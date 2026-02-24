@@ -40,7 +40,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
             <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
               {listing.name}
               {listing.verified && (
-                <Verified className="h-5 w-5 text-blue-500" title="Verified" />
+                <Verified className="h-5 w-5 text-blue-500" aria-label="Verified" />
               )}
             </h3>
           </div>
