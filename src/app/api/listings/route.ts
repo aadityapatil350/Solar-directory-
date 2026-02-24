@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const verified = searchParams.get('verified');
   const featured = searchParams.get('featured');
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
 
   if (categoryId) {
     where.categoryId = categoryId;

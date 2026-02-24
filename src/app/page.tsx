@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
@@ -234,10 +235,10 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
-                <li><a href="/" className="hover:text-white transition">Home</a></li>
-                <li><a href="/categories" className="hover:text-white transition">Categories</a></li>
-                <li><a href="/locations" className="hover:text-white transition">Locations</a></li>
-                <li><a href="/about" className="hover:text-white transition">About Us</a></li>
+                <li><Link href="/" className="hover:text-white transition">Home</Link></li>
+                <li><Link href="/categories" className="hover:text-white transition">Categories</Link></li>
+                <li><Link href="/locations" className="hover:text-white transition">Locations</Link></li>
+                <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
               </ul>
             </div>
             <div>
