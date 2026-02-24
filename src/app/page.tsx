@@ -1,42 +1,125 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
-import { prisma } from '@/lib/prisma';
 import { Zap, ShieldCheck, Star, TrendingUp } from 'lucide-react';
 
-async function getListings() {
-  return await prisma.listing.findMany({
-    include: {
-      category: true,
-      location: true,
-    },
-    orderBy: [
-      { featured: 'desc' },
-      { verified: 'desc' },
-      { rating: 'desc' },
-    ],
-    take: 20,
-  });
+interface Listing {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  phone: string | null;
+  address: string | null;
+  rating: number | null;
+  reviews: number;
+  verified: boolean;
+  featured: boolean;
+  location: {
+    city: string;
+    state: string;
+  };
+  category: {
+    name: string;
+  };
 }
 
-async function getCategories() {
-  return await prisma.category.findMany({
-    orderBy: { name: 'asc' },
-  });
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
 }
 
-async function getLocations() {
-  return await prisma.location.findMany({
-    orderBy: { city: 'asc' },
-    take: 10,
-  });
+interface Location {
+  id: string;
+  city: string;
+  state: string;
 }
 
-export default async function Home() {
-  const listings = await getListings();
-  const categories = await getCategories();
-  const locations = await getLocations();
+export default function Home() {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
+          fetch('/api/listings'),
+          fetch('/api/categories'),
+          fetch('/api/locations'),
+        ]);
+
+        const listingsData = await listingsRes.json();
+        const categoriesData = await categoriesRes.json();
+        const locationsData = await locationsRes.json();
+
+        setListings(listingsData);
+        setCategories(categoriesData);
+        setLocations(locationsData);
+        setFilteredListings(listingsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const handleSearch = (query: string, location: string) => {
+    let filtered = [...listings];
+    
+    if (query) {
+      filtered = filtered.filter(
+        (listing) =>
+          listing.name.toLowerCase().includes(query.toLowerCase()) ||
+          (listing.description?.toLowerCase().includes(query.toLowerCase())) ||
+          (listing.address?.toLowerCase().includes(query.toLowerCase()))
+      );
+    }
+    
+    if (location) {
+      filtered = filtered.filter(
+        (listing) =>
+          listing.location.city.toLowerCase().includes(location.toLowerCase()) ||
+          listing.location.state.toLowerCase().includes(location.toLowerCase())
+      );
+    }
+    
+    setFilteredListings(filtered);
+  };
+
+  const handleFilter = (categoryId: string | null, locationId: string | null) => {
+    let filtered = [...listings];
+    
+    if (categoryId) {
+      filtered = filtered.filter((listing) => listing.category.id === categoryId);
+    }
+    
+    if (locationId) {
+      filtered = filtered.filter((listing) => listing.location.id === locationId);
+    }
+    
+    setFilteredListings(filtered);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,7 +135,7 @@ export default async function Home() {
             <p className="text-xl mb-8 text-orange-100">
               Solar panel installers, dealers, and service providers near you. Compare prices, read reviews, go solar today!
             </p>
-            <SearchBar onSearch={() => {}} />
+            <SearchBar onSearch={handleSearch} />
           </div>
         </div>
       </section>
@@ -102,29 +185,32 @@ export default async function Home() {
               <Filter 
                 categories={categories}
                 locations={locations}
-                onFilter={() => {}}
+                onFilter={handleFilter}
               />
             </div>
             
             {/* Listings */}
             <div className="lg:col-span-3">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                {listings.length > 0 ? 'Featured Listings' : 'No listings yet'}
+                {filteredListings.length > 0 ? 'Featured Listings' : 'No listings found'}
               </h2>
               
-              {listings.length > 0 ? (
+              {filteredListings.length > 0 ? (
                 <div className="grid md:grid-cols-2 gap-6">
-                  {listings.map((listing) => (
+                  {filteredListings.map((listing) => (
                     <ListingCard key={listing.id} listing={listing} />
                   ))}
                 </div>
               ) : (
                 <div className="bg-white rounded-xl p-12 text-center">
                   <p className="text-gray-600 mb-4">
-                    No listings available yet. Be the first to add your business!
+                    No listings found. Try adjusting your search or filters.
                   </p>
-                  <button className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition">
-                    Add Your Business
+                  <button 
+                    onClick={() => setFilteredListings(listings)}
+                    className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
+                  >
+                    Clear Filters
                   </button>
                 </div>
               )}
@@ -140,7 +226,7 @@ export default async function Home() {
             <div>
               <h3 className="font-bold text-lg mb-4">Solar India</h3>
               <p className="text-gray-400 text-sm">
-                Your trusted directory for finding the best solar installers and service providers across India.
+                Your trusted directory for finding best solar installers and service providers across India.
               </p>
             </div>
             <div>
