@@ -19,10 +19,12 @@ interface Listing {
   verified: boolean;
   featured: boolean;
   location: {
+    id: string;
     city: string;
     state: string;
   };
   category: {
+    id: string;
     name: string;
   };
 }
