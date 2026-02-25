@@ -69,6 +69,7 @@ model User {
   name       String?
   email      String    @unique
   role       String    @default("user")
+  password   String?
   listings   Listing[]
   installer  Installer?
   createdAt  DateTime  @default(now())

@@ -1,18 +1,40 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-// Admin password - in production, use proper auth
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
-
-function verifyAuth(request: Request): boolean {
+async function verifyAuth(request: Request): Promise<{ success: boolean; user?: any }> {
   const authHeader = request.headers.get('authorization');
-  return authHeader === `Bearer ${ADMIN_PASSWORD}`;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { success: false };
+  }
+
+  const password = authHeader.substring(7); // Remove 'Bearer ' prefix
+
+  // Look up admin user from database
+  const user = await prisma.user.findUnique({
+    where: {
+      email: 'aadityabiz350@gmail.com',
+      role: 'admin',
+    },
+  });
+
+  if (!user || !user.password) {
+    return { success: false };
+  }
+
+  // Validate password
+  if (user.password !== password) {
+    return { success: false };
+  }
+
+  return { success: true, user };
 }
 
 export async function GET(request: Request) {
   try {
-    // Verify admin auth
-    if (!verifyAuth(request)) {
+    const { success, user } = await verifyAuth(request);
+
+    if (!success || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -59,7 +81,7 @@ export async function GET(request: Request) {
     const newLeads = await prisma.lead.count({ where: { status: 'new' } });
     const assignedLeads = await prisma.lead.count({ where: { status: 'assigned' } });
     const contactedLeads = await prisma.lead.count({ where: { status: 'contacted' } });
-    const closedLeads = await prisma.lead.count({ where: { status: 'closed' } });
+    const closedLeads = await prisma.lead.count({ where: { status: "closed" } });
 
     return NextResponse.json({
       leads,
@@ -69,6 +91,10 @@ export async function GET(request: Request) {
         assigned: assignedLeads,
         contacted: contactedLeads,
         closed: closedLeads,
+      },
+      adminUser: {
+        name: user.name,
+        email: user.email,
       },
     });
   } catch (error) {
@@ -82,8 +108,9 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    // Verify admin auth
-    if (!verifyAuth(request)) {
+    const { success, user } = await verifyAuth(request);
+
+    if (!success || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -91,7 +118,7 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { leadId, status, installerId, price } = body;
+    const { leadId, status, installerId } = body;
 
     if (!leadId) {
       return NextResponse.json(
@@ -125,7 +152,8 @@ export async function PATCH(request: Request) {
             leadId,
             installerId,
             status: 'pending',
-            price,
+            price: 50, // Default price for basic lead (you can adjust)
+            paid: false,
           },
         });
 
@@ -153,8 +181,9 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    // Verify admin auth
-    if (!verifyAuth(request)) {
+    const { success, user } = await verifyAuth(request);
+
+    if (!success || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

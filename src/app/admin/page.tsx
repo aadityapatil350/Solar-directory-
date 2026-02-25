@@ -40,6 +40,10 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [adminUser, setAdminUser] = useState<{
+    name: string;
+    email: string;
+  } | null>(null);
 
   const fetchLeads = async () => {
     try {
@@ -51,12 +55,14 @@ export default function AdminDashboard() {
 
       if (response.status === 401) {
         setIsAuthenticated(false);
+        setAdminUser(null);
         return;
       }
 
       const data = await response.json();
       setLeads(data.leads || []);
       setStats(data.stats || stats);
+      setAdminUser(data.adminUser || null);
     } catch (error) {
       console.error('Error fetching leads:', error);
     } finally {
@@ -65,10 +71,13 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchLeads();
+    // Check for saved auth on load
+    const savedAuth = localStorage.getItem('adminAuth');
+    if (savedAuth) {
+      setAuth(savedAuth);
+      setIsAuthenticated(true);
     }
-  }, [filter, isAuthenticated]);
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
