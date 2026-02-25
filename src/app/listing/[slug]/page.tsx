@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import LeadForm from '@/components/LeadForm';
 import { prisma } from '@/lib/prisma';
@@ -24,6 +26,10 @@ export default async function ListingPage({ params }: { params: { slug: string }
   if (!listing) {
     notFound();
   }
+
+  // Generate dynamic metadata
+  const title = `${listing.name} - Solar Installer`;
+  const description = `${listing.description} ${listing.location.city}, ${listing.location.state}. Rating: ${listing.rating}/5 with ${listing.reviews} reviews. ${listing.verified ? 'Verified' : ''} solar company.`;
 
   return (
     <div className="min-h-screen bg-gray-50">

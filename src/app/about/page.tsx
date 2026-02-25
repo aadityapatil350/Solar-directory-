@@ -1,5 +1,13 @@
+import type { Metadata } from 'next';
+import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import { Zap, ShieldCheck, TrendingUp } from 'lucide-react';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'About Go Solar Index',
+  description: 'Learn about Go Solar Index - India\'s most trusted solar directory. Connecting homeowners with verified solar professionals since 2025.',
+  path: '/about',
+});
 
 export default function AboutPage() {
   return (

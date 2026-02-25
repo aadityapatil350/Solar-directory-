@@ -1,8 +1,16 @@
+import type { Metadata } from 'next';
+import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Browse Solar Installers by Location',
+  description: 'Find solar services in your city across India. Verified installers, dealers, and service providers near you.',
+  path: '/locations',
+});
 
 export default async function LocationsPage() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/locations`, {

@@ -1,8 +1,16 @@
+import type { Metadata } from 'next';
+import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import { Zap } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Browse Solar Service Categories',
+  description: 'Find solar installers, dealers, and service providers by category. Residential, commercial, inverters, and maintenance services.',
+  path: '/categories',
+});
 
 export default async function CategoriesPage() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/categories`, {
