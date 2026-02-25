@@ -45,7 +45,9 @@ export default async function ListingPage({ params }: { params: { slug: string }
                     <div className="flex items-center gap-2 mb-2">
                       <h1 className="text-3xl font-bold text-gray-900">{listing.name}</h1>
                       {listing.verified && (
-                        <ShieldCheck className="h-6 w-6 text-green-500" title="Verified" />
+                        <span title="Verified">
+                          <ShieldCheck className="h-6 w-6 text-green-500" />
+                        </span>
                       )}
                     </div>
                     <div className="flex items-center gap-4 text-gray-600">
