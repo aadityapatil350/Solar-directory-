@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
+import LeadForm from '@/components/LeadForm';
 import { Zap, ShieldCheck, Star, TrendingUp } from 'lucide-react';
 
 interface Listing {
@@ -184,12 +185,13 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Sidebar Filters */}
-            <div className="lg:col-span-1">
-              <Filter 
+            <div className="lg:col-span-1 space-y-6">
+              <Filter
                 categories={categories}
                 locations={locations}
                 onFilter={handleFilter}
               />
+              <LeadForm />
             </div>
             
             {/* Listings */}
