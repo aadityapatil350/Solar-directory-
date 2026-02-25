@@ -29,6 +29,7 @@ model Location {
   updatedAt DateTime @updatedAt
 
   listings Listing[]
+  leads     Lead[]
 }
 
 model Listing {
@@ -64,11 +65,80 @@ model Listing {
 }
 
 model User {
-  id       String    @id @default(cuid())
-  name     String?
-  email    String    @unique
-  role     String    @default("user")
-  listings Listing[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String    @id @default(cuid())
+  name       String?
+  email      String    @unique
+  role       String    @default("user")
+  listings   Listing[]
+  installer  Installer?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Installer {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyName       String
+  contactPerson     String
+  phone             String
+  email             String
+  address           String?
+  website           String?
+  
+  subscriptionType   String   @default("basic") // basic, featured, premium
+  subscriptionStart DateTime @default(now())
+  subscriptionEnd   DateTime?
+  
+  paymentStatus     String   @default("pending") // pending, active, expired
+  balance           Float    @default(0)
+  
+  verified          Boolean  @default(false)
+  
+  leadDeliveries    LeadDelivery[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  email       String?
+  requirement String?  // e.g., "3kW for home", "Industrial rooftop"
+  locationId  String?
+  location    Location? @relation(fields: [locationId], references: [id])
+  budget      String?  // e.g., "₹2L-₹3L", "₹10L+"
+  urgency     String   @default("normal") // normal, urgent
+  status      String   @default("new") // new, assigned, contacted, closed
+  
+  leadDeliveries LeadDelivery[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model LeadDelivery {
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  installerId String
+  installer   Installer @relation(fields: [installerId], references: [id], onDelete: Cascade)
+  
+  status      String   @default("pending") // pending, opened, contacted, converted, lost
+  openedAt    DateTime?
+  readAt      DateTime?
+  
+  price       Float?   // Price paid for this lead
+  paid        Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([installerId])
+  @@index([leadId])
 }
