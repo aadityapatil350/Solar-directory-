@@ -48,6 +48,13 @@ export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
+  const [stats, setStats] = useState({
+    totalListings: 0,
+    featured: 0,
+    verified: 0,
+    avgRating: 0,
+    cities: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -67,6 +74,21 @@ export default function Home() {
         setCategories(categoriesData);
         setLocations(locationsData);
         setFilteredListings(listingsData);
+
+        // Calculate stats
+        const totalListings = listingsData.length;
+        const featured = listingsData.filter((l) => l.featured).length;
+        const verified = listingsData.filter((l) => l.verified).length;
+        const totalRating = listingsData.reduce((sum, l) => sum + (l.rating || 0), 0);
+        const avgRating = totalListings > 0 ? totalRating / totalListings : 0;
+
+        setStats({
+          totalListings,
+          featured,
+          verified,
+          avgRating: Math.round(avgRating * 10) / 10,
+          cities: locationsData.length,
+        });
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -147,34 +169,41 @@ export default function Home() {
       {/* Stats Section */}
       <section className="bg-white border-b py-8">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 <Zap className="h-8 w-8 text-orange-500" />
               </div>
-              <div className="text-3xl font-bold text-gray-900">500+</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.totalListings}</div>
               <div className="text-sm text-gray-600">Verified Listings</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 <ShieldCheck className="h-8 w-8 text-orange-500" />
               </div>
-              <div className="text-3xl font-bold text-gray-900">50+</div>
-              <div className="text-sm text-gray-600">Cities Covered</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.featured}</div>
+              <div className="text-sm text-gray-600">Featured Companies</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 <Star className="h-8 w-8 text-orange-500" />
               </div>
-              <div className="text-3xl font-bold text-gray-900">4.5+</div>
-              <div className="text-sm text-gray-600">Avg Rating</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.verified}</div>
+              <div className="text-sm text-gray-600">Verified Companies</div>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-2">
+                <MapPin className="h-8 w-8 text-orange-500" />
+              </div>
+              <div className="text-3xl font-bold text-gray-900">{stats.cities}</div>
+              <div className="text-sm text-gray-600">Cities Covered</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 <TrendingUp className="h-8 w-8 text-orange-500" />
               </div>
-              <div className="text-3xl font-bold text-gray-900">10k+</div>
-              <div className="text-sm text-gray-600">Happy Users</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.avgRating}</div>
+              <div className="text-sm text-gray-600">Avg Rating</div>
             </div>
           </div>
         </div>
