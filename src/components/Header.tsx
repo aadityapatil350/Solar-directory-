@@ -24,6 +24,15 @@ export default function Header() {
             <Link href="/about" className="text-gray-700 hover:text-orange-500 transition">
               About
             </Link>
+            <Link href="/installers/signup" className="text-orange-600 hover:text-orange-700 font-medium transition">
+              For Installers
+            </Link>
+            <Link href="/installers/dashboard" className="text-orange-600 hover:text-orange-700 font-medium transition">
+              Installer Dashboard
+            </Link>
+            <Link href="/admin" className="text-orange-600 hover:text-orange-700 font-medium transition">
+              Admin
+            </Link>
           </nav>
 
           <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition">
