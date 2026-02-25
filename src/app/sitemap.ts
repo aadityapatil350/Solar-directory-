@@ -29,57 +29,70 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   ]);
 
+  const pages: Array<{
+    url: string;
+    lastModified: string;
+    changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+    priority: number;
+  }> = [];
+
   // Static pages
-  const staticPages: MetadataRoute.SitemapEntry[] = [
+  pages.push(
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${baseUrl}/categories`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/locations`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: 'monthly',
       priority: 0.5,
     },
-  ];
+  );
 
   // Listing pages
-  const listingPages: MetadataRoute.SitemapEntry[] = listings.map((listing) => ({
-    url: `${baseUrl}/listing/${listing.slug}`,
-    lastModified: listing.updatedAt,
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }));
+  listings.forEach((listing) => {
+    pages.push({
+      url: `${baseUrl}/listing/${listing.slug}`,
+      lastModified: listing.updatedAt.toISOString(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    });
+  });
 
   // Category pages
-  const categoryPages: MetadataRoute.SitemapEntry[] = categories.map((category) => ({
-    url: `${baseUrl}/categories/${category.slug}`,
-    lastModified: category.updatedAt,
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  }));
+  categories.forEach((category) => {
+    pages.push({
+      url: `${baseUrl}/categories/${category.slug}`,
+      lastModified: category.updatedAt.toISOString(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    });
+  });
 
   // Location pages
-  const locationPages: MetadataRoute.SitemapEntry[] = locations.map((location) => ({
-    url: `${baseUrl}/locations/${location.slug}`,
-    lastModified: location.updatedAt,
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  }));
+  locations.forEach((location) => {
+    pages.push({
+      url: `${baseUrl}/locations/${location.slug}`,
+      lastModified: location.updatedAt.toISOString(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    });
+  });
 
-  return [...staticPages, ...listingPages, ...categoryPages, ...locationPages];
+  return pages;
 }
