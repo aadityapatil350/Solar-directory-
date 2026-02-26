@@ -76,7 +76,7 @@ const PLAN_LABELS: Record<string, { label: string; color: string }> = {
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
   opened: 'bg-blue-100 text-blue-800',
-  contacted: 'bg-purple-100 text-purple-800',
+  contacted: 'bg-blue-100 text-blue-800',
   converted: 'bg-green-100 text-green-800',
   lost: 'bg-red-100 text-red-800',
 };

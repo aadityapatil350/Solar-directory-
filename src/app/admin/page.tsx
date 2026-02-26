@@ -464,9 +464,9 @@ export default function AdminDashboard() {
             <div className="text-2xl font-bold text-yellow-900">{stats.newLeads}</div>
             <div className="text-sm text-yellow-700">New Leads</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-4 shadow-sm">
-            <div className="text-2xl font-bold text-purple-900">{stats.totalInstallers}</div>
-            <div className="text-sm text-purple-700">Installers</div>
+          <div className="bg-orange-50 rounded-lg p-4 shadow-sm">
+            <div className="text-2xl font-bold text-orange-900">{stats.totalInstallers}</div>
+            <div className="text-sm text-orange-700">Installers</div>
           </div>
           <div className="bg-indigo-50 rounded-lg p-4 shadow-sm">
             <div className="text-2xl font-bold text-indigo-900">{stats.verifiedInstallers}</div>
@@ -632,7 +632,7 @@ export default function AdminDashboard() {
                                     : lead.status === 'assigned'
                                     ? 'bg-yellow-100 text-yellow-900'
                                     : lead.status === 'contacted'
-                                    ? 'bg-purple-100 text-purple-900'
+                                    ? 'bg-orange-100 text-orange-900'
                                     : 'bg-green-100 text-green-900'
                                 }`}
                               >

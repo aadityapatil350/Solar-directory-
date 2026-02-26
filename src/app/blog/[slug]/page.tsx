@@ -106,16 +106,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Article body */}
           <article
-            className="bg-white rounded-2xl shadow-sm p-8 md:p-12 prose prose-lg max-w-none
-              prose-headings:text-gray-900 prose-headings:font-bold
-              prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-              prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-              prose-h4:text-lg prose-h4:mt-4 prose-h4:mb-2
-              prose-p:text-gray-600 prose-p:leading-relaxed
-              prose-li:text-gray-600
-              prose-strong:text-gray-900
-              prose-table:text-sm prose-td:p-2 prose-th:p-2 prose-th:bg-gray-50
-              prose-a:text-orange-600"
+            className="bg-white rounded-2xl shadow-sm p-8 md:p-12 article-body"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 
