@@ -5,41 +5,110 @@ import LeadForm from '@/components/LeadForm';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Phone, Mail, Globe, MapPin, Star, ShieldCheck } from 'lucide-react';
+import { Phone, Mail, Globe, MapPin, Star, ShieldCheck, ChevronRight } from 'lucide-react';
+import Script from 'next/script';
 
 export const dynamic = 'force-dynamic';
 
 async function getListing(slug: string) {
-  const listing = await prisma.listing.findUnique({
+  return prisma.listing.findUnique({
     where: { slug },
-    include: {
-      category: true,
-      location: true,
-    },
+    include: { category: true, location: true },
   });
-  return listing;
 }
 
-export default async function ListingPage({ params }: { params: { slug: string } }) {
-  const listing = await getListing(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const listing = await getListing(slug);
+  if (!listing) return {};
+  return constructMetadata({
+    title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,
+    description: `${listing.name} is a verified ${listing.category.name.toLowerCase()} in ${listing.location.city}, ${listing.location.state}. ${listing.description?.slice(0, 120) || ''}`,
+    path: `/listing/${slug}`,
+  });
+}
+
+export default async function ListingPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const listing = await getListing(slug);
 
   if (!listing) {
     notFound();
   }
 
-  // Generate dynamic metadata
-  const title = `${listing.name} - Solar Installer`;
-  const description = `${listing.description} ${listing.location.city}, ${listing.location.state}. Rating: ${listing.rating}/5 with ${listing.reviews} reviews. ${listing.verified ? 'Verified' : ''} solar company.`;
+  const siteUrl = 'https://gosolarindex.in';
+  const localBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: listing.name,
+    description: listing.description || undefined,
+    url: listing.website || `${siteUrl}/listing/${listing.slug}`,
+    telephone: listing.phone || undefined,
+    email: listing.email || undefined,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: listing.address || undefined,
+      addressLocality: listing.location.city,
+      addressRegion: listing.location.state,
+      addressCountry: 'IN',
+    },
+    geo: { '@type': 'GeoCoordinates' },
+    aggregateRating: listing.reviews > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: listing.rating,
+      reviewCount: listing.reviews,
+      bestRating: 5,
+      worstRating: 1,
+    } : undefined,
+    priceRange: '₹₹',
+    currenciesAccepted: 'INR',
+    paymentAccepted: 'Cash, UPI, Bank Transfer',
+    areaServed: listing.location.state,
+    serviceType: listing.category.name,
+    hasMap: `https://www.google.com/maps/search/${encodeURIComponent(`${listing.name} ${listing.location.city}`)}`,
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: listing.category.name, item: `${siteUrl}/categories/${listing.category.slug ?? ''}` },
+      { '@type': 'ListItem', position: 3, name: listing.name, item: `${siteUrl}/listing/${listing.slug}` },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Script
+        id="lb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
+      <Script
+        id="bc-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <Header />
-      
+
+      {/* Breadcrumb */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 py-3">
+          <nav className="flex items-center gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-orange-500 transition">Home</Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link href={`/categories/${listing.category.slug ?? ''}`} className="hover:text-orange-500 transition">
+              {listing.category.name}
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-gray-900 font-medium truncate max-w-48">{listing.name}</span>
+          </nav>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
-          <Link href="/" className="text-orange-500 hover:text-orange-600 mb-6 inline-block">
-            ← Back to Listings
-          </Link>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content */}

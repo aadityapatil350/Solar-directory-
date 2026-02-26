@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
+import PaymentButton from '@/components/PaymentButton';
 import Link from 'next/link';
 import { CheckCircle, Zap, Star, ShieldCheck } from 'lucide-react';
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = constructMetadata({
 const plans = [
   {
     name: 'Basic',
+    planKey: null,
     price: '₹0',
     period: 'Free forever',
     description: 'Get started with a free listing and appear in search results.',
@@ -37,13 +39,14 @@ const plans = [
   },
   {
     name: 'Featured',
+    planKey: 'featured',
     price: '₹999',
     period: 'per month',
     description: 'Stand out with featured placement and get more leads.',
     icon: Star,
     color: 'orange',
-    cta: 'Get Started',
-    href: '/installers/signup',
+    cta: 'Get Started — ₹999/mo',
+    href: null,
     badge: 'Most Popular',
     features: [
       'Everything in Basic',
@@ -61,13 +64,14 @@ const plans = [
   },
   {
     name: 'Premium',
+    planKey: 'premium',
     price: '₹2,499',
     period: 'per month',
     description: 'Maximum visibility across India with unlimited lead access.',
     icon: ShieldCheck,
     color: 'green',
-    cta: 'Contact Sales',
-    href: '/contact',
+    cta: 'Get Premium — ₹2,499/mo',
+    href: null,
     features: [
       'Everything in Featured',
       'Unlimited direct leads',
@@ -186,16 +190,19 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
-                  <Link
-                    href={plan.href}
-                    className={`w-full text-center py-3 rounded-xl font-semibold transition ${
-                      isPopular
-                        ? 'bg-orange-500 text-white hover:bg-orange-600'
-                        : 'border-2 border-gray-300 text-gray-700 hover:border-orange-400 hover:text-orange-600'
-                    }`}
-                  >
-                    {plan.cta}
-                  </Link>
+                  {plan.planKey ? (
+                    <PaymentButton
+                      plan={plan.planKey as 'featured' | 'premium'}
+                      label={plan.cta}
+                    />
+                  ) : (
+                    <Link
+                      href={plan.href!}
+                      className="w-full text-center py-3 rounded-xl font-semibold transition border-2 border-gray-300 text-gray-700 hover:border-orange-400 hover:text-orange-600 block"
+                    >
+                      {plan.cta}
+                    </Link>
+                  )}
                 </div>
               );
             })}

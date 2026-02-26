@@ -453,12 +453,20 @@ export default function InstallerSignup() {
                 <li>You can then purchase leads and upgrade your subscription</li>
               </ol>
             </div>
-            <Link
-              href="/"
-              className="inline-block bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
-            >
-              Back to Home
-            </Link>
+            <div className="flex gap-3 justify-center">
+              <Link
+                href="/installers/login"
+                className="inline-block bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
+              >
+                Go to Login
+              </Link>
+              <Link
+                href="/"
+                className="inline-block border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition"
+              >
+                Back to Home
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -31,6 +31,9 @@ export default function Header() {
             <Link href="/about" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
               About
             </Link>
+            <Link href="/blog" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
+              Blog
+            </Link>
             <Link href="/contact" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
               Contact
             </Link>
@@ -67,6 +70,7 @@ export default function Header() {
               { href: '/categories', label: 'Categories' },
               { href: '/locations', label: 'Locations' },
               { href: '/about', label: 'About' },
+              { href: '/blog', label: 'Blog' },
               { href: '/contact', label: 'Contact' },
               { href: '/pricing', label: 'Pricing' },
             ].map(({ href, label }) => (
