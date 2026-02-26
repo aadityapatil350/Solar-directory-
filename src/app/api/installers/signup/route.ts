@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    
+
     const {
       companyName,
       contactPerson,
@@ -17,8 +17,6 @@ export async function POST(request: Request) {
       yearsExperience,
       teamSize,
       serviceAreas,
-      mnreApproved,
-      panAvailable,
       password,
     } = body;
 
@@ -41,7 +39,7 @@ export async function POST(request: Request) {
     // Validate phone
     if (!/^[6-9]\d{9}$/.test(phone)) {
       return NextResponse.json(
-        { error: 'Invalid phone number (must be 10 digits)' },
+        { error: 'Invalid phone number (must be 10 digits starting with 6-9)' },
         { status: 400 }
       );
     }
@@ -80,23 +78,37 @@ export async function POST(request: Request) {
         email,
         name: contactPerson,
         role: 'installer',
-        password, // In production, hash with bcrypt
+        password, // TODO: hash with bcrypt before launch
       },
     });
 
-    // Find category and location
-    const categoryRecord = await prisma.category.findFirst({
-      where: { name: category },
-    });
-
-    const locationRecord = await prisma.location.findFirst({
+    // Find or create location
+    let locationRecord = await prisma.location.findFirst({
       where: { city, state },
     });
 
+    if (!locationRecord) {
+      const locationSlug = city.toLowerCase().replace(/\s+/g, '-') + '-' + state.toLowerCase().replace(/\s+/g, '-');
+      locationRecord = await prisma.location.create({
+        data: { city, state, slug: locationSlug + '-' + Date.now() },
+      });
+    }
+
+    // Find category record — fallback to first category if not found
+    let categoryRecord = await prisma.category.findFirst({
+      where: { name: { contains: category, mode: 'insensitive' } },
+    });
+
+    if (!categoryRecord) {
+      categoryRecord = await prisma.category.findFirst();
+    }
+
     if (!categoryRecord || !locationRecord) {
+      // Rollback user creation
+      await prisma.user.delete({ where: { id: user.id } });
       return NextResponse.json(
-        { error: 'Category or location not found. Please contact support.' },
-        { status: 400 }
+        { error: 'Setup error: no categories found. Please contact support.' },
+        { status: 500 }
       );
     }
 
@@ -111,25 +123,23 @@ export async function POST(request: Request) {
         address,
         city,
         state,
-        category,
-        yearsExperience: parseInt(yearsExperience),
-        teamSize,
-        serviceAreas: JSON.stringify(serviceAreas),
-        mnreApproved,
-        panAvailable,
         subscriptionType: 'basic',
         paymentStatus: 'pending',
-        verified: false, // Requires admin verification
+        verified: false,
         balance: 0,
       },
     });
 
     // Create listing for installer
-    const listing = await prisma.listing.create({
+    const areas = Array.isArray(serviceAreas) ? serviceAreas.join(', ') : (serviceAreas || '');
+    const exp = yearsExperience ? `${yearsExperience}+ years experience. ` : '';
+    const team = teamSize ? `Team size: ${teamSize}. ` : '';
+
+    await prisma.listing.create({
       data: {
         name: companyName,
         slug,
-        description: `${yearsExperience}+ years experience in solar industry. Team size: ${teamSize}. Specializes in: ${serviceAreas.join(', ')}.`,
+        description: `${exp}${team}Specializes in: ${areas || category}.`,
         phone,
         email,
         website: '',
@@ -150,7 +160,6 @@ export async function POST(request: Request) {
         message: 'Registration successful! Your account will be reviewed by our team.',
         userId: user.id,
         installerId: installer.id,
-        listingId: listing.id,
       },
       { status: 201 }
     );

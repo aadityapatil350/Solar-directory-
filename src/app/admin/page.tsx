@@ -66,12 +66,12 @@ export default function AdminDashboard() {
   const [auth, setAuth] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminUser, setAdminUser] = useState<{ name: string; email: string } | null>(null);
-  
+
   // Leads state
   const [leads, setLeads] = useState<any[]>([]);
   const [leadsLoading, setLeadsLoading] = useState(true);
   const [leadsFilter, setLeadsFilter] = useState('all');
-  
+
   // Listings state
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(true);
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
     verified: false,
     featured: false,
   });
-  
+
   // Installers state
   const [installers, setInstallers] = useState<Installer[]>([]);
   const [installersLoading, setInstallersLoading] = useState(true);
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
     totalInstallers: 0,
     verifiedInstallers: 0,
   });
-  
+
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Load categories and locations for forms
@@ -123,21 +123,31 @@ export default function AdminDashboard() {
   const fetchAllData = async (authToken: string) => {
     try {
       // Fetch all data in parallel
-      const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
+      const [listingsRes, categoriesRes, locationsRes, installersRes, usersRes] = await Promise.all([
         fetch('/api/admin/listings', {
           headers: { Authorization: `Bearer ${authToken}` },
         }),
         fetch('/api/categories'),
         fetch('/api/locations'),
+        fetch('/api/admin/installers', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }),
+        fetch('/api/admin/users', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }),
       ]);
 
       const listingsData = await listingsRes.json();
       const categoriesData = await categoriesRes.json();
       const locationsData = await locationsRes.json();
+      const installersData = await installersRes.json();
+      const usersData = await usersRes.json();
 
       setListings(listingsData.listings || []);
       setCategories(categoriesData);
       setLocations(locationsData);
+      setInstallers(installersData.installers || []);
+      setUsers(usersData.users || []);
       setStats(listingsData.stats || stats);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -145,20 +155,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Tab handlers
-  useEffect(() => {
-    if (isAuthenticated) {
-      if (activeTab === 'leads') {
-        fetchLeads();
-      } else if (activeTab === 'listings') {
-        fetchListings();
-      } else if (activeTab === 'installers') {
-        fetchInstallers();
-      }
-    }
-  }, [activeTab, isAuthenticated]);
-
-  // Leads
   const fetchLeads = async () => {
     setLeadsLoading(true);
     try {
@@ -175,7 +171,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Listings
   const fetchListings = async () => {
     setListingsLoading(true);
     try {
@@ -222,7 +217,7 @@ export default function AdminDashboard() {
         if (!response.ok) throw new Error(data.error || 'Creation failed');
         showMessage('success', 'Listing created successfully');
       }
-      
+
       fetchAllData(auth);
       handleCancelEdit();
     } catch (error) {
@@ -249,7 +244,7 @@ export default function AdminDashboard() {
 
   const handleDeleteListing = async (listingId: string) => {
     if (!confirm('Are you sure you want to delete this listing? This cannot be undone.')) return;
-    
+
     try {
       const response = await fetch(`/api/admin/listings/${listingId}`, {
         method: 'DELETE',
@@ -257,7 +252,7 @@ export default function AdminDashboard() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Delete failed');
-      
+
       showMessage('success', 'Listing deleted successfully');
       fetchListings();
     } catch (error) {
@@ -277,7 +272,7 @@ export default function AdminDashboard() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Update failed');
-      
+
       fetchListings();
       showMessage('success', `Listing ${listing.featured ? 'removed from' : 'added to'} featured`);
     } catch (error) {
@@ -317,7 +312,7 @@ export default function AdminDashboard() {
 
       const installersData = await installersRes.json();
       const usersData = await usersRes.json();
-      setInstallers(instersData.installers || []);
+      setInstallers(installersData.installers || []);
       setUsers(usersData.users || []);
       setStats(installersData.stats || stats);
     } catch (error) {
@@ -339,7 +334,7 @@ export default function AdminDashboard() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Verification failed');
-      
+
       showMessage('success', 'Installer verified successfully');
       fetchInstallers();
     } catch (error) {
@@ -349,7 +344,7 @@ export default function AdminDashboard() {
 
   const handleDeleteInstaller = async (installerId: string) => {
     if (!confirm('Are you sure you want to delete this installer?')) return;
-    
+
     try {
       const response = await fetch(`/api/admin/installers/${installerId}`, {
         method: 'DELETE',
@@ -357,7 +352,7 @@ export default function AdminDashboard() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Delete failed');
-      
+
       showMessage('success', 'Installer deleted successfully');
       fetchInstallers();
     } catch (error) {
@@ -420,7 +415,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
       <div className="bg-white border-b shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -450,7 +444,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Message */}
       {message && (
         <div className={`container mx-auto px-4 py-4 ${message.type === 'success' ? 'bg-green-50' : 'bg-red-50'}`}>
           <div className={`max-w-md mx-auto p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -459,7 +452,6 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Stats Overview */}
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
           <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -493,7 +485,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="container mx-auto px-4">
         <div className="bg-white rounded-xl shadow-sm">
           <div className="border-b">
@@ -534,9 +525,7 @@ export default function AdminDashboard() {
             </nav>
           </div>
 
-          {/* Tab Content */}
           <div className="p-6">
-            {/* Leads Tab */}
             {activeTab === 'leads' && (
               <>
                 <div className="flex items-center justify-between mb-6">
@@ -618,7 +607,7 @@ export default function AdminDashboard() {
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <div className="space-y-1 text-sm">
+                              <div className="space-y-1">
                                 {lead.requirement && (
                                   <div>
                                     <span className="font-medium">Need:</span> {lead.requirement}
@@ -635,7 +624,6 @@ export default function AdminDashboard() {
                               <select
                                 value={lead.status}
                                 onChange={(e) => {
-                                  // Handle status change
                                   fetch(`/api/admin/leads`, {
                                     method: 'PATCH',
                                     headers: {
@@ -687,7 +675,6 @@ export default function AdminDashboard() {
               </>
             )}
 
-            {/* Listings Tab */}
             {activeTab === 'listings' && (
               <>
                 <div className="flex items-center justify-between mb-6">
@@ -704,7 +691,6 @@ export default function AdminDashboard() {
                   </button>
                 </div>
 
-                {/* Add/Edit Listing Form */}
                 {showAddListingForm && (
                   <div className="bg-gray-50 rounded-xl p-6 mb-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-6">
@@ -820,7 +806,7 @@ export default function AdminDashboard() {
                             onChange={(e) => setListingForm({ ...listingForm, featured: e.target.checked })}
                             className="w-4 h-4 text-orange-500 rounded"
                           />
-                          Featured Listing (⭐)
+                          Featured Listing
                         </label>
                       </div>
                       <div className="flex items-center gap-4">
@@ -842,7 +828,6 @@ export default function AdminDashboard() {
                   </div>
                 )}
 
-                {/* Listings Table */}
                 {listingsLoading ? (
                   <div className="text-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
@@ -949,7 +934,6 @@ export default function AdminDashboard() {
               </>
             )}
 
-            {/* Installers Tab */}
             {activeTab === 'installers' && (
               <>
                 <div className="mb-6">

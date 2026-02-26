@@ -36,6 +36,9 @@ export async function GET(request: Request) {
       ];
     }
 
+    const takeParam = searchParams.get('take');
+    const take = takeParam ? Math.min(parseInt(takeParam), 500) : 50;
+
     const listings = await prisma.listing.findMany({
       where,
       include: {
@@ -47,7 +50,7 @@ export async function GET(request: Request) {
         { verified: 'desc' },
         { rating: 'desc' },
       ],
-      take: 50,
+      take,
     });
 
     return NextResponse.json(listings);

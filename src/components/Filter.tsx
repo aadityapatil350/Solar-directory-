@@ -1,19 +1,70 @@
 'use client';
 
+import { useState } from 'react';
+
 interface FilterProps {
   categories: { id: string; name: string; slug: string }[];
   locations: { id: string; city: string; state: string }[];
-  onFilter: (categoryId: string | null, locationId: string | null) => void;
+  onFilter: (
+    categoryId: string | null,
+    locationId: string | null,
+    verifiedOnly: boolean,
+    featuredOnly: boolean
+  ) => void;
 }
 
 export default function Filter({ categories, locations, onFilter }: FilterProps) {
+  const [categoryId, setCategoryId] = useState('');
+  const [locationId, setLocationId] = useState('');
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+
+  function applyFilter(
+    newCategoryId = categoryId,
+    newLocationId = locationId,
+    newVerified = verifiedOnly,
+    newFeatured = featuredOnly
+  ) {
+    onFilter(
+      newCategoryId || null,
+      newLocationId || null,
+      newVerified,
+      newFeatured
+    );
+  }
+
+  function handleCategory(e: React.ChangeEvent<HTMLSelectElement>) {
+    const val = e.target.value;
+    setCategoryId(val);
+    applyFilter(val, locationId, verifiedOnly, featuredOnly);
+  }
+
+  function handleLocation(e: React.ChangeEvent<HTMLSelectElement>) {
+    const val = e.target.value;
+    setLocationId(val);
+    applyFilter(categoryId, val, verifiedOnly, featuredOnly);
+  }
+
+  function handleVerified(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = e.target.checked;
+    setVerifiedOnly(val);
+    applyFilter(categoryId, locationId, val, featuredOnly);
+  }
+
+  function handleFeatured(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = e.target.checked;
+    setFeaturedOnly(val);
+    applyFilter(categoryId, locationId, verifiedOnly, val);
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-md p-6 space-y-6">
       <div>
         <h3 className="font-semibold text-gray-900 mb-3">Categories</h3>
         <select
+          value={categoryId}
+          onChange={handleCategory}
           className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-          onChange={(e) => onFilter(e.target.value || null, null)}
         >
           <option value="">All Categories</option>
           {categories.map((category) => (
@@ -23,12 +74,13 @@ export default function Filter({ categories, locations, onFilter }: FilterProps)
           ))}
         </select>
       </div>
-      
+
       <div>
         <h3 className="font-semibold text-gray-900 mb-3">Location</h3>
         <select
+          value={locationId}
+          onChange={handleLocation}
           className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-          onChange={(e) => onFilter(null, e.target.value || null)}
         >
           <option value="">All Locations</option>
           {locations.map((location) => (
@@ -38,16 +90,26 @@ export default function Filter({ categories, locations, onFilter }: FilterProps)
           ))}
         </select>
       </div>
-      
+
       <div>
         <h3 className="font-semibold text-gray-900 mb-3">Quick Filters</h3>
         <div className="space-y-2">
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" className="w-4 h-4 text-orange-500 rounded" />
+            <input
+              type="checkbox"
+              checked={verifiedOnly}
+              onChange={handleVerified}
+              className="w-4 h-4 accent-orange-500 rounded"
+            />
             <span className="text-sm text-gray-700">Verified Only</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" className="w-4 h-4 text-orange-500 rounded" />
+            <input
+              type="checkbox"
+              checked={featuredOnly}
+              onChange={handleFeatured}
+              className="w-4 h-4 accent-orange-500 rounded"
+            />
             <span className="text-sm text-gray-700">Featured Only</span>
           </label>
         </div>

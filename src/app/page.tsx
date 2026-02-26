@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
 import LeadForm from '@/components/LeadForm';
-import { Zap, ShieldCheck, Star, TrendingUp } from 'lucide-react';
+import { Zap, ShieldCheck, Star, TrendingUp, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Listing {
   id: string;
@@ -20,73 +20,54 @@ interface Listing {
   reviews: number;
   verified: boolean;
   featured: boolean;
-  location: {
-    id: string;
-    city: string;
-    state: string;
-  };
-  category: {
-    id: string;
-    name: string;
-  };
+  location: { id: string; city: string; state: string };
+  category: { id: string; name: string };
 }
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
+interface Category { id: string; name: string; slug: string }
+interface Location { id: string; city: string; state: string }
 
-interface Location {
-  id: string;
-  city: string;
-  state: string;
-}
+const PAGE_SIZE = 12;
 
 export default function Home() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
-  const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
-  const [stats, setStats] = useState({
-    totalListings: 0,
-    featured: 0,
-    verified: 0,
-    avgRating: 0,
-    cities: 0,
-  });
+  const [stats, setStats] = useState({ totalListings: 0, featured: 0, verified: 0, avgRating: 0, cities: 0 });
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Active filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchLocation, setSearchLocation] = useState('');
+  const [filterCategoryId, setFilterCategoryId] = useState<string | null>(null);
+  const [filterLocationId, setFilterLocationId] = useState<string | null>(null);
+  const [filterVerified, setFilterVerified] = useState(false);
+  const [filterFeatured, setFilterFeatured] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
-          fetch('/api/listings'),
+          fetch('/api/listings?take=200'),
           fetch('/api/categories'),
           fetch('/api/locations'),
         ]);
+        const listingsData: Listing[] = await listingsRes.json();
+        const categoriesData: Category[] = await categoriesRes.json();
+        const locationsData: Location[] = await locationsRes.json();
 
-        const listingsData = await listingsRes.json();
-        const categoriesData = await categoriesRes.json();
-        const locationsData = await locationsRes.json();
-
-        setListings(listingsData);
+        setListings(Array.isArray(listingsData) ? listingsData : []);
         setCategories(categoriesData);
         setLocations(locationsData);
-        setFilteredListings(listingsData);
 
-        // Calculate stats
-        const totalListings = listingsData.length;
-        const featured = listingsData.filter((l) => l.featured).length;
-        const verified = listingsData.filter((l) => l.verified).length;
-        const totalRating = listingsData.reduce((sum, l) => sum + (l.rating || 0), 0);
-        const avgRating = totalListings > 0 ? totalRating / totalListings : 0;
-
+        const total = listingsData.length;
+        const totalRating = listingsData.reduce((s, l) => s + (l.rating || 0), 0);
         setStats({
-          totalListings,
-          featured,
-          verified,
-          avgRating: Math.round(avgRating * 10) / 10,
+          totalListings: total,
+          featured: listingsData.filter((l) => l.featured).length,
+          verified: listingsData.filter((l) => l.verified).length,
+          avgRating: total > 0 ? Math.round((totalRating / total) * 10) / 10 : 0,
           cities: locationsData.length,
         });
       } catch (error) {
@@ -95,46 +76,83 @@ export default function Home() {
         setLoading(false);
       }
     }
-
     fetchData();
   }, []);
 
-  const handleSearch = (query: string, location: string) => {
-    let filtered = [...listings];
-    
-    if (query) {
-      filtered = filtered.filter(
-        (listing) =>
-          listing.name.toLowerCase().includes(query.toLowerCase()) ||
-          (listing.description?.toLowerCase().includes(query.toLowerCase())) ||
-          (listing.address?.toLowerCase().includes(query.toLowerCase()))
-      );
-    }
-    
-    if (location) {
-      filtered = filtered.filter(
-        (listing) =>
-          listing.location.city.toLowerCase().includes(location.toLowerCase()) ||
-          listing.location.state.toLowerCase().includes(location.toLowerCase())
-      );
-    }
-    
-    setFilteredListings(filtered);
-  };
+  // Derived filtered list
+  const filteredListings = useMemo(() => {
+    let result = [...listings];
 
-  const handleFilter = (categoryId: string | null, locationId: string | null) => {
-    let filtered = [...listings];
-    
-    if (categoryId) {
-      filtered = filtered.filter((listing) => listing.category.id === categoryId);
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (l) =>
+          l.name.toLowerCase().includes(q) ||
+          l.description?.toLowerCase().includes(q) ||
+          l.address?.toLowerCase().includes(q)
+      );
     }
-    
-    if (locationId) {
-      filtered = filtered.filter((listing) => listing.location.id === locationId);
+
+    if (searchLocation) {
+      const loc = searchLocation.toLowerCase();
+      result = result.filter(
+        (l) =>
+          l.location.city.toLowerCase().includes(loc) ||
+          l.location.state.toLowerCase().includes(loc)
+      );
     }
-    
-    setFilteredListings(filtered);
-  };
+
+    if (filterCategoryId) {
+      result = result.filter((l) => l.category.id === filterCategoryId);
+    }
+
+    if (filterLocationId) {
+      result = result.filter((l) => l.location.id === filterLocationId);
+    }
+
+    if (filterVerified) {
+      result = result.filter((l) => l.verified);
+    }
+
+    if (filterFeatured) {
+      result = result.filter((l) => l.featured);
+    }
+
+    return result;
+  }, [listings, searchQuery, searchLocation, filterCategoryId, filterLocationId, filterVerified, filterFeatured]);
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filteredListings.length / PAGE_SIZE));
+  const paginated = filteredListings.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  function handleSearch(query: string, location: string) {
+    setSearchQuery(query);
+    setSearchLocation(location);
+    setCurrentPage(1);
+  }
+
+  function handleFilter(
+    categoryId: string | null,
+    locationId: string | null,
+    verifiedOnly: boolean,
+    featuredOnly: boolean
+  ) {
+    setFilterCategoryId(categoryId);
+    setFilterLocationId(locationId);
+    setFilterVerified(verifiedOnly);
+    setFilterFeatured(featuredOnly);
+    setCurrentPage(1);
+  }
+
+  function clearFilters() {
+    setSearchQuery('');
+    setSearchLocation('');
+    setFilterCategoryId(null);
+    setFilterLocationId(null);
+    setFilterVerified(false);
+    setFilterFeatured(false);
+    setCurrentPage(1);
+  }
 
   if (loading) {
     return (
@@ -150,8 +168,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      {/* Hero Section */}
+
+      {/* Hero */}
       <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
@@ -166,42 +184,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats */}
       <section className="bg-white border-b py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-4xl mx-auto">
             <div className="text-center">
-              <div className="flex justify-center mb-2">
-                <Zap className="h-8 w-8 text-orange-500" />
-              </div>
-              <div className="text-3xl font-bold text-gray-900">{stats.totalListings}</div>
-              <div className="text-sm text-gray-600">Verified Listings</div>
+              <div className="flex justify-center mb-2"><Zap className="h-8 w-8 text-orange-500" /></div>
+              <div className="text-3xl font-bold text-gray-900">{stats.totalListings}+</div>
+              <div className="text-sm text-gray-600">Total Listings</div>
             </div>
             <div className="text-center">
-              <div className="flex justify-center mb-2">
-                <ShieldCheck className="h-8 w-8 text-orange-500" />
-              </div>
+              <div className="flex justify-center mb-2"><ShieldCheck className="h-8 w-8 text-orange-500" /></div>
               <div className="text-3xl font-bold text-gray-900">{stats.featured}</div>
               <div className="text-sm text-gray-600">Featured Companies</div>
             </div>
             <div className="text-center">
-              <div className="flex justify-center mb-2">
-                <Star className="h-8 w-8 text-orange-500" />
-              </div>
+              <div className="flex justify-center mb-2"><Star className="h-8 w-8 text-orange-500" /></div>
               <div className="text-3xl font-bold text-gray-900">{stats.verified}</div>
               <div className="text-sm text-gray-600">Verified Companies</div>
             </div>
             <div className="text-center">
-              <div className="flex justify-center mb-2">
-                <MapPin className="h-8 w-8 text-orange-500" />
-              </div>
+              <div className="flex justify-center mb-2"><MapPin className="h-8 w-8 text-orange-500" /></div>
               <div className="text-3xl font-bold text-gray-900">{stats.cities}</div>
               <div className="text-sm text-gray-600">Cities Covered</div>
             </div>
             <div className="text-center">
-              <div className="flex justify-center mb-2">
-                <TrendingUp className="h-8 w-8 text-orange-500" />
-              </div>
+              <div className="flex justify-center mb-2"><TrendingUp className="h-8 w-8 text-orange-500" /></div>
               <div className="text-3xl font-bold text-gray-900">{stats.avgRating}</div>
               <div className="text-sm text-gray-600">Avg Rating</div>
             </div>
@@ -213,35 +221,92 @@ export default function Home() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-4 gap-8">
-            {/* Sidebar Filters */}
+            {/* Sidebar */}
             <div className="lg:col-span-1 space-y-6">
-              <Filter
-                categories={categories}
-                locations={locations}
-                onFilter={handleFilter}
-              />
+              <Filter categories={categories} locations={locations} onFilter={handleFilter} />
               <LeadForm />
             </div>
-            
+
             {/* Listings */}
             <div className="lg:col-span-3">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                {filteredListings.length > 0 ? 'Featured Listings' : 'No listings found'}
-              </h2>
-              
-              {filteredListings.length > 0 ? (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {filteredListings.map((listing) => (
-                    <ListingCard key={listing.id} listing={listing} />
-                  ))}
-                </div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {filteredListings.length > 0
+                    ? `${filteredListings.length} Solar Companies Found`
+                    : 'No listings found'}
+                </h2>
+                {(filterCategoryId || filterLocationId || filterVerified || filterFeatured || searchQuery) && (
+                  <button
+                    onClick={clearFilters}
+                    className="text-sm text-orange-600 hover:text-orange-700 underline"
+                  >
+                    Clear filters
+                  </button>
+                )}
+              </div>
+
+              {paginated.length > 0 ? (
+                <>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {paginated.map((listing) => (
+                      <ListingCard key={listing.id} listing={listing} />
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-10">
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="p-2 rounded-lg border border-gray-200 hover:border-orange-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                      >
+                        <ChevronLeft className="h-5 w-5 text-gray-600" />
+                      </button>
+
+                      {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                        .reduce<(number | '...')[]>((acc, p, idx, arr) => {
+                          if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('...');
+                          acc.push(p);
+                          return acc;
+                        }, [])
+                        .map((item, idx) =>
+                          item === '...' ? (
+                            <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">…</span>
+                          ) : (
+                            <button
+                              key={item}
+                              onClick={() => setCurrentPage(item as number)}
+                              className={`w-10 h-10 rounded-lg text-sm font-medium transition ${
+                                currentPage === item
+                                  ? 'bg-orange-500 text-white'
+                                  : 'border border-gray-200 text-gray-700 hover:border-orange-400'
+                              }`}
+                            >
+                              {item}
+                            </button>
+                          )
+                        )}
+
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="p-2 rounded-lg border border-gray-200 hover:border-orange-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                      >
+                        <ChevronRight className="h-5 w-5 text-gray-600" />
+                      </button>
+                    </div>
+                  )}
+                  <p className="text-center text-sm text-gray-500 mt-3">
+                    Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredListings.length)} of {filteredListings.length} results
+                  </p>
+                </>
               ) : (
                 <div className="bg-white rounded-xl p-12 text-center">
-                  <p className="text-gray-600 mb-4">
-                    No listings found. Try adjusting your search or filters.
-                  </p>
-                  <button 
-                    onClick={() => setFilteredListings(listings)}
+                  <p className="text-gray-600 mb-4">No listings found. Try adjusting your search or filters.</p>
+                  <button
+                    onClick={clearFilters}
                     className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
                   >
                     Clear Filters
@@ -258,9 +323,9 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-bold text-lg mb-4">Solar India</h3>
+              <h3 className="font-bold text-lg mb-4">GoSolarIndex</h3>
               <p className="text-gray-400 text-sm">
-                Your trusted directory for finding best solar installers and service providers across India.
+                India's trusted directory for finding the best solar installers and service providers.
               </p>
             </div>
             <div>
@@ -273,24 +338,23 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Resources</h4>
+              <h4 className="font-semibold mb-4">For Installers</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Solar Subsidy Guide</a></li>
-                <li><a href="#" className="hover:text-white transition">Installation Cost Calculator</a></li>
-                <li><a href="#" className="hover:text-white transition">FAQ</a></li>
-                <li><a href="#" className="hover:text-white transition">Blog</a></li>
+                <li><Link href="/installers/signup" className="hover:text-white transition">List Your Business</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition">Pricing Plans</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition">Contact Us</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
-                <li>Email: contact@solarindia.com</li>
+                <li>Email: hello@gosolarindex.in</li>
                 <li>Phone: +91 98765 43210</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            © 2025 Solar India. All rights reserved.
+            © 2025 GoSolarIndex. All rights reserved.
           </div>
         </div>
       </footer>

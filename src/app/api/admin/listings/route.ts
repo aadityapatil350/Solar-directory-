@@ -99,7 +99,8 @@ export async function POST(request: Request) {
       .toLowerCase()
       .replace(/[^a-z0-9\s]/g, '-')
       .replace(/\s+/g, '-')
-      .replace(/-+/g, '-') + '-' + Date.now();
+      .replace(/-+/g, '-')
+      + '-' + Date.now();
 
     const listing = await prisma.listing.create({
       data: {
@@ -136,44 +137,6 @@ export async function POST(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
-  try {
-    const { success } = await verifyAuth(request);
-
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const { searchParams } = new URL(request.url);
-    const listingId = searchParams.get('listingId');
-
-    if (!listingId) {
-      return NextResponse.json(
-        { error: 'Listing ID is required' },
-        { status: 400 }
-      );
-    }
-
-    await prisma.listing.delete({
-      where: { id: listingId },
-    });
-
-    return NextResponse.json({
-      success: true,
-      message: 'Listing deleted successfully',
-    });
-  } catch (error) {
-    console.error('Error deleting listing:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete listing' },
-      { status: 500 }
-    );
-  }
-}
-
 // PATCH update listing (toggle featured)
 export async function PATCH(request: Request) {
   try {
@@ -186,10 +149,8 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const { searchParams } = new URL(request.url);
     const body = await request.json();
-    const { id } = searchParams;
-    const { featured, verified, rating, reviews } = body;
+    const { id, featured, verified, rating, reviews } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -230,6 +191,44 @@ export async function PATCH(request: Request) {
     console.error('Error updating listing:', error);
     return NextResponse.json(
       { error: 'Failed to update listing' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { success } = await verifyAuth(request);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const listingId = searchParams.get('listingId');
+
+    if (!listingId) {
+      return NextResponse.json(
+        { error: 'Listing ID is required' },
+        { status: 400 }
+      );
+    }
+
+    await prisma.listing.delete({
+      where: { id: listingId },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Listing deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting listing:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete listing' },
       { status: 500 }
     );
   }

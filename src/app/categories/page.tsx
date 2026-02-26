@@ -37,7 +37,7 @@ export default async function CategoriesPage() {
             {categories.map((category: any) => (
               <Link
                 key={category.id}
-                href={`/?categoryId=${category.id}`}
+                href={`/categories/${category.slug}`}
                 className="bg-white rounded-xl p-6 hover:shadow-lg transition border border-gray-200 group"
               >
                 <h2 className="text-xl font-semibold text-gray-900 group-hover:text-orange-500 transition">

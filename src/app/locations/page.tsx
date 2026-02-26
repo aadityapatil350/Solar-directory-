@@ -34,16 +34,19 @@ export default async function LocationsPage() {
           </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {locations.map((location: any) => (
+            {locations.map((location: { id: string; city: string; state: string; slug: string }) => (
               <Link
                 key={location.id}
-                href={`/?locationId=${location.id}`}
+                href={`/${location.city.toLowerCase().replace(/\s+/g, '-')}`}
                 className="bg-white rounded-xl p-6 hover:shadow-lg transition border border-gray-200 group"
               >
                 <h2 className="text-xl font-semibold text-gray-900 group-hover:text-orange-500 transition">
                   {location.city}
                 </h2>
                 <p className="text-gray-600 mt-1">{location.state}</p>
+                <p className="text-xs text-orange-500 mt-2 font-medium group-hover:underline">
+                  View solar companies →
+                </p>
               </Link>
             ))}
           </div>
