@@ -98,54 +98,75 @@
 
 ## What's DONE ✅
 
-- Homepage with hero, search, stats, listings grid, lead form
-- Category and Location browse pages
-- 10 dynamic city pages (Mumbai, Delhi, Bangalore, etc.)
-- Listing detail pages
-- Installer 4-step signup form + API
-- Admin dashboard (Leads, Listings, Installers tabs)
-- Admin CRUD APIs (listings, leads, installers)
+### Core Directory
+- Homepage: hero, search, filters (working), pagination (12/page), stats, listings grid, lead form
+- Category browse + individual category pages (/categories/[slug])
+- Location browse + 10 dynamic city pages + state pages (/states/[slug])
+- Listing detail pages with LocalBusiness Schema.org JSON-LD
 - 89 seed listings across 10 cities, 5 categories
+
+### Installer System
+- 4-step signup form + API (city/state auto-creates location)
+- JWT session auth (jose) with bcrypt password hashing on login
+- /installers/login — clean login page
+- /installers/dashboard — full dashboard: Overview, Leads, My Listing, Subscription tabs
+- Middleware protects /installers/dashboard
+- Lead reveal workflow (click to unlock contact details)
+
+### Lead Distribution
+- Leads auto-assigned to up to 3 verified installers in same city on submission
+- LeadDelivery records created, lead marked 'assigned'
+- Installers see new lead badge count, can update status
+
+### Payments (Razorpay)
+- /api/payment/create-order + /api/payment/verify
+- PaymentButton component loads Razorpay SDK dynamically
+- On successful payment: subscription upgraded, listing promoted to featured
+
+### Admin
+- Admin dashboard (Leads, Listings, Installers tabs)
+- Admin CRUD APIs with Bearer token auth
+
+### SEO
 - Dynamic sitemap + robots.txt
+- WebSite + Organization schema in root layout
+- LocalBusiness + BreadcrumbList on listing pages
+- /blog — index with 8 SEO articles targeting Indian solar keywords
+- /blog/[slug] — Article schema + related posts + CTA
+- /contact, /pricing (with 3-tier plans + FAQ)
+
+### Navigation & UX
+- Mobile hamburger menu
+- GoSolarIndex branding throughout
 - Full Tailwind orange theme + responsive design
 
 ---
 
-## What's MISSING / Broken ❌
+## What's STILL TODO ❌
 
-### Critical Security Issues
-- [ ] Passwords stored as PLAIN TEXT — must add bcrypt
-- [ ] Admin uses hardcoded email — need proper auth
-- [ ] No session management / JWT
+### Revenue (need Razorpay keys in production)
+- [ ] Add RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET to Vercel env vars
+- [ ] Test Razorpay checkout end-to-end
+- [ ] WhatsApp/SMS notification to installer when new lead arrives
 
-### Missing Features
-- [ ] Proper user auth (login/logout/sessions)
-- [ ] Installer dashboard (after login)
-- [ ] Payment integration (Razorpay for subscriptions + leads)
-- [ ] Review/rating submission by users
-- [ ] Working filter checkboxes (Verified Only, Featured Only)
-- [ ] Pagination on listing pages
-- [ ] Full-text search
-- [ ] Email verification / OTP
-- [ ] Lead distribution workflow (automated assignment)
-- [ ] Blog/content pages for SEO
-- [ ] Individual category pages (e.g., `/categories/residential`)
-- [ ] Individual state pages (beyond city)
-- [ ] Contact page
-- [ ] Pricing page (for installer subscriptions)
-- [ ] FAQ page
+### Auth & Security
+- [ ] Admin middleware (currently only API-level Bearer token)
+- [ ] Forgot password flow
+- [ ] Email verification on signup
 
-### SEO Phase (To complete for rankings)
-- [ ] Blog with solar education content (10+ articles)
-- [ ] State-level landing pages (28 states)
-- [ ] Service-specific pages (e.g., `/solar-panels-for-home`)
-- [ ] Schema.org LocalBusiness structured data on listing pages
-- [ ] Schema.org FAQ structured data on content pages
-- [ ] Image optimization + alt texts
-- [ ] Core Web Vitals optimization
-- [ ] Google Analytics integration
-- [ ] Google Search Console setup
-- [ ] Backlink strategy (directories, forums)
+### SEO (ongoing)
+- [ ] Add 10+ more blog articles
+- [ ] Google Analytics (NEXT_PUBLIC_GA_ID env var)
+- [ ] Google Search Console verification (GOOGLE_SITE_VERIFICATION env var)
+- [ ] Image OG tags per page
+- [ ] FAQ Schema on pricing + blog pages
+- [ ] More state pages (currently 10 states, India has 28)
+
+### Growth
+- [ ] Review/rating submission system
+- [ ] Installer profile edit from dashboard
+- [ ] More listings (currently 89 — aim for 500+)
+- [ ] Google AdSense integration
 
 ---
 
