@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
@@ -21,7 +22,7 @@ async function verifyAuth(request: Request): Promise<{ success: boolean; user?: 
     return { success: false };
   }
 
-  if (user.password !== password) {
+  if (!await bcrypt.compare(password, user.password)) {
     return { success: false };
   }
 
