@@ -123,31 +123,21 @@ export default function AdminDashboard() {
   const fetchAllData = async (authToken: string) => {
     try {
       // Fetch all data in parallel
-      const [listingsRes, categoriesRes, locationsRes, installersRes, usersRes] = await Promise.all([
+      const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
         fetch('/api/admin/listings', {
           headers: { Authorization: `Bearer ${authToken}` },
         }),
         fetch('/api/categories'),
         fetch('/api/locations'),
-        fetch('/api/admin/installers', {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }),
-        fetch('/api/admin/users', {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }),
       ]);
 
       const listingsData = await listingsRes.json();
       const categoriesData = await categoriesRes.json();
       const locationsData = await locationsRes.json();
-      const installersData = await installersRes.json();
-      const usersData = await usersRes.json();
 
       setListings(listingsData.listings || []);
       setCategories(categoriesData);
       setLocations(locationsData);
-      setInstallers(installersData.installers || []);
-      setUsers(usersData.users || []);
       setStats(listingsData.stats || stats);
     } catch (error) {
       console.error('Error fetching data:', error);
