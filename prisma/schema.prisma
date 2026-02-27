@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,25 +8,23 @@ datasource db {
 }
 
 model Category {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  listings Listing[]
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  listings  Listing[]
 }
 
 model Location {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   city      String
   state     String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  listings Listing[]
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   leads     Lead[]
+  listings  Listing[]
 }
 
 model Listing {
@@ -45,18 +40,14 @@ model Listing {
   featured    Boolean  @default(false)
   rating      Float?   @default(0)
   reviews     Int      @default(0)
-
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
-
-  locationId String
-  location   Location @relation(fields: [locationId], references: [id])
-
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  categoryId  String
+  locationId  String
+  userId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  category    Category @relation(fields: [categoryId], references: [id])
+  location    Location @relation(fields: [locationId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
 
   @@index([categoryId])
   @@index([locationId])
@@ -65,82 +56,70 @@ model Listing {
 }
 
 model User {
-  id         String    @id @default(cuid())
-  name       String?
-  email      String    @unique
-  role       String    @default("user")
-  password   String?
-  listings   Listing[]
-  installer  Installer?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        String     @id @default(cuid())
+  name      String?
+  email     String     @unique
+  role      String     @default("user")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  password  String?
+  installer Installer?
+  listings  Listing[]
 }
 
 model Installer {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id                String         @id @default(cuid())
+  userId            String         @unique
   companyName       String
   contactPerson     String
   phone             String
   email             String
   address           String?
   website           String?
-  city              String
-  state             String
-
-  subscriptionType   String   @default("basic") // basic, featured, premium
-  subscriptionStart DateTime @default(now())
+  subscriptionType  String         @default("basic")
+  subscriptionStart DateTime       @default(now())
   subscriptionEnd   DateTime?
-
-  paymentStatus     String   @default("pending") // pending, active, expired
-  balance           Float    @default(0)
-
-  verified          Boolean  @default(false)
-
+  paymentStatus     String         @default("pending")
+  balance           Float          @default(0)
+  verified          Boolean        @default(false)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   leadDeliveries    LeadDelivery[]
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
 }
 
 model Lead {
-  id          String   @id @default(cuid())
-  name        String
-  phone       String
-  email       String?
-  requirement String?  // e.g., "3kW for home", "Industrial rooftop"
-  locationId  String?
-  location    Location? @relation(fields: [locationId], references: [id])
-  budget      String?  // e.g., "₹2L-₹3L", "₹10L+"
-  urgency     String   @default("normal") // normal, urgent
-  status      String   @default("new") // new, assigned, contacted, closed
-  
+  id             String         @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  requirement    String?
+  locationId     String?
+  budget         String?
+  urgency        String         @default("normal")
+  status         String         @default("new")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  location       Location?      @relation(fields: [locationId], references: [id])
   leadDeliveries LeadDelivery[]
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
   @@index([status])
   @@index([createdAt])
 }
 
 model LeadDelivery {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   leadId      String
-  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   installerId String
-  installer   Installer @relation(fields: [installerId], references: [id], onDelete: Cascade)
-  
-  status      String   @default("pending") // pending, opened, contacted, converted, lost
+  status      String    @default("pending")
   openedAt    DateTime?
   readAt      DateTime?
-  
-  price       Float?   // Price paid for this lead
-  paid        Boolean  @default(false)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  price       Float?
+  paid        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  installer   Installer @relation(fields: [installerId], references: [id], onDelete: Cascade)
+  lead        Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
 
   @@index([installerId])
   @@index([leadId])

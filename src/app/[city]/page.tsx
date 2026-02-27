@@ -8,41 +8,37 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-const cities = [
-  { name: 'Mumbai', state: 'Maharashtra', slug: 'mumbai' },
-  { name: 'Delhi', state: 'Delhi', slug: 'delhi' },
-  { name: 'Bangalore', state: 'Karnataka', slug: 'bangalore' },
-  { name: 'Pune', state: 'Maharashtra', slug: 'pune' },
-  { name: 'Hyderabad', state: 'Telangana', slug: 'hyderabad' },
-  { name: 'Chennai', state: 'Tamil Nadu', slug: 'chennai' },
-  { name: 'Kolkata', state: 'West Bengal', slug: 'kolkata' },
-  { name: 'Ahmedabad', state: 'Gujarat', slug: 'ahmedabad' },
-  { name: 'Jaipur', state: 'Rajasthan', slug: 'jaipur' },
-  { name: 'Lucknow', state: 'Uttar Pradesh', slug: 'lucknow' },
-];
-
 interface PageProps {
-  params: {
+  params: Promise<{
     city: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
-  return cities.map((city) => ({
-    city: city.slug,
-  }));
+  const locations = await prisma.location.findMany({
+    select: { city: true },
+  });
+  return locations.map((l) => ({ city: l.city.toLowerCase().replace(/\s+/g, '-') }));
+}
+
+function slugToSearch(slug: string) {
+  return slug.replace(/-/g, ' ');
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const cityData = cities.find((c) => c.slug === params.city);
-  if (!cityData) {
-    return {};
-  }
-  return constructCityMetadata(cityData.name, cityData.state);
+  const { city: citySlug } = await params;
+  const location = await prisma.location.findFirst({
+    where: { city: { equals: slugToSearch(citySlug), mode: 'insensitive' } },
+  });
+  if (!location) return {};
+  return constructCityMetadata(location.city, location.state);
 }
 
 export default async function CityPage({ params }: PageProps) {
-  const cityData = cities.find((c) => c.slug === params.city);
+  const { city: citySlug } = await params;
+  const cityData = await prisma.location.findFirst({
+    where: { city: { equals: slugToSearch(citySlug), mode: 'insensitive' } },
+  });
 
   if (!cityData) {
     return (
@@ -61,7 +57,7 @@ export default async function CityPage({ params }: PageProps) {
   const listings = await prisma.listing.findMany({
     where: {
       location: {
-        city: cityData.name,
+        city: cityData.city,
       },
     },
     include: {
@@ -86,14 +82,14 @@ export default async function CityPage({ params }: PageProps) {
             <div className="flex items-center justify-center gap-3 mb-4">
               <MapPin className="h-8 w-8" />
               <h1 className="text-4xl md:text-5xl font-bold">
-                {cityData.name}
+                {cityData.city}
               </h1>
             </div>
             <p className="text-xl mb-4 text-orange-100">
               {cityData.state}, India
             </p>
             <p className="text-lg text-orange-200">
-              Find verified solar installers, dealers, and service providers in {cityData.name}
+              Find verified solar installers, dealers, and service providers in {cityData.city}
             </p>
           </div>
         </div>
@@ -105,7 +101,7 @@ export default async function CityPage({ params }: PageProps) {
             <>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {listings.length} Solar Companies in {cityData.name}
+                  {listings.length} Solar Companies in {cityData.city}
                 </h2>
                 <span className="flex items-center gap-2 text-green-600">
                   <Zap className="h-5 w-5" />
@@ -122,7 +118,7 @@ export default async function CityPage({ params }: PageProps) {
           ) : (
             <div className="bg-white rounded-xl p-12 text-center">
               <p className="text-gray-600 mb-4">
-                No solar companies found in {cityData.name} yet.
+                No solar companies found in {cityData.city} yet.
               </p>
               <Link
                 href="/"
@@ -135,12 +131,12 @@ export default async function CityPage({ params }: PageProps) {
 
           <div className="mt-12 bg-white rounded-xl p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">
-              About Solar in {cityData.name}
+              About Solar in {cityData.city}
             </h3>
             <div className="space-y-3 text-gray-600">
               <p>
-                {cityData.name} offers excellent solar potential with abundant sunshine throughout the year.
-                Installing solar panels in {cityData.name} can help you reduce electricity bills
+                {cityData.city} offers excellent solar potential with abundant sunshine throughout the year.
+                Installing solar panels in {cityData.city} can help you reduce electricity bills
                 significantly while contributing to a greener environment.
               </p>
               <p>
@@ -148,7 +144,7 @@ export default async function CityPage({ params }: PageProps) {
                 through PM Surya Ghar Yojana, making solar installation more affordable.
               </p>
               <p>
-                Our directory features verified solar installers in {cityData.name} with proven
+                Our directory features verified solar installers in {cityData.city} with proven
                 track records. Compare prices, read reviews, and choose the right solar
                 company for your needs.
               </p>

@@ -22,6 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Google OAuth credentials
+**/google-oauth-client.json
+**/google-service-account.json
+
 # local env files
 .env*.local
 .env
