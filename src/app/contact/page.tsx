@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Header from '@/components/Header';
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, MessageCircle } from 'lucide-react';
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -62,8 +62,26 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Email</h3>
-                  <p className="text-gray-600">hello@gosolarindex.in</p>
+                  <a href="mailto:adityabiz350@gmail.com" className="text-gray-600 hover:text-orange-600 transition">adityabiz350@gmail.com</a>
                   <p className="text-sm text-gray-500">We reply within 24 hours</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="bg-green-100 p-3 rounded-xl">
+                  <MessageCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">WhatsApp</h3>
+                  <a
+                    href="https://wa.me/919373238164"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-green-600 transition"
+                  >
+                    +91 93732 38164
+                  </a>
+                  <p className="text-sm text-gray-500">Mon–Sat, 9am–6pm IST</p>
                 </div>
               </div>
 
@@ -73,7 +91,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Phone</h3>
-                  <p className="text-gray-600">+91 98765 43210</p>
+                  <a href="tel:+919373238164" className="text-gray-600 hover:text-orange-600 transition">+91 93732 38164</a>
                   <p className="text-sm text-gray-500">Mon–Sat, 9am–6pm IST</p>
                 </div>
               </div>

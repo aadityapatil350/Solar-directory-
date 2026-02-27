@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
+import { blogPosts } from '@/lib/blog';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,7 +63,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/pricing`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
   );
+
+  // Blog posts
+  blogPosts.forEach((post) => {
+    pages.push({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.date).toISOString(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    });
+  });
 
   // Listing pages
   listings.forEach((listing) => {

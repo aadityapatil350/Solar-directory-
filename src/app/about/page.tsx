@@ -16,12 +16,12 @@ export default function AboutPage() {
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">About Solar India</h1>
-          
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">About GoSolarIndex</h1>
+
           <section className="bg-white rounded-xl p-8 mb-8 shadow-sm">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
             <p className="text-gray-600 leading-relaxed">
-              Solar India is India's most trusted directory for finding reliable solar installers,
+              GoSolarIndex is India's most trusted directory for finding reliable solar installers,
               dealers, and service providers. We connect homeowners and businesses with verified
               solar professionals across the country, making the transition to clean energy easier than ever.
             </p>
@@ -71,8 +71,8 @@ export default function AboutPage() {
           <section className="bg-white rounded-xl p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
             <div className="space-y-2 text-gray-600">
-              <p>Email: contact@solarindia.com</p>
-              <p>Phone: +91 98765 43210</p>
+              <p>Email: <a href="mailto:adityabiz350@gmail.com" className="text-orange-600 hover:underline">adityabiz350@gmail.com</a></p>
+              <p>WhatsApp: <a href="https://wa.me/919373238164" className="text-orange-600 hover:underline">+91 93732 38164</a></p>
             </div>
           </section>
         </div>

@@ -31,7 +31,7 @@ const orgSchema = {
   logo: 'https://gosolarindex.in/logo.png',
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+91-98765-43210',
+    telephone: '+91-93732-38164',
     contactType: 'customer service',
     availableLanguage: ['English', 'Hindi'],
   },
