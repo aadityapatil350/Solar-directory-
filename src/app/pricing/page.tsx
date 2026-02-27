@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
-import PaymentButton from '@/components/PaymentButton';
 import Link from 'next/link';
 import { CheckCircle, Zap, Star, ShieldCheck } from 'lucide-react';
 
@@ -191,10 +190,12 @@ export default function PricingPage() {
                   </ul>
 
                   {plan.planKey ? (
-                    <PaymentButton
-                      plan={plan.planKey as 'featured' | 'premium'}
-                      label={plan.cta}
-                    />
+                    <Link
+                      href="/contact"
+                      className="w-full text-center py-3 rounded-xl font-semibold transition bg-orange-500 text-white hover:bg-orange-600 block"
+                    >
+                      {plan.cta}
+                    </Link>
                   ) : (
                     <Link
                       href={plan.href!}
