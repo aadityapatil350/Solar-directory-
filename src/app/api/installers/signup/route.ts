@@ -121,8 +121,6 @@ export async function POST(request: Request) {
         phone,
         email,
         address,
-        city,
-        state,
         subscriptionType: 'basic',
         paymentStatus: 'pending',
         verified: false,
