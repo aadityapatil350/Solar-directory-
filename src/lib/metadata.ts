@@ -22,6 +22,11 @@ export function constructMetadata({
   return {
     title: fullTitle,
     description: fullDescription,
+    icons: {
+      icon: '/icon.svg',
+      shortcut: '/icon.svg',
+      apple: '/icon.svg',
+    },
     keywords: [
       'solar installers India',
       'solar panel dealers',
