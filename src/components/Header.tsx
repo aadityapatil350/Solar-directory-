@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Sun, Menu, X } from 'lucide-react';
+import { Sun, Menu, X, Calculator } from 'lucide-react';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -30,6 +30,10 @@ export default function Header() {
             </Link>
             <Link href="/about" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
               About
+            </Link>
+            <Link href="/solar-calculator" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium flex items-center gap-1">
+              <Calculator className="h-3.5 w-3.5" />
+              Calculator
             </Link>
             <Link href="/blog" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
               Blog
@@ -70,6 +74,7 @@ export default function Header() {
               { href: '/categories', label: 'Categories' },
               { href: '/locations', label: 'Locations' },
               { href: '/about', label: 'About' },
+              { href: '/solar-calculator', label: 'Calculator' },
               { href: '/blog', label: 'Blog' },
               { href: '/contact', label: 'Contact' },
               { href: '/pricing', label: 'Pricing' },
