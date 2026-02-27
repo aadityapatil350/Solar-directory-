@@ -27,7 +27,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const Razorpay = (await import('razorpay')).default;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const Razorpay = require('razorpay');
     const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
 
     const installer = await prisma.installer.findUnique({
