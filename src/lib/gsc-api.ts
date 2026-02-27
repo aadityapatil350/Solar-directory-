@@ -34,17 +34,21 @@ export function getOAuth2Client(): OAuth2Client {
     throw new Error('GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in .env');
   }
 
-  return new OAuth2Client({
+  const client = new OAuth2Client({
     clientId,
     clientSecret,
     redirectUri: 'http://localhost:3000/api/auth/callback',
   });
+
+  return client;
 }
 
 /**
  * Generate OAuth 2.0 authorization URL
  */
-export function getAuthUrl(oauth2Client: OAuth2Client): string {
+export function getAuthUrl(): string {
+  const oauth2Client = getOAuth2Client();
+
   const scopes = [
     'https://www.googleapis.com/auth/webmasters.readonly',
   ];
@@ -74,19 +78,18 @@ export async function getAccessToken(
 
 /**
  * Fetch search analytics data from Google Search Console
+ * Note: This requires the googleapis package and valid access token
  */
 export async function getSearchAnalytics(
   siteUrl: string,
+  accessToken: string,
   query: GSCPerformanceQuery
 ): Promise<GSCPerformanceRow[]> {
-  // Note: This requires the googleapis library and valid access token
-  // For now, this is a template implementation
-
   const response = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // 'Authorization': `Bearer ${accessToken}`, // Add valid access token here
+      'Authorization': `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       startDate: query.startDate,
@@ -111,6 +114,7 @@ export async function getSearchAnalytics(
  */
 export async function getTopKeywords(
   siteUrl: string,
+  accessToken: string,
   startDate: string,
   endDate: string,
   limit: number = 20
@@ -121,7 +125,7 @@ export async function getTopKeywords(
   ctr: number;
   position: number;
 }>> {
-  const rows = await getSearchAnalytics({
+  const rows = await getSearchAnalytics(siteUrl, accessToken, {
     startDate,
     endDate,
     dimensions: ['query'],
@@ -142,6 +146,7 @@ export async function getTopKeywords(
  */
 export async function getTopPages(
   siteUrl: string,
+  accessToken: string,
   startDate: string,
   endDate: string,
   limit: number = 20
@@ -152,7 +157,7 @@ export async function getTopPages(
   ctr: number;
   position: number;
 }>> {
-  const rows = await getSearchAnalytics({
+  const rows = await getSearchAnalytics(siteUrl, accessToken, {
     startDate,
     endDate,
     dimensions: ['page'],
@@ -173,6 +178,7 @@ export async function getTopPages(
  */
 export async function exportForKeywordTracking(
   siteUrl: string,
+  accessToken: string,
   startDate: string,
   endDate: string
 ): Promise<{
@@ -192,8 +198,8 @@ export async function exportForKeywordTracking(
   }>;
 }> {
   const [topKeywords, topPages] = await Promise.all([
-    getTopKeywords(siteUrl, startDate, endDate, 50),
-    getTopPages(siteUrl, startDate, endDate, 50),
+    getTopKeywords(siteUrl, accessToken, startDate, endDate, 50),
+    getTopPages(siteUrl, accessToken, startDate, endDate, 50),
   ]);
 
   return {
