@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
-import Razorpay from 'razorpay';
 
 const PLANS: Record<string, { amount: number; label: string; days: number }> = {
   featured: { amount: 99900, label: 'Featured Plan', days: 30 },   // ₹999 in paise
@@ -28,6 +27,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    const Razorpay = (await import('razorpay')).default;
     const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
 
     const installer = await prisma.installer.findUnique({
