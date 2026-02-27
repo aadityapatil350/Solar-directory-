@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ListFilter, RefreshCw, Trash2, Phone, Mail, MapPin, Star, ShieldCheck, Plus, Edit, Users, Building2, Zap } from 'lucide-react';
+import { ListFilter, RefreshCw, Trash2, Phone, Mail, MapPin, Star, ShieldCheck, Plus, Edit, Users, Building2, Zap, Send, ChevronDown, ChevronUp, CheckCircle2, X } from 'lucide-react';
 
 interface Listing {
   id: string;
@@ -71,6 +71,13 @@ export default function AdminDashboard() {
   const [leads, setLeads] = useState<any[]>([]);
   const [leadsLoading, setLeadsLoading] = useState(true);
   const [leadsFilter, setLeadsFilter] = useState('all');
+
+  // Suggest-installers panel state
+  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const [suggestInstallers, setSuggestInstallers] = useState<any[]>([]);
+  const [suggestCity, setSuggestCity] = useState('');
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const [sendingTo, setSendingTo] = useState<string | null>(null);
 
   // Listings state
   const [listings, setListings] = useState<Listing[]>([]);
@@ -158,6 +165,54 @@ export default function AdminDashboard() {
       console.error('Error fetching leads:', error);
     } finally {
       setLeadsLoading(false);
+    }
+  };
+
+  const toggleSuggestPanel = async (lead: any) => {
+    if (expandedLeadId === lead.id) {
+      setExpandedLeadId(null);
+      return;
+    }
+    if (!lead.location) {
+      setExpandedLeadId(lead.id);
+      setSuggestInstallers([]);
+      setSuggestCity('No city on this lead');
+      return;
+    }
+    setExpandedLeadId(lead.id);
+    setSuggestLoading(true);
+    try {
+      const res = await fetch(
+        `/api/admin/installers/suggest?locationId=${lead.location.id}&leadId=${lead.id}`,
+        { headers: { Authorization: `Bearer ${auth}` } }
+      );
+      const data = await res.json();
+      setSuggestInstallers(data.installers || []);
+      setSuggestCity(data.city || lead.location.city);
+    } catch {
+      setSuggestInstallers([]);
+    } finally {
+      setSuggestLoading(false);
+    }
+  };
+
+  const sendLeadToInstaller = async (leadId: string, installerId: string) => {
+    setSendingTo(installerId);
+    try {
+      await fetch('/api/admin/leads', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` },
+        body: JSON.stringify({ leadId, installerId, status: 'assigned' }),
+      });
+      // Refresh the suggest list so the sent installer shows as alreadySent
+      const lead = leads.find((l) => l.id === leadId);
+      if (lead) await toggleSuggestPanel({ ...lead, _refresh: true });
+      setSuggestInstallers((prev) =>
+        prev.map((inst) => inst.id === installerId ? { ...inst, alreadySent: true } : inst)
+      );
+      fetchLeads();
+    } finally {
+      setSendingTo(null);
     }
   };
 
@@ -565,98 +620,210 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {leads.map((lead) => (
-                          <tr key={lead.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4">
-                              <div className="font-medium text-gray-900">{lead.name}</div>
-                              {lead.urgency === 'urgent' && (
-                                <span className="inline-block bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium mt-1">
-                                  URGENT
-                                </span>
-                              )}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2 text-sm">
-                                  <Phone className="h-4 w-4 text-gray-400" />
-                                  <span className="text-gray-600">{lead.phone}</span>
+                          <>
+                            <tr key={lead.id} className={`hover:bg-gray-50 ${expandedLeadId === lead.id ? 'bg-orange-50/40' : ''}`}>
+                              <td className="px-6 py-4">
+                                <div className="font-medium text-gray-900">{lead.name}</div>
+                                {lead.urgency === 'urgent' && (
+                                  <span className="inline-block bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium mt-1">
+                                    URGENT
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <Phone className="h-4 w-4 text-gray-400" />
+                                    <a href={`tel:${lead.phone}`} className="text-blue-600 hover:underline font-medium">{lead.phone}</a>
+                                  </div>
+                                  {lead.email && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <Mail className="h-4 w-4 text-gray-400" />
+                                      <span className="text-gray-600">{lead.email}</span>
+                                    </div>
+                                  )}
+                                  {lead.location && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <MapPin className="h-4 w-4 text-gray-400" />
+                                      <span className="text-gray-600">{lead.location.city}, {lead.location.state}</span>
+                                    </div>
+                                  )}
                                 </div>
-                                {lead.email && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Mail className="h-4 w-4 text-gray-400" />
-                                    <span className="text-gray-600">{lead.email}</span>
+                              </td>
+                              <td className="px-6 py-4 text-sm">
+                                {lead.requirement && <div><span className="font-medium">Need:</span> {lead.requirement}</div>}
+                                {lead.budget && <div className="text-gray-500 mt-0.5"><span className="font-medium">Budget:</span> {lead.budget}</div>}
+                                {lead.leadDeliveries?.length > 0 && (
+                                  <div className="text-xs text-green-600 mt-1 font-medium">
+                                    ✓ Sent to {lead.leadDeliveries.length} installer{lead.leadDeliveries.length > 1 ? 's' : ''}
                                   </div>
                                 )}
-                                {lead.location && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <MapPin className="h-4 w-4 text-gray-400" />
-                                    <span className="text-gray-600">
-                                      {lead.location.city}, {lead.location.state}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="space-y-1">
-                                {lead.requirement && (
-                                  <div>
-                                    <span className="font-medium">Need:</span> {lead.requirement}
-                                  </div>
-                                )}
-                                {lead.budget && (
-                                  <div>
-                                    <span className="font-medium">Budget:</span> {lead.budget}
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <select
-                                value={lead.status}
-                                onChange={(e) => {
-                                  fetch(`/api/admin/leads`, {
-                                    method: 'PATCH',
-                                    headers: {
-                                      'Content-Type': 'application/json',
-                                      Authorization: `Bearer ${auth}`,
-                                    },
-                                    body: JSON.stringify({
-                                      leadId: lead.id,
-                                      status: e.target.value,
-                                    }),
-                                  }).then(() => fetchLeads());
-                                }}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium ${
-                                  lead.status === 'new'
-                                    ? 'bg-blue-100 text-blue-900'
-                                    : lead.status === 'assigned'
-                                    ? 'bg-yellow-100 text-yellow-900'
-                                    : lead.status === 'contacted'
-                                    ? 'bg-orange-100 text-orange-900'
+                              </td>
+                              <td className="px-6 py-4">
+                                <select
+                                  value={lead.status}
+                                  onChange={(e) => {
+                                    fetch('/api/admin/leads', {
+                                      method: 'PATCH',
+                                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` },
+                                      body: JSON.stringify({ leadId: lead.id, status: e.target.value }),
+                                    }).then(() => fetchLeads());
+                                  }}
+                                  className={`px-3 py-2 rounded-lg text-sm font-medium border-0 ${
+                                    lead.status === 'new' ? 'bg-blue-100 text-blue-900'
+                                    : lead.status === 'assigned' ? 'bg-yellow-100 text-yellow-900'
+                                    : lead.status === 'contacted' ? 'bg-orange-100 text-orange-900'
                                     : 'bg-green-100 text-green-900'
-                                }`}
-                              >
-                                {lead.status === 'new' ? 'New' : lead.status === 'assigned' ? 'Assigned' : lead.status === 'contacted' ? 'Contacted' : 'Closed'}
-                              </select>
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-600">
-                              {new Date(lead.createdAt).toLocaleDateString('en-IN')}
-                            </td>
-                            <td className="px-6 py-4">
-                              <button
-                                onClick={() => {
-                                  fetch(`/api/admin/leads?leadId=${lead.id}`, {
-                                    method: 'DELETE',
-                                    headers: { Authorization: `Bearer ${auth}` },
-                                  }).then(() => fetchLeads());
-                                }}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                                title="Delete Lead"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </td>
-                          </tr>
+                                  }`}
+                                >
+                                  <option value="new">New</option>
+                                  <option value="assigned">Assigned</option>
+                                  <option value="contacted">Contacted</option>
+                                  <option value="closed">Closed</option>
+                                </select>
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-500">
+                                {new Date(lead.createdAt).toLocaleDateString('en-IN')}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-2">
+                                  {/* Suggest installers button */}
+                                  <button
+                                    onClick={() => toggleSuggestPanel(lead)}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                                      expandedLeadId === lead.id
+                                        ? 'bg-orange-500 text-white'
+                                        : 'bg-orange-50 text-orange-700 hover:bg-orange-100'
+                                    }`}
+                                    title="Suggest installers for this lead"
+                                  >
+                                    <Send className="h-3.5 w-3.5" />
+                                    Send
+                                    {expandedLeadId === lead.id
+                                      ? <ChevronUp className="h-3 w-3" />
+                                      : <ChevronDown className="h-3 w-3" />
+                                    }
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      fetch(`/api/admin/leads?leadId=${lead.id}`, {
+                                        method: 'DELETE',
+                                        headers: { Authorization: `Bearer ${auth}` },
+                                      }).then(() => fetchLeads());
+                                    }}
+                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                    title="Delete Lead"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+
+                            {/* ── Suggest Installers Panel ── */}
+                            {expandedLeadId === lead.id && (
+                              <tr key={`suggest-${lead.id}`}>
+                                <td colSpan={6} className="px-6 pb-5 bg-orange-50/40 border-b border-orange-100">
+                                  <div className="bg-white rounded-xl border border-orange-200 p-5 shadow-sm">
+                                    <div className="flex items-center justify-between mb-4">
+                                      <div>
+                                        <h4 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                                          <Send className="h-4 w-4 text-orange-500" />
+                                          Suggested Installers
+                                          {suggestCity && (
+                                            <span className="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                                              {suggestCity}
+                                            </span>
+                                          )}
+                                        </h4>
+                                        <p className="text-xs text-gray-500 mt-0.5">
+                                          Select an installer to forward this lead to
+                                        </p>
+                                      </div>
+                                      <button onClick={() => setExpandedLeadId(null)} className="text-gray-400 hover:text-gray-600">
+                                        <X className="h-4 w-4" />
+                                      </button>
+                                    </div>
+
+                                    {suggestLoading ? (
+                                      <div className="flex items-center gap-2 text-sm text-gray-500 py-4">
+                                        <span className="w-4 h-4 border-2 border-orange-300 border-t-orange-500 rounded-full animate-spin" />
+                                        Finding installers in {lead.location?.city}…
+                                      </div>
+                                    ) : suggestInstallers.length === 0 ? (
+                                      <div className="text-sm text-gray-500 py-4 text-center">
+                                        No registered installers found in {lead.location?.city || 'this city'}.
+                                        <br />
+                                        <span className="text-xs text-gray-400">Ask installers to sign up at /installers/signup</span>
+                                      </div>
+                                    ) : (
+                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        {suggestInstallers.map((inst) => (
+                                          <div
+                                            key={inst.id}
+                                            className={`border rounded-xl p-4 flex flex-col gap-3 transition ${
+                                              inst.alreadySent
+                                                ? 'border-green-200 bg-green-50'
+                                                : 'border-gray-200 bg-white hover:border-orange-200'
+                                            }`}
+                                          >
+                                            <div className="flex items-start justify-between gap-2">
+                                              <div>
+                                                <p className="font-semibold text-gray-900 text-sm">{inst.companyName}</p>
+                                                <p className="text-xs text-gray-500">{inst.contactPerson}</p>
+                                              </div>
+                                              <div className="flex flex-col items-end gap-1 shrink-0">
+                                                {inst.verified && (
+                                                  <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
+                                                    <ShieldCheck className="h-3 w-3" /> Verified
+                                                  </span>
+                                                )}
+                                                <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
+                                                  inst.subscriptionType === 'premium'
+                                                    ? 'bg-purple-100 text-purple-700'
+                                                    : 'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                  {inst.subscriptionType}
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div className="text-xs text-gray-500 space-y-0.5">
+                                              <div className="flex items-center gap-1.5">
+                                                <Phone className="h-3 w-3" /> {inst.phone}
+                                              </div>
+                                              {inst.category && (
+                                                <div className="flex items-center gap-1.5">
+                                                  <Zap className="h-3 w-3" /> {inst.category}
+                                                </div>
+                                              )}
+                                            </div>
+                                            {inst.alreadySent ? (
+                                              <div className="flex items-center gap-1.5 text-xs text-green-600 font-semibold">
+                                                <CheckCircle2 className="h-4 w-4" />
+                                                Lead already sent
+                                              </div>
+                                            ) : (
+                                              <button
+                                                onClick={() => sendLeadToInstaller(lead.id, inst.id)}
+                                                disabled={sendingTo === inst.id}
+                                                className="w-full flex items-center justify-center gap-1.5 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white text-xs font-bold py-2 rounded-lg transition"
+                                              >
+                                                {sendingTo === inst.id
+                                                  ? <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                  : <Send className="h-3 w-3" />
+                                                }
+                                                {sendingTo === inst.id ? 'Sending…' : 'Send This Lead'}
+                                              </button>
+                                            )}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </>
                         ))}
                       </tbody>
                     </table>

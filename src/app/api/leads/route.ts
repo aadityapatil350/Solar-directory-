@@ -63,7 +63,7 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone, email, requirement, locationId, budget, urgency } = body;
+    const { name, phone, email, requirement, locationId: rawLocationId, city, budget, urgency } = body;
 
     if (!name || !phone) {
       return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
@@ -75,6 +75,15 @@ export async function POST(request: Request) {
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+    }
+
+    // Resolve locationId: use provided ID, or look up by city name
+    let locationId = rawLocationId || null;
+    if (!locationId && city) {
+      const location = await prisma.location.findFirst({
+        where: { city: { equals: city.trim(), mode: 'insensitive' } },
+      });
+      locationId = location?.id || null;
     }
 
     const lead = await prisma.lead.create({

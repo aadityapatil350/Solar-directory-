@@ -225,7 +225,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               <LeadForm
                 prefill={{
                   requirement: listing.category.name,
-                  locationId: listing.locationId,
+                  city: listing.location?.city,
                 }}
               />
             </div>
