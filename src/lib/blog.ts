@@ -1228,6 +1228,941 @@ export const blogPosts: BlogPost[] = [
 <p>Under the PLI (Production-Linked Incentive) scheme, India is building 50+ GW of domestic solar manufacturing capacity. Companies like Adani, Reliance, Waaree, and Tata are investing billions. By 2026, India aims to be self-sufficient in solar panels — reducing import dependence from China.</p>
     `,
   },
+  // ── 2026 Government & Policy Blog Posts ──────────────────────────────────
+
+  {
+    slug: 'pm-surya-ghar-muft-bijli-yojana-2026-complete-guide',
+    title: 'PM Surya Ghar Muft Bijli Yojana 2026 — Subsidy Amount, Eligibility & How to Apply',
+    description: 'Complete updated guide to PM Surya Ghar Muft Bijli Yojana 2026. Subsidy increased to ₹18,000/kWp, 20.8 lakh households enrolled. Step-by-step application process at pmsuryaghar.gov.in.',
+    date: '2026-03-06',
+    readTime: '9 min read',
+    category: 'Government Schemes',
+    content: `
+<h2>PM Surya Ghar Muft Bijli Yojana 2026 — Everything Updated</h2>
+<p>PM Surya Ghar Muft Bijli Yojana is India's biggest rooftop solar scheme launched on February 13, 2024. As of early 2026, over <strong>20.8 lakh (2.08 million) households</strong> have installed rooftop solar under this scheme — and the government has increased the subsidy rate by 23% in January 2026.</p>
+
+<h3>Key Updates in 2026</h3>
+<ul>
+<li><strong>CFA rate increased:</strong> From ₹14,588/kWp to ₹18,000/kWp (23% hike effective January 2026)</li>
+<li><strong>Budget 2026 allocation:</strong> ₹22,000 crore dedicated to PM Surya Ghar acceleration</li>
+<li><strong>Progress:</strong> 20.8 lakh households, 6.38 GW installed as of December 2025</li>
+<li><strong>45% of beneficiaries</strong> now have zero electricity bills</li>
+<li><strong>Monthly rate:</strong> ~70,000 installations per month (tenfold increase since launch)</li>
+</ul>
+
+<h3>Subsidy Amount in 2026</h3>
+<table>
+<thead><tr><th>System Size</th><th>Subsidy Amount</th><th>Your Cost (Approx)</th></tr></thead>
+<tbody>
+<tr><td>1 kW</td><td>₹30,000</td><td>₹30,000–₹48,000</td></tr>
+<tr><td>2 kW</td><td>₹60,000</td><td>₹60,000–₹90,000</td></tr>
+<tr><td>3 kW or above</td><td>₹78,000 (maximum)</td><td>₹90,000–₹1,30,000</td></tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> The ₹78,000 cap applies for systems 3 kW and above. Larger systems get the same maximum subsidy.</p>
+
+<h3>Who Is Eligible?</h3>
+<ul>
+<li>Indian citizen owning a residential property</li>
+<li>Valid electricity connection from a DISCOM</li>
+<li>Structurally sound rooftop able to bear solar panels</li>
+<li>No previous solar installation at the same address</li>
+<li>All income categories eligible (not restricted to BPL)</li>
+</ul>
+
+<h3>How to Apply — Step by Step (2026)</h3>
+<ol>
+<li>Visit <strong>pmsuryaghar.gov.in</strong></li>
+<li>Click "Apply for Rooftop Solar" and register with your mobile number</li>
+<li>Enter your electricity consumer number and select your DISCOM</li>
+<li>Fill the application form — your details, roof area, required system size</li>
+<li>Submit application — you'll receive an acknowledgement number</li>
+<li>DISCOM will conduct a site inspection (within 30 days)</li>
+<li>Select an MNRE-empanelled installer from the portal's approved list</li>
+<li>Installer completes the installation</li>
+<li>Submit completion certificate and net meter application</li>
+<li>DISCOM installs bidirectional meter</li>
+<li><strong>Subsidy credited directly to your bank account</strong> within 30 days of commissioning</li>
+</ol>
+
+<h3>Documents Required</h3>
+<ul>
+<li>Aadhaar card (linked to mobile number)</li>
+<li>Latest electricity bill (showing consumer number)</li>
+<li>Bank account details (for subsidy credit — must be Aadhaar-linked)</li>
+<li>Property ownership proof (sale deed, property tax receipt)</li>
+<li>Passport-size photograph</li>
+<li>Roof photographs</li>
+</ul>
+
+<h3>Top Performing States (December 2025)</h3>
+<table>
+<thead><tr><th>State</th><th>Installations</th><th>Capacity</th></tr></thead>
+<tbody>
+<tr><td>Gujarat</td><td>11+ lakh</td><td>6,412 MW</td></tr>
+<tr><td>Rajasthan</td><td>Strong performer</td><td>Top 3</td></tr>
+<tr><td>Maharashtra</td><td>Strong performer</td><td>Top 5</td></tr>
+<tr><td>Tamil Nadu</td><td>Strong performer</td><td>Top 5</td></tr>
+</tbody>
+</table>
+
+<h3>Bank Loans for PM Surya Ghar</h3>
+<p>Public Sector Banks have sanctioned over <strong>5.79 lakh loans worth ₹10,907 crore</strong> under PM Surya Ghar. Key features:</p>
+<ul>
+<li>Collateral-free loans up to ₹2 lakh</li>
+<li>Interest rate: ~7% per annum</li>
+<li>Loan tenure: up to 10 years</li>
+<li>Available at all nationalized banks — SBI, Bank of Baroda, Canara Bank, PNB, etc.</li>
+</ul>
+
+<h3>What Happens After Installation?</h3>
+<ul>
+<li>Your meter runs backward when solar produces more than you use</li>
+<li>Excess units credited to your electricity account</li>
+<li>Monthly bills reduced dramatically — 45% of beneficiaries now pay zero</li>
+<li>25-year panel life means 20+ years of free electricity after break-even</li>
+</ul>
+
+<h3>Common Issues & Solutions</h3>
+<ul>
+<li><strong>DISCOM taking too long:</strong> File a grievance on the PM Surya Ghar portal under "Grievance" section — DISCOM has a 30-day legal deadline</li>
+<li><strong>Installer not found:</strong> Use the portal's "Vendor Locator" feature to find MNRE-empanelled vendors in your pincode</li>
+<li><strong>Subsidy not credited:</strong> Ensure your bank account is Aadhaar-linked (mandatory for DBT transfer)</li>
+</ul>
+    `,
+  },
+
+  {
+    slug: 'pm-kusum-scheme-2026-solar-pump-farmers-guide',
+    title: 'PM-KUSUM Scheme 2026 — Free Solar Pump for Farmers: Eligibility, Subsidy & Apply',
+    description: 'PM-KUSUM scheme 2026 updated guide for Indian farmers. Get 60% subsidy on solar water pumps (3HP to 10HP). Budget 2026 doubled allocation to ₹5,000 crore. Apply now before deadline.',
+    date: '2026-03-08',
+    readTime: '8 min read',
+    category: 'Government Schemes',
+    content: `
+<h2>PM-KUSUM Scheme 2026 — Solar Pumps for Indian Farmers</h2>
+<p>PM-KUSUM (Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan) is India's flagship solar scheme for farmers. In Budget 2026, the government <strong>nearly doubled the allocation to ₹5,000 crore</strong> from ₹2,600 crore — signalling massive scale-up. Over <strong>10 lakh solar pumps</strong> have been installed/solarized so far.</p>
+
+<h3>Big Changes in 2026</h3>
+<ul>
+<li><strong>Budget allocation doubled:</strong> ₹2,600 crore → ₹5,000 crore in Budget 2026-27</li>
+<li><strong>PM-KUSUM 2.0 coming:</strong> Government finalizing next phase with ₹50,000 crore outlay, agro-PV models, battery integration</li>
+<li><strong>FY25 achievement:</strong> 4.4 lakh pumps installed (Component B) — 4.2x jump over previous year</li>
+<li><strong>Component C surge:</strong> 2.6 lakh grid-connected pumps solarized — 25x more than FY24</li>
+</ul>
+
+<h3>Three Components of PM-KUSUM</h3>
+
+<h4>Component A — Decentralized Solar Power Plants</h4>
+<ul>
+<li>Farmers can set up 500 kW to 2 MW solar plants on barren or agricultural land</li>
+<li>Power sold to DISCOM at fixed tariff for 25 years</li>
+<li>Central subsidy: 30% of cost</li>
+<li>Target: 10,000 MW across India</li>
+</ul>
+
+<h4>Component B — Standalone Solar Pumps (Most Popular)</h4>
+<ul>
+<li>Replace diesel pumps with solar-powered pumps</li>
+<li>Central subsidy: 30% of cost</li>
+<li>State subsidy: 30% of cost (varies by state)</li>
+<li>Farmer pays: Only 40% (often further subsidized by state)</li>
+<li>Target: 14 lakh pumps</li>
+</ul>
+
+<h4>Component C — Solarization of Grid-Connected Pumps</h4>
+<ul>
+<li>Add solar panel to your existing electric pump</li>
+<li>Excess solar power sold back to grid — extra income for farmers</li>
+<li>Target: 35 lakh pumps</li>
+</ul>
+
+<h3>Subsidy Amount for Solar Pumps (Component B)</h3>
+<table>
+<thead><tr><th>Pump Capacity</th><th>Total Cost</th><th>Farmer's Share (40%)</th><th>Annual Diesel Saving</th></tr></thead>
+<tbody>
+<tr><td>3 HP</td><td>₹1,50,000–₹2,00,000</td><td>₹30,000–₹40,000</td><td>₹50,000–₹80,000</td></tr>
+<tr><td>5 HP</td><td>₹2,20,000–₹2,80,000</td><td>₹44,000–₹56,000</td><td>₹80,000–₹1,20,000</td></tr>
+<tr><td>7.5 HP</td><td>₹3,00,000–₹3,80,000</td><td>₹60,000–₹76,000</td><td>₹1,20,000–₹1,80,000</td></tr>
+<tr><td>10 HP</td><td>₹4,00,000–₹5,00,000</td><td>₹80,000–₹1,00,000</td><td>₹1,80,000–₹2,50,000</td></tr>
+</tbody>
+</table>
+
+<h3>State-Wise PM-KUSUM Performance 2025-26</h3>
+<table>
+<thead><tr><th>State</th><th>Allocation</th><th>Special Features</th></tr></thead>
+<tbody>
+<tr><td>Maharashtra</td><td>₹1,154 crore</td><td>Top recipient, 250% increase vs FY24</td></tr>
+<tr><td>Rajasthan</td><td>₹400 crore</td><td>50,000 pumps, first "green budget"</td></tr>
+<tr><td>Karnataka</td><td>₹752 crore</td><td>50% state support, farmer pays only 20%</td></tr>
+<tr><td>Uttar Pradesh</td><td>₹509 crore</td><td>Strong Component B push</td></tr>
+<tr><td>Madhya Pradesh</td><td>Large allocation</td><td>10 GW decentralized target</td></tr>
+</tbody>
+</table>
+
+<h3>How to Apply for PM-KUSUM Solar Pump</h3>
+<ol>
+<li>Visit your state's agriculture department or renewable energy agency website</li>
+<li>Register using Aadhaar-linked mobile number</li>
+<li>Fill the online application: land details, water source type (borewell/open well/canal), pump capacity needed</li>
+<li>Upload required documents</li>
+<li>After approval, choose from the list of government-empanelled vendors</li>
+<li>Pay your 40% farmer share to the vendor</li>
+<li>Vendor installs the solar pump (typically within 60 days of order)</li>
+<li>Subsidy (60%) paid directly to vendor by government</li>
+</ol>
+
+<h3>Documents Required</h3>
+<ul>
+<li>Aadhaar card + PAN card</li>
+<li>Land documents (7/12 extract, khatauni, or equivalent)</li>
+<li>Electricity bill (if existing connection) or no-objection certificate</li>
+<li>Bank passbook copy (Aadhaar-linked)</li>
+<li>Proof of water source (borewell certificate, etc.)</li>
+<li>Passport-size photograph</li>
+</ul>
+
+<h3>PM-KUSUM 2.0 — What's Coming</h3>
+<p>The government is finalizing PM-KUSUM 2.0 as the successor scheme post-March 2026:</p>
+<ul>
+<li>Estimated outlay: ~₹50,000 crore (vs ₹34,422 crore current phase)</li>
+<li>New: Agro-photovoltaic (agro-PV) models — grow crops under elevated solar panels</li>
+<li>New: Battery storage integration for reliability</li>
+<li>Expanded feeder-level solarisation across more states</li>
+<li>Higher private sector participation</li>
+</ul>
+    `,
+  },
+
+  {
+    slug: 'solar-subsidy-india-2026-state-wise-complete-guide',
+    title: 'Solar Subsidy India 2026 — State-Wise Complete Guide (Maharashtra, Gujarat, Karnataka, UP)',
+    description: 'Complete state-wise solar subsidy guide for India 2026. Central PM Surya Ghar subsidy ₹78,000 + state-specific incentives for Maharashtra, Gujarat, Rajasthan, Karnataka, UP, MP, Delhi.',
+    date: '2026-03-10',
+    readTime: '10 min read',
+    category: 'Government Schemes',
+    content: `
+<h2>Solar Subsidy in India 2026 — State-Wise Complete Guide</h2>
+<p>India offers solar subsidies at two levels — <strong>central government (PM Surya Ghar)</strong> and <strong>state-specific schemes</strong>. In many states, you can stack both subsidies to bring your installation cost down by 50-70%. Here's the definitive 2026 guide.</p>
+
+<h3>Central Government Subsidy (Available in All States)</h3>
+<table>
+<thead><tr><th>System Size</th><th>Subsidy</th><th>CFA Rate (2026)</th></tr></thead>
+<tbody>
+<tr><td>Up to 1 kW</td><td>₹30,000</td><td>₹18,000/kWp</td></tr>
+<tr><td>2 kW</td><td>₹60,000</td><td>₹18,000/kWp</td></tr>
+<tr><td>3 kW and above</td><td>₹78,000 (max)</td><td>Capped at ₹78,000</td></tr>
+</tbody>
+</table>
+<p>The CFA (Central Financial Assistance) rate was increased by <strong>23% in January 2026</strong> from ₹14,588/kWp to ₹18,000/kWp — your subsidy amount increased.</p>
+
+<h3>Maharashtra — Ghar Ghar Solar + SMART Solar</h3>
+<ul>
+<li><strong>Ghar Ghar Solar Campaign:</strong> Ultra-low upfront cost — households pay only ~1/3 in installments, rest through electricity bill savings</li>
+<li><strong>SMART Solar Scheme:</strong> Additional 40% subsidy for low-consumption homes (under 100 units/month), BPL, SC/ST households</li>
+<li>MSEDCL group net metering for housing societies — multiple flats share one solar installation</li>
+<li>MERC allows net metering capacities up to 5 MW for commercial consumers</li>
+<li>PM KUSUM allocation: ₹1,154 crore (250% increase vs previous year)</li>
+</ul>
+<p><strong>Total subsidy for eligible Maharashtra consumers:</strong> Central ₹78,000 + State up to 40% of system cost</p>
+
+<h3>Gujarat — SURYA Gujarat Yojana</h3>
+<ul>
+<li><strong>SURYA Gujarat (Surya Urja Rooftop Yojana):</strong> Additional ₹40,000 state subsidy on top of central PM Surya Ghar subsidy</li>
+<li>Gujarat is India's #1 state: 11+ lakh installations, 6,412 MW rooftop solar</li>
+<li>Gujarat Integrated Renewable Energy Policy-2025 launched</li>
+<li><strong>Kisan Suryoday Yojana:</strong> Daytime agricultural power — ₹2,175 crore allocated</li>
+<li>Waiver on electricity duty for solar power plants</li>
+<li>GEDA manages all applications — geda.gujarat.gov.in</li>
+</ul>
+<p><strong>Total subsidy (Gujarat):</strong> Central ₹78,000 + SURYA Gujarat ₹40,000 = up to <strong>₹1,18,000</strong></p>
+
+<h3>Rajasthan — India's Solar Powerhouse</h3>
+<ul>
+<li>Rajasthan has highest solar radiation in India — best ROI for solar investment</li>
+<li>Residential subsidy: 40% for systems up to 3 kW; 20% for 3–10 kW</li>
+<li>First state to announce a "green budget" — ₹400 crore for PM KUSUM solar pumps</li>
+<li>₹559 crore from state fund for solar-powered minor irrigation projects</li>
+<li>RVUNL manages state solar applications</li>
+</ul>
+
+<h3>Karnataka — DSPV Policy & Virtual Net Metering</h3>
+<ul>
+<li>Karnataka overhauled rooftop solar as <strong>DSPV (Distributed Solar PV)</strong> effective July 1, 2025</li>
+<li><strong>Virtual Net Metering (VNM):</strong> Housing societies can share solar generation across multiple flats from one installation (minimum 5 kW)</li>
+<li>BESCOM net metering export rate: ₹3.57/unit — one of India's best rates</li>
+<li>Component B solar pump support: 50% state subsidy (farmer pays only 20%); ₹752 crore for 40,000 pumps</li>
+<li>Residential subsidy up to 40% via KREDL</li>
+</ul>
+
+<h3>Delhi — ₹2/Unit Generation Incentive</h3>
+<ul>
+<li>PM Surya Ghar central subsidy available (₹78,000 max)</li>
+<li><strong>DERC generation incentive:</strong> Additional ₹2 per unit generated for 5 years</li>
+<li>For a 3 kW system generating 4,500 units/year — extra ₹9,000/year</li>
+<li>Free net meter installation by BSES/Tata Power Delhi</li>
+<li>Delhi's solar target: 4.5 GW by 2027</li>
+</ul>
+
+<h3>Uttar Pradesh — UPNEDA Additional Subsidy</h3>
+<ul>
+<li>PM Surya Ghar central subsidy available</li>
+<li><strong>UPNEDA additional state subsidy:</strong> ₹15,000/kW, capped at ₹30,000 for residential consumers</li>
+<li>Can be combined with central PM Surya Ghar subsidy</li>
+<li>₹509 crore for PM KUSUM in FY2025-26</li>
+<li>Apply via UPNEDA portal: upneda.org.in</li>
+</ul>
+
+<h3>Madhya Pradesh</h3>
+<ul>
+<li>40% subsidy on solar rooftops via PM Surya Ghar</li>
+<li>PM KUSUM Component A & C SOPs launched — 10 GW decentralized solar target</li>
+<li>MPUVNL manages applications: mpuvnl.nic.in</li>
+<li>Strong push for government building solarization</li>
+</ul>
+
+<h3>How to Get Maximum Subsidy — Stacking Strategy</h3>
+<ol>
+<li>Apply on <strong>pmsuryaghar.gov.in</strong> for central subsidy first</li>
+<li>Simultaneously apply on your <strong>state renewable energy agency website</strong> for state subsidy</li>
+<li>Use a single MNRE-empanelled installer who handles both applications</li>
+<li>Submit combined documents to avoid duplication</li>
+<li>Ensure your bank account is Aadhaar-linked (mandatory for DBT)</li>
+</ol>
+
+<h3>Important: ALMM Compliance from June 2026</h3>
+<p>From June 2026, only solar modules on the <strong>ALMM (Approved List of Models and Manufacturers) List-II</strong> are eligible for government subsidies. Ensure your installer uses ALMM-listed panels — non-compliant panels will not qualify for PM Surya Ghar or state subsidies.</p>
+    `,
+  },
+
+  {
+    slug: 'budget-2026-solar-energy-what-changed',
+    title: 'Budget 2026 Solar Energy — ₹22,000 Crore for Rooftop Solar, Customs Duty Cuts & What Changed',
+    description: 'Union Budget 2026-27 solar energy announcements decoded. ₹22,000 crore for PM Surya Ghar, ₹5,000 crore for PM-KUSUM, customs duty cuts on solar glass and modules. Impact on solar prices.',
+    date: '2026-03-12',
+    readTime: '7 min read',
+    category: 'Government Schemes',
+    content: `
+<h2>Union Budget 2026-27 — What Changed for Solar Energy in India</h2>
+<p>The Union Budget presented on February 1, 2026 gave a massive push to India's solar sector. Total renewable energy allocation increased 30% to ₹3.29 lakh crore, with solar getting the lion's share. Here's everything that changed and what it means for you.</p>
+
+<h3>Key Budget 2026 Solar Announcements</h3>
+<table>
+<thead><tr><th>Item</th><th>2025 Allocation</th><th>2026 Allocation</th><th>Change</th></tr></thead>
+<tbody>
+<tr><td>Total Solar Sector</td><td>₹2,42,240 crore</td><td>₹3,05,390 crore</td><td>+26%</td></tr>
+<tr><td>PM Surya Ghar</td><td>Not separately disclosed</td><td>₹22,000 crore</td><td>Major increase</td></tr>
+<tr><td>PM-KUSUM</td><td>₹2,600 crore</td><td>₹5,000 crore</td><td>+92%</td></tr>
+<tr><td>Total Renewables</td><td>₹2,53,190 crore</td><td>₹3,29,147 crore</td><td>+30%</td></tr>
+</tbody>
+</table>
+
+<h3>Customs Duty Changes — Impact on Solar Prices</h3>
+
+<h4>Good News — Duties Reduced</h4>
+<ul>
+<li><strong>Sodium Antimonate</strong> (raw material for solar glass): BCD reduced from 7.5% → Nil</li>
+<li><strong>Solar modules:</strong> Effective duty reduced to 20% through rebalancing of BCD and cess</li>
+<li><strong>Solar cell duties:</strong> Lowered via duty structure rebalancing</li>
+<li><strong>Capital goods for lithium-ion (BESS) manufacturing:</strong> BCD exemptions extended</li>
+<li><strong>Critical mineral processing equipment:</strong> BCD exempted</li>
+</ul>
+
+<h4>Watch Out — BCD Exemptions Expiring</h4>
+<ul>
+<li>BCD exemptions for silicon used in un-diffused wafers will <strong>lapse from April 1, 2026</strong></li>
+<li>This may slightly increase upstream manufacturing costs but impact on end consumer is minimal</li>
+</ul>
+
+<h3>What This Means for Solar Buyers</h3>
+<ul>
+<li>Solar module prices expected to remain stable or decrease slightly as manufacturing input costs fall</li>
+<li>Battery storage (BESS) systems will become more affordable — extended capital goods exemptions reduce manufacturing cost</li>
+<li>Domestic manufacturing (PLI) gets stronger support — more Indian-made panels available</li>
+<li>PM Surya Ghar funding secured for 2026-27 — subsidy payments will continue without disruption</li>
+</ul>
+
+<h3>New Financial Infrastructure — Infrastructure Risk Guarantee Fund</h3>
+<p>Budget 2026 introduced a new Infrastructure Risk Guarantee Fund that provides partial credit guarantees to banks lending for large Battery Energy Storage System (BESS) projects. This makes grid-scale battery storage bankable — crucial for managing India's growing solar surplus during peak afternoon hours.</p>
+
+<h3>CCUS Fund — ₹20,000 Crore</h3>
+<p>Budget 2026 announced a ₹20,000 crore Carbon Capture, Utilization and Storage (CCUS) fund. While not directly solar-related, this signals India's long-term clean energy commitment and creates new opportunities for solar+storage projects.</p>
+
+<h3>What Budget 2026 Did NOT Do</h3>
+<ul>
+<li>No new dedicated income tax deduction for individual solar buyers (existing provisions apply)</li>
+<li>Subsidy cap of ₹78,000 per household was not increased (CFA rate was increased in January 2026 separately)</li>
+<li>No change in GST rate on solar systems (remains at 5%)</li>
+</ul>
+
+<h3>Overall Impact on Solar Sector</h3>
+<p>Budget 2026 is strongly positive for India's solar sector:</p>
+<ul>
+<li>Record funding ensures scheme continuity through 2026-27</li>
+<li>Nearly doubled PM-KUSUM budget benefits 5 crore+ farmers</li>
+<li>Customs duty relief reduces system costs</li>
+<li>BESS support ensures grid can absorb more solar — removes a key scaling barrier</li>
+<li>India's solar sector grew 43% in 2025 (36.6 GW added) — Budget 2026 sustains this momentum</li>
+</ul>
+    `,
+  },
+
+  {
+    slug: 'net-metering-india-2026-state-rules-guide',
+    title: 'Net Metering India 2026 — State-by-State Rules, Limits, Application & New Changes',
+    description: 'Complete net metering guide India 2026. Karnataka DSPV virtual net metering, Maharashtra 5 MW limit, Delhi free net meter, Kerala restrictions. How to apply and avoid DISCOM delays.',
+    date: '2026-03-14',
+    readTime: '8 min read',
+    category: 'Guides',
+    content: `
+<h2>Net Metering in India 2026 — Complete State-Wise Guide</h2>
+<p>Net metering rules changed significantly across Indian states in 2025-2026. Karnataka introduced Virtual Net Metering, Maharashtra expanded limits to 5 MW, and the draft National Electricity Policy 2026 signals a shift toward storage-integrated solar. Here's the latest guide.</p>
+
+<h3>How Net Metering Works (Quick Recap)</h3>
+<ol>
+<li>Your solar panels generate electricity</li>
+<li>You use what you need — excess flows back to the DISCOM grid</li>
+<li>Your meter runs backward — units credited to your account</li>
+<li>Monthly bill: You pay only for NET units (imports minus exports)</li>
+</ol>
+<p><strong>Example:</strong> Monthly consumption 400 units. Solar generates 350 units. You pay for only 50 units instead of 400 — <strong>87.5% bill reduction.</strong></p>
+
+<h3>Big Changes in Net Metering (2025-2026)</h3>
+
+<h4>Karnataka — Most Progressive (July 2025)</h4>
+<ul>
+<li>Renamed system as <strong>DSPV (Distributed Solar PV)</strong></li>
+<li>Introduced <strong>Virtual Net Metering (VNM):</strong> Housing societies, institutions can share one solar plant's output across multiple consumer accounts — minimum 5 kW</li>
+<li>Group Net Metering (GNM) also available</li>
+<li>Export rate: ₹3.57/unit — one of India's best rates</li>
+<li>Apply: BESCOM portal (bescom.org)</li>
+</ul>
+
+<h4>Maharashtra — Expanded to 5 MW</h4>
+<ul>
+<li>MERC enabled net-metered capacities up to <strong>5 MW</strong> for specific C&I and public sector consumers</li>
+<li>Group net metering and Virtual Net Metering available for housing societies</li>
+<li>Residential: Net metering available for systems up to 10 kW typically</li>
+<li>MSEDCL area: Apply at mahadiscom.in</li>
+</ul>
+
+<h4>Delhi — Best for Consumers</h4>
+<ul>
+<li>Free net meter installation by BSES/Tata Power Delhi</li>
+<li>Export credited at consumption tariff rate</li>
+<li>Additional ₹2/unit generation incentive for 5 years (DERC)</li>
+<li>No capacity restriction for residential consumers</li>
+</ul>
+
+<h4>Kerala — Becoming Restrictive</h4>
+<ul>
+<li>Draft proposal to restrict residential net metering to ≤3 kW</li>
+<li>KSEB facing financial pressure from net metering losses</li>
+<li>Commercial consumers largely unaffected</li>
+<li>Apply at KSEB portal before any new restrictions are notified</li>
+</ul>
+
+<h4>Gujarat — Strong Policy</h4>
+<ul>
+<li>Net metering up to 1 MW for residential and commercial</li>
+<li>Export at consumption tariff rate</li>
+<li>PGVCL/UGVCL/DGVCL — apply at your local DISCOM portal</li>
+</ul>
+
+<h4>Odisha — Battery-Friendly Update</h4>
+<ul>
+<li>OERC formally included <strong>hybrid inverters</strong> in net metering framework</li>
+<li>Battery storage can now be integrated with net-metered solar systems</li>
+<li>Progressive step for energy independence</li>
+</ul>
+
+<h3>Net Metering Limits by State</h3>
+<table>
+<thead><tr><th>State</th><th>Residential Limit</th><th>Commercial Limit</th><th>Export Rate</th></tr></thead>
+<tbody>
+<tr><td>Karnataka</td><td>Up to 500 kW</td><td>Up to 500 kW</td><td>₹3.57/unit</td></tr>
+<tr><td>Maharashtra</td><td>Up to 10 kW typical</td><td>Up to 5 MW</td><td>Consumption tariff</td></tr>
+<tr><td>Gujarat</td><td>Up to 1 MW</td><td>Up to 1 MW</td><td>Consumption tariff</td></tr>
+<tr><td>Delhi</td><td>No restriction</td><td>No restriction</td><td>Consumption tariff + ₹2/unit incentive</td></tr>
+<tr><td>Tamil Nadu</td><td>Up to 1 MW</td><td>Up to 1 MW</td><td>₹2.25/unit</td></tr>
+<tr><td>Rajasthan</td><td>Up to 1 MW</td><td>Up to 1 MW</td><td>Consumption tariff</td></tr>
+<tr><td>UP</td><td>Up to 500 kW</td><td>Up to 500 kW</td><td>Consumption tariff</td></tr>
+<tr><td>Kerala</td><td>Up to 5 kW (proposed)</td><td>Up to 500 kW</td><td>Consumption tariff</td></tr>
+</tbody>
+</table>
+
+<h3>How to Apply for Net Metering</h3>
+<ol>
+<li>Install solar through MNRE-approved installer</li>
+<li>Installer submits net metering application to DISCOM on your behalf (or you apply via DISCOM portal)</li>
+<li>DISCOM inspection within 30 working days (legal requirement)</li>
+<li>Bidirectional meter installed by DISCOM</li>
+<li>Net metering activated — check first bill to confirm credits</li>
+</ol>
+
+<h3>DISCOM Delays — How to Fight Back</h3>
+<ul>
+<li>DISCOMs are legally required to connect within 30 days under the Electricity Rights of Consumers Rules</li>
+<li>If delayed: File a complaint on the PM Surya Ghar portal → "Grievance" section</li>
+<li>Escalate to your State Electricity Regulatory Commission (SERC) if DISCOM is unresponsive</li>
+<li>National Consumer Helpline: 1800-11-4000</li>
+</ul>
+
+<h3>Virtual Net Metering — Great for Apartments</h3>
+<p>Available in Karnataka and Maharashtra, Virtual Net Metering allows a housing society to install one large solar plant on the terrace and distribute the generated units proportionally to individual flats' electricity accounts. This means individual flat owners benefit even without their own dedicated solar panels — a game-changer for urban India.</p>
+
+<h3>Draft National Electricity Policy 2026 — What's Changing</h3>
+<p>The draft NEP 2026 signals a future shift: for new consumers with systems above 5 kW, net metering may be replaced by gross metering (sell all generation at a fixed feed-in tariff) or storage-integrated systems. <strong>Existing net metering consumers will be grandfathered</strong> — so install now to lock in net metering benefits before policy changes.</p>
+    `,
+  },
+
+  {
+    slug: 'solar-tax-benefits-business-india-2026',
+    title: 'Solar Tax Benefits for Businesses in India 2026 — Accelerated Depreciation, Section 80-IA & GST',
+    description: 'Complete tax guide for commercial solar in India 2026. 40% accelerated depreciation benefit, Section 80-IA 100% profit exemption, 5% GST, and state-level electricity duty waivers explained.',
+    date: '2026-03-16',
+    readTime: '7 min read',
+    category: 'Commercial Solar',
+    content: `
+<h2>Solar Tax Benefits for Indian Businesses in 2026</h2>
+<p>For businesses, commercial solar is not just an energy investment — it's a tax planning tool. Between accelerated depreciation, profit tax exemption, and GST benefits, the effective cost of a solar installation can be reduced by 30-50% for a profitable business. Here's the complete 2026 guide.</p>
+
+<h3>1. Accelerated Depreciation — Section 32, Income Tax Act</h3>
+<p>This is the single biggest tax benefit for commercial solar in India.</p>
+<ul>
+<li>Solar power plants fall under the <strong>40% depreciation block</strong></li>
+<li>If commissioned and in use for <strong>more than 180 days</strong> in the financial year: <strong>40% depreciation in Year 1</strong></li>
+<li>If in use for <strong>less than 180 days</strong>: 20% depreciation in Year 1 (half rate rule)</li>
+</ul>
+
+<h4>Real Example — 100 kW Factory Solar (₹50 Lakhs)</h4>
+<table>
+<thead><tr><th>Item</th><th>Amount</th></tr></thead>
+<tbody>
+<tr><td>System Cost</td><td>₹50,00,000</td></tr>
+<tr><td>Depreciation (40% Year 1)</td><td>₹20,00,000</td></tr>
+<tr><td>Tax Saved (30% bracket)</td><td>₹6,00,000</td></tr>
+<tr><td>Annual Electricity Saving</td><td>₹15,00,000</td></tr>
+<tr><td>Total Year 1 Benefit</td><td>₹21,00,000</td></tr>
+<tr><td>Effective Payback Period</td><td>~2.4 years</td></tr>
+</tbody>
+</table>
+<p><strong>Tip:</strong> Commission your solar plant before September 30 (before 180-day cutoff from April 1) to maximize Year 1 depreciation at 40%.</p>
+
+<h3>2. Section 80-IA — 100% Profit Tax Holiday</h3>
+<ul>
+<li>Solar power generation businesses can claim <strong>100% exemption on profits</strong></li>
+<li>For any <strong>10 consecutive years within the first 15 years</strong> of operation</li>
+<li>Available to companies/entities generating and distributing solar power</li>
+<li>Qualifying condition: Must have begun generation before cut-off date</li>
+<li>Most relevant for: IPPs, solar farm developers, large C&I solar with third-party sale</li>
+</ul>
+
+<h3>3. GST at 5% on Solar Systems</h3>
+<p>Solar power generating systems and components attract only <strong>5% GST</strong> compared to 18% for most goods:</p>
+<ul>
+<li>Solar photovoltaic cells: 5% GST</li>
+<li>Solar modules/panels: 5% GST</li>
+<li>Solar inverters: 5% GST (as part of solar system)</li>
+<li>Solar batteries (standalone): 12% GST</li>
+<li>Installation charges: 5% GST (if bundled with supply)</li>
+</ul>
+<p>This lower GST reduces your initial investment cost compared to other capital equipment.</p>
+
+<h3>4. State-Level Tax & Duty Benefits</h3>
+<table>
+<thead><tr><th>State</th><th>Benefit</th></tr></thead>
+<tbody>
+<tr><td>Gujarat</td><td>Waiver on electricity duty for solar power plants</td></tr>
+<tr><td>Karnataka</td><td>Property tax exemptions in select categories</td></tr>
+<tr><td>Rajasthan</td><td>Electricity levy waiver for solar rooftop adopters</td></tr>
+<tr><td>Maharashtra</td><td>Stamp duty exemption on solar plant agreements</td></tr>
+<tr><td>Tamil Nadu</td><td>Assessment fee waiver for TANGEDCO solar connections</td></tr>
+</tbody>
+</table>
+
+<h3>5. CAPEX vs OPEX Model — Tax Implications</h3>
+
+<h4>CAPEX (Own the system)</h4>
+<ul>
+<li>Claim depreciation, Section 80-IA benefits</li>
+<li>Maximum long-term savings (20+ years)</li>
+<li>Best for: Profitable businesses with tax liability</li>
+</ul>
+
+<h4>OPEX/PPA (Third party owns, you pay per unit)</h4>
+<ul>
+<li>Zero capital investment</li>
+<li>Monthly PPA payments are fully deductible as operating expenses</li>
+<li>No depreciation benefit (third party owner claims it)</li>
+<li>Best for: Businesses wanting to conserve capital, startups, loss-making entities</li>
+</ul>
+
+<h3>Budget 2026 Impact on Solar Tax Benefits</h3>
+<ul>
+<li>No new dedicated solar tax deductions introduced in Budget 2026</li>
+<li>Customs duty reduction lowers system cost → lower depreciation base (smaller absolute tax saving, but better ROI)</li>
+<li>Accelerated depreciation (40%) continues unchanged</li>
+<li>Section 80-IA continues for qualifying power generators</li>
+</ul>
+
+<h3>How to Claim These Benefits</h3>
+<ol>
+<li>Ensure solar system is capitalized correctly in your books as a Plant & Machinery asset</li>
+<li>Maintain installation and commissioning certificate from installer</li>
+<li>File depreciation claim in ITR under Schedule DPM</li>
+<li>For Section 80-IA: File Form 10CCB (audit report) for claiming profit deduction</li>
+<li>Consult a CA with renewable energy experience for maximum optimization</li>
+</ol>
+    `,
+  },
+
+  {
+    slug: 'india-solar-manufacturing-pli-scheme-2026',
+    title: 'PLI Scheme Solar Manufacturing India 2026 — Progress, 29 GW Cell Capacity & Impact on Prices',
+    description: 'India\'s PLI scheme for high-efficiency solar PV modules 2026 update. 29 GW solar cell capacity, 120 GW module capacity, key manufacturers Adani, Waaree, Vikram. Impact on solar panel prices.',
+    date: '2026-03-18',
+    readTime: '7 min read',
+    category: 'Industry News',
+    content: `
+<h2>PLI Scheme for Solar Manufacturing in India — 2026 Progress Update</h2>
+<p>India's Production Linked Incentive (PLI) scheme for solar PV modules is reshaping the country's solar supply chain. As of mid-2025, India has <strong>29 GW of solar cell capacity</strong> and over <strong>120 GW of module capacity</strong> — a dramatic transformation from near-zero domestic manufacturing just 4 years ago.</p>
+
+<h3>PLI Scheme Overview</h3>
+<ul>
+<li><strong>Full Name:</strong> PLI — National Programme on High Efficiency Solar PV Modules</li>
+<li><strong>Implementing Agency:</strong> MNRE / SECI</li>
+<li><strong>Tranche I (2021):</strong> 3 winners, 8,737 MW fully integrated manufacturing</li>
+<li><strong>Tranche II (2023):</strong> 11 winners, 39,600 MW manufacturing capacity</li>
+<li><strong>Total awarded:</strong> ~48,337 MW</li>
+</ul>
+
+<h3>Manufacturing Capacity Progress (June 2025)</h3>
+<table>
+<thead><tr><th>Component</th><th>Target</th><th>Achieved (June 2025)</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Solar Cells</td><td>42 GW (by June 2026)</td><td>29 GW</td><td>On track</td></tr>
+<tr><td>Solar Modules</td><td>65 GW</td><td>120 GW (total, incl. non-PLI)</td><td>Exceeded</td></tr>
+<tr><td>Polysilicon</td><td>Large GW target</td><td>3.3 GW</td><td>Lagging</td></tr>
+<tr><td>Wafers</td><td>Large GW target</td><td>5.3 GW</td><td>Lagging</td></tr>
+</tbody>
+</table>
+
+<h3>Key PLI Manufacturers in India</h3>
+<ul>
+<li><strong>Adani Solar:</strong> Largest integrated solar manufacturer — polysilicon to modules</li>
+<li><strong>Waaree Energies:</strong> Largest module manufacturer, 12 GW+ capacity</li>
+<li><strong>Vikram Solar:</strong> Premium Topcon and PERC technology</li>
+<li><strong>Tata Power Solar:</strong> Growing domestic cell and module capacity</li>
+<li><strong>Shirdi Sai Electricals:</strong> Wafer manufacturing under PLI</li>
+<li><strong>Premier Energies:</strong> Listed company, cell and module manufacturing</li>
+</ul>
+
+<h3>India's Strengths and Gaps in Solar Manufacturing</h3>
+
+<h4>Strengths</h4>
+<ul>
+<li>Module capacity exceeds domestic demand — India now exports modules</li>
+<li>Cell capacity growing rapidly — 29 GW is significant vs zero in 2021</li>
+<li>Strong government policy consistency — PLI, BCD protection, ALMM</li>
+<li>Competitive labor costs vs China</li>
+</ul>
+
+<h4>Gaps</h4>
+<ul>
+<li>Polysilicon: India produces only 3.3 GW worth — still heavily import-dependent from China</li>
+<li>Wafers: 5.3 GW capacity vs much higher demand</li>
+<li>Full supply chain independence (polysilicon to module) remains 2-3 years away</li>
+</ul>
+
+<h3>ALMM — Why It Matters for You</h3>
+<p>The Approved List of Models and Manufacturers (ALMM) is India's quality certification for solar panels:</p>
+<ul>
+<li>From <strong>June 2026</strong>: Only ALMM List-II compliant modules qualify for government-subsidized installations</li>
+<li>PM Surya Ghar, PM-KUSUM and all DISCOM net metering connections require ALMM modules</li>
+<li>Always ask your installer for the ALMM certificate of the panels being installed</li>
+<li>Check ALMM list at: mnre.gov.in/almm</li>
+</ul>
+
+<h3>How PLI Affects Solar Panel Prices</h3>
+<ul>
+<li>Indian-made modules are now price-competitive with Chinese imports</li>
+<li>BCD (Basic Customs Duty) on imported modules: 40% — protects domestic manufacturers</li>
+<li>Budget 2026 further reduced raw material import costs for domestic manufacturers</li>
+<li>Expected: Solar panel prices to remain stable or decrease 5-10% by end of 2026 as cell capacity scales</li>
+</ul>
+
+<h3>What This Means for Solar Buyers</h3>
+<ul>
+<li>More domestic panel options — wider choice of quality Indian-made panels</li>
+<li>Better quality assurance — ALMM compliance mandatory</li>
+<li>Potential price reduction as competition increases among Indian manufacturers</li>
+<li>Faster delivery — no customs clearance delays for domestic modules</li>
+<li>Better after-sales support from domestic manufacturers</li>
+</ul>
+    `,
+  },
+
+  {
+    slug: 'india-solar-target-2027-100gw-progress',
+    title: 'India Solar Energy 2026-2027 — 135 GW Installed, 500 GW Target & Rooftop Progress Report',
+    description: 'India solar energy progress report 2026. 135.8 GW installed, record 36.6 GW added in 2025. PM Surya Ghar 1 crore household target 2027, 500 GW renewable target 2030 — are we on track?',
+    date: '2026-03-20',
+    readTime: '7 min read',
+    category: 'Industry News',
+    content: `
+<h2>India Solar Energy 2026 — Progress Report & 2027 Targets</h2>
+<p>India's solar sector had a record-breaking 2025 — adding <strong>36.6 GW of solar capacity</strong>, a 43% jump over 2024. The country now has <strong>135.8 GW of total installed solar capacity</strong> and crossed the historic 100 GW solar milestone in January 2025. Here's a full progress report and what to expect in 2026-2027.</p>
+
+<h3>India's Solar Milestones in 2025</h3>
+<table>
+<thead><tr><th>Milestone</th><th>Achievement</th></tr></thead>
+<tbody>
+<tr><td>Total solar installed capacity</td><td>135.8 GW (December 2025)</td></tr>
+<tr><td>New solar added in 2025</td><td>36.6 GW (calendar year record)</td></tr>
+<tr><td>Growth vs 2024</td><td>+43% (2024: 25.6 GW)</td></tr>
+<tr><td>100 GW solar milestone crossed</td><td>January 2025</td></tr>
+<tr><td>Total renewables installed</td><td>253.96 GW (November 2025)</td></tr>
+<tr><td>Non-fossil % of total capacity</td><td>51.5% (crossed 50% for first time)</td></tr>
+<tr><td>250 GW non-fossil milestone</td><td>August 2025</td></tr>
+</tbody>
+</table>
+
+<h3>PM Surya Ghar — Rooftop Solar Progress</h3>
+<table>
+<thead><tr><th>Milestone</th><th>Target Date</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>10 lakh households</td><td>March 2025</td><td>✅ Achieved March 10, 2025</td></tr>
+<tr><td>20 lakh households</td><td>October 2025</td><td>✅ Achieved (21.5 lakh by Oct 28)</td></tr>
+<tr><td>40 lakh households</td><td>March 2026</td><td>⚠️ At risk — 20.8 lakh by Dec 2025</td></tr>
+<tr><td>1 crore households</td><td>March 2027</td><td>🔴 Pace needs to double</td></tr>
+</tbody>
+</table>
+
+<h3>India's Path to 500 GW by 2030</h3>
+<p>India pledged 500 GW of non-fossil capacity by 2030 at COP26. Here's where we stand:</p>
+<ul>
+<li>Current non-fossil installed capacity: <strong>262.74 GW</strong> (52.5% of the 500 GW target achieved)</li>
+<li>Required addition in remaining 4 years (2026-2030): ~237 GW</li>
+<li>At 2025's record pace of 36.6 GW/year: 146 GW more in 4 years — <strong>will fall short</strong></li>
+<li>Pace needs to increase to ~60 GW/year to hit the 2030 target</li>
+<li>Government confident: Budget 2026 funding + PLI manufacturing scale-up expected to accelerate additions</li>
+</ul>
+
+<h3>State-Wise Solar Leaders (2025)</h3>
+<table>
+<thead><tr><th>State</th><th>Installed Solar Capacity</th><th>Rank</th></tr></thead>
+<tbody>
+<tr><td>Rajasthan</td><td>~32 GW</td><td>#1</td></tr>
+<tr><td>Gujarat</td><td>~25 GW</td><td>#2</td></tr>
+<tr><td>Karnataka</td><td>~20 GW</td><td>#3</td></tr>
+<tr><td>Tamil Nadu</td><td>~16 GW</td><td>#4</td></tr>
+<tr><td>Andhra Pradesh</td><td>~15 GW</td><td>#5</td></tr>
+</tbody>
+</table>
+
+<h3>Rooftop Solar Target — 30 GW by 2027</h3>
+<ul>
+<li>Current rooftop solar: ~6.38 GW (PM Surya Ghar alone) + commercial rooftop</li>
+<li>Target: 30 GW rooftop by FY 2027</li>
+<li>The 1 crore household target (March 2027) would add ~3 GW alone</li>
+<li>Gap: Significant — requires massive acceleration in both residential and commercial rooftop</li>
+</ul>
+
+<h3>Key Drivers for 2026-2027 Solar Growth</h3>
+<ul>
+<li><strong>PM Surya Ghar:</strong> ₹22,000 crore budget ensuring continued subsidies</li>
+<li><strong>Falling costs:</strong> Solar now the cheapest electricity source at ₹2-3/unit</li>
+<li><strong>Battery storage:</strong> Falling BESS prices enabling 24/7 solar use</li>
+<li><strong>PLI manufacturing:</strong> Domestic panel supply scaling rapidly</li>
+<li><strong>Green energy demand:</strong> India Inc's RE100 commitments driving corporate solar demand</li>
+<li><strong>Agricultural solar:</strong> PM-KUSUM 2.0 bringing millions of farmers to solar</li>
+</ul>
+
+<h3>What This Means for You</h3>
+<ul>
+<li>If you're considering solar — install now while PM Surya Ghar subsidies are fully funded</li>
+<li>Solar panel prices will continue to fall but subsidies may evolve — don't wait too long</li>
+<li>Net metering policies are most favorable right now — future policies may shift to storage-integrated models</li>
+<li>India's grid is becoming more solar-friendly with BESS integration — longer-term, solar-only systems become even more valuable</li>
+</ul>
+    `,
+  },
+
+  {
+    slug: 'surya-gujarat-yojana-2026-guide',
+    title: 'SURYA Gujarat Yojana 2026 — ₹40,000 Extra Subsidy, How to Apply & Documents',
+    description: 'Complete guide to SURYA Gujarat Yojana 2026. Get ₹40,000 additional state subsidy on top of PM Surya Ghar ₹78,000. Total subsidy up to ₹1,18,000 for Gujarat rooftop solar. Apply on GEDA portal.',
+    date: '2026-03-22',
+    readTime: '6 min read',
+    category: 'Government Schemes',
+    content: `
+<h2>SURYA Gujarat Yojana 2026 — India's Most Generous State Solar Scheme</h2>
+<p>Gujarat is India's #1 state for rooftop solar with 11+ lakh installations and 6,412 MW capacity. The SURYA Gujarat Yojana (Surya Urja Rooftop Yojana) provides an additional ₹40,000 state subsidy on top of the central PM Surya Ghar subsidy — making Gujarat one of the most financially attractive states for going solar.</p>
+
+<h3>Total Subsidy Available in Gujarat</h3>
+<table>
+<thead><tr><th>System Size</th><th>PM Surya Ghar (Central)</th><th>SURYA Gujarat (State)</th><th>Total Subsidy</th></tr></thead>
+<tbody>
+<tr><td>1 kW</td><td>₹30,000</td><td>Up to ₹40,000</td><td>Up to ₹70,000</td></tr>
+<tr><td>2 kW</td><td>₹60,000</td><td>Up to ₹40,000</td><td>Up to ₹1,00,000</td></tr>
+<tr><td>3 kW and above</td><td>₹78,000</td><td>Up to ₹40,000</td><td>Up to ₹1,18,000</td></tr>
+</tbody>
+</table>
+
+<h3>SURYA Gujarat — Key Features</h3>
+<ul>
+<li>Additional ₹40,000 state subsidy per household</li>
+<li>Available for all residential consumers with valid Gujarat DISCOM connection</li>
+<li>Must be combined with PM Surya Ghar central subsidy application</li>
+<li>Installation must use GEDA-approved and MNRE-empanelled vendors</li>
+<li>Panels must be ALMM-compliant (BIS certified)</li>
+</ul>
+
+<h3>Kisan Suryoday Yojana — For Gujarat Farmers</h3>
+<ul>
+<li>₹2,175 crore allocated for providing daytime power to farmers</li>
+<li>Solar feeders supplying power during daylight hours to agricultural connections</li>
+<li>Reduces farmer dependence on unreliable nighttime power</li>
+<li>Combined with PM-KUSUM for solar pump integration</li>
+</ul>
+
+<h3>Gujarat Electricity Duty Waiver</h3>
+<p>Solar power plants in Gujarat benefit from a waiver on electricity duty — reducing the operating cost of grid-connected solar installations. This applies to:</p>
+<ul>
+<li>Residential rooftop solar plants</li>
+<li>Commercial and industrial solar plants</li>
+<li>Effective for the first 10 years of plant operation in most cases</li>
+</ul>
+
+<h3>How to Apply for SURYA Gujarat Yojana</h3>
+<ol>
+<li>Apply on <strong>pmsuryaghar.gov.in</strong> for central subsidy first (mandatory prerequisite)</li>
+<li>Simultaneously visit <strong>geda.gujarat.gov.in</strong> for SURYA Gujarat application</li>
+<li>Select a GEDA-approved vendor from the portal</li>
+<li>Vendor handles installation, DISCOM net metering, and both subsidy applications</li>
+<li>Central subsidy credited first (within 30 days of DISCOM commissioning)</li>
+<li>State subsidy (SURYA Gujarat) credited subsequently through GEDA</li>
+</ol>
+
+<h3>Documents Required</h3>
+<ul>
+<li>Aadhaar card (linked to bank account)</li>
+<li>Latest electricity bill (with consumer number)</li>
+<li>Bank passbook (Aadhaar-linked, for DBT)</li>
+<li>Property ownership documents</li>
+<li>Roof photographs (at least 4 angles)</li>
+<li>Passport-size photo</li>
+</ul>
+
+<h3>Gujarat Solar Success Story</h3>
+<p>Gujarat's success is a blueprint for India:</p>
+<ul>
+<li>11+ lakh households have solar — highest in India</li>
+<li>6,412 MW rooftop solar capacity — 1/3 of India's total rooftop</li>
+<li>Total renewable capacity: 42.583 GW</li>
+<li>Gujarat's solar target: 100 GW by 2030</li>
+<li>Key success factors: Strong GEDA execution, high solar radiation, business-friendly environment</li>
+</ul>
+
+<h3>Other Gujarat Solar Schemes</h3>
+<ul>
+<li><strong>Gujarat Integrated Renewable Energy Policy-2025:</strong> Comprehensive framework for all renewable energy including solar</li>
+<li><strong>Off-grid solar for tribal areas:</strong> 100% subsidy for remote tribal village electrification</li>
+<li><strong>Solar parks:</strong> Gujarat has multiple large solar parks — Charanka (largest), Dholera SIR Solar</li>
+<li><strong>Green hydrogen:</strong> Gujarat emerging as India's green hydrogen hub — solar-powered electrolysis</li>
+</ul>
+    `,
+  },
+
+  {
+    slug: 'pm-kusum-2-0-india-farm-solar-next-phase',
+    title: 'PM-KUSUM 2.0 — India\'s Next Farm Solar Scheme: What We Know So Far (2026-2027)',
+    description: 'PM-KUSUM 2.0 latest news 2026. Expected ₹50,000 crore outlay, agro-photovoltaic models, battery storage for pumps, feeder solarisation. All updates on the successor to PM-KUSUM.',
+    date: '2026-03-24',
+    readTime: '6 min read',
+    category: 'Government Schemes',
+    content: `
+<h2>PM-KUSUM 2.0 — What's Coming for Indian Farmers</h2>
+<p>The current PM-KUSUM scheme ends in March 2026. The government is actively finalizing <strong>PM-KUSUM 2.0</strong> — the next phase with nearly 50% more funding and significant new features. Here's everything we know so far.</p>
+
+<h3>Why PM-KUSUM 2.0?</h3>
+<p>The original PM-KUSUM achieved impressive results — 10+ lakh solar pumps installed — but fell short of some targets. PM-KUSUM 2.0 aims to fix gaps and scale faster:</p>
+<ul>
+<li>Agriculture accounts for 18% of India's electricity consumption — massive solar opportunity</li>
+<li>5+ crore farmers still use diesel pumps or unreliable grid power</li>
+<li>Feeder-level solarisation reduces DISCOM agricultural subsidy burden — financial incentive for DISCOMs</li>
+<li>Budget 2026 doubled PM-KUSUM to ₹5,000 crore — strong signal of PM-KUSUM 2.0 scale-up</li>
+</ul>
+
+<h3>Expected Features of PM-KUSUM 2.0</h3>
+
+<h4>1. Much Larger Budget</h4>
+<ul>
+<li>Expected outlay: ~₹50,000 crore (current phase: ₹34,422 crore)</li>
+<li>~45-50% funding increase over current scheme</li>
+</ul>
+
+<h4>2. Agro-Photovoltaic (Agro-PV) Models</h4>
+<ul>
+<li>Solar panels installed 3-4 metres above ground — crops grow underneath</li>
+<li>Dual use of land: electricity + agriculture simultaneously</li>
+<li>Studies show: Some crops (vegetables, medicinal plants) grow better under partial solar shade</li>
+<li>Farmer earns from both crop yield AND solar power sale</li>
+<li>This model is hugely popular in Japan, Germany — PM-KUSUM 2.0 brings it to India</li>
+</ul>
+
+<h4>3. Battery Storage Integration</h4>
+<ul>
+<li>Solar pumps can only run during daylight — battery storage extends operation to evenings</li>
+<li>Farmers can pump water early morning and evening when crops need it</li>
+<li>BESS integration costs partly subsidized under PM-KUSUM 2.0</li>
+</ul>
+
+<h4>4. Expanded Feeder-Level Solarisation</h4>
+<ul>
+<li>Solar installed at agricultural feeder level — all connected farmers benefit</li>
+<li>DISCOM's agricultural power supply cost drops dramatically</li>
+<li>Reduces DISCOM's annual subsidy burden from state government</li>
+<li>Creates a financially sustainable model for agricultural solar</li>
+</ul>
+
+<h4>5. Higher Private Sector Participation</h4>
+<ul>
+<li>More transparent bidding process for Component A solar plants</li>
+<li>Better revenue sharing models for farmer-developer partnerships</li>
+<li>Private solar companies can help set up agro-PV projects with farmers</li>
+</ul>
+
+<h3>State-Wise PM-KUSUM 2.0 Expectations</h3>
+<table>
+<thead><tr><th>State</th><th>Expected Focus</th><th>Opportunity</th></tr></thead>
+<tbody>
+<tr><td>Rajasthan</td><td>Agro-PV for desert fringe agriculture</td><td>Highest solar radiation</td></tr>
+<tr><td>Maharashtra</td><td>Feeder solarisation for sugarcane belt</td><td>Massive farm power demand</td></tr>
+<tr><td>Gujarat</td><td>Integration with Kisan Suryoday Yojana</td><td>Proven infrastructure</td></tr>
+<tr><td>UP + MP</td><td>Standalone pump scale-up</td><td>Largest farming populations</td></tr>
+<tr><td>Punjab + Haryana</td><td>Feeder solarisation for paddy irrigation</td><td>High electricity subsidy burden</td></tr>
+</tbody>
+</table>
+
+<h3>What Farmers Should Do Now</h3>
+<ul>
+<li><strong>Apply under current PM-KUSUM (before March 2026 deadline) if possible</strong> — current scheme's budget is nearly exhausted in some states</li>
+<li>Register interest on your state agriculture portal for PM-KUSUM 2.0 updates</li>
+<li>Join farmer producer organizations (FPOs) — PM-KUSUM 2.0 expected to have FPO-level group applications</li>
+<li>Learn about agro-PV — contact MNRE or SECI for pilot project details in your state</li>
+</ul>
+
+<h3>Timeline</h3>
+<ul>
+<li><strong>March 2026:</strong> Current PM-KUSUM phase ends</li>
+<li><strong>Q1 2026:</strong> PM-KUSUM 2.0 framework expected to be announced</li>
+<li><strong>Q2 2026:</strong> State-level SOPs and applications expected to open</li>
+<li><strong>FY 2026-27:</strong> Full implementation of PM-KUSUM 2.0 begins</li>
+</ul>
+    `,
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
