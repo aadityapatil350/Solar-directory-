@@ -3,6 +3,8 @@ import { constructMetadata } from "@/lib/metadata";
 import Script from "next/script";
 import "./globals.css";
 
+const GA_ID = 'G-HRQJB0S57Q';
+
 export const metadata: Metadata = constructMetadata({
   title: 'Find Best Solar Installers & Companies in India',
   description: 'Discover top-rated solar panel installers, dealers, and service providers across India. Compare prices, read reviews, get free quotes. PM Surya Ghar Yojana available.',
@@ -46,6 +48,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        {/* Google Analytics 4 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+          `}
+        </Script>
+
+        {/* Schema.org */}
         <Script
           id="website-schema"
           type="application/ld+json"

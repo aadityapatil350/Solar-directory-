@@ -75,7 +75,7 @@ export function constructMetadata({
       },
     },
     verification: {
-      google: process.env.GOOGLE_SITE_VERIFICATION,
+      google: process.env.GOOGLE_SITE_VERIFICATION || 'Cz_rmQPT0CkxgxVyumpD4qoyt2Bkjax_gYv4k58T-1k',
     },
   };
 }
