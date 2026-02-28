@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -688,8 +688,8 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {leads.map((lead) => (
-                          <>
-                            <tr key={lead.id} className={`border-b border-gray-50 hover:bg-gray-50/50 transition ${expandedLeadId === lead.id ? 'bg-orange-50/30' : ''}`}>
+                          <Fragment key={lead.id}>
+                            <tr className={`border-b border-gray-50 hover:bg-gray-50/50 transition ${expandedLeadId === lead.id ? 'bg-orange-50/30' : ''}`}>
                               <td className="px-5 py-3.5">
                                 <div className="font-semibold text-gray-900">{lead.name}</div>
                                 {lead.urgency === 'urgent' && (
@@ -843,7 +843,7 @@ export default function AdminDashboard() {
                                 </td>
                               </tr>
                             )}
-                          </>
+                          </Fragment>
                         ))}
                       </tbody>
                     </table>

@@ -1,14 +1,13 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
-import { blogPosts } from '@/lib/blog';
 
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gosolarindex.in';
 
-  // Get all listings, categories, and locations
-  const [listings, categories, locations] = await Promise.all([
+  // Get all listings, categories, locations, and blog posts
+  const [listings, categories, locations, blogPosts] = await Promise.all([
     prisma.listing.findMany({
       select: {
         slug: true,
@@ -27,6 +26,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         slug: true,
         updatedAt: true,
       },
+    }),
+    prisma.blogPost.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true },
     }),
   ]);
 
@@ -87,7 +90,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   blogPosts.forEach((post) => {
     pages.push({
       url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(post.date).toISOString(),
+      lastModified: post.updatedAt.toISOString(),
       changeFrequency: 'monthly',
       priority: 0.7,
     });
