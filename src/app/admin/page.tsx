@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Zap, LogOut, RefreshCw, Trash2, Phone, Mail, MapPin, Star,
   ShieldCheck, Plus, Edit2, Send, ChevronDown, ChevronUp,
   CheckCircle2, X, Search, SlidersHorizontal, Building2,
-  FileText, AlertTriangle, TrendingUp, Users2, XCircle,
+  FileText, AlertTriangle, TrendingUp, Users2, XCircle, BookOpen,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -68,6 +70,8 @@ function ToastList({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: num
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function AdminDashboard() {
+  const router = useRouter();
+
   // Auth
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -621,6 +625,14 @@ export default function AdminDashboard() {
                 )}
               </button>
             ))}
+            {/* Blog CMS link — navigates to dedicated blog management page */}
+            <Link
+              href="/admin/blogs"
+              className="px-6 py-3.5 text-sm font-semibold text-gray-500 border-b-2 border-transparent hover:text-emerald-600 hover:bg-emerald-50/40 transition flex items-center gap-2"
+            >
+              <BookOpen className="h-4 w-4" />
+              Blog CMS
+            </Link>
           </div>
 
           <div className="p-5">

@@ -124,3 +124,24 @@ model LeadDelivery {
   @@index([installerId])
   @@index([leadId])
 }
+
+model BlogPost {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  description     String   @db.Text
+  content         String   @db.Text
+  category        String
+  date            DateTime @default(now())
+  readTime        String   @default("5 min read")
+  published       Boolean  @default(true)
+  metaTitle       String?
+  metaDescription String?  @db.Text
+  ogImage         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([slug])
+  @@index([published])
+  @@index([category])
+}

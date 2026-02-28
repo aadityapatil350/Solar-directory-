@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { constructMetadata } from '@/lib/metadata';
-import { getBlogPost, blogPosts } from '@/lib/blog';
+import { prisma } from '@/lib/prisma';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import Script from 'next/script';
 import { Clock, Tag, ChevronRight, ArrowLeft, MapPin, Zap } from 'lucide-react';
+
+export const revalidate = 3600;   // ISR — revalidate every hour
+export const dynamicParams = true; // Allow new slugs created via CMS
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -13,22 +16,32 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await prisma.blogPost.findUnique({
+    where: { slug, published: true },
+    select: { title: true, description: true, metaTitle: true, metaDescription: true, ogImage: true },
+  });
   if (!post) return {};
   return constructMetadata({
-    title: post.title,
-    description: post.description,
+    title: post.metaTitle || post.title,
+    description: post.metaDescription || post.description,
     path: `/blog/${slug}`,
   });
 }
 
-export function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const posts = await prisma.blogPost.findMany({
+    where: { published: true },
+    select: { slug: true },
+  });
+  return posts.map((p) => ({ slug: p.slug }));
 }
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+
+  const post = await prisma.blogPost.findUnique({
+    where: { slug, published: true },
+  });
   if (!post) notFound();
 
   const siteUrl = 'https://gosolarindex.in';
@@ -38,8 +51,8 @@ export default async function BlogPostPage({ params }: Props) {
     '@type': 'Article',
     headline: post.title,
     description: post.description,
-    datePublished: post.date,
-    dateModified: post.date,
+    datePublished: post.date.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
     author: { '@type': 'Organization', name: 'GoSolarIndex', url: siteUrl },
     publisher: {
       '@type': 'Organization',
@@ -47,6 +60,7 @@ export default async function BlogPostPage({ params }: Props) {
       logo: { '@type': 'ImageObject', url: `${siteUrl}/logo.png` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}/blog/${slug}` },
+    ...(post.ogImage && { image: post.ogImage }),
   };
 
   const breadcrumbSchema = {
@@ -59,7 +73,13 @@ export default async function BlogPostPage({ params }: Props) {
     ],
   };
 
-  const related = blogPosts.filter((p) => p.slug !== slug && p.category === post.category).slice(0, 3);
+  // Related posts in same category
+  const related = await prisma.blogPost.findMany({
+    where: { published: true, category: post.category, NOT: { slug } },
+    orderBy: { date: 'desc' },
+    take: 3,
+    select: { slug: true, title: true, category: true },
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -117,22 +137,16 @@ export default async function BlogPostPage({ params }: Props) {
               Find verified solar installers in your city. Get free quotes and compare prices.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/"
-                className="bg-white text-orange-600 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition"
-              >
+              <Link href="/" className="bg-white text-orange-600 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition">
                 Find Solar Installers
               </Link>
-              <Link
-                href="/pricing"
-                className="border border-white/40 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition"
-              >
+              <Link href="/pricing" className="border border-white/40 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition">
                 List Your Business
               </Link>
             </div>
           </div>
 
-          {/* ── Internal backlinks: cities + categories ── */}
+          {/* Internal backlinks: cities + categories */}
           <div className="mt-8 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
               <MapPin className="h-4 w-4 text-orange-500" />
@@ -140,22 +154,13 @@ export default async function BlogPostPage({ params }: Props) {
             </h3>
             <div className="flex flex-wrap gap-2 mb-5">
               {[
-                { city: 'Mumbai', href: '/mumbai' },
-                { city: 'Delhi', href: '/delhi' },
-                { city: 'Bangalore', href: '/bangalore' },
-                { city: 'Pune', href: '/pune' },
-                { city: 'Hyderabad', href: '/hyderabad' },
-                { city: 'Chennai', href: '/chennai' },
-                { city: 'Kolkata', href: '/kolkata' },
-                { city: 'Ahmedabad', href: '/ahmedabad' },
-                { city: 'Jaipur', href: '/jaipur' },
-                { city: 'Lucknow', href: '/lucknow' },
+                { city: 'Mumbai', href: '/mumbai' }, { city: 'Delhi', href: '/delhi' },
+                { city: 'Bangalore', href: '/bangalore' }, { city: 'Pune', href: '/pune' },
+                { city: 'Hyderabad', href: '/hyderabad' }, { city: 'Chennai', href: '/chennai' },
+                { city: 'Kolkata', href: '/kolkata' }, { city: 'Ahmedabad', href: '/ahmedabad' },
+                { city: 'Jaipur', href: '/jaipur' }, { city: 'Lucknow', href: '/lucknow' },
               ].map(({ city, href }) => (
-                <Link
-                  key={city}
-                  href={href}
-                  className="text-sm bg-orange-50 text-orange-700 hover:bg-orange-100 px-3 py-1.5 rounded-lg font-medium transition"
-                >
+                <Link key={city} href={href} className="text-sm bg-orange-50 text-orange-700 hover:bg-orange-100 px-3 py-1.5 rounded-lg font-medium transition">
                   {city}
                 </Link>
               ))}
@@ -172,11 +177,7 @@ export default async function BlogPostPage({ params }: Props) {
                 { name: 'Inverter Specialists', href: '/categories/inverter-specialists' },
                 { name: 'AMC & Maintenance', href: '/categories/amc-maintenance' },
               ].map(({ name, href }) => (
-                <Link
-                  key={name}
-                  href={href}
-                  className="text-sm bg-gray-100 text-gray-700 hover:bg-orange-50 hover:text-orange-700 px-3 py-1.5 rounded-lg font-medium transition"
-                >
+                <Link key={name} href={href} className="text-sm bg-gray-100 text-gray-700 hover:bg-orange-50 hover:text-orange-700 px-3 py-1.5 rounded-lg font-medium transition">
                   {name}
                 </Link>
               ))}
@@ -184,10 +185,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           {/* Back link */}
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-orange-600 hover:underline mt-8"
-          >
+          <Link href="/blog" className="inline-flex items-center gap-2 text-orange-600 hover:underline mt-8">
             <ArrowLeft className="h-4 w-4" />
             Back to Blog
           </Link>
@@ -198,11 +196,7 @@ export default async function BlogPostPage({ params }: Props) {
               <h2 className="text-xl font-bold text-gray-900 mb-4">Related Articles</h2>
               <div className="grid md:grid-cols-3 gap-4">
                 {related.map((p) => (
-                  <Link
-                    key={p.slug}
-                    href={`/blog/${p.slug}`}
-                    className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition group"
-                  >
+                  <Link key={p.slug} href={`/blog/${p.slug}`} className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition group">
                     <span className="text-xs text-orange-600 font-medium">{p.category}</span>
                     <h3 className="font-semibold text-gray-900 mt-1 text-sm leading-snug group-hover:text-orange-600 transition line-clamp-3">
                       {p.title}

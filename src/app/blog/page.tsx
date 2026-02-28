@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Link from 'next/link';
-import { blogPosts } from '@/lib/blog';
+import { prisma } from '@/lib/prisma';
 import { Clock, Tag, ArrowRight } from 'lucide-react';
+
+export const revalidate = 3600; // ISR — re-render every hour
 
 export const metadata: Metadata = constructMetadata({
   title: 'Solar Energy Blog — Guides, Tips & News for India',
@@ -11,8 +13,14 @@ export const metadata: Metadata = constructMetadata({
   path: '/blog',
 });
 
-export default function BlogPage() {
-  const categories = [...new Set(blogPosts.map((p) => p.category))];
+export default async function BlogPage() {
+  const posts = await prisma.blogPost.findMany({
+    where: { published: true },
+    orderBy: { date: 'desc' },
+    select: { slug: true, title: true, description: true, category: true, readTime: true, date: true },
+  });
+
+  const categories = [...new Set(posts.map((p) => p.category))];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,13 +47,12 @@ export default function BlogPage() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.map((post) => (
+          {posts.map((post) => (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
               className="bg-white rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden group"
             >
-              {/* Color banner by category */}
               <div className="h-2 bg-gradient-to-r from-orange-400 to-orange-600" />
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-3">
