@@ -7,6 +7,7 @@ import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
 import LeadForm from '@/components/LeadForm';
+import CalcPopup from '@/components/CalcPopup';
 import { Zap, ShieldCheck, Star, TrendingUp, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Listing {
@@ -156,6 +157,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <CalcPopup />
       <Header />
 
       {/* Hero */}
