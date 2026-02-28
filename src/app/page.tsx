@@ -208,8 +208,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Partners strip */}
-      {!loading && listings.filter((l) => l.featured).length > 0 && (
+      {/* Featured Partners strip — always visible */}
+      {!loading && (
         <section className="bg-white border-b py-8">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-5">
@@ -221,38 +221,81 @@ export default function Home() {
                 Premium Partners
               </span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {listings
-                .filter((l) => l.featured)
-                .slice(0, 4)
-                .map((listing) => (
-                  <a
-                    key={listing.id}
-                    href={`/listing/${listing.slug}`}
-                    className="group relative border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all"
-                  >
-                    <div className="absolute top-2 right-2">
-                      <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
-                        ⭐ Featured
-                      </span>
-                    </div>
-                    <div className="font-semibold text-gray-900 text-sm leading-tight pr-12 group-hover:text-orange-600 transition-colors">
-                      {listing.name}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">{listing.category.name}</div>
-                    <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {listing.location.city}
-                    </div>
-                    {listing.rating != null && listing.rating > 0 && (
-                      <div className="flex items-center gap-1 mt-2">
-                        <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-                        <span className="text-xs font-medium text-gray-700">{listing.rating}</span>
+
+            {listings.filter((l) => l.featured).length > 0 ? (
+              /* ── Active featured listings ── */
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {listings
+                  .filter((l) => l.featured)
+                  .slice(0, 4)
+                  .map((listing) => (
+                    <a
+                      key={listing.id}
+                      href={`/listing/${listing.slug}`}
+                      className="group relative border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all"
+                    >
+                      <div className="absolute top-2 right-2">
+                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                          ⭐ Featured
+                        </span>
                       </div>
-                    )}
+                      <div className="font-semibold text-gray-900 text-sm leading-tight pr-12 group-hover:text-orange-600 transition-colors">
+                        {listing.name}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">{listing.category.name}</div>
+                      <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {listing.location.city}
+                      </div>
+                      {listing.rating != null && listing.rating > 0 && (
+                        <div className="flex items-center gap-1 mt-2">
+                          <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
+                          <span className="text-xs font-medium text-gray-700">{listing.rating}</span>
+                        </div>
+                      )}
+                    </a>
+                  ))}
+              </div>
+            ) : (
+              /* ── No featured listings → CTA slots ── */
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((slot) => (
+                  <a
+                    key={slot}
+                    href="mailto:aadityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex&body=Hi%2C%0A%0AI%20would%20like%20to%20feature%20my%20solar%20business%20on%20GoSolarIndex.%0A%0ABusiness%20Name%3A%0APhone%3A%0ACity%3A%0AWebsite%3A%0A%0APlease%20get%20back%20to%20me%20with%20the%20details."
+                    className="group relative border-2 border-dashed border-yellow-300 bg-gradient-to-br from-yellow-50/60 to-orange-50/60 rounded-xl p-4 hover:border-orange-400 hover:bg-orange-50 hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[110px]"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-yellow-100 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
+                      <Star className="h-4 w-4 text-yellow-500 group-hover:fill-yellow-400 transition-colors" />
+                    </div>
+                    <div className="font-semibold text-gray-500 group-hover:text-orange-600 text-xs transition-colors leading-snug">
+                      Your Business Here
+                    </div>
+                    <span className="text-xs text-orange-500 font-medium group-hover:underline">
+                      Get Featured →
+                    </span>
                   </a>
                 ))}
-            </div>
+              </div>
+            )}
+
+            {/* CTA below the grid */}
+            {listings.filter((l) => l.featured).length === 0 && (
+              <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 bg-orange-50 border border-orange-200 rounded-xl px-5 py-4">
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Want to be a Featured Partner?</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Get top placement, a verified badge, and priority leads. Email us your business details to get started.
+                  </p>
+                </div>
+                <a
+                  href="mailto:aadityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex&body=Hi%2C%0A%0AI%20would%20like%20to%20feature%20my%20solar%20business%20on%20GoSolarIndex.%0A%0ABusiness%20Name%3A%0APhone%3A%0ACity%3A%0AWebsite%3A%0A%0APlease%20get%20back%20to%20me%20with%20the%20details."
+                  className="shrink-0 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition whitespace-nowrap"
+                >
+                  Email Us to Get Featured
+                </a>
+              </div>
+            )}
           </div>
         </section>
       )}
