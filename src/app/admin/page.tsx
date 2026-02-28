@@ -63,13 +63,16 @@ type Tab = 'leads' | 'listings' | 'installers';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('leads');
+  const [loginEmail, setLoginEmail] = useState('');
   const [auth, setAuth] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminUser, setAdminUser] = useState<{ name: string; email: string } | null>(null);
 
   // Leads state
   const [leads, setLeads] = useState<any[]>([]);
-  const [leadsLoading, setLeadsLoading] = useState(true);
+  const [leadsLoading, setLeadsLoading] = useState(false);
   const [leadsFilter, setLeadsFilter] = useState('all');
 
   // Suggest-installers panel state
@@ -117,15 +120,27 @@ export default function AdminDashboard() {
   const [categories, setCategories] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
 
-  // Auth check
+  // Auth check — restore session from localStorage
   useEffect(() => {
     const savedAuth = localStorage.getItem('adminAuth');
-    if (savedAuth) {
+    const savedEmail = localStorage.getItem('adminEmail');
+    const savedName = localStorage.getItem('adminName');
+    if (savedAuth && savedEmail) {
       setAuth(savedAuth);
+      setLoginEmail(savedEmail);
       setIsAuthenticated(true);
+      if (savedName) setAdminUser({ name: savedName, email: savedEmail });
       fetchAllData(savedAuth);
+      fetchLeadsWithToken(savedAuth);
     }
   }, []);
+
+  // Reload leads when filter changes or when leads tab becomes active
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'leads') {
+      fetchLeadsWithToken(auth);
+    }
+  }, [leadsFilter, activeTab, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAllData = async (authToken: string) => {
     try {
@@ -152,14 +167,22 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchLeads = async () => {
+  // Fetch leads using a given token (avoids stale closure on auth state)
+  const fetchLeadsWithToken = async (token: string, filter?: string) => {
     setLeadsLoading(true);
     try {
-      const response = await fetch(`/api/admin/leads?status=${leadsFilter}`, {
-        headers: { Authorization: `Bearer ${auth}` },
+      const statusParam = filter ?? leadsFilter;
+      const response = await fetch(`/api/admin/leads?status=${statusParam}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      if (!response.ok) {
+        console.error('Leads fetch failed:', response.status);
+        setLeads([]);
+        return;
+      }
       const data = await response.json();
       setLeads(data.leads || []);
+      if (data.adminUser) setAdminUser(data.adminUser);
       setStats(prev => ({ ...prev, totalLeads: data.stats?.total || 0, newLeads: data.stats?.new || 0 }));
     } catch (error) {
       console.error('Error fetching leads:', error);
@@ -167,6 +190,8 @@ export default function AdminDashboard() {
       setLeadsLoading(false);
     }
   };
+
+  const fetchLeads = () => fetchLeadsWithToken(auth);
 
   const toggleSuggestPanel = async (lead: any) => {
     if (expandedLeadId === lead.id) {
@@ -410,12 +435,35 @@ export default function AdminDashboard() {
     setTimeout(() => setMessage(null), 5000);
   };
 
-  // Login
-  const handleLogin = (e: React.FormEvent) => {
+  // Login — verify credentials server-side before granting access
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsAuthenticated(true);
-    localStorage.setItem('adminAuth', auth);
-    fetchAllData(auth);
+    setLoginError('');
+    setLoginLoading(true);
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail.trim(), password: auth }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLoginError(data.error || 'Invalid credentials');
+        return;
+      }
+      // Credentials verified — persist session
+      localStorage.setItem('adminAuth', auth);
+      localStorage.setItem('adminEmail', loginEmail.trim());
+      if (data.name) localStorage.setItem('adminName', data.name);
+      setAdminUser({ name: data.name, email: data.email });
+      setIsAuthenticated(true);
+      fetchAllData(auth);
+      fetchLeadsWithToken(auth);
+    } catch {
+      setLoginError('Network error. Please try again.');
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
   // Logout
@@ -423,7 +471,11 @@ export default function AdminDashboard() {
     setIsAuthenticated(false);
     setAdminUser(null);
     localStorage.removeItem('adminAuth');
+    localStorage.removeItem('adminEmail');
+    localStorage.removeItem('adminName');
     setAuth('');
+    setLoginEmail('');
+    setLeads([]);
   };
 
   if (!isAuthenticated) {
@@ -435,7 +487,27 @@ export default function AdminDashboard() {
             <h1 className="text-2xl font-bold text-gray-900">Go Solar Index Admin</h1>
             <p className="text-gray-600">Login to manage your solar directory</p>
           </div>
+
+          {loginError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-center gap-2">
+              <X className="h-4 w-4 flex-shrink-0" />
+              {loginError}
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Admin Email</label>
+              <input
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="Enter admin email"
+                required
+                autoComplete="username"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <input
@@ -444,13 +516,16 @@ export default function AdminDashboard() {
                 onChange={(e) => setAuth(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Enter admin password"
+                required
+                autoComplete="current-password"
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
+              disabled={loginLoading}
+              className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Login to Dashboard
+              {loginLoading ? 'Verifying...' : 'Login to Dashboard'}
             </button>
           </form>
         </div>
