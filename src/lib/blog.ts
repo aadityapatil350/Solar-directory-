@@ -2163,6 +2163,906 @@ export const blogPosts: BlogPost[] = [
 </ul>
     `,
   },
+
+  {
+    slug: 'do-solar-panels-work-monsoon-cloudy-weather-india',
+    title: 'Do Solar Panels Work in Monsoon & Cloudy Weather? India Answer (2026)',
+    description: 'Do solar panels work during monsoon season or on cloudy days in India? Yes — here\'s how much output drops, which states are most affected, and how to maximise generation year-round.',
+    date: '2026-03-01',
+    readTime: '5 min read',
+    category: 'Solar Basics',
+    content: `
+<h2>Do Solar Panels Work in Monsoon & Cloudy Weather? The Short Answer</h2>
+<p><strong>Yes — solar panels still generate electricity on cloudy days and during monsoon season.</strong> They don't need direct sunlight, only daylight (solar irradiance). But output does drop — typically to 10–25% of peak capacity on heavily overcast days.</p>
+<p>For Indian homeowners considering solar, this is one of the most common concerns. Let's break it down with real numbers.</p>
+
+<h2>How Solar Panels Work on Cloudy Days</h2>
+<p>Solar panels work by converting photons (light particles) into electricity via the photovoltaic effect. On cloudy days:</p>
+<ul>
+<li>Diffuse light (scattered sunlight through clouds) still reaches your panels</li>
+<li>A 3kW system that produces 12–15 units/day in summer might produce 3–6 units on a heavily overcast monsoon day</li>
+<li>Partly cloudy days: output is roughly 50–70% of peak</li>
+<li>Fully overcast/heavy rain: output drops to 10–25% of peak</li>
+</ul>
+<p><strong>Important:</strong> During monsoon, you also consume less electricity (less AC, fewer fans at full speed), so the deficit is smaller than you might expect.</p>
+
+<h2>India's Monsoon Season — State-by-State Impact</h2>
+<table>
+<thead><tr><th>Region</th><th>Monsoon Duration</th><th>Solar Impact</th><th>Annual GHI Impact</th></tr></thead>
+<tbody>
+<tr><td>Kerala, Coastal Karnataka</td><td>June–October (5 months)</td><td>High — heavy rains</td><td>~15–20% annual loss</td></tr>
+<tr><td>Maharashtra, Goa</td><td>June–September (4 months)</td><td>Moderate-high</td><td>~12–15% annual loss</td></tr>
+<tr><td>West Bengal, Northeast</td><td>June–September</td><td>High</td><td>~18% annual loss</td></tr>
+<tr><td>Delhi, UP, Bihar</td><td>July–September (3 months)</td><td>Moderate</td><td>~8–12% annual loss</td></tr>
+<tr><td>Rajasthan, Gujarat</td><td>Short/Light monsoon</td><td>Low</td><td>~5–8% annual loss</td></tr>
+<tr><td>Tamil Nadu</td><td>Northeast monsoon (Oct–Dec)</td><td>Low-moderate</td><td>~10% annual loss</td></tr>
+</tbody>
+</table>
+<p>Even in Kerala — India's rainiest state — solar panels generate enough annual electricity to give a positive ROI. The system is sized to account for monsoon months.</p>
+
+<h2>Real Numbers: Annual Solar Generation Including Monsoon</h2>
+<p>Solar installers use "Global Horizontal Irradiance" (GHI) data that already factors in historical cloud cover and monsoon patterns. A properly sized system in India delivers:</p>
+<ul>
+<li><strong>Mumbai (3kW system):</strong> ~3,800–4,200 units/year (including 4 months monsoon)</li>
+<li><strong>Delhi (3kW system):</strong> ~4,200–4,600 units/year (shorter monsoon)</li>
+<li><strong>Bangalore (3kW system):</strong> ~4,000–4,400 units/year</li>
+<li><strong>Chennai (3kW system):</strong> ~4,400–4,800 units/year</li>
+<li><strong>Kolkata (3kW system):</strong> ~3,600–4,000 units/year</li>
+</ul>
+<p>Your inverter will show you daily generation — expect significantly lower numbers during peak monsoon months.</p>
+
+<h2>Do Solar Panels Work in Heavy Rain?</h2>
+<p>Yes, with a bonus: <strong>rain actually cleans your panels</strong>, removing dust and bird droppings that reduce efficiency. A post-rain panel often works better than a dusty dry-season panel.</p>
+<p>Rain doesn't damage solar panels — they're rated IP67 (completely waterproof) and tested for hail up to 25mm diameter. Indian panels must also meet IEC 61215 and IEC 61730 standards that include rain and humidity testing.</p>
+
+<h2>What About Solar Panels During Cyclones?</h2>
+<p>India's coasts (Odisha, Andhra Pradesh, Tamil Nadu, Gujarat) face cyclones. Premium solar panels are rated for wind speeds up to 2,400 Pa (about 200 km/h). Proper mounting on RCC/metal roofs with correct tilt angles handles cyclone-prone areas well. Consult your installer about cyclone-rated racking systems if you're in a cyclone zone.</p>
+
+<h2>Tips to Maximise Solar Output Year-Round in India</h2>
+<ul>
+<li><strong>Choose high-efficiency panels:</strong> Monocrystalline panels (20–22% efficiency) perform better than polycrystalline in low-light/diffuse conditions. Worth the ₹5,000–10,000 extra per kW.</li>
+<li><strong>Correct tilt angle:</strong> Panels tilted at your latitude angle capture more diffuse radiation during monsoon months.</li>
+<li><strong>Oversizing slightly:</strong> If your roof allows, installing 10–20% more capacity than your calculated requirement compensates for monsoon months.</li>
+<li><strong>Net metering is your friend:</strong> Export surplus from sunny months, draw from grid during monsoon months — your annual bill nets out to near zero.</li>
+<li><strong>Battery backup (for off-grid):</strong> If you're in an area with grid outages, size your battery bank to cover 2–3 days of monsoon generation (not just 1 day).</li>
+<li><strong>Panel cleaning after monsoon:</strong> Once the monsoon ends, a professional cleaning restores full efficiency.</li>
+</ul>
+
+<h2>Monsoon Performance: Monocrystalline vs Polycrystalline</h2>
+<p>Monocrystalline panels have a clear advantage in diffuse/low-light conditions due to their higher cell efficiency. In monsoon-heavy states like Kerala, Maharashtra, and West Bengal, mono panels generate 5–10% more electricity annually compared to poly panels of the same rated wattage. The price difference has narrowed considerably in 2025-26, making mono the recommended choice for most Indian homes.</p>
+
+<h2>The Bottom Line</h2>
+<p>Solar panels work in monsoon India — every solar installer knows this and factors it into their ROI calculations. Typical Indian solar systems have payback periods of 4–6 years and 25-year warranties, meaning you earn for 19–21 years after payback. Monsoon months reduce output but don't change the fundamental economics.</p>
+<p>If you're concerned about monsoon impact in your specific city, ask your installer for the GHI data and month-wise generation estimate before signing. Any credible installer will have this data.</p>
+    `,
+  },
+
+  {
+    slug: 'on-grid-off-grid-hybrid-solar-system-india-comparison',
+    title: 'On Grid vs Off Grid vs Hybrid Solar System India — Which Is Best for You? (2026)',
+    description: 'On grid, off grid, or hybrid solar system — which should you choose in India? Complete comparison with costs, benefits, when to choose each, and recommendations for Indian homes and businesses.',
+    date: '2026-03-02',
+    readTime: '8 min read',
+    category: 'Solar Basics',
+    content: `
+<h2>On Grid vs Off Grid vs Hybrid Solar System — The Definitive India Guide</h2>
+<p>This is the most important decision when going solar. Get it wrong and you either overpay by ₹1–3 lakh or end up without backup during power cuts. Here's a complete breakdown for Indian conditions.</p>
+
+<h2>Quick Summary</h2>
+<table>
+<thead><tr><th>Feature</th><th>On Grid</th><th>Off Grid</th><th>Hybrid</th></tr></thead>
+<tbody>
+<tr><td>Battery Required</td><td>No</td><td>Yes</td><td>Yes (smaller)</td></tr>
+<tr><td>Grid Connection</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+<tr><td>Power During Cuts</td><td>No ❌</td><td>Yes ✅</td><td>Yes ✅</td></tr>
+<tr><td>Net Metering</td><td>Yes ✅</td><td>No ❌</td><td>Yes ✅</td></tr>
+<tr><td>Relative Cost (3kW)</td><td>₹1.5–2.0 lakh</td><td>₹2.5–3.5 lakh</td><td>₹2.0–3.0 lakh</td></tr>
+<tr><td>Subsidy Eligible</td><td>Yes ✅</td><td>No ❌</td><td>Partial ✅</td></tr>
+<tr><td>Best For</td><td>Grid-stable areas</td><td>Remote/no grid</td><td>Urban + cuts</td></tr>
+</tbody>
+</table>
+
+<h2>On-Grid Solar System (Grid-Tied)</h2>
+
+<h3>How It Works</h3>
+<p>Your solar panels generate DC electricity → on-grid inverter converts to AC → powers your home → excess sent to grid via net metering → you earn credits on your electricity bill.</p>
+<p>When solar generation is less than your consumption (nights, cloudy days), the grid supplies the deficit automatically.</p>
+
+<h3>Key Advantage: Net Metering</h3>
+<p>Export surplus electricity and import at night. Your DISCOM's meter spins backward (or a bidirectional meter records imports/exports separately). At month-end, you pay only the "net" units consumed. In sunny months, your bill can go to ₹0 or even earn a small credit.</p>
+
+<h3>Critical Limitation: No Backup</h3>
+<p><strong>On-grid inverters automatically shut down during power cuts.</strong> This is an international safety standard (anti-islanding) to protect grid workers. So if your area has 4-hour daily power cuts, your solar system sits idle during those cuts too — even when the sun is shining.</p>
+
+<h3>Who Should Choose On-Grid</h3>
+<ul>
+<li>Areas with reliable grid supply (less than 1 hour/day cuts)</li>
+<li>Urban metros — Mumbai, Bangalore, Pune, Chennai (minimal cuts)</li>
+<li>Businesses where battery maintenance is a concern</li>
+<li>When budget is tight — lowest upfront cost + maximum subsidy</li>
+</ul>
+
+<h3>On-Grid Inverter Brands in India (2026)</h3>
+<ul>
+<li><strong>Sungrow (China/India):</strong> Best value, widely used, 10-year warranty</li>
+<li><strong>SMA (Germany):</strong> Premium, reliable, 5-year standard + 5 optional</li>
+<li><strong>Growatt (China):</strong> Budget-friendly, improving quality</li>
+<li><strong>Fronius (Austria):</strong> Premium monitoring, expensive</li>
+<li><strong>Havells, Luminous (India):</strong> Local brands, good service network</li>
+</ul>
+
+<h2>Off-Grid Solar System</h2>
+
+<h3>How It Works</h3>
+<p>Solar panels → charge controller → battery bank → off-grid inverter → your home. No grid connection at all. The battery stores excess daytime energy for night use.</p>
+
+<h3>Battery Sizing Is Critical</h3>
+<p>For an Indian home consuming 10 units/day, a typical off-grid system needs:</p>
+<ul>
+<li>Solar panels: 3–4 kW (to charge batteries + meet daytime load)</li>
+<li>Battery: 10–15 kWh (2-3 days autonomy during cloudy/monsoon periods)</li>
+<li>Lead-acid: ₹80,000–1,20,000 for 10 kWh (needs replacement every 4–5 years)</li>
+<li>Lithium (LFP): ₹1,50,000–2,00,000 for 10 kWh (10+ year life)</li>
+</ul>
+
+<h3>Who Should Choose Off-Grid</h3>
+<ul>
+<li>Remote areas with no grid access (villages, farms, forest areas)</li>
+<li>Areas with 8+ hours of daily power cuts</li>
+<li>Telecom towers, remote monitoring stations</li>
+<li>Farm pumps under PM-KUSUM where grid is unreliable</li>
+<li>Resorts, homestays in hilly/coastal areas</li>
+</ul>
+<p><strong>Important:</strong> Off-grid systems are NOT eligible for PM Surya Ghar Yojana subsidy (which requires grid connection + net metering).</p>
+
+<h2>Hybrid Solar System (Best of Both Worlds)</h2>
+
+<h3>How It Works</h3>
+<p>Solar panels → hybrid inverter → battery bank AND grid connection. The hybrid inverter manages all three sources intelligently:</p>
+<ol>
+<li>Solar powers loads first</li>
+<li>Excess solar charges battery</li>
+<li>Battery runs home during power cuts</li>
+<li>If battery low + no solar, grid charges battery and powers home</li>
+<li>When battery full + surplus solar, exports to grid for net metering credit</li>
+</ol>
+
+<h3>Why Hybrid Is Most Popular in India (2025-26)</h3>
+<p>India's electricity infrastructure has improved but power cuts remain common in tier-2/3 cities, small towns, and semi-urban areas. Hybrid gives you:</p>
+<ul>
+<li>Backup during power cuts ✅</li>
+<li>Net metering earnings ✅</li>
+<li>PM Surya Ghar Yojana subsidy eligibility ✅ (the system is grid-connected)</li>
+<li>Smaller battery than off-grid (typically 5–10 kWh vs 10–20 kWh for off-grid)</li>
+</ul>
+
+<h3>Hybrid System Cost (2026)</h3>
+<table>
+<thead><tr><th>System Size</th><th>Without Battery</th><th>With 5kWh LFP Battery</th><th>With 10kWh LFP Battery</th></tr></thead>
+<tbody>
+<tr><td>2 kW</td><td>₹1.0–1.3 lakh</td><td>₹2.0–2.5 lakh</td><td>₹2.8–3.5 lakh</td></tr>
+<tr><td>3 kW</td><td>₹1.3–1.7 lakh</td><td>₹2.5–3.0 lakh</td><td>₹3.2–4.0 lakh</td></tr>
+<tr><td>5 kW</td><td>₹2.0–2.5 lakh</td><td>₹3.5–4.5 lakh</td><td>₹4.5–5.5 lakh</td></tr>
+<tr><td>10 kW</td><td>₹3.5–4.5 lakh</td><td>₹6.0–7.5 lakh</td><td>₹7.5–9.0 lakh</td></tr>
+</tbody>
+</table>
+
+<h3>Top Hybrid Inverter Brands in India</h3>
+<ul>
+<li><strong>Sungrow SH Series:</strong> Best value, excellent monitoring app, widely available</li>
+<li><strong>Growatt MIN TL-XH:</strong> Budget hybrid, improving quality, good for smaller homes</li>
+<li><strong>Deye (China):</strong> Popular with installers, good features at mid-range price</li>
+<li><strong>SMA Sunny Boy Storage:</strong> Premium, German quality, expensive</li>
+<li><strong>Luminous NXG Pro:</strong> Popular Indian brand, good service network</li>
+<li><strong>Eastman (India):</strong> Rising Indian brand, competitive pricing</li>
+</ul>
+
+<h2>Which System Should You Choose?</h2>
+
+<h3>Choose On-Grid if:</h3>
+<ul>
+<li>You're in a metro city with stable grid (Mumbai, Bangalore, Pune, Chennai)</li>
+<li>Budget is the primary constraint</li>
+<li>You want maximum subsidy benefit</li>
+<li>Power cuts are rare (less than 30 min/day on average)</li>
+</ul>
+
+<h3>Choose Hybrid if:</h3>
+<ul>
+<li>You have 2–6 hours of daily power cuts</li>
+<li>You have critical loads (home office, medical equipment, refrigerator must stay on)</li>
+<li>You're in a tier-2/3 city, small town, or semi-urban area</li>
+<li>You want future-proofing (can add more batteries later)</li>
+<li><strong>This is the best choice for most Indian homes in 2026</strong></li>
+</ul>
+
+<h3>Choose Off-Grid if:</h3>
+<ul>
+<li>No grid electricity available at your location</li>
+<li>Grid is available but extremely unreliable (8+ hours daily cuts)</li>
+<li>You want 100% energy independence regardless of cost</li>
+<li>Remote/rural location where grid extension is expensive</li>
+</ul>
+
+<h2>The Subsidy Factor</h2>
+<p>PM Surya Ghar Yojana subsidy (₹30,000–78,000 for 1–3 kW systems) is available for <strong>on-grid and hybrid systems only</strong> — the system must be grid-connected. Off-grid systems get no central subsidy, though some state schemes offer partial support.</p>
+<p>For a 3kW system, the ₹78,000 central subsidy alone covers ~40-50% of the cost difference between on-grid and hybrid. This often makes hybrid the clear winner economically.</p>
+    `,
+  },
+
+  {
+    slug: 'how-long-do-solar-panels-last-india',
+    title: 'How Long Do Solar Panels Last in India? Lifespan, Degradation & Warranty Guide (2026)',
+    description: 'How long do solar panels last in India\'s heat, dust and monsoon conditions? Most panels last 25–30 years. Here\'s what affects lifespan, what warranties cover, and how to make panels last longer.',
+    date: '2026-03-03',
+    readTime: '6 min read',
+    category: 'Solar Basics',
+    content: `
+<h2>How Long Do Solar Panels Last in India?</h2>
+<p>Most quality solar panels installed in India today come with a <strong>25-year performance warranty</strong> and are designed to last <strong>30+ years</strong>. This is one of solar's biggest advantages — once installed, you get clean electricity for three decades with almost zero ongoing costs.</p>
+<p>But "last 25 years" needs unpacking. Panels don't suddenly stop working at year 25 — they gradually produce less electricity over time. Here's what you need to know.</p>
+
+<h2>Solar Panel Degradation Rate Explained</h2>
+<p>Solar panels degrade slowly over time — each year they produce slightly less electricity due to:</p>
+<ul>
+<li>UV exposure causing cell material changes</li>
+<li>Thermal cycling (heat during day, cooling at night) causing micro-cracks</li>
+<li>Moisture ingress over decades</li>
+<li>Light-induced degradation (LID) in the first year</li>
+</ul>
+<p><strong>Typical degradation rates in India:</strong></p>
+<table>
+<thead><tr><th>Year</th><th>Output Remaining</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Year 1</td><td>97–98%</td><td>First-year LID (light-induced degradation)</td></tr>
+<tr><td>Year 5</td><td>95–96%</td><td>Minimal additional loss</td></tr>
+<tr><td>Year 10</td><td>91–93%</td><td>~0.5% loss/year</td></tr>
+<tr><td>Year 20</td><td>85–88%</td><td>Still highly productive</td></tr>
+<tr><td>Year 25</td><td>80–84%</td><td>Standard warranty minimum (80%)</td></tr>
+<tr><td>Year 30</td><td>75–80%</td><td>Still usable, most panels keep working</td></tr>
+</tbody>
+</table>
+<p>A quality panel producing 400W today will produce ~320–340W at year 25 — still economically useful.</p>
+
+<h2>Indian Climate Conditions: Does Heat Affect Lifespan?</h2>
+<p>India's climate is harsher than Europe where most panels were originally tested. Concerns include:</p>
+
+<h3>High Temperatures</h3>
+<p>Solar panels actually produce less electricity as temperature rises (temperature coefficient effect). A panel rated at 400W at 25°C produces ~370W when surface temperature hits 65°C (common in Rajasthan summers). However, this affects daily output, not lifespan significantly.</p>
+<p>Choose panels with lower temperature coefficients (−0.26%/°C or better) if you're in a hot climate like Rajasthan, Gujarat, or Tamil Nadu.</p>
+
+<h3>Dust and Soiling</h3>
+<p>India's dusty conditions (especially in northern plains and semi-arid regions) are a bigger day-to-day concern than lifespan. Dust accumulation can reduce output by 15–30% if panels aren't cleaned. Clean every 2–4 weeks in summer, or install with a slight tilt (10°+) for rain self-cleaning.</p>
+<p>Dust affects productivity but doesn't shorten panel lifespan.</p>
+
+<h3>Monsoon Humidity</h3>
+<p>Quality panels are rated IP67 (fully waterproof). The issue isn't rain but prolonged high humidity causing potential-induced degradation (PID) in lower-quality panels. Buy panels with anti-PID certification if you're in Kerala, coastal Karnataka, or Goa.</p>
+
+<h3>UV Exposure</h3>
+<p>India receives significantly more UV than Europe. This does slightly accelerate EVA encapsulant yellowing and backsheet degradation in cheap panels. Tier-1 panels with UV-resistant materials handle this well. Avoid anonymous brands without IEC certification.</p>
+
+<h2>Solar Panel Warranties — What They Actually Cover</h2>
+
+<h3>Performance Warranty (25 years)</h3>
+<p>The manufacturer guarantees your panel will produce at least 80% of its rated power at year 25. If degradation is faster, they must replace or compensate.</p>
+<p><strong>Problem:</strong> Most Chinese manufacturers may not exist in 25 years. Even established brands may not have India operations in 2050. This is why buying from companies with Indian subsidiaries or strong distributor networks matters.</p>
+
+<h3>Product Warranty (10–12 years)</h3>
+<p>Covers physical defects — delamination, frame damage, junction box failure, broken glass. This is more meaningful than performance warranty for the first decade.</p>
+
+<h3>Best-in-Class Warranties in India (2026)</h3>
+<ul>
+<li><strong>Waaree (Indian):</strong> 12-year product + 25-year performance — reliable since they have India offices</li>
+<li><strong>Adani Solar (Indian):</strong> 10-year product + 25-year performance</li>
+<li><strong>REC (Norwegian, manufactured in Singapore):</strong> 20-year product + 25-year performance (premium)</li>
+<li><strong>LONGi Hi-MO (Chinese):</strong> 15-year product + 30-year performance (industry-leading)</li>
+<li><strong>Jinko Solar (Chinese):</strong> 12-year product + 25-year performance</li>
+</ul>
+
+<h2>What Actually Fails Before the Panels?</h2>
+<p>In practice, the components that need replacement before your 25-year panel warranty expires are:</p>
+<ul>
+<li><strong>Inverter:</strong> 10–15 year lifespan. Budget ₹30,000–80,000 for a replacement at year 12–15.</li>
+<li><strong>Batteries (if hybrid/off-grid):</strong> Lead-acid: 4–5 years, Lithium LFP: 10+ years.</li>
+<li><strong>MC4 connectors:</strong> Should be inspected every 5 years; cheap connectors fail in 5–8 years.</li>
+<li><strong>Mounting structure:</strong> Hot-dip galvanised or aluminium lasts 25+ years. Painted MS structure may rust in 8–10 years in coastal areas.</li>
+<li><strong>DC cables:</strong> Quality solar cables (UV-resistant) last 25+ years. Cheap PVC cables may degrade in 10 years.</li>
+</ul>
+
+<h2>How to Make Your Solar Panels Last Longer in India</h2>
+<ol>
+<li><strong>Choose Tier-1 panels</strong> with proper IEC 61215 + IEC 61730 certifications. Never buy uncertified budget panels.</li>
+<li><strong>Professional installation</strong> — improper mounting, wiring, or grounding causes premature failure.</li>
+<li><strong>Regular cleaning</strong> — every 2–4 weeks in dusty areas prevents hot spots that accelerate degradation.</li>
+<li><strong>Annual inspection</strong> — check for loose connections, micro-cracks (with thermal camera), soiling, and mounting corrosion.</li>
+<li><strong>Quality mounting structure</strong> — aluminium or hot-dip galvanised steel. Avoid painted MS steel in coastal/high-humidity zones.</li>
+<li><strong>Shade-free installation</strong> — even partial shading from a new construction causes hot spots and early cell degradation. Plan for future shade during site survey.</li>
+<li><strong>Proper grounding</strong> — protects against lightning strikes and electrical surge damage.</li>
+</ol>
+
+<h2>Real-World Data: How Long Do Indian Solar Installations Last?</h2>
+<p>India's utility-scale solar sector (since 2010) gives us real data. NTPC, Adani, and state DISCOMs report that well-maintained systems show:</p>
+<ul>
+<li>Average degradation: 0.45–0.55%/year (better than 0.7% warranty rate)</li>
+<li>Very few panel failures in the first 10 years for Tier-1 brands</li>
+<li>Inverter replacements at year 10–14 are common</li>
+<li>Systems installed in 2010–2012 are still operating well in 2026 (15+ years)</li>
+</ul>
+<p>The conclusion: quality solar panels last well beyond their 25-year warranty in Indian conditions.</p>
+
+<h2>The Financial Math Over 25 Years</h2>
+<p>A 3kW system in Delhi:</p>
+<ul>
+<li>Year 1 generation: ~4,400 units @ ₹8/unit = ₹35,200 savings</li>
+<li>Year 25 generation (20% degraded): ~3,520 units = ₹28,160 savings (assuming same tariff)</li>
+<li>Total 25-year savings: ~₹7,50,000–8,50,000 (electricity tariffs will rise over time)</li>
+<li>System cost: ₹1.5–2.0 lakh (after subsidy)</li>
+<li><strong>Net gain: ₹6–7 lakh over 25 years</strong></li>
+</ul>
+<p>This assumes no major component replacement. Add ₹50,000–70,000 for inverter replacement at year 12–15. The economics still work overwhelmingly in your favour.</p>
+    `,
+  },
+
+  {
+    slug: 'monocrystalline-vs-polycrystalline-solar-panels-india',
+    title: 'Monocrystalline vs Polycrystalline Solar Panels in India — Which Is Better? (2026)',
+    description: 'Monocrystalline vs polycrystalline solar panels — which should you buy in India? Complete comparison of efficiency, price, performance in Indian climate, and our recommendation for 2026.',
+    date: '2026-03-04',
+    readTime: '6 min read',
+    category: 'Solar Basics',
+    content: `
+<h2>Monocrystalline vs Polycrystalline Solar Panels — The India Guide</h2>
+<p>If you've been getting solar quotes in India, you've probably heard both terms. In 2026, this is actually a simpler decision than it was a few years ago. Here's the complete comparison.</p>
+
+<h2>The Short Answer</h2>
+<p><strong>In 2026, monocrystalline (mono) panels are the better choice for most Indian homes.</strong> The price difference has shrunk to near zero, while efficiency and low-light performance advantages of mono panels remain significant.</p>
+
+<h2>What Is the Difference?</h2>
+
+<h3>Silicon Crystal Structure</h3>
+<p>Both types use silicon as the semiconductor material, but manufactured differently:</p>
+<ul>
+<li><strong>Monocrystalline:</strong> Made from a single crystal of pure silicon (Czochralski process). Uniform dark black/blue cells. Octagonal cell shape (corners cut).</li>
+<li><strong>Polycrystalline (or multicrystalline):</strong> Made from multiple silicon crystal fragments melted together. Blue/metallic non-uniform appearance. Square cells.</li>
+</ul>
+
+<h2>Efficiency Comparison</h2>
+<table>
+<thead><tr><th>Panel Type</th><th>Typical Efficiency</th><th>Best in Class</th><th>Watts per sq. metre</th></tr></thead>
+<tbody>
+<tr><td>Monocrystalline (PERC)</td><td>19–22%</td><td>22–24%</td><td>190–220W/m²</td></tr>
+<tr><td>Monocrystalline (TOPCon)</td><td>21–23%</td><td>24–25%</td><td>210–230W/m²</td></tr>
+<tr><td>Polycrystalline</td><td>15–18%</td><td>18–19%</td><td>150–180W/m²</td></tr>
+</tbody>
+</table>
+<p><strong>Practical impact:</strong> A mono panel generates the same electricity in ~20% less roof space compared to a poly panel. If your roof is small, this matters a lot.</p>
+
+<h2>Price Comparison in India (2026)</h2>
+<table>
+<thead><tr><th>Panel Type</th><th>Price per Watt (installed)</th><th>3kW System Cost</th></tr></thead>
+<tbody>
+<tr><td>Poly (standard)</td><td>₹35–42/W</td><td>₹1.05–1.26 lakh</td></tr>
+<tr><td>Mono PERC</td><td>₹38–48/W</td><td>₹1.14–1.44 lakh</td></tr>
+<tr><td>Mono TOPCon</td><td>₹45–55/W</td><td>₹1.35–1.65 lakh</td></tr>
+</tbody>
+</table>
+<p>The price gap between poly and mono PERC is now only ₹3,000–15,000 for a 3kW system — much smaller than 2–3 years ago when it was ₹20,000–40,000. TOPCon panels cost more but offer next-generation efficiency.</p>
+
+<h2>Performance in Indian Climate Conditions</h2>
+
+<h3>High Temperature Performance</h3>
+<p>Both panel types lose output as temperature rises (temperature coefficient). Mono panels generally have slightly better temperature coefficients:</p>
+<ul>
+<li>Mono PERC: −0.34 to −0.38%/°C</li>
+<li>Poly: −0.40 to −0.45%/°C</li>
+</ul>
+<p>In a city like Ahmedabad or Jaipur where summer panel temperatures hit 65–70°C, mono panels generate 3–6% more electricity in peak summer due to better temperature response.</p>
+
+<h3>Low-Light Performance (Monsoon/Cloudy Days)</h3>
+<p>Mono panels perform significantly better in diffuse/low-light conditions. The single-crystal structure captures more photons at lower light intensities. During monsoon months:</p>
+<ul>
+<li>Mono panels: 15–25% output at full overcast</li>
+<li>Poly panels: 10–18% output at full overcast</li>
+</ul>
+<p>For states with long monsoon seasons (Kerala, Maharashtra, West Bengal), this difference accumulates to hundreds of additional units per year.</p>
+
+<h3>Degradation Rate</h3>
+<ul>
+<li>Mono PERC: ~0.45%/year typical degradation</li>
+<li>Poly: ~0.55–0.60%/year typical degradation</li>
+</ul>
+<p>Over 25 years, mono panels retain more of their original output — meaningful for long-term ROI calculations.</p>
+
+<h2>Space Efficiency — Critical for Indian Rooftops</h2>
+<p>India's urban homes often have small usable roof areas (30–60 sq. metres after obstructions). Space efficiency directly affects how many kW you can install:</p>
+<table>
+<thead><tr><th>Roof Space</th><th>Poly Panels (17% eff)</th><th>Mono PERC (20% eff)</th><th>Mono TOPCon (22% eff)</th></tr></thead>
+<tbody>
+<tr><td>20 sq. metres</td><td>~2.8 kW</td><td>~3.3 kW</td><td>~3.7 kW</td></tr>
+<tr><td>30 sq. metres</td><td>~4.2 kW</td><td>~5.0 kW</td><td>~5.5 kW</td></tr>
+<tr><td>50 sq. metres</td><td>~7.0 kW</td><td>~8.3 kW</td><td>~9.1 kW</td></tr>
+</tbody>
+</table>
+<p>For a constrained rooftop, mono panels can mean an extra 0.5–1 kW of capacity — generating ₹5,000–10,000 more per year in electricity savings.</p>
+
+<h2>Aesthetics</h2>
+<p>Mono panels have a uniform dark appearance that many homeowners find more attractive than poly's non-uniform blue/metallic look. For visible roof areas (street-facing), this may matter.</p>
+
+<h2>Should You Buy Polycrystalline Panels in 2026?</h2>
+<p>Honestly, the market has moved on. Most Tier-1 manufacturers (LONGi, Jinko, Trina, Canadian Solar) have largely phased out poly production in favour of mono PERC and TOPCon. Poly panels are increasingly sold by smaller, less reputable manufacturers at low prices.</p>
+<p>If you see very cheap poly panels from unknown brands, treat this as a red flag — not a bargain.</p>
+
+<h2>Types of Monocrystalline Panels Available in India</h2>
+<ul>
+<li><strong>Mono PERC (Passivated Emitter Rear Contact):</strong> Most common, good efficiency, reasonable price. Best for most Indian homes.</li>
+<li><strong>Bifacial Mono PERC:</strong> Glass on both sides — captures reflected light from the roof. 5–15% more generation. Best for light-coloured or white roofs. Popular for commercial rooftops.</li>
+<li><strong>TOPCon:</strong> Next-generation technology with 22–24% efficiency. Slightly higher cost but best performance. Available from LONGi, Jinko, Waaree, Adani in India.</li>
+<li><strong>HJT (Heterojunction):</strong> Highest efficiency (23–25%) but most expensive. Niche products from REC, Panasonic.</li>
+</ul>
+
+<h2>Recommendation for Indian Homes in 2026</h2>
+<table>
+<thead><tr><th>Situation</th><th>Recommended Choice</th></tr></thead>
+<tbody>
+<tr><td>Budget-conscious, large roof</td><td>Mono PERC (Indian brands: Waaree, Adani)</td></tr>
+<tr><td>Small roof, want max capacity</td><td>Mono PERC or TOPCon</td></tr>
+<tr><td>Monsoon-heavy state (Kerala, WB)</td><td>Mono PERC — better low-light performance</td></tr>
+<tr><td>Hot climate (Rajasthan, Gujarat)</td><td>Mono PERC with better temp coefficient</td></tr>
+<tr><td>Commercial rooftop (large area)</td><td>Bifacial Mono PERC</td></tr>
+<tr><td>Premium installation, best ROI</td><td>TOPCon (LONGi, Jinko, Waaree TOPCon)</td></tr>
+</tbody>
+</table>
+
+<h2>Top Mono Panel Brands Available in India (2026)</h2>
+<ul>
+<li><strong>Waaree Energies (India):</strong> Largest Indian manufacturer, 12-year product warranty, good service</li>
+<li><strong>Adani Solar (India):</strong> Tier-1 quality, government project track record</li>
+<li><strong>LONGi Solar (China/India):</strong> World's largest mono panel maker, excellent quality, 30-year performance warranty</li>
+<li><strong>Jinko Solar (China):</strong> Most shipped globally, consistent Tier-1 quality</li>
+<li><strong>Trina Solar (China):</strong> Strong in India market, good value</li>
+<li><strong>Canadian Solar (Canada/China):</strong> Reliable brand, good Indian distribution</li>
+</ul>
+
+<h2>Bottom Line</h2>
+<p>Choose monocrystalline PERC panels from a Tier-1 brand. The price premium over polycrystalline has effectively disappeared, while the efficiency, low-light, and longevity advantages are real. In 2026, polycrystalline makes sense only if you have abundant roof space and a very tight budget — and even then, Indian-made mono panels like Waaree are competitively priced.</p>
+    `,
+  },
+
+  {
+    slug: '1kw-2kw-3kw-5kw-solar-system-india-which-size',
+    title: '1kW, 2kW, 3kW, 5kW Solar System in India — Which Size Do You Need? (2026)',
+    description: 'How to choose between 1kW, 2kW, 3kW, 5kW or 10kW solar system in India. With exact unit generation, costs, subsidy amounts, bill savings and which size suits which household.',
+    date: '2026-03-05',
+    readTime: '7 min read',
+    category: 'Solar Basics',
+    content: `
+<h2>Which Solar System Size Do You Need for Your Indian Home?</h2>
+<p>This is the most important decision when going solar — and getting it wrong costs you money either way. Too small and you miss out on savings. Too large and you overspend with no extra benefit (until DISCOM allows net metering credit carryforward).</p>
+<p>Here's how to size your solar system correctly for India's conditions.</p>
+
+<h2>Solar System Sizes at a Glance (India 2026)</h2>
+<table>
+<thead><tr><th>System Size</th><th>Daily Generation</th><th>Annual Units</th><th>Monthly Bill Saving</th><th>Ideal Household</th></tr></thead>
+<tbody>
+<tr><td>1 kW</td><td>3.5–4.5 units</td><td>1,200–1,600 units</td><td>₹800–1,400</td><td>1 BHK, small flat</td></tr>
+<tr><td>2 kW</td><td>7–9 units</td><td>2,400–3,200 units</td><td>₹1,600–2,800</td><td>2 BHK, 3–4 people</td></tr>
+<tr><td>3 kW</td><td>10.5–13.5 units</td><td>3,600–4,800 units</td><td>₹2,400–4,200</td><td>3 BHK, 4–5 people</td></tr>
+<tr><td>5 kW</td><td>17.5–22.5 units</td><td>6,000–8,000 units</td><td>₹4,000–7,000</td><td>4 BHK, large home, light commercial</td></tr>
+<tr><td>10 kW</td><td>35–45 units</td><td>12,000–16,000 units</td><td>₹8,000–14,000</td><td>Bungalow, small business, villa</td></tr>
+</tbody>
+</table>
+<p><em>Generation varies by city — Delhi and Rajasthan generate 15–20% more than Mumbai or Kolkata. Bill savings depend on your current per-unit tariff (₹4–12/unit depending on DISCOM and slab).</em></p>
+
+<h2>How to Calculate Your Ideal System Size</h2>
+
+<h3>Step 1: Find Your Monthly Electricity Consumption</h3>
+<p>Look at your last 12 months' electricity bills. Find the average monthly units (kWh). Or just note the units on your latest bill.</p>
+
+<h3>Step 2: Calculate Daily Consumption</h3>
+<p>Monthly units ÷ 30 = daily units consumed</p>
+<p>Example: 300 units/month ÷ 30 = 10 units/day</p>
+
+<h3>Step 3: Divide by Your City's "Peak Sun Hours"</h3>
+<table>
+<thead><tr><th>City</th><th>Peak Sun Hours</th><th>Daily generation per kW</th></tr></thead>
+<tbody>
+<tr><td>Delhi, Jaipur</td><td>5.0–5.5 hrs</td><td>4.5–5.0 units/kW</td></tr>
+<tr><td>Ahmedabad, Hyderabad</td><td>5.0–5.5 hrs</td><td>4.5–5.0 units/kW</td></tr>
+<tr><td>Mumbai, Pune</td><td>4.5–5.0 hrs</td><td>4.0–4.5 units/kW</td></tr>
+<tr><td>Bangalore, Chennai</td><td>4.5–5.0 hrs</td><td>4.0–4.5 units/kW</td></tr>
+<tr><td>Kolkata, Lucknow</td><td>4.0–4.5 hrs</td><td>3.5–4.0 units/kW</td></tr>
+<tr><td>Kerala, NE India</td><td>3.5–4.5 hrs</td><td>3.0–4.0 units/kW</td></tr>
+</tbody>
+</table>
+<p><strong>Formula:</strong> System size (kW) = Daily consumption ÷ peak sun hours</p>
+<p><strong>Example:</strong> 10 units/day ÷ 4.5 = 2.2 kW → round up to 3 kW system</p>
+
+<h3>Step 4: Apply the 80% Rule</h3>
+<p>Solar doesn't produce its rated output 100% of the time. Account for:</p>
+<ul>
+<li>Dust soiling: 10–15% loss</li>
+<li>Inverter efficiency: 3–5% loss</li>
+<li>Wiring losses: 2–3% loss</li>
+<li>Temperature derating: 5–10% loss in summer</li>
+</ul>
+<p>So divide your formula result by 0.8 to get the installed kW needed.</p>
+<p><strong>Revised example:</strong> 2.2 kW ÷ 0.8 = 2.75 kW → install 3 kW system</p>
+
+<h2>1 kW Solar System — Details</h2>
+<ul>
+<li><strong>Generation:</strong> 3.5–4.5 units/day (1,200–1,600 units/year)</li>
+<li><strong>Cost (2026):</strong> ₹65,000–85,000 installed</li>
+<li><strong>After subsidy (PM Surya Ghar):</strong> ₹35,000–55,000</li>
+<li><strong>Subsidy amount:</strong> ₹30,000 central + state subsidy</li>
+<li><strong>Roof area needed:</strong> ~7–8 sq. metres</li>
+<li><strong>Payback period:</strong> 5–7 years</li>
+<li><strong>Ideal for:</strong> 1 BHK flat, 1–2 people, monthly bill of ₹500–1,000</li>
+<li><strong>Covers:</strong> 2–3 fans, LED lights, TV, phone charging — basic loads</li>
+</ul>
+
+<h2>2 kW Solar System — Details</h2>
+<ul>
+<li><strong>Generation:</strong> 7–9 units/day (2,400–3,200 units/year)</li>
+<li><strong>Cost (2026):</strong> ₹1.10–1.40 lakh installed</li>
+<li><strong>After subsidy:</strong> ₹68,000–98,000</li>
+<li><strong>Subsidy amount:</strong> ₹60,000 central + state</li>
+<li><strong>Roof area needed:</strong> ~14–16 sq. metres</li>
+<li><strong>Payback period:</strong> 5–6 years</li>
+<li><strong>Ideal for:</strong> 2 BHK, 3–4 people, monthly bill of ₹1,000–2,000</li>
+<li><strong>Covers:</strong> All above + 1 AC (1 ton, 8 hrs/day in summer)</li>
+</ul>
+
+<h2>3 kW Solar System — Details (Most Popular)</h2>
+<ul>
+<li><strong>Generation:</strong> 10.5–13.5 units/day (3,600–4,800 units/year)</li>
+<li><strong>Cost (2026):</strong> ₹1.50–2.0 lakh installed (on-grid)</li>
+<li><strong>After subsidy:</strong> ₹72,000–1.22 lakh</li>
+<li><strong>Subsidy amount:</strong> ₹78,000 central (max for residential)</li>
+<li><strong>Roof area needed:</strong> ~22–24 sq. metres</li>
+<li><strong>Payback period:</strong> 4–6 years</li>
+<li><strong>Ideal for:</strong> 3 BHK, 4–5 people, monthly bill of ₹2,000–4,000</li>
+<li><strong>Covers:</strong> 2 ACs (1 ton each), refrigerator, washing machine, all basic loads</li>
+<li><strong>Note:</strong> 3 kW is the maximum size eligible for PM Surya Ghar's ₹78,000 central subsidy</li>
+</ul>
+
+<h2>5 kW Solar System — Details</h2>
+<ul>
+<li><strong>Generation:</strong> 17.5–22.5 units/day (6,000–8,000 units/year)</li>
+<li><strong>Cost (2026):</strong> ₹2.20–2.80 lakh installed</li>
+<li><strong>After subsidy:</strong> ₹1.42–2.02 lakh (₹78,000 max central subsidy applies)</li>
+<li><strong>Roof area needed:</strong> ~35–40 sq. metres</li>
+<li><strong>Payback period:</strong> 5–7 years</li>
+<li><strong>Ideal for:</strong> 4 BHK bungalow, 5–6 people, monthly bill of ₹4,000–6,000</li>
+<li><strong>Covers:</strong> 3 ACs, all home appliances, electric vehicle charging</li>
+</ul>
+
+<h2>10 kW Solar System — Details</h2>
+<ul>
+<li><strong>Generation:</strong> 35–45 units/day (12,000–16,000 units/year)</li>
+<li><strong>Cost (2026):</strong> ₹4.0–5.5 lakh installed</li>
+<li><strong>Subsidy:</strong> Limited subsidy; primarily for commercial/institutional</li>
+<li><strong>Roof area needed:</strong> ~65–80 sq. metres</li>
+<li><strong>Payback period:</strong> 4–6 years for commercial</li>
+<li><strong>Ideal for:</strong> Large bungalow, villa, small office, retail shop, small factory</li>
+</ul>
+
+<h2>Common Sizing Mistakes Indian Buyers Make</h2>
+<ul>
+<li><strong>Sizing for peak summer only:</strong> Your AC-heavy summer bill shouldn't be your only reference. Average across all 12 months.</li>
+<li><strong>Ignoring future load growth:</strong> Adding an EV? Planning a new AC? Size 20% larger to future-proof.</li>
+<li><strong>Installing too large for DISCOM's net metering limit:</strong> Some DISCOMs limit residential net metering to 1–10 kW. Check your DISCOM's policy before sizing above 5 kW.</li>
+<li><strong>Ignoring roof shading:</strong> A tree that casts shade on 20% of your panels reduces your effective capacity proportionally. Always do a solar site survey.</li>
+<li><strong>Not accounting for appliance upgrades:</strong> Planning to install more ACs or a water heater next year? Factor it in now.</li>
+</ul>
+
+<h2>Quick Reference: Which Size for Your Bill?</h2>
+<table>
+<thead><tr><th>Monthly Electricity Bill</th><th>Monthly Units (Approx)</th><th>Recommended System Size</th></tr></thead>
+<tbody>
+<tr><td>₹500–1,000</td><td>80–150 units</td><td>1 kW</td></tr>
+<tr><td>₹1,000–2,000</td><td>150–300 units</td><td>2 kW</td></tr>
+<tr><td>₹2,000–4,000</td><td>300–500 units</td><td>3 kW</td></tr>
+<tr><td>₹4,000–6,000</td><td>500–700 units</td><td>4–5 kW</td></tr>
+<tr><td>₹6,000–10,000</td><td>700–1,200 units</td><td>5–8 kW</td></tr>
+<tr><td>₹10,000+</td><td>1,200+ units</td><td>10 kW+</td></tr>
+</tbody>
+</table>
+<p><em>Note: These are rough guides. Actual sizing depends on your city's solar irradiance, tariff slab, and specific appliance usage patterns. Always get a detailed site survey from a certified installer.</em></p>
+    `,
+  },
+
+  {
+    slug: 'top-10-solar-companies-india-2026',
+    title: 'Top 10 Solar Companies in India 2026 — Best Manufacturers & Installers',
+    description: 'Who are the top solar companies in India in 2026? From Adani Green to Waaree, Tata Power Solar to NTPC Solar — ranked by installed capacity, quality, and reliability for homes and businesses.',
+    date: '2026-03-06',
+    readTime: '7 min read',
+    category: 'Solar Basics',
+    content: `
+<h2>Top Solar Companies in India 2026</h2>
+<p>India's solar sector has grown into a ₹1+ lakh crore industry. The companies leading this growth fall into two categories: <strong>solar panel manufacturers</strong> (who make the panels) and <strong>solar project developers/EPC companies</strong> (who design and install systems). Most top Indian solar companies do both.</p>
+<p>Here are the top 10 solar companies in India by reputation, scale, and reliability for Indian homeowners and businesses.</p>
+
+<h2>Top Solar Manufacturers in India</h2>
+
+<h3>1. Waaree Energies</h3>
+<ul>
+<li><strong>Type:</strong> Solar panel manufacturer + EPC</li>
+<li><strong>Capacity:</strong> 13 GW annual manufacturing capacity (largest in India)</li>
+<li><strong>Headquarters:</strong> Mumbai, Maharashtra</li>
+<li><strong>Products:</strong> Mono PERC, TOPCon, Bifacial panels</li>
+<li><strong>Warranty:</strong> 12-year product + 25-year performance</li>
+<li><strong>IPO:</strong> Listed on BSE/NSE (October 2024)</li>
+<li><strong>Why choose:</strong> India's largest solar panel maker, good service network, competitive prices, domestic manufacturer (eligible for domestic content requirement projects)</li>
+<li><strong>Service cities:</strong> Pan-India presence</li>
+</ul>
+
+<h3>2. Adani Solar (Adani Green Energy)</h3>
+<ul>
+<li><strong>Type:</strong> Manufacturer + largest solar power plant developer</li>
+<li><strong>Capacity:</strong> 4 GW panel manufacturing + 10.9 GW operational solar capacity</li>
+<li><strong>Headquarters:</strong> Ahmedabad, Gujarat</li>
+<li><strong>Products:</strong> Mono PERC, Bifacial, TOPCon (in development)</li>
+<li><strong>Why choose:</strong> Proven at massive scale, part of Adani Group (financial stability), strong in C&I (commercial & industrial) segment</li>
+<li><strong>Notable projects:</strong> Kamuthi Solar Power Project, multiple GW-scale projects across India</li>
+</ul>
+
+<h3>3. Tata Power Solar</h3>
+<ul>
+<li><strong>Type:</strong> Manufacturer + EPC + rooftop installer</li>
+<li><strong>Capacity:</strong> 530 MW panel manufacturing + 2.8 GW project development</li>
+<li><strong>Headquarters:</strong> Bangalore, Karnataka</li>
+<li><strong>Products:</strong> Mono PERC panels, complete rooftop solutions</li>
+<li><strong>Why choose:</strong> Trusted Tata brand name, strong rooftop solar division, end-to-end service (design → install → maintain), government project expertise</li>
+<li><strong>Best for:</strong> Urban homeowners who want a well-known brand with local service</li>
+</ul>
+
+<h3>4. Vikram Solar</h3>
+<ul>
+<li><strong>Type:</strong> Solar panel manufacturer + EPC</li>
+<li><strong>Capacity:</strong> 3.5 GW annual manufacturing</li>
+<li><strong>Headquarters:</strong> Kolkata, West Bengal</li>
+<li><strong>Products:</strong> Mono PERC, TOPCon, high-efficiency modules</li>
+<li><strong>Why choose:</strong> Strong on high-efficiency products, good export track record (quality indicator), expanding rooftop division</li>
+<li><strong>Note:</strong> Known for premium products, may be pricier than Waaree</li>
+</ul>
+
+<h3>5. RenewSys India</h3>
+<ul>
+<li><strong>Type:</strong> Solar panel manufacturer + raw materials</li>
+<li><strong>Headquarters:</strong> Mumbai, Maharashtra</li>
+<li><strong>Products:</strong> Modules, EVA encapsulants, backsheets</li>
+<li><strong>Why choose:</strong> Unique — makes both panels AND raw materials. Strong domestic content compliance for government projects.</li>
+</ul>
+
+<h2>Top Solar EPC & Installer Companies in India</h2>
+
+<h3>6. Nexus Power (and other regional EPC leaders)</h3>
+<p>India's residential solar market is served by thousands of regional EPC companies — local firms that buy panels from manufacturers and install complete systems. The best regional installers often outperform large national brands on service and price. Look for:</p>
+<ul>
+<li>MNRE-empanelled installer status</li>
+<li>3+ years in business</li>
+<li>Positive Google/Justdial reviews</li>
+<li>Local office (not just a WhatsApp number)</li>
+</ul>
+
+<h3>7. NTPC Renewable Energy (Government)</h3>
+<ul>
+<li><strong>Type:</strong> Government power company (utility-scale solar)</li>
+<li><strong>Capacity:</strong> 3.6 GW operational solar + 60 GW target by 2032</li>
+<li><strong>Headquarters:</strong> Delhi</li>
+<li><strong>Why relevant for you:</strong> NTPC runs the PM Surya Ghar portal and assigns empanelled installers for subsidy-linked rooftop solar. Many residential installations are through NTPC's empanelled vendor network.</li>
+</ul>
+
+<h3>8. Rays Power Experts</h3>
+<ul>
+<li><strong>Type:</strong> EPC company specialising in commercial & industrial (C&I) solar</li>
+<li><strong>Headquarters:</strong> Delhi</li>
+<li><strong>Why choose:</strong> Strong track record in large commercial rooftop projects, 500+ MW installed, competitive on pricing for business customers</li>
+</ul>
+
+<h3>9. CleanMax Solar</h3>
+<ul>
+<li><strong>Type:</strong> EPC + solar-as-a-service (OPEX model)</li>
+<li><strong>Headquarters:</strong> Mumbai</li>
+<li><strong>Why choose:</strong> Popular with large businesses — OPEX model means zero upfront cost (pay per unit generated). Served over 600 commercial clients including Godrej, Marico, Mahindra.</li>
+<li><strong>Best for:</strong> Businesses wanting solar without capital expenditure</li>
+</ul>
+
+<h3>10. Fourth Partner Energy</h3>
+<ul>
+<li><strong>Type:</strong> Distributed solar developer + EPC</li>
+<li><strong>Headquarters:</strong> Hyderabad</li>
+<li><strong>Why choose:</strong> 1 GW+ rooftop solar installed across 18 states, strong in C&I, good project management track record</li>
+</ul>
+
+<h2>Top International Solar Brands Active in India</h2>
+<table>
+<thead><tr><th>Brand</th><th>Country</th><th>India Presence</th><th>Known For</th></tr></thead>
+<tbody>
+<tr><td>LONGi Solar</td><td>China</td><td>Strong — import + manufacturing JV</td><td>World's largest mono panel maker, 30-yr warranty</td></tr>
+<tr><td>Jinko Solar</td><td>China</td><td>Strong — large importer</td><td>Most panels shipped globally, consistent Tier-1</td></tr>
+<tr><td>Trina Solar</td><td>China</td><td>Strong importer</td><td>Good quality:price, Vertex series popular in India</td></tr>
+<tr><td>Canadian Solar</td><td>Canada/China</td><td>Good Indian distribution</td><td>Reliable brand, strong warranty</td></tr>
+<tr><td>REC Group</td><td>Norway</td><td>Limited but premium</td><td>Best-in-class product warranty (20 years)</td></tr>
+<tr><td>SMA Solar</td><td>Germany</td><td>Good — via distributors</td><td>Premium inverters, not panels</td></tr>
+</tbody>
+</table>
+
+<h2>How to Choose a Solar Company for Your Home</h2>
+<p>For residential solar in India, the most important factors are:</p>
+<ol>
+<li><strong>Local installation quality</strong> — The installer's workmanship matters more than the brand. A poorly installed Waaree system will underperform a well-installed no-name system.</li>
+<li><strong>After-sales service</strong> — Can they send a technician within 48 hours? Do they have local staff?</li>
+<li><strong>MNRE empanelment</strong> — Required for PM Surya Ghar subsidy. Always verify at pmsuryaghar.gov.in.</li>
+<li><strong>Panel warranty backing</strong> — Is the manufacturer's India warranty actually enforced? Indian-headquartered companies (Waaree, Adani, Tata) are safer for long-term warranty claims.</li>
+<li><strong>No advance payment pressure</strong> — Legitimate installers take 20–30% advance, balance on completion. Full advance requests are a red flag.</li>
+</ol>
+
+<h2>Beware of Solar Scams in India</h2>
+<p>With India's solar boom, fraudulent solar companies have multiplied. Red flags:</p>
+<ul>
+<li>Offering "free solar panels" from government schemes (there is no free panel scheme — only subsidies on your purchase)</li>
+<li>Asking for full payment before any work starts</li>
+<li>No physical office — only WhatsApp or phone number</li>
+<li>No MNRE empanelment or state renewable energy department registration</li>
+<li>Prices far below market rate (below ₹35/W for installed system is a red flag)</li>
+<li>Promising "no electricity bill forever" without a written system design</li>
+</ul>
+<p>Use GoSolarIndex to find verified, review-backed solar installers in your city.</p>
+    `,
+  },
+
+  {
+    slug: 'solar-panel-buying-guide-india-2026',
+    title: 'Solar Panel Buying Guide India 2026 — 10 Things to Know Before You Buy',
+    description: 'Planning to buy solar panels for your home in India? This complete solar panel buying guide covers: how to choose, things to check, subsidy process, red flags, and getting the best deal in 2026.',
+    date: '2026-03-07',
+    readTime: '8 min read',
+    category: 'Buying Guide',
+    content: `
+<h2>Solar Panel Buying Guide India 2026 — Everything Before You Sign</h2>
+<p>Buying solar is a ₹1–5 lakh decision that lasts 25 years. Getting it right the first time matters. This guide covers every key decision point based on India's market in 2026.</p>
+
+<h2>Step 1: Calculate How Much Solar You Need</h2>
+<p>Before getting quotes, know your target system size. Check your last electricity bill for monthly units consumed.</p>
+<ul>
+<li>Monthly consumption 100–150 units → 1 kW system</li>
+<li>Monthly consumption 150–300 units → 2 kW system</li>
+<li>Monthly consumption 300–500 units → 3 kW system</li>
+<li>Monthly consumption 500+ units → 5 kW or larger</li>
+</ul>
+<p>Rule of thumb: 1 kW of solar generates ~100–130 units/month in most Indian cities (slightly less in monsoon months).</p>
+
+<h2>Step 2: Decide On-Grid, Off-Grid, or Hybrid</h2>
+<p>This one decision changes your budget by ₹50,000–1,50,000:</p>
+<ul>
+<li><strong>On-grid (recommended for cities with stable power):</strong> No battery, lowest cost, maximum subsidy</li>
+<li><strong>Hybrid (recommended for most Indian homes):</strong> Battery backup for power cuts, slightly higher cost</li>
+<li><strong>Off-grid (only if no grid connection):</strong> Fully independent, highest cost, no central subsidy</li>
+</ul>
+
+<h2>Step 3: Apply for PM Surya Ghar Yojana Subsidy First</h2>
+<p>Don't sign with any installer before registering for PM Surya Ghar Yojana subsidy. The subsidy is:</p>
+<ul>
+<li>Up to 2 kW: ₹30,000/kW (up to ₹60,000)</li>
+<li>3 kW: ₹18,000 for the 3rd kW (total ₹78,000 max)</li>
+<li>Above 3 kW for residential: no additional central subsidy</li>
+</ul>
+<p>Register at: pmsuryaghar.gov.in → click "Apply for Rooftop Solar" → choose your state and DISCOM → complete form with your electricity consumer number. The subsidy is credited directly to your bank account after installation + DISCOM net metering approval.</p>
+<p><strong>Important:</strong> You must choose an MNRE-empanelled installer (listed on the portal) to be eligible for this subsidy. Most good installers are already empanelled — verify before signing.</p>
+
+<h2>Step 4: Get at Least 3 Quotes</h2>
+<p>Never buy from the first installer who visits. Get quotes from at least 3 empanelled installers. Quotes should include:</p>
+<ul>
+<li>Brand and model of solar panels (watt rating, efficiency, warranty)</li>
+<li>Brand and model of inverter</li>
+<li>Battery specifications (if hybrid/off-grid)</li>
+<li>Mounting structure type (aluminium, galvanised steel, etc.)</li>
+<li>DC cable specification (4 sq.mm or 6 sq.mm, UV-resistant)</li>
+<li>Earthing and lightning protection</li>
+<li>Net metering application service (included or extra?)</li>
+<li>Total installed cost and subsidy amount</li>
+<li>Annual maintenance contract terms</li>
+</ul>
+<p>If a quote doesn't specify panel brand and model, don't accept it. "Good quality solar panels" is not a specification.</p>
+
+<h2>Step 5: Evaluate Panel Quality</h2>
+<p>Things to check about the panels being offered:</p>
+<ul>
+<li><strong>IEC certifications:</strong> IEC 61215 (performance) + IEC 61730 (safety) are mandatory. Ask for the certificate.</li>
+<li><strong>BIS certification:</strong> Bureau of Indian Standards IS 14286 certification for panels sold in India</li>
+<li><strong>Tier-1 manufacturer:</strong> Bloomberg's Tier-1 list or equivalent — indicates financial stability and bankability</li>
+<li><strong>Efficiency:</strong> Below 18% efficiency (for mono) is outdated stock. Expect 19–22% for good mono PERC</li>
+<li><strong>Temperature coefficient:</strong> −0.40%/°C or better (lower is better for Indian heat)</li>
+<li><strong>Product warranty:</strong> Minimum 10 years; 12+ years is better</li>
+<li><strong>Performance warranty:</strong> 25 years at minimum 80% output (linear degradation is premium)</li>
+</ul>
+
+<h2>Step 6: Evaluate Inverter Quality</h2>
+<p>The inverter is the solar system's brain and the most likely component to need replacement. Key checks:</p>
+<ul>
+<li><strong>BIS/MNRE approved:</strong> Inverters must be on MNRE's approved list for subsidy eligibility</li>
+<li><strong>Efficiency:</strong> 95%+ is good; 97%+ is excellent</li>
+<li><strong>MPPT efficiency:</strong> How well it tracks maximum power from panels</li>
+<li><strong>Monitoring app:</strong> Most modern inverters have WiFi + smartphone monitoring — check this works in India</li>
+<li><strong>Warranty:</strong> 5 years standard; 10 years with extended warranty (worth paying for)</li>
+<li><strong>Local service:</strong> Does the inverter brand have service centers in your city? Sungrow, Growatt, Havells, Luminous have good India networks.</li>
+</ul>
+
+<h2>Step 7: Check Installer Credentials</h2>
+<p>The installer's quality of work determines your system's real-world performance. Verify:</p>
+<ul>
+<li><strong>MNRE empanelment:</strong> Check pmsuryaghar.gov.in vendor list or your state renewable energy agency list</li>
+<li><strong>Years in business:</strong> 3+ years preferred. New companies may not honor long-term commitments</li>
+<li><strong>Local references:</strong> Ask for 3 recent customer contacts in your city — call them</li>
+<li><strong>Certified electricians:</strong> Installation must be done by licensed electricians (electrical contractor license)</li>
+<li><strong>Physical office:</strong> Visit their office. A company operating from a residential flat is a risk</li>
+<li><strong>GST registration:</strong> Always get a proper GST invoice</li>
+</ul>
+
+<h2>Step 8: Understand What's Included in the Quote</h2>
+<p>Low-price quotes often exclude critical items. Verify these are included:</p>
+<ul>
+<li>Net metering application and DISCOM liaison (₹2,000–10,000 value)</li>
+<li>Earthing and lightning arrestor (essential, not optional)</li>
+<li>DC-AC disconnect switches</li>
+<li>Generation meter</li>
+<li>Roof waterproofing/sealing at mounting points</li>
+<li>Structural load analysis for your roof type</li>
+<li>Post-installation commissioning and training</li>
+</ul>
+
+<h2>Step 9: Payment Terms and Contract</h2>
+<p><strong>Standard payment structure for reputable installers:</strong></p>
+<ul>
+<li>20–30% advance on signing</li>
+<li>40–50% on material delivery</li>
+<li>Remaining 20–30% on commissioning + net meter installation</li>
+</ul>
+<p><strong>Red flags in payment terms:</strong></p>
+<ul>
+<li>100% advance required — big red flag</li>
+<li>Payment demanded in cash (loses GST input credit benefit)</li>
+<li>No written contract — never proceed without a signed agreement</li>
+</ul>
+<p><strong>Your contract must specify:</strong> Panel brand + model, inverter brand + model, warranty terms, installation timeline, penalty for delay, after-sales service terms.</p>
+
+<h2>Step 10: After Installation — What to Verify</h2>
+<p>Before making final payment, verify:</p>
+<ul>
+<li>All panels are the brand and model specified in the contract (check serial numbers)</li>
+<li>Inverter model matches quote</li>
+<li>System generates roughly expected units on a clear sunny day (check inverter display)</li>
+<li>Proper earthing installed (test with multimeter or ask inspector to verify)</li>
+<li>Net metering meter installed by DISCOM (this may take 1–3 months after application)</li>
+<li>All electrical work is neat, proper cable management, no exposed wires</li>
+<li>Roof mounts are leak-proof (check inside during or after installation)</li>
+<li>You receive: inverter manual, warranty cards, system design document, net metering application receipt</li>
+</ul>
+
+<h2>What Does Solar Cost in India in 2026?</h2>
+<table>
+<thead><tr><th>System Size</th><th>On-Grid Cost</th><th>After Subsidy</th><th>Hybrid Cost</th><th>Payback</th></tr></thead>
+<tbody>
+<tr><td>1 kW</td><td>₹65,000–85,000</td><td>₹35,000–55,000</td><td>₹1.2–1.7 lakh</td><td>5–7 yrs</td></tr>
+<tr><td>2 kW</td><td>₹1.10–1.40 lakh</td><td>₹50,000–80,000</td><td>₹1.8–2.4 lakh</td><td>5–7 yrs</td></tr>
+<tr><td>3 kW</td><td>₹1.50–2.0 lakh</td><td>₹72,000–1.22 lakh</td><td>₹2.5–3.2 lakh</td><td>4–6 yrs</td></tr>
+<tr><td>5 kW</td><td>₹2.20–2.80 lakh</td><td>₹1.42–2.02 lakh</td><td>₹3.5–4.5 lakh</td><td>5–7 yrs</td></tr>
+</tbody>
+</table>
+
+<h2>Common Solar Buying Mistakes in India</h2>
+<ul>
+<li><strong>Choosing cheapest quote without checking quality</strong> — A ₹20,000 cheaper system with unknown panels will underperform and may fail warranty claims</li>
+<li><strong>Not checking MNRE empanelment</strong> — Ineligible for PM Surya Ghar subsidy</li>
+<li><strong>Paying 100% advance</strong> — If work doesn't happen, recovery is difficult</li>
+<li><strong>Buying "off the shelf" without a site survey</strong> — System sizing without seeing your roof leads to under/overinstallation</li>
+<li><strong>Ignoring shadow analysis</strong> — A single shadow source (water tank, AC unit, neighbour's building) can reduce output by 20–40%</li>
+<li><strong>Not registering subsidy yourself</strong> — Some installers claim they'll handle it but don't follow through. Register on pmsuryaghar.gov.in yourself.</li>
+</ul>
+    `,
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
