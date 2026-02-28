@@ -29,11 +29,10 @@ async function verifyAuth(request: Request): Promise<{ success: boolean; user?: 
   return { success: true, user };
 }
 
-// GET all listings (with optional filters: categoryId, locationId, verified, featured, search)
+// GET all listings (with optional filters)
 export async function GET(request: Request) {
   try {
     const { success, user } = await verifyAuth(request);
-
     if (!success || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -70,7 +69,6 @@ export async function GET(request: Request) {
       ],
     });
 
-    // Global stats (ignores filters)
     const [total, featured, verified] = await Promise.all([
       prisma.listing.count(),
       prisma.listing.count({ where: { featured: true } }),
@@ -91,25 +89,17 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const { success, user } = await verifyAuth(request);
-
     if (!success || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { name, description, phone, email, website, address, categoryId, locationId, verified, featured } = body;
 
     if (!name || !phone || !categoryId || !locationId) {
-      return NextResponse.json(
-        { error: 'Name, phone, category, and location are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Name, phone, category, and location are required' }, { status: 400 });
     }
 
-    // Generate slug from name
     const slug = name
       .toLowerCase()
       .replace(/[^a-z0-9\s]/g, '-')
@@ -123,9 +113,9 @@ export async function POST(request: Request) {
         slug,
         description: description?.trim(),
         phone: phone.trim(),
-        email: email?.trim(),
-        website: website?.trim(),
-        address: address?.trim(),
+        email: email?.trim() || null,
+        website: website?.trim() || null,
+        address: address?.trim() || null,
         verified: verified || false,
         featured: featured || false,
         rating: 0,
@@ -133,118 +123,79 @@ export async function POST(request: Request) {
         categoryId,
         locationId,
       },
+      include: { category: true, location: true },
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Listing created successfully',
-        listing,
-      },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, listing }, { status: 201 });
   } catch (error) {
     console.error('Error creating listing:', error);
-    return NextResponse.json(
-      { error: 'Failed to create listing' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create listing' }, { status: 500 });
   }
 }
 
-// PATCH update listing (toggle featured)
+// PATCH update listing — accepts id in body + any updatable fields
 export async function PATCH(request: Request) {
   try {
     const { success, user } = await verifyAuth(request);
-
     if (!success || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    const { id, featured, verified, rating, reviews } = body;
+    const { id, featured, verified, name, description, phone, email, website, address, categoryId, locationId, rating, reviews } = body;
 
     if (!id) {
-      return NextResponse.json(
-        { error: 'Listing ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Listing ID is required' }, { status: 400 });
     }
 
     const updateData: Record<string, unknown> = {};
 
-    if (typeof featured === 'boolean') {
-      updateData.featured = featured;
-    }
-
-    if (typeof verified === 'boolean') {
-      updateData.verified = verified;
-    }
-
-    if (rating !== undefined) {
-      updateData.rating = parseFloat(rating);
-    }
-
-    if (reviews !== undefined) {
-      updateData.reviews = parseInt(reviews);
-    }
+    if (typeof featured === 'boolean') updateData.featured = featured;
+    if (typeof verified === 'boolean') updateData.verified = verified;
+    if (name !== undefined) updateData.name = name.trim();
+    if (description !== undefined) updateData.description = description?.trim() || null;
+    if (phone !== undefined) updateData.phone = phone.trim();
+    if (email !== undefined) updateData.email = email?.trim() || null;
+    if (website !== undefined) updateData.website = website?.trim() || null;
+    if (address !== undefined) updateData.address = address?.trim() || null;
+    if (categoryId !== undefined) updateData.categoryId = categoryId;
+    if (locationId !== undefined) updateData.locationId = locationId;
+    if (rating !== undefined) updateData.rating = parseFloat(rating);
+    if (reviews !== undefined) updateData.reviews = parseInt(reviews);
 
     const updatedListing = await prisma.listing.update({
       where: { id },
       data: updateData,
+      include: { category: true, location: true },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Listing updated successfully',
-      listing: updatedListing,
-    });
+    return NextResponse.json({ success: true, listing: updatedListing });
   } catch (error) {
     console.error('Error updating listing:', error);
-    return NextResponse.json(
-      { error: 'Failed to update listing' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update listing' }, { status: 500 });
   }
 }
 
+// DELETE listing — listingId as query param
 export async function DELETE(request: Request) {
   try {
     const { success } = await verifyAuth(request);
-
     if (!success) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const listingId = searchParams.get('listingId');
 
     if (!listingId) {
-      return NextResponse.json(
-        { error: 'Listing ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Listing ID is required' }, { status: 400 });
     }
 
-    await prisma.listing.delete({
-      where: { id: listingId },
-    });
+    await prisma.listing.delete({ where: { id: listingId } });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Listing deleted successfully',
-    });
+    return NextResponse.json({ success: true, message: 'Listing deleted' });
   } catch (error) {
     console.error('Error deleting listing:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete listing' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete listing' }, { status: 500 });
   }
 }
