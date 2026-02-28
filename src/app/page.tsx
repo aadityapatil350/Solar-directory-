@@ -208,6 +208,55 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured Partners strip */}
+      {!loading && listings.filter((l) => l.featured).length > 0 && (
+        <section className="bg-white border-b py-8">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-500 fill-yellow-400" />
+                <h2 className="text-lg font-bold text-gray-900">Featured Solar Companies</h2>
+              </div>
+              <span className="text-sm text-orange-600 font-medium bg-orange-50 px-3 py-1 rounded-full">
+                Premium Partners
+              </span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {listings
+                .filter((l) => l.featured)
+                .slice(0, 4)
+                .map((listing) => (
+                  <a
+                    key={listing.id}
+                    href={`/listing/${listing.slug}`}
+                    className="group relative border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all"
+                  >
+                    <div className="absolute top-2 right-2">
+                      <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                        ⭐ Featured
+                      </span>
+                    </div>
+                    <div className="font-semibold text-gray-900 text-sm leading-tight pr-12 group-hover:text-orange-600 transition-colors">
+                      {listing.name}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">{listing.category.name}</div>
+                    <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {listing.location.city}
+                    </div>
+                    {listing.rating != null && listing.rating > 0 && (
+                      <div className="flex items-center gap-1 mt-2">
+                        <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
+                        <span className="text-xs font-medium text-gray-700">{listing.rating}</span>
+                      </div>
+                    )}
+                  </a>
+                ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Main Content */}
       <section className="py-12">
         <div className="container mx-auto px-4">

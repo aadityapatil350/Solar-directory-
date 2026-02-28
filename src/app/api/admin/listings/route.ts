@@ -29,47 +29,61 @@ async function verifyAuth(request: Request): Promise<{ success: boolean; user?: 
   return { success: true, user };
 }
 
-// GET all listings
+// GET all listings (with optional filters: categoryId, locationId, verified, featured, search)
 export async function GET(request: Request) {
   try {
     const { success, user } = await verifyAuth(request);
 
     if (!success || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const categoryId = searchParams.get('categoryId');
+    const locationId = searchParams.get('locationId');
+    const verifiedParam = searchParams.get('verified');
+    const featuredParam = searchParams.get('featured');
+    const search = searchParams.get('search');
+
+    const where: Record<string, unknown> = {};
+    if (categoryId) where.categoryId = categoryId;
+    if (locationId) where.locationId = locationId;
+    if (verifiedParam === 'true') where.verified = true;
+    if (verifiedParam === 'false') where.verified = false;
+    if (featuredParam === 'true') where.featured = true;
+    if (featuredParam === 'false') where.featured = false;
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
     }
 
     const listings = await prisma.listing.findMany({
-      include: {
-        category: true,
-        location: true,
-      },
+      where,
+      include: { category: true, location: true },
       orderBy: [
         { featured: 'desc' },
         { verified: 'desc' },
         { createdAt: 'desc' },
       ],
-      take: 100,
     });
 
-    const stats = {
-      totalListings: listings.length,
-      featuredListings: listings.filter((l) => l.featured).length,
-      verifiedListings: listings.filter((l) => l.verified).length,
-    };
+    // Global stats (ignores filters)
+    const [total, featured, verified] = await Promise.all([
+      prisma.listing.count(),
+      prisma.listing.count({ where: { featured: true } }),
+      prisma.listing.count({ where: { verified: true } }),
+    ]);
 
     return NextResponse.json({
       listings,
-      stats,
+      stats: { totalListings: total, featuredListings: featured, verifiedListings: verified },
     });
   } catch (error) {
     console.error('Error fetching listings:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch listings' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch listings' }, { status: 500 });
   }
 }
 

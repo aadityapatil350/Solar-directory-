@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
     } = body;
 
     // Validate required fields
-    if (!companyName || !contactPerson || !email || !phone || !address || !city || !state || !category || !password) {
+    if (!companyName || !contactPerson || !email || !phone || !city || !category || !password) {
       return NextResponse.json(
         { error: 'All required fields must be filled' },
         { status: 400 }
@@ -72,25 +73,29 @@ export async function POST(request: Request) {
       .replace(/-+/g, '-')
       + '-' + Date.now();
 
+    // Hash password before storing
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create user
     const user = await prisma.user.create({
       data: {
         email,
         name: contactPerson,
         role: 'installer',
-        password, // TODO: hash with bcrypt before launch
+        password: hashedPassword,
       },
     });
 
-    // Find or create location
+    // Find or create location — match by city first (case-insensitive)
     let locationRecord = await prisma.location.findFirst({
-      where: { city, state },
+      where: { city: { equals: city.trim(), mode: 'insensitive' } },
     });
 
     if (!locationRecord) {
-      const locationSlug = city.toLowerCase().replace(/\s+/g, '-') + '-' + state.toLowerCase().replace(/\s+/g, '-');
+      const resolvedState = state?.trim() || city.trim(); // fallback: use city as state if not provided
+      const locationSlug = city.toLowerCase().replace(/\s+/g, '-') + '-' + resolvedState.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
       locationRecord = await prisma.location.create({
-        data: { city, state, slug: locationSlug + '-' + Date.now() },
+        data: { city: city.trim(), state: resolvedState, slug: locationSlug },
       });
     }
 

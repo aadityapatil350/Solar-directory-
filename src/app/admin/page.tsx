@@ -84,7 +84,12 @@ export default function AdminDashboard() {
 
   // Listings state
   const [listings, setListings] = useState<Listing[]>([]);
-  const [listingsLoading, setListingsLoading] = useState(true);
+  const [listingsLoading, setListingsLoading] = useState(false);
+  const [listingFilterCategory, setListingFilterCategory] = useState('');
+  const [listingFilterLocation, setListingFilterLocation] = useState('');
+  const [listingFilterVerified, setListingFilterVerified] = useState('');
+  const [listingFilterFeatured, setListingFilterFeatured] = useState('');
+  const [listingSearch, setListingSearch] = useState('');
   const [showAddListingForm, setShowAddListingForm] = useState(false);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
   const [listingForm, setListingForm] = useState({
@@ -142,28 +147,40 @@ export default function AdminDashboard() {
     }
   }, [leadsFilter, activeTab, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Reload listings when filters change or listings tab becomes active
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'listings') {
+      fetchListings();
+    }
+  }, [activeTab, isAuthenticated, listingFilterCategory, listingFilterLocation, listingFilterVerified, listingFilterFeatured]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reload installers when installers tab becomes active
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'installers') {
+      fetchInstallers();
+    }
+  }, [activeTab, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const fetchAllData = async (authToken: string) => {
+    setListingsLoading(true);
     try {
-      // Fetch all data in parallel
       const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
-        fetch('/api/admin/listings', {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }),
+        fetch('/api/admin/listings', { headers: { Authorization: `Bearer ${authToken}` } }),
         fetch('/api/categories'),
         fetch('/api/locations'),
       ]);
-
       const listingsData = await listingsRes.json();
       const categoriesData = await categoriesRes.json();
       const locationsData = await locationsRes.json();
-
       setListings(listingsData.listings || []);
       setCategories(categoriesData);
       setLocations(locationsData);
-      setStats(listingsData.stats || stats);
+      setStats(prev => ({ ...prev, ...(listingsData.stats || {}) }));
     } catch (error) {
       console.error('Error fetching data:', error);
       showMessage('error', 'Failed to load data');
+    } finally {
+      setListingsLoading(false);
     }
   };
 
@@ -244,12 +261,18 @@ export default function AdminDashboard() {
   const fetchListings = async () => {
     setListingsLoading(true);
     try {
-      const response = await fetch('/api/admin/listings', {
+      const params = new URLSearchParams();
+      if (listingFilterCategory) params.set('categoryId', listingFilterCategory);
+      if (listingFilterLocation) params.set('locationId', listingFilterLocation);
+      if (listingFilterVerified) params.set('verified', listingFilterVerified);
+      if (listingFilterFeatured) params.set('featured', listingFilterFeatured);
+      if (listingSearch) params.set('search', listingSearch);
+      const response = await fetch(`/api/admin/listings?${params.toString()}`, {
         headers: { Authorization: `Bearer ${auth}` },
       });
       const data = await response.json();
       setListings(data.listings || []);
-      setStats(data.stats || stats);
+      setStats(prev => ({ ...prev, ...(data.stats || {}) }));
     } catch (error) {
       console.error('Error fetching listings:', error);
     } finally {
@@ -909,18 +932,90 @@ export default function AdminDashboard() {
 
             {activeTab === 'listings' && (
               <>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">Manage Listings</h2>
-                  <button
-                    onClick={() => {
-                      handleCancelEdit();
-                      setShowAddListingForm(true);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Manage Listings
+                    <span className="ml-2 text-sm font-normal text-gray-500">({listings.length} shown)</span>
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={fetchListings}
+                      className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => { handleCancelEdit(); setShowAddListingForm(true); }}
+                      className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Listing
+                    </button>
+                  </div>
+                </div>
+
+                {/* Filters row */}
+                <div className="flex flex-wrap gap-3 mb-6 p-4 bg-gray-50 rounded-xl">
+                  <input
+                    type="text"
+                    placeholder="Search name / phone / email..."
+                    value={listingSearch}
+                    onChange={(e) => setListingSearch(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && fetchListings()}
+                    className="flex-1 min-w-48 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                  <select
+                    value={listingFilterCategory}
+                    onChange={(e) => setListingFilterCategory(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
                   >
-                    <Plus className="h-4 w-4" />
-                    Add New Listing
-                  </button>
+                    <option value="">All Categories</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={listingFilterLocation}
+                    onChange={(e) => setListingFilterLocation(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  >
+                    <option value="">All Cities</option>
+                    {locations.map((loc) => (
+                      <option key={loc.id} value={loc.id}>{loc.city}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={listingFilterVerified}
+                    onChange={(e) => setListingFilterVerified(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  >
+                    <option value="">All (Verified?)</option>
+                    <option value="true">Verified only</option>
+                    <option value="false">Unverified only</option>
+                  </select>
+                  <select
+                    value={listingFilterFeatured}
+                    onChange={(e) => setListingFilterFeatured(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  >
+                    <option value="">All (Featured?)</option>
+                    <option value="true">Featured only</option>
+                    <option value="false">Non-featured only</option>
+                  </select>
+                  {(listingFilterCategory || listingFilterLocation || listingFilterVerified || listingFilterFeatured || listingSearch) && (
+                    <button
+                      onClick={() => {
+                        setListingFilterCategory('');
+                        setListingFilterLocation('');
+                        setListingFilterVerified('');
+                        setListingFilterFeatured('');
+                        setListingSearch('');
+                      }}
+                      className="px-3 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition"
+                    >
+                      Clear Filters
+                    </button>
+                  )}
                 </div>
 
                 {showAddListingForm && (
@@ -1134,28 +1229,57 @@ export default function AdminDashboard() {
                                 <span className="text-xs text-gray-500">({listing.reviews} reviews)</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 flex gap-2">
-                              <button
-                                onClick={() => handleEditListing(listing)}
-                                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                                title="Edit"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleToggleFeatured(listing)}
-                                className="p-2 text-gray-600 hover:bg-yellow-100 rounded-lg transition"
-                                title="Toggle Featured"
-                              >
-                                <Star className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteListing(listing.id)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                                title="Delete"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
+                            <td className="px-6 py-4">
+                              <div className="flex flex-col gap-2">
+                                {/* Featured toggle */}
+                                <button
+                                  onClick={() => handleToggleFeatured(listing)}
+                                  title={listing.featured ? 'Remove from Featured' : 'Mark as Featured'}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition ${
+                                    listing.featured
+                                      ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                                      : 'bg-gray-100 text-gray-600 hover:bg-yellow-100'
+                                  }`}
+                                >
+                                  <Star className="h-3 w-3" />
+                                  {listing.featured ? 'Unfeature' : 'Feature'}
+                                </button>
+                                {/* Verified toggle */}
+                                <button
+                                  onClick={() => {
+                                    fetch('/api/admin/listings', {
+                                      method: 'PATCH',
+                                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` },
+                                      body: JSON.stringify({ id: listing.id, verified: !listing.verified }),
+                                    }).then(() => fetchListings());
+                                  }}
+                                  title={listing.verified ? 'Remove Verification' : 'Verify Listing'}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition ${
+                                    listing.verified
+                                      ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                                      : 'bg-gray-100 text-gray-600 hover:bg-blue-100'
+                                  }`}
+                                >
+                                  <ShieldCheck className="h-3 w-3" />
+                                  {listing.verified ? 'Unverify' : 'Verify'}
+                                </button>
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={() => handleEditListing(listing)}
+                                    className="p-1.5 text-gray-600 hover:bg-gray-100 rounded transition"
+                                    title="Edit"
+                                  >
+                                    <Edit className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteListing(listing.id)}
+                                    className="p-1.5 text-red-600 hover:bg-red-50 rounded transition"
+                                    title="Delete"
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -1200,10 +1324,19 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {installers.map((installer) => (
-                          <tr key={installer.id} className="hover:bg-gray-50">
+                        {installers.map((installer: any) => {
+                          const isNew = new Date(installer.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                          return (
+                          <tr key={installer.id} className={`hover:bg-gray-50 ${isNew && !installer.verified ? 'bg-green-50/40' : ''}`}>
                             <td className="px-6 py-4">
-                              <div className="font-medium text-gray-900">{installer.companyName}</div>
+                              <div className="flex items-center gap-2">
+                                <div className="font-medium text-gray-900">{installer.companyName}</div>
+                                {isNew && !installer.verified && (
+                                  <span className="inline-block bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-bold animate-pulse">
+                                    NEW
+                                  </span>
+                                )}
+                              </div>
                               <div className="flex items-center gap-2 mt-1">
                                 {installer.verified && (
                                   <div className="flex items-center gap-1">
@@ -1211,6 +1344,9 @@ export default function AdminDashboard() {
                                     <span className="text-blue-600 text-xs">Verified</span>
                                   </div>
                                 )}
+                                <span className="text-xs text-gray-400">
+                                  Joined {new Date(installer.createdAt).toLocaleDateString('en-IN')}
+                                </span>
                               </div>
                             </td>
                             <td className="px-6 py-4">
@@ -1259,7 +1395,8 @@ export default function AdminDashboard() {
                               </div>
                             </td>
                           </tr>
-                        ))}
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
