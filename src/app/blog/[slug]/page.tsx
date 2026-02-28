@@ -5,7 +5,7 @@ import { getBlogPost, blogPosts } from '@/lib/blog';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import Script from 'next/script';
-import { Clock, Tag, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Clock, Tag, ChevronRight, ArrowLeft, MapPin, Zap } from 'lucide-react';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -129,6 +129,57 @@ export default async function BlogPostPage({ params }: Props) {
               >
                 List Your Business
               </Link>
+            </div>
+          </div>
+
+          {/* ── Internal backlinks: cities + categories ── */}
+          <div className="mt-8 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-orange-500" />
+              Find Solar Installers by City
+            </h3>
+            <div className="flex flex-wrap gap-2 mb-5">
+              {[
+                { city: 'Mumbai', href: '/mumbai' },
+                { city: 'Delhi', href: '/delhi' },
+                { city: 'Bangalore', href: '/bangalore' },
+                { city: 'Pune', href: '/pune' },
+                { city: 'Hyderabad', href: '/hyderabad' },
+                { city: 'Chennai', href: '/chennai' },
+                { city: 'Kolkata', href: '/kolkata' },
+                { city: 'Ahmedabad', href: '/ahmedabad' },
+                { city: 'Jaipur', href: '/jaipur' },
+                { city: 'Lucknow', href: '/lucknow' },
+              ].map(({ city, href }) => (
+                <Link
+                  key={city}
+                  href={href}
+                  className="text-sm bg-orange-50 text-orange-700 hover:bg-orange-100 px-3 py-1.5 rounded-lg font-medium transition"
+                >
+                  {city}
+                </Link>
+              ))}
+            </div>
+            <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+              <Zap className="h-4 w-4 text-orange-500" />
+              Browse by Service Type
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { name: 'Residential Installers', href: '/categories/residential-installers' },
+                { name: 'Commercial Installers', href: '/categories/commercial-installers' },
+                { name: 'Solar Panel Dealers', href: '/categories/solar-panel-dealers' },
+                { name: 'Inverter Specialists', href: '/categories/inverter-specialists' },
+                { name: 'AMC & Maintenance', href: '/categories/amc-maintenance' },
+              ].map(({ name, href }) => (
+                <Link
+                  key={name}
+                  href={href}
+                  className="text-sm bg-gray-100 text-gray-700 hover:bg-orange-50 hover:text-orange-700 px-3 py-1.5 rounded-lg font-medium transition"
+                >
+                  {name}
+                </Link>
+              ))}
             </div>
           </div>
 
