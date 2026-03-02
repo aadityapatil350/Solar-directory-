@@ -174,7 +174,7 @@ export default function Home() {
             <p className="text-xl mb-8 text-orange-100">
               Solar panel installers, dealers, and service providers near you. Compare prices, read reviews, go solar today!
             </p>
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar onSearch={handleSearch} locations={locations} />
           </div>
         </div>
       </section>
