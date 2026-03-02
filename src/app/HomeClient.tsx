@@ -173,6 +173,14 @@ export default function HomeClient({ initialStats }: Props) {
       result = result.filter((l) => l.featured);
     }
 
+    // Sort: top-rated first, then by review count, unrated/new last
+    result.sort((a, b) => {
+      const ra = a.rating ?? 0;
+      const rb = b.rating ?? 0;
+      if (rb !== ra) return rb - ra;
+      return b.reviews - a.reviews;
+    });
+
     return result;
   }, [listings, searchQuery, searchLocation, filterCategoryId, filterLocationId, filterVerified, filterFeatured]);
 
@@ -277,11 +285,11 @@ export default function HomeClient({ initialStats }: Props) {
             </div>
 
             {listings.filter((l) => l.featured).length > 0 ? (
-              /* ── Active featured listings ── */
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              /* ── Active featured listings — 5+5 grid ── */
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                 {listings
                   .filter((l) => l.featured)
-                  .slice(0, 4)
+                  .slice(0, 10)
                   .map((listing) => (
                     <a
                       key={listing.id}
@@ -289,11 +297,9 @@ export default function HomeClient({ initialStats }: Props) {
                       className="group relative border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all"
                     >
                       <div className="absolute top-2 right-2">
-                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
-                          ⭐ Featured
-                        </span>
+                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-full">⭐</span>
                       </div>
-                      <div className="font-semibold text-gray-900 text-sm leading-tight pr-12 group-hover:text-orange-600 transition-colors">
+                      <div className="font-semibold text-gray-900 text-sm leading-tight pr-6 group-hover:text-orange-600 transition-colors">
                         {listing.name}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">{listing.category.name}</div>
@@ -311,15 +317,15 @@ export default function HomeClient({ initialStats }: Props) {
                   ))}
               </div>
             ) : (
-              /* ── No featured listings → CTA slots ── */
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map((slot) => (
+              /* ── No featured listings → 10 CTA slots ── */
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((slot) => (
                   <a
                     key={slot}
                     href="mailto:aadityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex&body=Hi%2C%0A%0AI%20would%20like%20to%20feature%20my%20solar%20business%20on%20GoSolarIndex.%0A%0ABusiness%20Name%3A%0APhone%3A%0ACity%3A%0AWebsite%3A%0A%0APlease%20get%20back%20to%20me%20with%20the%20details."
                     className="group relative border-2 border-dashed border-yellow-300 bg-gradient-to-br from-yellow-50/60 to-orange-50/60 rounded-xl p-4 hover:border-orange-400 hover:bg-orange-50 hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[110px]"
                   >
-                    <div className="w-9 h-9 rounded-full bg-yellow-100 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-yellow-100 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
                       <Star className="h-4 w-4 text-yellow-500 group-hover:fill-yellow-400 transition-colors" />
                     </div>
                     <div className="font-semibold text-gray-500 group-hover:text-orange-600 text-xs transition-colors leading-snug">
