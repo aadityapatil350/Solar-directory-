@@ -179,7 +179,7 @@ export default async function BlogPostPage({ params }: Props) {
                 { name: 'Solar Panel Dealers', href: '/categories/solar-dealers' },
                 { name: 'Inverter Specialists', href: '/categories/inverter-specialists' },
                 { name: 'AMC & Maintenance', href: '/categories/maintenance-services' },
-              ]}.map(({ name, href }) => (
+              ].map(({ name, href }) => (
                 <Link key={name} href={href} className="text-sm bg-gray-100 text-gray-700 hover:bg-orange-50 hover:text-orange-700 px-3 py-1.5 rounded-lg font-medium transition">
                   {name}
                 </Link>
