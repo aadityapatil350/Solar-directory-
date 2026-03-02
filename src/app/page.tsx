@@ -50,7 +50,7 @@ export default function Home() {
     async function fetchData() {
       try {
         const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
-          fetch('/api/listings?take=2500'),
+          fetch('/api/listings?take=4000'),
           fetch('/api/categories'),
           fetch('/api/locations'),
         ]);
@@ -185,7 +185,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="flex justify-center mb-2"><Zap className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.totalListings > 0 ? `${stats.totalListings}+` : '2400+'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.totalListings > 0 ? `${stats.totalListings}+` : '3900+'}</div>
               <div className="text-sm text-gray-600">Total Listings</div>
             </div>
             <div className="text-center">
@@ -195,12 +195,12 @@ export default function Home() {
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2"><Star className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.verified > 0 ? `${stats.verified}+` : '2400+'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.verified > 0 ? `${stats.verified}+` : '3900+'}</div>
               <div className="text-sm text-gray-600">Verified Companies</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2"><MapPin className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.cities > 0 ? `${stats.cities}+` : '53+'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.cities > 0 ? `${stats.cities}+` : '78+'}</div>
               <div className="text-sm text-gray-600">Cities Covered</div>
             </div>
             <div className="text-center">
@@ -435,37 +435,46 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-lg mb-4">GoSolarIndex</h3>
-              <p className="text-gray-400 text-sm">
-                India's trusted directory for finding the best solar installers and service providers.
+              <p className="text-gray-400 text-sm mb-4">
+                India's trusted solar directory. {stats.totalListings > 0 ? `${stats.totalListings}+` : '3900+'} verified listings across {stats.cities > 0 ? `${stats.cities}+` : '78+'} cities.
               </p>
+              <ul className="space-y-1 text-gray-400 text-sm">
+                <li>Email: <a href="mailto:hello@gosolarindex.in" className="hover:text-white transition">hello@gosolarindex.in</a></li>
+              </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
                 <li><Link href="/" className="hover:text-white transition">Home</Link></li>
                 <li><Link href="/categories" className="hover:text-white transition">Categories</Link></li>
-                <li><Link href="/locations" className="hover:text-white transition">Locations</Link></li>
-                <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Resources</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
+                <li><Link href="/locations" className="hover:text-white transition">All Locations</Link></li>
                 <li><Link href="/blog" className="hover:text-white transition">Solar Blog</Link></li>
+                <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
                 <li><Link href="/installers/signup" className="hover:text-white transition">List Your Business</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition">Contact Us</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li>Email: hello@gosolarindex.in</li>
-                <li>Phone: +91 98765 43210</li>
+              <h4 className="font-semibold mb-4">Maharashtra</h4>
+              <ul className="space-y-1 text-gray-400 text-sm">
+                {['Mumbai','Pune','Nagpur','Nashik','Aurangabad','Thane','Navi Mumbai','Solapur','Kolhapur','Amravati','Sangli','Nashik','Latur'].map(city => (
+                  <li key={city}><Link href={`/${city.toLowerCase().replace(/\s+/g,'-')}`} className="hover:text-white transition">{city}</Link></li>
+                ))}
+                <li><Link href="/locations" className="text-orange-400 hover:text-orange-300 transition">View all cities →</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Other Cities</h4>
+              <ul className="space-y-1 text-gray-400 text-sm">
+                {['Delhi','Bangalore','Hyderabad','Chennai','Kolkata','Ahmedabad','Jaipur','Lucknow','Surat','Chandigarh','Kochi','Bhopal','Indore'].map(city => (
+                  <li key={city}><Link href={`/${city.toLowerCase().replace(/\s+/g,'-')}`} className="hover:text-white transition">{city}</Link></li>
+                ))}
+                <li><Link href="/locations" className="text-orange-400 hover:text-orange-300 transition">View all cities →</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            © 2025 GoSolarIndex. All rights reserved.
+            © 2026 GoSolarIndex. All rights reserved.
           </div>
         </div>
       </footer>

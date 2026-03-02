@@ -154,11 +154,14 @@ export default async function BlogPostPage({ params }: Props) {
             </h3>
             <div className="flex flex-wrap gap-2 mb-5">
               {[
-                { city: 'Mumbai', href: '/mumbai' }, { city: 'Delhi', href: '/delhi' },
-                { city: 'Bangalore', href: '/bangalore' }, { city: 'Pune', href: '/pune' },
+                { city: 'Mumbai', href: '/mumbai' }, { city: 'Pune', href: '/pune' },
+                { city: 'Nagpur', href: '/nagpur' }, { city: 'Nashik', href: '/nashik' },
+                { city: 'Thane', href: '/thane' }, { city: 'Aurangabad', href: '/aurangabad' },
+                { city: 'Delhi', href: '/delhi' }, { city: 'Bangalore', href: '/bangalore' },
                 { city: 'Hyderabad', href: '/hyderabad' }, { city: 'Chennai', href: '/chennai' },
-                { city: 'Kolkata', href: '/kolkata' }, { city: 'Ahmedabad', href: '/ahmedabad' },
-                { city: 'Jaipur', href: '/jaipur' }, { city: 'Lucknow', href: '/lucknow' },
+                { city: 'Ahmedabad', href: '/ahmedabad' }, { city: 'Jaipur', href: '/jaipur' },
+                { city: 'Kolkata', href: '/kolkata' }, { city: 'Lucknow', href: '/lucknow' },
+                { city: 'Solapur', href: '/solapur' }, { city: 'Kolhapur', href: '/kolhapur' },
               ].map(({ city, href }) => (
                 <Link key={city} href={href} className="text-sm bg-orange-50 text-orange-700 hover:bg-orange-100 px-3 py-1.5 rounded-lg font-medium transition">
                   {city}
