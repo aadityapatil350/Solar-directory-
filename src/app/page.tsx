@@ -457,7 +457,7 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Maharashtra</h4>
               <ul className="space-y-1 text-gray-400 text-sm">
-                {['Mumbai','Pune','Nagpur','Nashik','Aurangabad','Thane','Navi Mumbai','Solapur','Kolhapur','Amravati','Sangli','Nashik','Latur'].map(city => (
+                {['Mumbai','Pune','Nagpur','Nashik','Aurangabad','Thane','Navi Mumbai','Solapur','Kolhapur','Amravati','Sangli','Satara','Latur'].map(city => (
                   <li key={city}><Link href={`/${city.toLowerCase().replace(/\s+/g,'-')}`} className="hover:text-white transition">{city}</Link></li>
                 ))}
                 <li><Link href="/locations" className="text-orange-400 hover:text-orange-300 transition">View all cities →</Link></li>
