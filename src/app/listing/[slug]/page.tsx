@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
 
 // ─── Services mapped from category name ───────────────────────────────────────
 const CATEGORY_SERVICES: Record<string, string[]> = {
-  'Residential Installers': [
+  'Residential Solar Installers': [
     'Rooftop Solar Installation',
     'Grid-Tied Solar Systems',
     'Off-Grid & Hybrid Systems',
@@ -26,7 +26,7 @@ const CATEGORY_SERVICES: Record<string, string[]> = {
     'Rooftop Assessment & Site Survey',
     'Solar Performance Monitoring',
   ],
-  'Commercial Installers': [
+  'Commercial Solar Installers': [
     'Commercial & Industrial Solar',
     'Large-Scale Ground Mount Systems',
     'Power Purchase Agreements (PPA)',
@@ -46,7 +46,7 @@ const CATEGORY_SERVICES: Record<string, string[]> = {
     'Panel Performance Testing',
     'Import & Domestic Panels',
   ],
-  'Inverter Specialists': [
+  'Solar Inverter Specialists': [
     'Solar Inverter Installation',
     'String Inverter Supply & Service',
     'Micro-Inverter Systems',
@@ -56,7 +56,7 @@ const CATEGORY_SERVICES: Record<string, string[]> = {
     'Battery Storage Integration',
     'Remote Monitoring Setup',
   ],
-  'AMC & Maintenance': [
+  'Solar AMC & Maintenance': [
     'Annual Maintenance Contracts',
     'Solar Panel Cleaning',
     'Performance & Yield Monitoring',

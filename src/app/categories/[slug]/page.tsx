@@ -38,7 +38,7 @@ export default async function CategoryPage({ params }: Props) {
     where: { categoryId: category.id },
     include: { category: true, location: true },
     orderBy: [{ featured: 'desc' }, { verified: 'desc' }, { rating: 'desc' }],
-    take: 100,
+    take: 500,
   });
 
   const locations = await prisma.location.findMany({

@@ -3,6 +3,7 @@ import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
+import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,38 +14,44 @@ export const metadata: Metadata = constructMetadata({
 });
 
 export default async function LocationsPage() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/locations`, {
-    cache: 'no-store',
+  const locations = await prisma.location.findMany({
+    orderBy: { city: 'asc' },
+    include: { _count: { select: { listings: true } } },
   });
-  const locations = await res.json();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-3 mb-3">
             <MapPin className="h-10 w-10 text-orange-500" />
             <h1 className="text-4xl font-bold text-gray-900">Browse Locations</h1>
           </div>
-          
           <p className="text-gray-600 mb-8">
-            Find solar services in your city across India
+            Solar companies across {locations.length} cities in India
           </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {locations.map((location: { id: string; city: string; state: string; slug: string }) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {locations.map((location) => (
               <Link
                 key={location.id}
                 href={`/${location.city.toLowerCase().replace(/\s+/g, '-')}`}
-                className="bg-white rounded-xl p-6 hover:shadow-lg transition border border-gray-200 group"
+                className="bg-white rounded-xl p-5 hover:shadow-lg transition border border-gray-200 group"
               >
-                <h2 className="text-xl font-semibold text-gray-900 group-hover:text-orange-500 transition">
-                  {location.city}
-                </h2>
-                <p className="text-gray-600 mt-1">{location.state}</p>
-                <p className="text-xs text-orange-500 mt-2 font-medium group-hover:underline">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 group-hover:text-orange-500 transition">
+                      {location.city}
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-0.5">{location.state}</p>
+                  </div>
+                  <span className="bg-orange-50 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">
+                    {location._count.listings}
+                  </span>
+                </div>
+                <p className="text-xs text-orange-500 mt-3 font-medium group-hover:underline">
                   View solar companies →
                 </p>
               </Link>
