@@ -9,23 +9,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Get all listings, categories, locations, and blog posts
   const [listings, categories, locations, blogPosts] = await Promise.all([
     prisma.listing.findMany({
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-      take: 1000,
+      select: { slug: true, updatedAt: true },
+      take: 3000,
     }),
     prisma.category.findMany({
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
+      select: { slug: true, updatedAt: true },
     }),
     prisma.location.findMany({
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
+      select: { city: true, updatedAt: true },
     }),
     prisma.blogPost.findMany({
       where: { published: true },
@@ -116,13 +107,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  // Location pages
+  // City pages — use /{city} URL pattern (matches actual routes)
   locations.forEach((location) => {
     pages.push({
-      url: `${baseUrl}/locations/${location.slug}`,
+      url: `${baseUrl}/${location.city.toLowerCase().replace(/\s+/g, '-')}`,
       lastModified: location.updatedAt.toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
+      changeFrequency: 'weekly',
+      priority: 0.8,
     });
   });
 
