@@ -453,7 +453,6 @@ export default function Home() {
               <ul className="space-y-2 text-gray-400 text-sm">
                 <li><Link href="/blog" className="hover:text-white transition">Solar Blog</Link></li>
                 <li><Link href="/installers/signup" className="hover:text-white transition">List Your Business</Link></li>
-                <li><Link href="/pricing" className="hover:text-white transition">Pricing Plans</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition">Contact Us</Link></li>
               </ul>
             </div>
