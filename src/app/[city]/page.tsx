@@ -5,6 +5,7 @@ import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
 import { MapPin, Zap } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
+import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,18 +41,7 @@ export default async function CityPage({ params }: PageProps) {
     where: { city: { equals: slugToSearch(citySlug), mode: 'insensitive' } },
   });
 
-  if (!cityData) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">City not found</h1>
-          <Link href="/" className="text-orange-500 mt-4 inline-block">
-            ← Back to Home
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (!cityData) notFound();
 
   // Fetch listings for this city
   const listings = await prisma.listing.findMany({

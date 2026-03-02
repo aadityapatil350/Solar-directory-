@@ -22,6 +22,9 @@ export function constructMetadata({
   return {
     title: fullTitle,
     description: fullDescription,
+    alternates: {
+      canonical: url,
+    },
     icons: {
       icon: '/icon.svg',
       shortcut: '/icon.svg',
@@ -91,7 +94,7 @@ export function constructCityMetadata(city: string, state: string): Metadata {
   return constructMetadata({
     title,
     description,
-    path: `/${city.toLowerCase().replace(/\s+/g, '-')}-solar-installers`,
+    path: `/${city.toLowerCase().replace(/\s+/g, '-')}`,
   });
 }
 

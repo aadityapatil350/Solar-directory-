@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import Script from 'next/script';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;    // ISR — revalidate every hour
+export const dynamicParams = true; // serve new slugs on-demand
 
 // ─── Services mapped from category name ───────────────────────────────────────
 const CATEGORY_SERVICES: Record<string, string[]> = {
