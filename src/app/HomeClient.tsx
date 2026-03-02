@@ -2,13 +2,50 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
 import LeadForm from '@/components/LeadForm';
 import CalcPopup from '@/components/CalcPopup';
-import { Zap, ShieldCheck, Star, TrendingUp, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Zap, ShieldCheck, Star, TrendingUp, MapPin, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+
+const FAQS = [
+  {
+    q: 'How much does solar panel installation cost in India?',
+    a: 'The cost of a residential solar system in India typically ranges from ₹50,000 to ₹1,50,000 for a 1 kW system. A 3 kW rooftop system suitable for most homes costs ₹1.5 lakh–₹2.5 lakh before subsidies. Under the PM Surya Ghar Yojana scheme, you can get a central government subsidy of ₹30,000 per kW (up to 2 kW) + ₹18,000 for the 3rd kW, making solar significantly cheaper.',
+  },
+  {
+    q: 'How do I find a reliable solar installer near me?',
+    a: 'Use GoSolarIndex to search for verified solar installers in your city. Filter by location, category (residential/commercial), and ratings. Always check Google ratings and review counts, ask for at least 3 quotes, verify the installer is empanelled with MNRE/DISCOM, and ask for a site visit before signing any agreement.',
+  },
+  {
+    q: 'What is the PM Surya Ghar Yojana subsidy?',
+    a: 'PM Surya Ghar Muft Bijli Yojana offers central government subsidies for rooftop solar: ₹30,000/kW for systems up to 2 kW, and ₹18,000 for the 3rd kW. The maximum subsidy is ₹78,000 for a 3 kW system. Apply through the National Portal for Rooftop Solar (pmsuryaghar.gov.in) with your DISCOM consumer number.',
+  },
+  {
+    q: 'How long do solar panels last in India?',
+    a: 'Quality solar panels (Tier 1 brands like Adani, Waaree, Vikram Solar, Renewsys) last 25–30 years with minimal degradation. Most panels come with a 25-year performance warranty guaranteeing at least 80% output. Solar inverters typically last 10–15 years. Regular cleaning and annual AMC (Annual Maintenance Contract) can extend the lifespan.',
+  },
+  {
+    q: 'What is the payback period for solar in India?',
+    a: 'In India, a rooftop solar system typically pays back in 4–7 years depending on your city, electricity tariff, and system size. With average electricity bills of ₹2,000–5,000/month, most homeowners see full payback in 5 years and enjoy free electricity for the remaining 20+ years of the system\'s life.',
+  },
+  {
+    q: 'On-grid vs off-grid solar — which is better for Indian homes?',
+    a: 'For homes with a stable grid connection, on-grid (grid-tied) solar is recommended. You can sell excess power back to the grid through net metering and avoid expensive battery costs. Off-grid systems with batteries make sense in areas with frequent power cuts or no grid access. Hybrid systems offer both grid-tied operation and battery backup.',
+  },
+  {
+    q: 'How many solar panels do I need for my home?',
+    a: 'A typical Indian household consuming 300–400 units/month needs a 3–4 kW solar system (9–12 panels). For a 1 BHK (150 units/month) you need 1–1.5 kW; for a 2 BHK (250 units/month) around 2.5 kW; for a 3 BHK+ (400+ units/month) around 4–5 kW. Use our solar calculator or get a site assessment from a listed installer.',
+  },
+  {
+    q: 'Is net metering available across India?',
+    a: 'Yes, net metering is available in all Indian states under MNRE guidelines. You can sell excess solar units to your DISCOM at a feed-in tariff. The process involves applying to your local electricity board (MSEDCL in Maharashtra, BESCOM in Karnataka, TSSPDCL in Telangana, etc.) after installation. Your empanelled installer should handle the net metering application.',
+  },
+];
+
 
 interface Listing {
   id: string;
@@ -49,6 +86,7 @@ export default function HomeClient({ initialStats }: Props) {
   const [stats, setStats] = useState<InitialStats>(initialStats);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Active filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -437,6 +475,66 @@ export default function HomeClient({ initialStats }: Props) {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: FAQS.map((faq) => ({
+              '@type': 'Question',
+              name: faq.q,
+              acceptedAnswer: { '@type': 'Answer', text: faq.a },
+            })),
+          }),
+        }}
+      />
+      <section className="bg-white py-14 border-t">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-gray-500 text-center mb-10">
+              Common questions about going solar in India
+            </p>
+            <div className="space-y-3">
+              {FAQS.map((faq, i) => (
+                <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition"
+                  >
+                    <span className="font-semibold text-gray-900 pr-4">{faq.q}</span>
+                    <ChevronDown
+                      className={`h-5 w-5 text-orange-500 shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                  {openFaq === i && (
+                    <div className="px-6 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-sm text-gray-400 mt-8">
+              Have more questions?{' '}
+              <Link href="/contact" className="text-orange-600 hover:underline">
+                Contact us
+              </Link>{' '}
+              or{' '}
+              <Link href="/blog" className="text-orange-600 hover:underline">
+                read our solar blog
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </section>
