@@ -50,7 +50,7 @@ export default function Home() {
     async function fetchData() {
       try {
         const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
-          fetch('/api/listings?take=200'),
+          fetch('/api/listings?take=2500'),
           fetch('/api/categories'),
           fetch('/api/locations'),
         ]);
@@ -90,17 +90,21 @@ export default function Home() {
         (l) =>
           l.name.toLowerCase().includes(q) ||
           l.description?.toLowerCase().includes(q) ||
-          l.address?.toLowerCase().includes(q)
+          l.address?.toLowerCase().includes(q) ||
+          l.category.name.toLowerCase().includes(q) ||
+          l.location.city.toLowerCase().includes(q) ||
+          l.location.state.toLowerCase().includes(q)
       );
     }
 
     if (searchLocation) {
-      const loc = searchLocation.toLowerCase();
-      result = result.filter(
-        (l) =>
-          l.location.city.toLowerCase().includes(loc) ||
-          l.location.state.toLowerCase().includes(loc)
-      );
+      const loc = searchLocation.toLowerCase().replace(/\s+/g, '');
+      result = result.filter((l) => {
+        const city = l.location.city.toLowerCase().replace(/\s+/g, '');
+        const state = l.location.state.toLowerCase().replace(/\s+/g, '');
+        const address = (l.address || '').toLowerCase().replace(/\s+/g, '');
+        return city.includes(loc) || state.includes(loc) || address.includes(loc);
+      });
     }
 
     if (filterCategoryId) {
@@ -181,27 +185,27 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="flex justify-center mb-2"><Zap className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.totalListings > 0 ? `${stats.totalListings}+` : '89+'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.totalListings > 0 ? `${stats.totalListings}+` : '2400+'}</div>
               <div className="text-sm text-gray-600">Total Listings</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2"><ShieldCheck className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.featured || '10+'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.featured > 0 ? `${stats.featured}+` : '10+'}</div>
               <div className="text-sm text-gray-600">Featured Companies</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2"><Star className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.verified || '50+'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.verified > 0 ? `${stats.verified}+` : '2400+'}</div>
               <div className="text-sm text-gray-600">Verified Companies</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2"><MapPin className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.cities || '10'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.cities > 0 ? `${stats.cities}+` : '53+'}</div>
               <div className="text-sm text-gray-600">Cities Covered</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2"><TrendingUp className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.avgRating || '4.5'}</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.avgRating > 0 ? stats.avgRating : '4.5'}</div>
               <div className="text-sm text-gray-600">Avg Rating</div>
             </div>
           </div>

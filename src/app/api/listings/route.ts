@@ -33,11 +33,15 @@ export async function GET(request: Request) {
         { name: { contains: query, mode: 'insensitive' } },
         { description: { contains: query, mode: 'insensitive' } },
         { address: { contains: query, mode: 'insensitive' } },
+        { phone: { contains: query, mode: 'insensitive' } },
+        { location: { city: { contains: query, mode: 'insensitive' } } },
+        { location: { state: { contains: query, mode: 'insensitive' } } },
+        { category: { name: { contains: query, mode: 'insensitive' } } },
       ];
     }
 
     const takeParam = searchParams.get('take');
-    const take = takeParam ? Math.min(parseInt(takeParam), 500) : 50;
+    const take = takeParam ? Math.min(parseInt(takeParam), 3000) : 50;
 
     const listings = await prisma.listing.findMany({
       where,
