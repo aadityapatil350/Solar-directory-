@@ -6,23 +6,32 @@ export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gosolarindex.in';
 
-  // Get all listings, categories, locations, and blog posts
+  // Get all listings, categories, locations, blog posts, and states
   const [listings, categories, locations, blogPosts] = await Promise.all([
     prisma.listing.findMany({
-      select: { slug: true, updatedAt: true },
+      select: { slug: true, updatedAt: true, verified: true, featured: true },
       take: 5000,
     }),
     prisma.category.findMany({
       select: { slug: true, updatedAt: true },
     }),
     prisma.location.findMany({
-      select: { city: true, updatedAt: true },
+      select: { city: true, state: true, updatedAt: true },
     }),
     prisma.blogPost.findMany({
       where: { published: true },
       select: { slug: true, updatedAt: true },
     }),
   ]);
+
+  // Get unique states from locations
+  const uniqueStates = [...new Set(locations.map((l) => l.state))];
+
+  // Define top cities for higher priority
+  const topCities = [
+    'mumbai', 'delhi', 'bangalore', 'pune', 'hyderabad',
+    'chennai', 'kolkata', 'ahmedabad', 'jaipur', 'lucknow'
+  ];
 
   const pages: Array<{
     url: string;
@@ -31,14 +40,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: number;
   }> = [];
 
-  // Static pages
+  // Static pages - Critical & High Priority
   pages.push(
+    // Homepage - Critical
     {
       url: baseUrl,
       lastModified: new Date().toISOString(),
       changeFrequency: 'daily',
-      priority: 1,
+      priority: 1.0,
     },
+    // Tools - High Priority
     {
       url: `${baseUrl}/solar-calculator`,
       lastModified: new Date().toISOString(),
@@ -51,6 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    // Directory Pages - High Priority
     {
       url: `${baseUrl}/categories`,
       lastModified: new Date().toISOString(),
@@ -66,8 +78,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date().toISOString(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'daily',
       priority: 0.8,
+    },
+    // Installer Pages - Medium-High Priority
+    {
+      url: `${baseUrl}/installers/signup`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/installers/login`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    // Business Pages - Medium Priority
+    {
+      url: `${baseUrl}/pricing`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/about`,
@@ -81,18 +113,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
-    {
-      url: `${baseUrl}/pricing`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/installers/signup`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
   );
 
   // Blog posts
@@ -105,13 +125,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  // Listing pages
+  // Listing pages - Higher priority for verified/featured
   listings.forEach((listing) => {
+    let priority = 0.5; // Default
+    if (listing.verified && listing.featured) {
+      priority = 0.7; // Verified + Featured
+    } else if (listing.verified) {
+      priority = 0.6; // Just verified
+    } else if (listing.featured) {
+      priority = 0.6; // Just featured
+    }
+
     pages.push({
       url: `${baseUrl}/listing/${listing.slug}`,
       lastModified: listing.updatedAt.toISOString(),
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority,
     });
   });
 
@@ -125,13 +154,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  // City pages — use /{city} URL pattern (matches actual routes)
+  // City pages — Higher priority for top metro cities
   locations.forEach((location) => {
+    const citySlug = location.city.toLowerCase().replace(/\s+/g, '-');
+    const isTopCity = topCities.includes(citySlug);
+
     pages.push({
-      url: `${baseUrl}/${location.city.toLowerCase().replace(/\s+/g, '-')}`,
+      url: `${baseUrl}/${citySlug}`,
       lastModified: location.updatedAt.toISOString(),
       changeFrequency: 'weekly',
-      priority: 0.8,
+      priority: isTopCity ? 0.9 : 0.7, // Top cities get 0.9, others get 0.7
+    });
+  });
+
+  // State pages — Medium-High Priority
+  uniqueStates.forEach((state) => {
+    const stateSlug = state.toLowerCase().replace(/\s+/g, '-');
+    pages.push({
+      url: `${baseUrl}/states/${stateSlug}`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
     });
   });
 
