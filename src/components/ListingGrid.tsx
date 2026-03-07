@@ -10,6 +10,7 @@ interface Listing {
   slug: string;
   description: string | null;
   phone: string | null;
+  website: string | null;
   address: string | null;
   rating: number | null;
   reviews: number;
@@ -17,6 +18,7 @@ interface Listing {
   featured: boolean;
   location: { id: string; city: string; state: string };
   category: { id: string; name: string };
+  installerId?: string | null;
 }
 
 interface ListingGridProps {

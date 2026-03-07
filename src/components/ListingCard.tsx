@@ -49,14 +49,13 @@ async function trackWhatsAppClick(listingId: string, city: string) {
 }
 
 export default function ListingCard({ listing, installerId, enquiryCount }: ListingCardProps) {
-  const [allCategories, setAllCategories] = useState<Category[]>([listing.category]);
-  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   // Fetch all categories this company works in
   useEffect(() => {
     async function fetchCategories() {
       try {
-        setLoadingCategories(true);
         const response = await fetch(`/api/listings/${listing.id}/categories`);
         const data = await response.json();
         if (data.categories && data.categories.length > 0) {
@@ -156,16 +155,19 @@ export default function ListingCard({ listing, installerId, enquiryCount }: List
 
         {/* Category Badges - Show all categories */}
         <div className="flex flex-wrap gap-2 mb-3">
-          {allCategories.map((cat) => (
-            <span
-              key={cat.id}
-              className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full"
-            >
-              {cat.name}
+          {loadingCategories && allCategories.length === 0 ? (
+            <span className="bg-gray-100 text-gray-500 text-xs font-semibold px-3 py-1 rounded-full animate-pulse">
+              {listing.category.name}
             </span>
-          ))}
-          {loadingCategories && allCategories.length === 1 && (
-            <span className="text-xs text-gray-400">Loading...</span>
+          ) : (
+            allCategories.map((cat) => (
+              <span
+                key={cat.id}
+                className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full"
+              >
+                {cat.name}
+              </span>
+            ))
           )}
         </div>
 
