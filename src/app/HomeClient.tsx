@@ -9,7 +9,10 @@ import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
 import LeadForm from '@/components/LeadForm';
 import CalcPopup from '@/components/CalcPopup';
-import { Zap, ShieldCheck, Star, TrendingUp, MapPin, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import {
+  Zap, ShieldCheck, Star, TrendingUp, MapPin, ChevronLeft, ChevronRight, ChevronDown,
+  Award, CheckCircle, Users, Clock, Phone, Mail, Shield, BadgeCheck, Search, Building2
+} from 'lucide-react';
 
 const FAQS = [
   {
@@ -46,13 +49,13 @@ const FAQS = [
   },
 ];
 
-
 interface Listing {
   id: string;
   name: string;
   slug: string;
   description: string | null;
   phone: string | null;
+  website: string | null;
   address: string | null;
   rating: number | null;
   reviews: number;
@@ -60,6 +63,7 @@ interface Listing {
   featured: boolean;
   location: { id: string; city: string; state: string };
   category: { id: string; name: string };
+  installerId?: string | null;
 }
 
 interface Category { id: string; name: string; slug: string }
@@ -75,18 +79,25 @@ export interface InitialStats {
 
 interface Props {
   initialStats: InitialStats;
+  initialListings?: Listing[];
+  initialCategories?: Category[];
+  initialLocations?: Location[];
+  children?: React.ReactNode;
+  initialInstallers?: Record<string, { enquiryCount: number | null; loading: boolean }>;
 }
 
 const PAGE_SIZE = 12;
 
-export default function HomeClient({ initialStats }: Props) {
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [locations, setLocations] = useState<Location[]>([]);
+export default function HomeClient({ initialStats, initialListings = [], initialCategories = [], initialLocations = [], children, initialInstallers }: Props) {
+  const [listings, setListings] = useState<Listing[]>(initialListings);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [locations, setLocations] = useState<Location[]>(initialLocations);
   const [stats, setStats] = useState<InitialStats>(initialStats);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [installerData, setInstallerData] = useState<Record<string, { enquiryCount: number | null; loading: boolean }>>(initialInstallers || {});
   const [currentPage, setCurrentPage] = useState(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [useClientRender, setUseClientRender] = useState(false);
 
   // Active filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,8 +134,6 @@ export default function HomeClient({ initialStats }: Props) {
         });
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
       }
     }
     fetchData();
@@ -140,21 +149,13 @@ export default function HomeClient({ initialStats }: Props) {
         (l) =>
           l.name.toLowerCase().includes(q) ||
           l.description?.toLowerCase().includes(q) ||
-          l.address?.toLowerCase().includes(q) ||
-          l.category.name.toLowerCase().includes(q) ||
-          l.location.city.toLowerCase().includes(q) ||
-          l.location.state.toLowerCase().includes(q)
+          l.location.city.toLowerCase().includes(q)
       );
     }
 
     if (searchLocation) {
-      const loc = searchLocation.toLowerCase().replace(/\s+/g, '');
-      result = result.filter((l) => {
-        const city = l.location.city.toLowerCase().replace(/\s+/g, '');
-        const state = l.location.state.toLowerCase().replace(/\s+/g, '');
-        const address = (l.address || '').toLowerCase().replace(/\s+/g, '');
-        return city.includes(loc) || state.includes(loc) || address.includes(loc);
-      });
+      const loc = searchLocation.toLowerCase();
+      result = result.filter((l) => l.location.city.toLowerCase().includes(loc));
     }
 
     if (filterCategoryId) {
@@ -173,319 +174,467 @@ export default function HomeClient({ initialStats }: Props) {
       result = result.filter((l) => l.featured);
     }
 
-    // Sort: top-rated first, then by review count, unrated/new last
-    result.sort((a, b) => {
-      const ra = a.rating ?? 0;
-      const rb = b.rating ?? 0;
-      if (rb !== ra) return rb - ra;
-      return b.reviews - a.reviews;
-    });
-
     return result;
-  }, [listings, searchQuery, searchLocation, filterCategoryId, filterLocationId, filterVerified, filterFeatured]);
+  }, [
+    listings,
+    searchQuery,
+    searchLocation,
+    filterCategoryId,
+    filterLocationId,
+    filterVerified,
+    filterFeatured,
+  ]);
 
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(filteredListings.length / PAGE_SIZE));
-  const paginated = filteredListings.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const paginatedListings = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredListings.slice(start, start + PAGE_SIZE);
+  }, [filteredListings, currentPage]);
 
-  function handleSearch(query: string, location: string) {
+  const totalPages = Math.ceil(filteredListings.length / PAGE_SIZE);
+
+  const handleSearch = (query: string, location: string) => {
     setSearchQuery(query);
     setSearchLocation(location);
     setCurrentPage(1);
-  }
+  };
 
-  function handleFilter(
+  const handleFilterChange = (
     categoryId: string | null,
     locationId: string | null,
-    verifiedOnly: boolean,
-    featuredOnly: boolean
-  ) {
+    verified: boolean,
+    featured: boolean
+  ) => {
     setFilterCategoryId(categoryId);
     setFilterLocationId(locationId);
-    setFilterVerified(verifiedOnly);
-    setFilterFeatured(featuredOnly);
+    setFilterVerified(verified);
+    setFilterFeatured(featured);
     setCurrentPage(1);
-  }
+  };
 
-  function clearFilters() {
-    setSearchQuery('');
-    setSearchLocation('');
-    setFilterCategoryId(null);
-    setFilterLocationId(null);
-    setFilterVerified(false);
-    setFilterFeatured(false);
-    setCurrentPage(1);
-  }
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <CalcPopup />
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <Header />
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Find Best Solar Installers in India
+      {/* Hero Section - Premium Design */}
+      <section className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 text-white overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-700/20 rounded-full blur-3xl"></div>
+
+        <div className="container mx-auto px-4 py-20 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Trust Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-white/30">
+              <Shield className="h-4 w-4" />
+              <span className="text-sm font-medium">India's Most Trusted Solar Directory</span>
+            </div>
+
+            <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+              Find <span className="text-yellow-200">Verified</span> Solar Installers
+              <br />Near You in Minutes
             </h1>
-            <p className="text-xl mb-8 text-orange-100">
-              Solar panel installers, dealers, and service providers near you. Compare prices, read reviews, go solar today!
+
+            <p className="text-xl md:text-2xl mb-4 text-orange-50 font-light">
+              Compare quotes from {stats.verified}+ verified solar companies across {stats.cities}+ cities
             </p>
-            <SearchBar onSearch={handleSearch} locations={locations} />
-          </div>
-        </div>
-      </section>
 
-      {/* Stats — initial values come from server (SEO-friendly), update after client fetch */}
-      <section className="bg-white border-b py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="flex justify-center mb-2"><Zap className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.totalListings}+</div>
-              <div className="text-sm text-gray-600">Total Listings</div>
-            </div>
-            <div className="text-center">
-              <div className="flex justify-center mb-2"><ShieldCheck className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.featured > 0 ? `${stats.featured}+` : 'Get Featured'}</div>
-              <div className="text-sm text-gray-600">Featured Companies</div>
-            </div>
-            <div className="text-center">
-              <div className="flex justify-center mb-2"><Star className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.verified}+</div>
-              <div className="text-sm text-gray-600">Verified Companies</div>
-            </div>
-            <div className="text-center">
-              <div className="flex justify-center mb-2"><MapPin className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.cities}+</div>
-              <div className="text-sm text-gray-600">Cities Covered</div>
-            </div>
-            <div className="text-center">
-              <div className="flex justify-center mb-2"><TrendingUp className="h-8 w-8 text-orange-500" /></div>
-              <div className="text-3xl font-bold text-gray-900">{stats.avgRating > 0 ? stats.avgRating : '4.5'}</div>
-              <div className="text-sm text-gray-600">Avg Rating</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Partners strip — always visible */}
-      {!loading && (
-        <section className="bg-white border-b py-8">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-500 fill-yellow-400" />
-                <h2 className="text-lg font-bold text-gray-900">Featured Solar Companies</h2>
+            <div className="flex flex-wrap items-center justify-center gap-6 mb-10">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-300" />
+                <span className="font-medium">100% Free Quotes</span>
               </div>
-              <span className="text-sm text-orange-600 font-medium bg-orange-50 px-3 py-1 rounded-full">
-                Premium Partners
-              </span>
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-300" />
+                <span className="font-medium">PM Surya Ghar Eligible</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-300" />
+                <span className="font-medium">MNRE Approved</span>
+              </div>
             </div>
 
-            {listings.filter((l) => l.featured).length > 0 ? (
-              /* ── Active featured listings — 5+5 grid ── */
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                {listings
-                  .filter((l) => l.featured)
-                  .slice(0, 10)
-                  .map((listing) => (
-                    <a
-                      key={listing.id}
-                      href={`/listing/${listing.slug}`}
-                      className="group relative border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all"
-                    >
-                      <div className="absolute top-2 right-2">
-                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-full">⭐</span>
-                      </div>
-                      <div className="font-semibold text-gray-900 text-sm leading-tight pr-6 group-hover:text-orange-600 transition-colors">
-                        {listing.name}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">{listing.category.name}</div>
-                      <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {listing.location.city}
-                      </div>
-                      {listing.rating != null && listing.rating > 0 && (
-                        <div className="flex items-center gap-1 mt-2">
-                          <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-                          <span className="text-xs font-medium text-gray-700">{listing.rating}</span>
-                        </div>
-                      )}
-                    </a>
-                  ))}
-              </div>
-            ) : (
-              /* ── No featured listings → 10 CTA slots ── */
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((slot) => (
-                  <a
-                    key={slot}
-                    href="mailto:aadityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex&body=Hi%2C%0A%0AI%20would%20like%20to%20feature%20my%20solar%20business%20on%20GoSolarIndex.%0A%0ABusiness%20Name%3A%0APhone%3A%0ACity%3A%0AWebsite%3A%0A%0APlease%20get%20back%20to%20me%20with%20the%20details."
-                    className="group relative border-2 border-dashed border-yellow-300 bg-gradient-to-br from-yellow-50/60 to-orange-50/60 rounded-xl p-4 hover:border-orange-400 hover:bg-orange-50 hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[110px]"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-yellow-100 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
-                      <Star className="h-4 w-4 text-yellow-500 group-hover:fill-yellow-400 transition-colors" />
-                    </div>
-                    <div className="font-semibold text-gray-500 group-hover:text-orange-600 text-xs transition-colors leading-snug">
-                      Your Business Here
-                    </div>
-                    <span className="text-xs text-orange-500 font-medium group-hover:underline">
-                      Get Featured →
-                    </span>
-                  </a>
-                ))}
-              </div>
-            )}
+            {/* Search Bar */}
+            <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-3xl mx-auto">
+              <SearchBar onSearch={handleSearch} />
 
-            {/* CTA below the grid */}
-            {listings.filter((l) => l.featured).length === 0 && (
-              <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 bg-orange-50 border border-orange-200 rounded-xl px-5 py-4">
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">Want to be a Featured Partner?</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Get top placement, a verified badge, and priority leads. Email us your business details to get started.
-                  </p>
-                </div>
-                <a
-                  href="mailto:aadityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex&body=Hi%2C%0A%0AI%20would%20like%20to%20feature%20my%20solar%20business%20on%20GoSolarIndex.%0A%0ABusiness%20Name%3A%0APhone%3A%0ACity%3A%0AWebsite%3A%0A%0APlease%20get%20back%20to%20me%20with%20the%20details."
-                  className="shrink-0 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition whitespace-nowrap"
+              {/* Location Filter - Yellow Pages Style */}
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Or browse by location:
+                </label>
+                <select
+                  value={filterLocationId || ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFilterLocationId(val || null);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 bg-white"
                 >
-                  Email Us to Get Featured
-                </a>
+                  <option value="">All Cities in India</option>
+                  {locations
+                    .sort((a, b) => a.city.localeCompare(b.city))
+                    .map((location) => (
+                      <option key={location.id} value={location.id}>
+                        {location.city}, {location.state}
+                      </option>
+                    ))}
+                </select>
               </div>
-            )}
-          </div>
-        </section>
-      )}
+            </div>
 
-      {/* Main Content */}
+            {/* Quick Links */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm">
+              <span className="text-orange-100">Popular:</span>
+              <Link href="/mumbai" className="text-white hover:text-yellow-200 underline font-medium transition">
+                Mumbai
+              </Link>
+              <Link href="/delhi" className="text-white hover:text-yellow-200 underline font-medium transition">
+                Delhi
+              </Link>
+              <Link href="/bangalore" className="text-white hover:text-yellow-200 underline font-medium transition">
+                Bangalore
+              </Link>
+              <Link href="/pune" className="text-white hover:text-yellow-200 underline font-medium transition">
+                Pune
+              </Link>
+              <Link href="/subsidy-checker" className="text-white hover:text-yellow-200 underline font-medium transition">
+                Check Subsidy
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Indicators - Social Proof */}
+      <section className="bg-white border-y py-12 shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+            <div className="text-center">
+              <div className="flex justify-center mb-3">
+                <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
+                  <Building2 className="h-7 w-7 text-orange-600" />
+                </div>
+              </div>
+              <div className="text-4xl font-bold text-gray-900">{stats.totalListings.toLocaleString()}+</div>
+              <div className="text-sm text-gray-600 font-medium mt-1">Solar Companies</div>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-3">
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                  <BadgeCheck className="h-7 w-7 text-green-600" />
+                </div>
+              </div>
+              <div className="text-4xl font-bold text-gray-900">{stats.verified.toLocaleString()}+</div>
+              <div className="text-sm text-gray-600 font-medium mt-1">Verified Installers</div>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-3">
+                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                  <MapPin className="h-7 w-7 text-blue-600" />
+                </div>
+              </div>
+              <div className="text-4xl font-bold text-gray-900">{stats.cities}+</div>
+              <div className="text-sm text-gray-600 font-medium mt-1">Cities Covered</div>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-3">
+                <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <Star className="h-7 w-7 text-yellow-600 fill-yellow-600" />
+                </div>
+              </div>
+              <div className="text-4xl font-bold text-gray-900">{stats.avgRating}</div>
+              <div className="text-sm text-gray-600 font-medium mt-1">Average Rating</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Companies Section */}
+      <section className="py-12 bg-gradient-to-b from-orange-50/50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Award className="h-7 w-7 text-orange-600" />
+                <h2 className="text-3xl font-bold text-gray-900">Featured Solar Partners</h2>
+              </div>
+              <p className="text-gray-600">Top-rated companies with proven track records</p>
+            </div>
+            <Link
+              href="/categories"
+              className="hidden md:flex items-center gap-2 text-orange-600 hover:text-orange-700 font-semibold transition"
+            >
+              View All
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          {/* Featured Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
+            {[...Array(5)].map((_, i) => (
+              <a
+                key={i}
+                href="mailto:aadityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex"
+                className="group relative border-2 border-dashed border-orange-300 bg-gradient-to-br from-orange-50/80 to-yellow-50/80 rounded-xl p-6 hover:border-orange-500 hover:shadow-lg transition-all text-center flex flex-col items-center justify-center gap-3 min-h-[140px]"
+              >
+                <div className="w-12 h-12 rounded-full bg-orange-100 group-hover:bg-orange-200 flex items-center justify-center transition-colors">
+                  <Star className="h-6 w-6 text-orange-500 group-hover:fill-orange-400 transition-colors" />
+                </div>
+                <div className="font-semibold text-gray-700 group-hover:text-orange-600 text-sm leading-snug transition-colors">
+                  Your Company Here
+                </div>
+                <span className="text-xs text-orange-600 font-medium group-hover:underline">
+                  Get Featured →
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Listings Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-4 gap-8">
-            {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-6">
-              <Filter categories={categories} locations={locations} onFilter={handleFilter} />
-              <LeadForm />
-            </div>
+          <div className="max-w-7xl mx-auto">
+            {/* Section Header - Yellow Pages Style */}
+            <div className="mb-8 bg-white rounded-xl border-2 border-orange-200 p-6">
+              <div className="flex items-start justify-between flex-wrap gap-4">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    {filterLocationId ? (
+                      <>
+                        Solar Companies in{' '}
+                        <span className="text-orange-600">
+                          {locations.find((l) => l.id === filterLocationId)?.city}
+                        </span>
+                      </>
+                    ) : (
+                      'All Solar Companies in India'
+                    )}
+                  </h2>
+                  <p className="text-gray-600">
+                    {filteredListings.length.toLocaleString()} verified installers found
+                    {filterCategoryId && (
+                      <> • {categories.find((c) => c.id === filterCategoryId)?.name}</>
+                    )}
+                    {filterVerified && <> • Verified only</>}
+                  </p>
+                </div>
 
-            {/* Listings */}
-            <div className="lg:col-span-3">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {loading
-                    ? 'Loading solar companies...'
-                    : filteredListings.length > 0
-                    ? `${filteredListings.length} Solar Companies Found`
-                    : 'No listings found'}
-                </h2>
-                {!loading && (filterCategoryId || filterLocationId || filterVerified || filterFeatured || searchQuery) && (
+                {/* Active Filters */}
+                {(filterLocationId || filterCategoryId || filterVerified || filterFeatured) && (
                   <button
-                    onClick={clearFilters}
-                    className="text-sm text-orange-600 hover:text-orange-700 underline"
+                    onClick={() => {
+                      setFilterCategoryId(null);
+                      setFilterLocationId(null);
+                      setFilterVerified(false);
+                      setFilterFeatured(false);
+                      setCurrentPage(1);
+                    }}
+                    className="text-sm text-orange-600 hover:text-orange-700 font-semibold underline"
                   >
-                    Clear filters
+                    Clear all filters
                   </button>
                 )}
               </div>
+            </div>
 
-              {loading ? (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0" />
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-gray-200 rounded w-3/4" />
-                          <div className="h-3 bg-gray-200 rounded w-1/2" />
-                        </div>
-                      </div>
-                      <div className="mt-4 space-y-2">
-                        <div className="h-3 bg-gray-200 rounded w-full" />
-                        <div className="h-3 bg-gray-200 rounded w-5/6" />
-                      </div>
-                      <div className="mt-4 flex gap-2">
-                        <div className="h-8 bg-gray-200 rounded-lg w-24" />
-                        <div className="h-8 bg-gray-200 rounded-lg w-24" />
-                      </div>
-                    </div>
-                  ))}
+            <div className="grid lg:grid-cols-4 gap-8">
+              {/* Filters Sidebar */}
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
+                  <Filter
+                    categories={categories}
+                    locations={locations}
+                    onChange={handleFilterChange}
+                  />
                 </div>
-              ) : paginated.length > 0 ? (
-                <>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {paginated.map((listing) => (
-                      <ListingCard key={listing.id} listing={listing} />
-                    ))}
+              </div>
+
+              {/* Listings Grid */}
+              <div className="lg:col-span-3">
+                {filteredListings.length === 0 ? (
+                  <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                    <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">No companies found</h3>
+                    <p className="text-gray-600 mb-6">
+                      Try adjusting your filters or search in a different location
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSearchLocation('');
+                        setFilterCategoryId(null);
+                        setFilterLocationId(null);
+                        setFilterVerified(false);
+                        setFilterFeatured(false);
+                        setCurrentPage(1);
+                      }}
+                      className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition font-medium"
+                    >
+                      Clear All Filters
+                    </button>
                   </div>
+                ) : (
+                  <>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {paginatedListings.map((listing) => (
+                        <ListingCard
+                          key={listing.id}
+                          listing={listing}
+                          installerId={listing.installerId}
+                          enquiryCount={installerData[listing.installerId || '']?.enquiryCount}
+                        />
+                      ))}
+                    </div>
 
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-10">
-                      <button
-                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className="p-2 rounded-lg border border-gray-200 hover:border-orange-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                      >
-                        <ChevronLeft className="h-5 w-5 text-gray-600" />
-                      </button>
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <div className="mt-10 flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                          disabled={currentPage === 1}
+                          className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
 
-                      {Array.from({ length: totalPages }, (_, i) => i + 1)
-                        .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-                        .reduce<(number | '...')[]>((acc, p, idx, arr) => {
-                          if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('...');
-                          acc.push(p);
-                          return acc;
-                        }, [])
-                        .map((item, idx) =>
-                          item === '...' ? (
-                            <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">…</span>
-                          ) : (
+                        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                          let pageNum;
+                          if (totalPages <= 5) {
+                            pageNum = i + 1;
+                          } else if (currentPage <= 3) {
+                            pageNum = i + 1;
+                          } else if (currentPage >= totalPages - 2) {
+                            pageNum = totalPages - 4 + i;
+                          } else {
+                            pageNum = currentPage - 2 + i;
+                          }
+
+                          return (
                             <button
-                              key={item}
-                              onClick={() => setCurrentPage(item as number)}
-                              className={`w-10 h-10 rounded-lg text-sm font-medium transition ${
-                                currentPage === item
+                              key={pageNum}
+                              onClick={() => handlePageChange(pageNum)}
+                              className={`px-4 py-2 rounded-lg font-medium transition ${
+                                currentPage === pageNum
                                   ? 'bg-orange-500 text-white'
-                                  : 'border border-gray-200 text-gray-700 hover:border-orange-400'
+                                  : 'border border-gray-300 hover:bg-gray-50'
                               }`}
                             >
-                              {item}
+                              {pageNum}
                             </button>
-                          )
-                        )}
+                          );
+                        })}
 
-                      <button
-                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className="p-2 rounded-lg border border-gray-200 hover:border-orange-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                      >
-                        <ChevronRight className="h-5 w-5 text-gray-600" />
-                      </button>
-                    </div>
-                  )}
-                  <p className="text-center text-sm text-gray-500 mt-3">
-                    Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredListings.length)} of {filteredListings.length} results
-                  </p>
-                </>
-              ) : (
-                <div className="bg-white rounded-xl p-12 text-center">
-                  <p className="text-gray-600 mb-4">No listings found. Try adjusting your search or filters.</p>
-                  <button
-                    onClick={clearFilters}
-                    className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              )}
+                        <button
+                          onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                          disabled={currentPage === totalPages}
+                          className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                          <ChevronRight className="h-5 w-5" />
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Get Solar Quote */}
+      <section className="py-16 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-4">
+              Ready to Go Solar? Get Free Quotes Today
+            </h2>
+            <p className="text-xl text-blue-100 mb-8">
+              Compare quotes from multiple verified installers. Save up to 30% on your solar installation.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/solar-calculator"
+                className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:scale-105"
+              >
+                Calculate Your Savings
+              </Link>
+              <Link
+                href="/subsidy-checker"
+                className="bg-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-400 transition border-2 border-white/30"
+              >
+                Check Subsidy Eligibility
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* FAQ Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-center text-gray-600 mb-10">
+              Everything you need to know about solar in India
+            </p>
+
+            <div className="space-y-4">
+              {FAQS.map((faq, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition"
+                  >
+                    <span className="font-semibold text-gray-900 pr-8">{faq.q}</span>
+                    <ChevronDown
+                      className={`h-5 w-5 text-gray-500 shrink-0 transition-transform ${
+                        openFaq === i ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  {openFaq === i && (
+                    <div className="px-6 pb-5 text-gray-700 leading-relaxed border-t border-gray-100 pt-4">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer CTA */}
+      <section className="py-12 bg-white border-t">
+        <div className="container mx-auto px-4 text-center">
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            Are you a solar installer?
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Join India's fastest-growing solar directory and get quality leads
+          </p>
+          <Link
+            href="/installers/signup"
+            className="inline-flex items-center gap-2 bg-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-lg"
+          >
+            List Your Business
+            <ChevronRight className="h-5 w-5" />
+          </Link>
+        </div>
+      </section>
+
+      {/* FAQPage Schema */}
       <Script
         id="faq-schema"
         type="application/ld+json"
@@ -496,104 +645,16 @@ export default function HomeClient({ initialStats }: Props) {
             mainEntity: FAQS.map((faq) => ({
               '@type': 'Question',
               name: faq.q,
-              acceptedAnswer: { '@type': 'Answer', text: faq.a },
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: faq.a,
+              },
             })),
           }),
         }}
       />
-      <section className="bg-white py-14 border-t">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-gray-500 text-center mb-10">
-              Common questions about going solar in India
-            </p>
-            <div className="space-y-3">
-              {FAQS.map((faq, i) => (
-                <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
-                  <button
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition"
-                  >
-                    <span className="font-semibold text-gray-900 pr-4">{faq.q}</span>
-                    <ChevronDown
-                      className={`h-5 w-5 text-orange-500 shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-                  {openFaq === i && (
-                    <div className="px-6 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <p className="text-center text-sm text-gray-400 mt-8">
-              Have more questions?{' '}
-              <Link href="/contact" className="text-orange-600 hover:underline">
-                Contact us
-              </Link>{' '}
-              or{' '}
-              <Link href="/blog" className="text-orange-600 hover:underline">
-                read our solar blog
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-bold text-lg mb-4">GoSolarIndex</h3>
-              <p className="text-gray-400 text-sm mb-4">
-                India's trusted solar directory. {stats.totalListings}+ verified listings across {stats.cities}+ cities.
-              </p>
-              <ul className="space-y-1 text-gray-400 text-sm">
-                <li>Email: <a href="mailto:hello@gosolarindex.in" className="hover:text-white transition">hello@gosolarindex.in</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/" className="hover:text-white transition">Home</Link></li>
-                <li><Link href="/categories" className="hover:text-white transition">Categories</Link></li>
-                <li><Link href="/locations" className="hover:text-white transition">All Locations</Link></li>
-                <li><Link href="/blog" className="hover:text-white transition">Solar Blog</Link></li>
-                <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
-                <li><Link href="/installers/signup" className="hover:text-white transition">List Your Business</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Maharashtra</h4>
-              <ul className="space-y-1 text-gray-400 text-sm">
-                {['Mumbai','Pune','Nagpur','Nashik','Aurangabad','Thane','Navi Mumbai','Solapur','Kolhapur','Amravati','Sangli','Satara','Latur'].map(city => (
-                  <li key={city}><Link href={`/${city.toLowerCase().replace(/\s+/g,'-')}`} className="hover:text-white transition">{city}</Link></li>
-                ))}
-                <li><Link href="/locations" className="text-orange-400 hover:text-orange-300 transition">View all cities →</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Other Cities</h4>
-              <ul className="space-y-1 text-gray-400 text-sm">
-                {['Delhi','Bangalore','Hyderabad','Chennai','Kolkata','Ahmedabad','Jaipur','Lucknow','Surat','Chandigarh','Kochi','Bhopal','Indore'].map(city => (
-                  <li key={city}><Link href={`/${city.toLowerCase().replace(/\s+/g,'-')}`} className="hover:text-white transition">{city}</Link></li>
-                ))}
-                <li><Link href="/locations" className="text-orange-400 hover:text-orange-300 transition">View all cities →</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            © 2026 GoSolarIndex. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <CalcPopup />
     </div>
   );
 }

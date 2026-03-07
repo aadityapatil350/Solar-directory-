@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Category {
@@ -43,16 +44,19 @@ model Listing {
   categoryId  String
   locationId  String
   userId      String?
+  installerId String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   category    Category @relation(fields: [categoryId], references: [id])
   location    Location @relation(fields: [locationId], references: [id])
   user        User?    @relation(fields: [userId], references: [id])
+  installer   Installer? @relation(fields: [installerId], references: [id])
 
   @@index([categoryId])
   @@index([locationId])
   @@index([featured])
   @@index([verified])
+  @@index([installerId])
 }
 
 model User {
@@ -82,10 +86,13 @@ model Installer {
   paymentStatus     String         @default("pending")
   balance           Float          @default(0)
   verified          Boolean        @default(false)
+  enquiryCount     Int            @default(0)
+  enquiryCountResetAt DateTime?
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   leadDeliveries    LeadDelivery[]
+  listings         Listing[]
 }
 
 model Lead {
@@ -125,6 +132,17 @@ model LeadDelivery {
   @@index([leadId])
 }
 
+model WhatsAppClick {
+  id        String   @id @default(cuid())
+  listingId String
+  city      String
+  timestamp DateTime @default(now())
+
+  @@index([listingId])
+  @@index([city])
+  @@index([timestamp])
+}
+
 model BlogPost {
   id              String   @id @default(cuid())
   slug            String   @unique
@@ -144,4 +162,17 @@ model BlogPost {
   @@index([slug])
   @@index([published])
   @@index([category])
+}
+
+model SolarLead {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String
+  city         String
+  monthlyBill  Float
+  systemSize   Float
+  createdAt    DateTime @default(now())
+
+  @@index([city])
+  @@index([createdAt])
 }

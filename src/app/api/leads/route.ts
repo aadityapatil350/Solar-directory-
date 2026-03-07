@@ -4,8 +4,35 @@ import { NextResponse } from 'next/server';
 // How many verified installers to notify per lead
 const MAX_INSTALLERS_PER_LEAD = 3;
 
+// Check if it's Monday midnight IST (5:30 AM UTC) to reset weekly counters
+async function resetWeeklyEnquiryCountsIfNeeded() {
+  const now = new Date();
+  const day = now.getUTCDay(); // 0-6 (0 = Sunday, 1 = Monday)
+  const hours = now.getUTCHours();
+  const minutes = now.getUTCMinutes();
+
+  // Monday = day 1, at or after 00:00 UTC (which is 5:30 AM IST)
+  const isMondayMorning = day === 1 && (hours * 60 + minutes) >= 30;
+
+  if (isMondayMorning) {
+    // Reset all installer enquiry counts
+    await prisma.installer.updateMany({
+      where: { enquiryCountResetAt: { lt: now } },
+      data: {
+        enquiryCount: 0,
+        enquiryCountResetAt: now,
+      },
+    });
+
+    console.log(`Reset weekly enquiry counts at ${new Date(now).toISOString()}`);
+  }
+}
+
 async function distributeLeadToInstallers(leadId: string, locationId: string | null) {
   try {
+    // Check and reset weekly counters if needed
+    await resetWeeklyEnquiryCountsIfNeeded();
+
     // Find verified installers in the same location
     let installers = locationId
       ? await prisma.installer.findMany({
@@ -37,6 +64,15 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
     }
 
     if (installers.length === 0) return;
+
+    // Increment enquiry count for each installer and reset the weekly counter
+    await prisma.installer.updateMany({
+      where: { id: { in: installers.map((i) => i.id) } },
+      data: {
+        enquiryCount: { increment: 1 },
+        enquiryCountResetAt: null, // Clear the reset timestamp
+      },
+    });
 
     // Create LeadDelivery records for each installer
     await prisma.leadDelivery.createMany({
