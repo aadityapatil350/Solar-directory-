@@ -5,6 +5,12 @@
  * Run: npx tsx scripts/generate-priority-urls.ts
  */
 
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Load environment variables from .env.local
+config({ path: resolve(__dirname, '../.env.local') });
+
 import { prisma } from '../src/lib/prisma';
 import * as fs from 'fs';
 import * as path from 'path';
