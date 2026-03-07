@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Script from 'next/script';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
@@ -670,6 +671,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       />
 
       <CalcPopup />
+      <Footer />
     </div>
   );
 }
