@@ -30,6 +30,12 @@ interface ListingCardProps {
   enquiryCount?: number | null;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 async function trackWhatsAppClick(listingId: string, city: string) {
   try {
     await fetch('/api/whatsapp-click', {
@@ -43,6 +49,29 @@ async function trackWhatsAppClick(listingId: string, city: string) {
 }
 
 export default function ListingCard({ listing, installerId, enquiryCount }: ListingCardProps) {
+  const [allCategories, setAllCategories] = useState<Category[]>([listing.category]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+
+  // Fetch all categories this company works in
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        setLoadingCategories(true);
+        const response = await fetch(`/api/listings/${listing.id}/categories`);
+        const data = await response.json();
+        if (data.categories && data.categories.length > 0) {
+          setAllCategories(data.categories);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoadingCategories(false);
+      }
+    }
+
+    fetchCategories();
+  }, [listing.id]);
+
   const handleWhatsAppClick = () => {
     if (listing.phone) {
       trackWhatsAppClick(listing.id, listing.location.city);
@@ -125,11 +154,19 @@ export default function ListingCard({ listing, installerId, enquiryCount }: List
           </Link>
         </div>
 
-        {/* Category Badge */}
-        <div className="inline-block mb-3">
-          <span className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full">
-            {listing.category.name}
-          </span>
+        {/* Category Badges - Show all categories */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {allCategories.map((cat) => (
+            <span
+              key={cat.id}
+              className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full"
+            >
+              {cat.name}
+            </span>
+          ))}
+          {loadingCategories && allCategories.length === 1 && (
+            <span className="text-xs text-gray-400">Loading...</span>
+          )}
         </div>
 
         {/* Rating */}

@@ -174,7 +174,22 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       result = result.filter((l) => l.featured);
     }
 
-    return result;
+    // Deduplicate by company name + location (same company in multiple categories)
+    // Keep the first occurrence (usually highest rated or featured)
+    const seen = new Map<string, Listing>();
+    const deduplicated: Listing[] = [];
+
+    for (const listing of result) {
+      // Create unique key: name + city (case-insensitive)
+      const key = `${listing.name.toLowerCase()}-${listing.location.city.toLowerCase()}`;
+
+      if (!seen.has(key)) {
+        seen.set(key, listing);
+        deduplicated.push(listing);
+      }
+    }
+
+    return deduplicated;
   }, [
     listings,
     searchQuery,
