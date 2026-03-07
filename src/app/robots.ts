@@ -21,7 +21,7 @@ export default function robots(): MetadataRoute.Robots {
         crawlDelay: 1,
       },
     ],
-    sitemap: 'https://gosolarindex.in/sitemap.xml',
-    host: 'https://gosolarindex.in',
+    sitemap: 'https://www.gosolarindex.in/sitemap.xml',
+    host: 'https://www.gosolarindex.in',
   };
 }

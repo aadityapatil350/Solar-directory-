@@ -6,10 +6,11 @@ import Header from '@/components/Header';
 import ListingCard from '@/components/ListingCard';
 import LeadForm from '@/components/LeadForm';
 import Link from 'next/link';
-import { ChevronRight, Zap } from 'lucide-react';
+import { ChevronRight, Zap, ChevronLeft } from 'lucide-react';
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -28,18 +29,33 @@ export async function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }));
 }
 
-export default async function CategoryPage({ params }: Props) {
+export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { page: pageParam } = await searchParams;
+
+  // Parse page number with default of 1
+  const currentPage = Math.max(1, parseInt(pageParam || '1'));
+  const PAGE_SIZE = 20;
+  const skip = (currentPage - 1) * PAGE_SIZE;
 
   const category = await prisma.category.findUnique({ where: { slug } });
   if (!category) notFound();
 
+  // Get total count for pagination
+  const totalListings = await prisma.listing.count({
+    where: { categoryId: category.id },
+  });
+
+  // Fetch paginated listings
   const listings = await prisma.listing.findMany({
     where: { categoryId: category.id },
     include: { category: true, location: true },
     orderBy: [{ featured: 'desc' }, { verified: 'desc' }, { rating: 'desc' }],
-    take: 500,
+    take: PAGE_SIZE,
+    skip: skip,
   });
+
+  const totalPages = Math.ceil(totalListings / PAGE_SIZE);
 
   const locations = await prisma.location.findMany({
     where: {
@@ -73,8 +89,9 @@ export default async function CategoryPage({ params }: Props) {
             <h1 className="text-3xl md:text-4xl font-bold">{category.name} in India</h1>
           </div>
           <p className="text-orange-100 max-w-2xl">
-            Browse {listings.length} verified {category.name.toLowerCase()} across India.
-            Compare prices, read reviews, and get free quotes today.
+            Browse {totalListings} verified {category.name.toLowerCase()} across India.
+            {totalPages > 1 && ` Showing page ${currentPage} of ${totalPages}.`}
+            {' '}Compare prices, read reviews, and get free quotes today.
           </p>
         </div>
       </section>
@@ -94,7 +111,7 @@ export default async function CategoryPage({ params }: Props) {
                       href={`/categories/${slug}`}
                       className="text-sm text-orange-600 hover:underline"
                     >
-                      All Cities ({listings.length})
+                      All Cities ({totalListings})
                     </Link>
                   </li>
                   {locations.map((loc) => {
@@ -122,16 +139,73 @@ export default async function CategoryPage({ params }: Props) {
           <div className="lg:col-span-3">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">
-                {listings.length} {category.name} Companies
+                {totalListings} {category.name} Companies
               </h2>
             </div>
 
             {listings.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-6">
-                {listings.map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} />
-                ))}
-              </div>
+              <>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {listings.map((listing) => (
+                    <ListingCard key={listing.id} listing={listing} />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="mt-10 flex items-center justify-center gap-2">
+                    {/* Previous Button */}
+                    <Link
+                      href={`/categories/${slug}${currentPage > 1 ? `?page=${currentPage - 1}` : ''}`}
+                      className={`p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition ${
+                        currentPage === 1 ? 'opacity-50 pointer-events-none' : ''
+                      }`}
+                      aria-label="Previous page"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </Link>
+
+                    {/* Page Numbers */}
+                    {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <Link
+                          key={pageNum}
+                          href={`/categories/${slug}?page=${pageNum}`}
+                          className={`px-4 py-2 rounded-lg font-medium transition ${
+                            currentPage === pageNum
+                              ? 'bg-orange-500 text-white'
+                              : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {pageNum}
+                        </Link>
+                      );
+                    })}
+
+                    {/* Next Button */}
+                    <Link
+                      href={`/categories/${slug}?page=${currentPage + 1}`}
+                      className={`p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition ${
+                        currentPage === totalPages ? 'opacity-50 pointer-events-none' : ''
+                      }`}
+                      aria-label="Next page"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </Link>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="bg-white rounded-xl p-12 text-center">
                 <p className="text-gray-500 mb-4">No listings in this category yet.</p>

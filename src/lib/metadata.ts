@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const siteName = 'Go Solar Index';
 export const siteDescription = 'India\'s most trusted solar directory. Find verified solar installers, dealers, and service providers in your city. Compare prices, read reviews, go solar today!';
-export const siteUrl = 'https://gosolarindex.in';
+export const siteUrl = 'https://www.gosolarindex.in';
 
 export function constructMetadata({
   title,

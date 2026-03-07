@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://gosolarindex.in';
+  const baseUrl = 'https://www.gosolarindex.in';
 
   // Get all listings, categories, locations, blog posts, and states
   const [listings, categories, locations, blogPosts] = await Promise.all([
