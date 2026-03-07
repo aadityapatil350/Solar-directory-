@@ -4,13 +4,6 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["hkg1"],
-  "redirects": [
-    {
-      "source": "/:path*/",
-      "destination": "/:path*",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
