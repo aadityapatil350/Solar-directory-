@@ -100,19 +100,31 @@ function toGoogleMapsEmbed(address: string | null, name: string, city: string, s
 // ─── Data fetching ─────────────────────────────────────────────────────────────
 
 async function getListing(slug: string) {
-  return prisma.listing.findUnique({
-    where: { slug },
-    include: { category: true, location: true },
-  });
+  try {
+    const listing = await prisma.listing.findUnique({
+      where: { slug },
+      include: { category: true, location: true },
+    });
+    return listing;
+  } catch (error) {
+    console.error('Error fetching listing:', error);
+    return null;
+  }
 }
 
 async function getRelated(categoryId: string, locationId: string, excludeId: string) {
-  return prisma.listing.findMany({
-    where: { categoryId, locationId, id: { not: excludeId } },
-    orderBy: [{ featured: 'desc' }, { verified: 'desc' }],
-    take: 3,
-    include: { category: true, location: true },
-  });
+  try {
+    const listings = await prisma.listing.findMany({
+      where: { categoryId, locationId, id: { not: excludeId } },
+      orderBy: [{ featured: 'desc' }, { verified: 'desc' }],
+      take: 3,
+      include: { category: true, location: true },
+    });
+    return listings;
+  } catch (error) {
+    console.error('Error fetching related listings:', error);
+    return [];
+  }
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -136,12 +148,12 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   if (!listing) notFound();
 
   const related = await getRelated(listing.categoryId, listing.locationId, listing.id);
-  const services = CATEGORY_SERVICES[listing.category.name] ?? [];
-  const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category.name);
+  const services = CATEGORY_SERVICES[listing.category?.name] ?? [];
+  const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category?.name);
   const mapSrc = toGoogleMapsEmbed(listing.address, listing.name, listing.location.city, listing.location.state);
   const initials = getInitials(listing.name);
 
-  const siteUrl = 'https://gosolarindex.in';
+  const siteUrl = 'https://www.gosolarindex.in';
 
   const localBusinessSchema = {
     '@context': 'https://schema.org',
