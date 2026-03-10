@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const siteName = 'Go Solar Index';
 export const siteDescription = 'India\'s most trusted solar directory. Find verified solar installers, dealers, and service providers in your city. Compare prices, read reviews, go solar today!';
-export const siteUrl = 'https://gosolarindex.in';
+export const siteUrl = 'https://www.gosolarindex.in';
 
 export function constructMetadata({
   title,
@@ -88,9 +88,10 @@ export function constructMetadata({
   };
 }
 
-export function constructCityMetadata(city: string, state: string): Metadata {
-  const title = `Best Solar Installers in ${city}, ${state}`;
-  const description = `Find verified solar installers, dealers, and service providers in ${city}, ${state}. Compare prices, read reviews, get free quotes. PM Surya Ghar Yojana available.`;
+export function constructCityMetadata(city: string, state: string, count?: number): Metadata {
+  const displayCount = count ? `Top ${count}` : 'Best';
+  const title = `${displayCount} Solar Installers in ${city} (2026) — Free Quotes + Subsidy Help`;
+  const description = `Compare ${count || 'verified'} solar companies in ${city}. Get 3 free quotes, check PM Surya Ghar subsidy eligibility, and go solar in 2026. No spam, only verified installers.`;
   return constructMetadata({
     title,
     description,
@@ -98,9 +99,10 @@ export function constructCityMetadata(city: string, state: string): Metadata {
   });
 }
 
-export function constructCategoryMetadata(category: string): Metadata {
-  const title = `${category} in India`;
-  const description = `Find top ${category} across India. Verified professionals, best prices, excellent service. Get free quotes today!`;
+export function constructCategoryMetadata(category: string, city?: string): Metadata {
+  const locationText = city ? `in ${city} India` : 'in India';
+  const title = `${category} ${locationText} (2026) — Verified ${category} Near You`;
+  const description = `Find top-rated ${category} ${locationText}. Compare prices, read reviews, get free quotes. PM Surya Ghar subsidy available.`;
   return constructMetadata({
     title,
     description,

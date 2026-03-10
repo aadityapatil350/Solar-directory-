@@ -2,13 +2,14 @@ import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import LeadForm from '@/components/LeadForm';
+import WhatsAppButton from '@/components/WhatsAppButton';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
   Phone, Mail, Globe, MapPin, Star, ShieldCheck,
-  ChevronRight, MessageCircle, Clock, Award, Zap,
-  CheckCircle, Building2, Users, Wrench,
+  ChevronRight, Clock, Award, Zap,
+  CheckCircle, Building2, Wrench, Users,
 } from 'lucide-react';
 import Script from 'next/script';
 
@@ -99,19 +100,31 @@ function toGoogleMapsEmbed(address: string | null, name: string, city: string, s
 // ─── Data fetching ─────────────────────────────────────────────────────────────
 
 async function getListing(slug: string) {
-  return prisma.listing.findUnique({
-    where: { slug },
-    include: { category: true, location: true },
-  });
+  try {
+    const listing = await prisma.listing.findUnique({
+      where: { slug },
+      include: { category: true, location: true },
+    });
+    return listing;
+  } catch (error) {
+    console.error('Error fetching listing:', error);
+    return null;
+  }
 }
 
 async function getRelated(categoryId: string, locationId: string, excludeId: string) {
-  return prisma.listing.findMany({
-    where: { categoryId, locationId, id: { not: excludeId } },
-    orderBy: [{ featured: 'desc' }, { verified: 'desc' }],
-    take: 3,
-    include: { category: true, location: true },
-  });
+  try {
+    const listings = await prisma.listing.findMany({
+      where: { categoryId, locationId, id: { not: excludeId } },
+      orderBy: [{ featured: 'desc' }, { verified: 'desc' }],
+      take: 3,
+      include: { category: true, location: true },
+    });
+    return listings;
+  } catch (error) {
+    console.error('Error fetching related listings:', error);
+    return [];
+  }
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -135,12 +148,12 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   if (!listing) notFound();
 
   const related = await getRelated(listing.categoryId, listing.locationId, listing.id);
-  const services = CATEGORY_SERVICES[listing.category.name] ?? [];
-  const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category.name);
+  const services = CATEGORY_SERVICES[listing.category?.name] ?? [];
+  const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category?.name);
   const mapSrc = toGoogleMapsEmbed(listing.address, listing.name, listing.location.city, listing.location.state);
   const initials = getInitials(listing.name);
 
-  const siteUrl = 'https://gosolarindex.in';
+  const siteUrl = 'https://www.gosolarindex.in';
 
   const localBusinessSchema = {
     '@context': 'https://schema.org',
@@ -346,16 +359,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                       <Phone className="h-4 w-4" /> Call Now
                     </a>
                   )}
-                  {whatsappUrl && (
-                    <a
-                      href={whatsappUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition"
-                    >
-                      <MessageCircle className="h-4 w-4" /> WhatsApp
-                    </a>
-                  )}
+                  <WhatsAppButton phone={listing.phone} listingId={listing.id} city={listing.location.city} name={listing.name} installerId={listing.installerId} />
                   {listing.email && (
                     <a
                       href={`mailto:${listing.email}`}

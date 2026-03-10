@@ -72,6 +72,27 @@ export default function SolarCalculator() {
   const [city, setCity]                 = useState('Mumbai');
   const [buffer, setBuffer]             = useState(false);
   const [sliderKW, setSliderKW]         = useState(3);
+  const [showLeadForm, setShowLeadForm] = useState(false);
+  const [leadName, setLeadName]         = useState('');
+  const [leadPhone, setLeadPhone]       = useState('');
+  const [submitting, setSubmitting]     = useState(false);
+  const [submitted, setSubmitted]       = useState(false);
+  const [shareUrl, setShareUrl]         = useState('');
+
+  const generateShareUrl = () => {
+    const params = new URLSearchParams({
+      monthlyUnits: monthlyUnits.toString(),
+      city,
+      systemSize: rec.actualKW.toFixed(1),
+      netCost: rec.netCost.toString(),
+      annualSavings: rec.annualSavings.toString(),
+      payback: rec.payback.toFixed(1),
+    });
+    const uniqueId = Math.random().toString(36).substring(7);
+    const url = `${window.location.origin}/solar-calculator/results/${uniqueId}?${params.toString()}`;
+    setShareUrl(url);
+    navigator.clipboard.writeText(url);
+  };
 
   const peakHours = CITY_DATA[city]?.peakHours ?? 5.0;
 
@@ -230,6 +251,14 @@ export default function SolarCalculator() {
                 <p className="text-xs text-blue-400 mt-0.5">then pure profit</p>
               </div>
             </div>
+
+            {/* Share Button */}
+            <button
+              onClick={generateShareUrl}
+              className="w-full mt-3 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+            >
+              {shareUrl ? '✓ Link Copied to Clipboard' : '🔗 Share This Estimate'}
+            </button>
           </div>
         </div>
 
@@ -368,30 +397,135 @@ export default function SolarCalculator() {
           </div>
         </div>
 
-        {/* ── CTA ──────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Ready to Go Solar in {city}?</h2>
-          <p className="text-gray-500 mb-6 max-w-lg mx-auto">
-            Get free quotes from verified solar installers. Compare prices, check reviews, and make the switch today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href={`/${city.toLowerCase()}`}
-              className="inline-flex items-center justify-center gap-2 bg-orange-500 text-white px-8 py-3.5 rounded-xl font-bold text-base hover:bg-orange-600 transition shadow-md"
-            >
-              Find Installers in {city}
-              <ChevronRight className="h-5 w-5" />
-            </Link>
-            <Link
-              href="/installers/signup"
-              className="inline-flex items-center justify-center gap-2 border-2 border-orange-500 text-orange-600 px-8 py-3.5 rounded-xl font-bold text-base hover:bg-orange-50 transition"
-            >
-              List Your Business
-            </Link>
-          </div>
-          <p className="text-xs text-gray-400 mt-4">
-            * Estimates based on ₹{COST_PER_KW.toLocaleString('en-IN')}/kW installed cost, ₹{ELECTRICITY_RATE}/unit tariff, {peakHours} peak sun hours in {city}. Actual figures may vary.
-          </p>
+        {/* ── LEAD CAPTURE CTA ──────────────────────────── */}
+        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+          {!showLeadForm ? (
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Get Exact Quotes from 3 Verified Installers in {city}</h2>
+              <p className="text-gray-500 mb-6 max-w-lg mx-auto">
+                Share your details and installers will call you within 24 hours with personalized quotes.
+              </p>
+              <button
+                onClick={() => setShowLeadForm(true)}
+                className="inline-flex items-center justify-center gap-2 bg-orange-500 text-white px-8 py-3.5 rounded-xl font-bold text-base hover:bg-orange-600 transition shadow-md"
+              >
+                Get Free Quotes
+                <ChevronRight className="h-5 w-5" />
+              </button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+                <Link
+                  href={`/${city.toLowerCase()}`}
+                  className="text-sm text-orange-600 hover:underline"
+                >
+                  Or browse installers in {city}
+                </Link>
+              </div>
+              <p className="text-xs text-gray-400 mt-4">
+                * Estimates based on ₹{COST_PER_KW.toLocaleString('en-IN')}/kW installed cost, ₹{ELECTRICITY_RATE}/unit tariff, {peakHours} peak sun hours in {city}. Actual figures may vary.
+              </p>
+            </div>
+          ) : submitted ? (
+            <div className="text-center py-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Request Submitted!</h3>
+              <p className="text-gray-600 mb-6">
+                3 installers in {city} will call you within 24 hours with personalized quotes.
+              </p>
+              <Link
+                href={`/${city.toLowerCase()}`}
+                className="inline-flex items-center gap-2 text-orange-600 hover:underline font-medium"
+              >
+                View installers in {city}
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+          ) : (
+            <div className="max-w-md mx-auto">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Enter Your Details</h3>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!leadName || !leadPhone) return;
+
+                  setSubmitting(true);
+                  try {
+                    const response = await fetch('/api/solar-leads', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        name: leadName,
+                        phone: leadPhone,
+                        city,
+                        monthlyBill: monthlyUnits * ELECTRICITY_RATE,
+                        systemSize: rec.actualKW,
+                      }),
+                    });
+
+                    if (response.ok) {
+                      setSubmitted(true);
+                    } else {
+                      alert('Failed to submit. Please try again.');
+                    }
+                  } catch (error) {
+                    console.error('Error submitting lead:', error);
+                    alert('Failed to submit. Please try again.');
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={leadName}
+                    onChange={(e) => setLeadName(e.target.value)}
+                    placeholder="e.g. Rajesh Kumar"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Your Phone</label>
+                  <input
+                    type="tel"
+                    required
+                    value={leadPhone}
+                    onChange={(e) => setLeadPhone(e.target.value)}
+                    placeholder="e.g. 9876543210"
+                    pattern="[0-9]{10}"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">10-digit mobile number</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+                  <p><strong>Your Requirements:</strong></p>
+                  <p className="mt-1">• City: <span className="font-medium">{city}</span></p>
+                  <p>• Monthly Bill: <span className="font-medium">₹{(monthlyUnits * ELECTRICITY_RATE).toLocaleString('en-IN')}</span></p>
+                  <p>• Recommended System: <span className="font-medium">{rec.actualKW.toFixed(1)} kW</span></p>
+                </div>
+                <button
+                  type="submit"
+                  disabled={submitting || !leadName || !leadPhone}
+                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Submitting...' : 'Get Free Quotes'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowLeadForm(false)}
+                  className="w-full text-gray-600 text-sm hover:underline"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          )}
         </div>
 
       </div>

@@ -6,8 +6,10 @@ import ListingCard from '@/components/ListingCard';
 import { MapPin, Zap } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 
-export const dynamic = 'force-dynamic';
+// Use ISR for better SEO - revalidate every 1 hour
+export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{
@@ -32,7 +34,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     where: { city: { equals: slugToSearch(citySlug), mode: 'insensitive' } },
   });
   if (!location) return {};
-  return constructCityMetadata(location.city, location.state);
+
+  const listingsCount = await prisma.listing.count({
+    where: { location: { city: location.city } },
+  });
+
+  return constructCityMetadata(location.city, location.state, listingsCount);
 }
 
 export default async function CityPage({ params }: PageProps) {
@@ -62,8 +69,39 @@ export default async function CityPage({ params }: PageProps) {
     take: 500,
   });
 
+  // BreadcrumbList Schema
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://gosolarindex.in',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: cityData.state,
+        item: `https://gosolarindex.in/states/${cityData.state.toLowerCase().replace(/\s+/g, '-')}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: cityData.city,
+        item: `https://gosolarindex.in/${cityData.city.toLowerCase().replace(/\s+/g, '-')}`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <Header />
 
       <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-16">
@@ -138,6 +176,25 @@ export default async function CityPage({ params }: PageProps) {
                 track records. Compare prices, read reviews, and choose the right solar
                 company for your needs.
               </p>
+            </div>
+
+            {/* Internal links to blog */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h4 className="font-semibold text-gray-900 mb-3">Helpful Resources</h4>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/blog/solar-panel-cost-india-2025" className="text-sm text-orange-600 hover:underline">
+                  → Solar Panel Costs in India
+                </Link>
+                <Link href="/blog/pm-surya-ghar-yojana-complete-guide" className="text-sm text-orange-600 hover:underline">
+                  → PM Surya Ghar Subsidy Guide
+                </Link>
+                <Link href="/solar-calculator" className="text-sm text-orange-600 hover:underline">
+                  → Calculate Your Savings
+                </Link>
+                <Link href="/subsidy-checker" className="text-sm text-orange-600 hover:underline">
+                  → Check Subsidy Eligibility
+                </Link>
+              </div>
             </div>
           </div>
         </div>

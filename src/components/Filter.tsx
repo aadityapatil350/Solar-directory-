@@ -5,7 +5,7 @@ import { useState } from 'react';
 interface FilterProps {
   categories: { id: string; name: string; slug: string }[];
   locations: { id: string; city: string; state: string }[];
-  onFilter: (
+  onChange: (
     categoryId: string | null,
     locationId: string | null,
     verifiedOnly: boolean,
@@ -13,7 +13,7 @@ interface FilterProps {
   ) => void;
 }
 
-export default function Filter({ categories, locations, onFilter }: FilterProps) {
+export default function Filter({ categories, locations, onChange }: FilterProps) {
   const [categoryId, setCategoryId] = useState('');
   const [locationId, setLocationId] = useState('');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -25,7 +25,7 @@ export default function Filter({ categories, locations, onFilter }: FilterProps)
     newVerified = verifiedOnly,
     newFeatured = featuredOnly
   ) {
-    onFilter(
+    onChange(
       newCategoryId || null,
       newLocationId || null,
       newVerified,
