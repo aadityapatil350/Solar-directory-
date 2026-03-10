@@ -122,7 +122,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!listing) return {};
   return constructMetadata({
     title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,
-    description: `${listing.name} is a ${listing.verified ? 'verified ' : ''}${listing.category.name.toLowerCase()} in ${listing.location.city}, ${listing.location.state}. ${listing.description?.slice(0, 120) || 'Get a free quote today.'}`,
+    description: `${listing.name} is a ${listing.category.name.toLowerCase()} in ${listing.location.city}, ${listing.location.state}. ${listing.description?.slice(0, 120) || 'Get a free quote today.'}`,
     path: `/listing/${slug}`,
   });
 }
@@ -215,11 +215,6 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">{listing.name}</h1>
-                {listing.verified && (
-                  <span className="flex items-center gap-1 bg-green-400/20 border border-green-300/40 text-green-100 text-xs font-semibold px-2 py-0.5 rounded-full">
-                    <ShieldCheck className="h-3 w-3" /> Verified
-                  </span>
-                )}
                 {listing.featured && (
                   <span className="flex items-center gap-1 bg-yellow-400/20 border border-yellow-300/40 text-yellow-100 text-xs font-semibold px-2 py-0.5 rounded-full">
                     <Star className="h-3 w-3 fill-yellow-300" /> Featured
@@ -451,11 +446,6 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
                 {/* Badges */}
                 <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
-                  {listing.verified && (
-                    <span className="flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-200">
-                      <ShieldCheck className="h-3 w-3" /> Verified Business
-                    </span>
-                  )}
                   {listing.featured && (
                     <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-amber-200">
                       <Award className="h-3 w-3" /> Premium Partner
@@ -465,6 +455,19 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                     <CheckCircle className="h-3 w-3" /> Listed on GoSolarIndex
                   </span>
                 </div>
+
+                {/* Claim this listing */}
+                {!listing.userId && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <Link
+                      href={`/claim/${listing.slug}`}
+                      className="flex items-center gap-2 text-xs text-gray-500 hover:text-orange-600 transition"
+                    >
+                      <Building2 className="h-3.5 w-3.5" />
+                      Is this your business? <span className="underline font-medium">Claim this listing</span>
+                    </Link>
+                  </div>
+                )}
               </div>
 
               {/* Lead Form */}
@@ -499,7 +502,6 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                           {r.name}
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          {r.verified && <ShieldCheck className="h-3.5 w-3.5 text-green-500" />}
                           {r.featured && <Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-400" />}
                           {r.reviews > 0 && (
                             <span className="text-xs text-gray-500">{r.rating} ★ ({r.reviews})</span>

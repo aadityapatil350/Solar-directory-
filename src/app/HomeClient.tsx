@@ -173,6 +173,24 @@ export default function HomeClient({ initialStats }: Props) {
       result = result.filter((l) => l.featured);
     }
 
+    // Deduplicate: same company may appear in multiple categories/cities — keep one per unique company
+    const seen = new Map<string, Listing>();
+    for (const l of result) {
+      // Use phone as the unique company key; fall back to name if no phone
+      const key = l.phone ? l.phone.replace(/\s+/g, '') : l.name.toLowerCase();
+      const existing = seen.get(key);
+      if (!existing) {
+        seen.set(key, l);
+      } else {
+        // Keep the entry with higher rating, or more reviews on tie
+        const better =
+          (l.rating ?? 0) > (existing.rating ?? 0) ||
+          ((l.rating ?? 0) === (existing.rating ?? 0) && l.reviews > existing.reviews);
+        if (better) seen.set(key, l);
+      }
+    }
+    result = Array.from(seen.values());
+
     // Sort: top-rated first, then by review count, unrated/new last
     result.sort((a, b) => {
       const ra = a.rating ?? 0;
@@ -590,6 +608,12 @@ export default function HomeClient({ initialStats }: Props) {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
+            <div className="flex flex-wrap justify-center gap-4 mb-3">
+              <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white transition">Terms of Service</Link>
+              <Link href="/contact" className="hover:text-white transition">Contact Us</Link>
+              <Link href="/about" className="hover:text-white transition">About</Link>
+            </div>
             © 2026 GoSolarIndex. All rights reserved.
           </div>
         </div>

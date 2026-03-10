@@ -37,7 +37,24 @@ interface Stats {
   newLeads: number;
 }
 
-type Tab = 'leads' | 'listings';
+type Tab = 'leads' | 'listings' | 'claims';
+
+interface ClaimRequest {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string | null;
+  status: string;
+  createdAt: string;
+  listing: {
+    id: string;
+    name: string;
+    slug: string;
+    category: { name: string };
+    location: { city: string; state: string };
+  };
+}
 
 interface Toast {
   id: number;
@@ -101,6 +118,11 @@ export default function AdminDashboard() {
   const [suggestCity, setSuggestCity] = useState('');
   const [suggestLoading, setSuggestLoading] = useState(false);
   const [sendingTo, setSendingTo] = useState<string | null>(null);
+
+  // ── Claims state ──
+  const [claims, setClaims] = useState<ClaimRequest[]>([]);
+  const [claimsLoading, setClaimsLoading] = useState(false);
+  const [processingClaim, setProcessingClaim] = useState<string | null>(null);
 
   // ── Listings state ──
   const [listings, setListings] = useState<Listing[]>([]);
@@ -240,12 +262,48 @@ export default function AdminDashboard() {
     setLocations(await locsRes.json());
   }, []);
 
+  const fetchClaims = useCallback(async (token = auth) => {
+    setClaimsLoading(true);
+    try {
+      const res = await fetch('/api/admin/claims', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setClaims(data.claims || []);
+    } catch { setClaims([]); } finally { setClaimsLoading(false); }
+  }, [auth]);
+
+  const processClaim = async (claimId: string, action: 'approve' | 'reject') => {
+    if (action === 'approve' && !confirm('Approve this claim? A new installer account will be created.')) return;
+    setProcessingClaim(claimId);
+    try {
+      const res = await fetch('/api/admin/claims', {
+        method: 'PATCH',
+        headers: headers(),
+        body: JSON.stringify({ claimId, action }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      if (action === 'approve') {
+        toast('success', `Claim approved! Installer account created. Temp password: ${data.tempPassword}`);
+      } else {
+        toast('success', 'Claim rejected.');
+      }
+      fetchClaims();
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'Failed to process claim');
+    } finally {
+      setProcessingClaim(null);
+    }
+  };
+
   // Load data when authenticated
   useEffect(() => {
     if (!isAuthenticated || !auth) return;
     fetchCatsLocs();
     fetchLeads(auth);
     fetchListings(auth);
+    fetchClaims(auth);
   }, [isAuthenticated, auth]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reload leads when filter changes
@@ -625,6 +683,25 @@ export default function AdminDashboard() {
                 )}
               </button>
             ))}
+            {/* Claims tab */}
+            <button
+              onClick={() => setActiveTab('claims')}
+              className={`px-6 py-3.5 text-sm font-semibold transition border-b-2 ${
+                activeTab === 'claims'
+                  ? 'text-orange-600 border-orange-500 bg-orange-50/40'
+                  : 'text-gray-500 border-transparent hover:text-gray-800 hover:bg-gray-50'
+              }`}
+            >
+              <span className="flex items-center justify-center gap-2">
+                <ShieldCheck className="h-4 w-4" />
+                Claims
+                {claims.filter((c) => c.status === 'pending').length > 0 && (
+                  <span className="bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+                    {claims.filter((c) => c.status === 'pending').length}
+                  </span>
+                )}
+              </span>
+            </button>
             {/* Blog CMS link — navigates to dedicated blog management page */}
             <Link
               href="/admin/blogs"
@@ -1188,6 +1265,127 @@ export default function AdminDashboard() {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ════════════════════════ CLAIMS TAB ════════════════════════ */}
+            {activeTab === 'claims' && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-gray-900">
+                    Listing Claim Requests
+                    <span className="ml-2 text-sm text-gray-400 font-normal">({claims.length} total)</span>
+                  </h2>
+                  <button
+                    onClick={() => fetchClaims()}
+                    className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-orange-600 transition"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    Refresh
+                  </button>
+                </div>
+
+                {claimsLoading ? (
+                  <div className="text-center py-12 text-gray-400">Loading claims…</div>
+                ) : claims.length === 0 ? (
+                  <div className="text-center py-12">
+                    <ShieldCheck className="h-12 w-12 text-gray-200 mx-auto mb-3" />
+                    <p className="text-gray-400">No claim requests yet.</p>
+                    <p className="text-gray-300 text-sm mt-1">When businesses submit claim requests they will appear here.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {claims.map((claim) => (
+                      <div
+                        key={claim.id}
+                        className={`border rounded-xl p-5 ${
+                          claim.status === 'pending'
+                            ? 'border-blue-200 bg-blue-50/30'
+                            : claim.status === 'approved'
+                            ? 'border-green-200 bg-green-50/30'
+                            : 'border-gray-200 bg-gray-50/30'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                                claim.status === 'pending'
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : claim.status === 'approved'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                {claim.status.toUpperCase()}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {new Date(claim.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </span>
+                            </div>
+
+                            {/* Listing being claimed */}
+                            <div className="mb-3">
+                              <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-0.5">Listing</p>
+                              <p className="font-semibold text-gray-900">{claim.listing.name}</p>
+                              <p className="text-sm text-gray-500">{claim.listing.category.name} · {claim.listing.location.city}, {claim.listing.location.state}</p>
+                              <Link
+                                href={`/listing/${claim.listing.slug}`}
+                                target="_blank"
+                                className="text-xs text-orange-600 hover:underline"
+                              >
+                                View listing →
+                              </Link>
+                            </div>
+
+                            {/* Claimant details */}
+                            <div className="grid sm:grid-cols-3 gap-3 text-sm">
+                              <div>
+                                <p className="text-xs text-gray-400 font-semibold uppercase">Name</p>
+                                <p className="text-gray-800 font-medium">{claim.name}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-400 font-semibold uppercase">Email</p>
+                                <a href={`mailto:${claim.email}`} className="text-orange-600 hover:underline">{claim.email}</a>
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-400 font-semibold uppercase">Phone</p>
+                                <a href={`tel:${claim.phone}`} className="text-gray-800 font-medium">{claim.phone}</a>
+                              </div>
+                            </div>
+
+                            {claim.message && (
+                              <div className="mt-3 p-3 bg-white rounded-lg border border-gray-100 text-sm text-gray-600 italic">
+                                &ldquo;{claim.message}&rdquo;
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Action buttons */}
+                          {claim.status === 'pending' && (
+                            <div className="flex flex-col gap-2 shrink-0">
+                              <button
+                                onClick={() => processClaim(claim.id, 'approve')}
+                                disabled={processingClaim === claim.id}
+                                className="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition disabled:opacity-60"
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => processClaim(claim.id, 'reject')}
+                                disabled={processingClaim === claim.id}
+                                className="flex items-center gap-1.5 bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xs font-semibold px-4 py-2 rounded-lg transition disabled:opacity-60"
+                              >
+                                <X className="h-3.5 w-3.5" />
+                                Reject
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

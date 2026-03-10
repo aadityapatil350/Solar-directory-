@@ -4,6 +4,8 @@ import Script from "next/script";
 import "./globals.css";
 
 const GA_ID = 'G-HRQJB0S57Q';
+// Replace with your AdSense Publisher ID after approval: ca-pub-XXXXXXXXXXXXXXXXX
+const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || '';
 
 export const metadata: Metadata = constructMetadata({
   title: 'Find Best Solar Installers & Companies in India',
@@ -61,6 +63,16 @@ export default function RootLayout({
             gtag('config', '${GA_ID}', { page_path: window.location.pathname });
           `}
         </Script>
+
+        {/* Google AdSense — only loads after you have an approved Publisher ID */}
+        {ADSENSE_ID && (
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
 
         {/* Schema.org */}
         <Script

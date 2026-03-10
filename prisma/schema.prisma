@@ -42,12 +42,13 @@ model Listing {
   reviews     Int      @default(0)
   categoryId  String
   locationId  String
-  userId      String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  category    Category @relation(fields: [categoryId], references: [id])
-  location    Location @relation(fields: [locationId], references: [id])
-  user        User?    @relation(fields: [userId], references: [id])
+  userId        String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  category      Category       @relation(fields: [categoryId], references: [id])
+  location      Location       @relation(fields: [locationId], references: [id])
+  user          User?          @relation(fields: [userId], references: [id])
+  claimRequests ClaimRequest[]
 
   @@index([categoryId])
   @@index([locationId])
@@ -123,6 +124,23 @@ model LeadDelivery {
 
   @@index([installerId])
   @@index([leadId])
+}
+
+model ClaimRequest {
+  id          String   @id @default(cuid())
+  listingId   String
+  name        String
+  email       String
+  phone       String
+  message     String?
+  status      String   @default("pending") // pending | approved | rejected
+  installerId String?  // set on approval
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([status])
 }
 
 model BlogPost {

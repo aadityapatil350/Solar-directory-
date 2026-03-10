@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Star, MapPin, Phone, Verified } from 'lucide-react';
+import { Star, MapPin, Phone } from 'lucide-react';
 
 interface ListingCardProps {
   listing: {
@@ -37,11 +37,8 @@ export default function ListingCard({ listing }: ListingCardProps) {
         
         <div className="p-6">
           <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <h3 className="text-xl font-semibold text-gray-900">
               {listing.name}
-              {listing.verified && (
-                <Verified className="h-5 w-5 text-blue-500" aria-label="Verified" />
-              )}
             </h3>
           </div>
           

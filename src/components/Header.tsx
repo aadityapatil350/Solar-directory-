@@ -38,6 +38,9 @@ export default function Header() {
             <Link href="/blog" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
               Blog
             </Link>
+            <Link href="/pricing" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
+              Pricing
+            </Link>
             <Link href="/contact" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
               Contact
             </Link>
@@ -73,6 +76,7 @@ export default function Header() {
               { href: '/about', label: 'About' },
               { href: '/solar-calculator', label: 'Calculator' },
               { href: '/blog', label: 'Blog' },
+              { href: '/pricing', label: 'Pricing' },
               { href: '/contact', label: 'Contact' },
             ].map(({ href, label }) => (
               <Link
