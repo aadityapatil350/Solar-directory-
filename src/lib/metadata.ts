@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const siteName = 'Go Solar Index';
-export const siteDescription = 'India\'s most trusted solar directory. Find verified solar installers, dealers, and service providers in your city. Compare prices, read reviews, go solar today!';
+export const siteDescription = "India's most trusted solar directory. Find verified solar installers, dealers, and service providers in your city. Compare prices, read reviews, go solar today!";
 export const siteUrl = 'https://www.gosolarindex.in';
 
 export function constructMetadata({
@@ -9,13 +9,18 @@ export function constructMetadata({
   description,
   path = '',
   ogImage = '/og-image.png',
+  standalone = false,
 }: {
   title?: string;
   description?: string;
   path?: string;
   ogImage?: string;
+  standalone?: boolean;
 }): Metadata {
-  const fullTitle = title ? `${title} | ${siteName}` : siteName;
+  // standalone=true: use title as-is (for blog posts/city pages that are already fully formed)
+  const fullTitle = title
+    ? (standalone ? title : `${title} | ${siteName}`)
+    : siteName;
   const fullDescription = description || siteDescription;
   const url = `${siteUrl}${path}`;
 
@@ -44,9 +49,9 @@ export function constructMetadata({
       'solar battery',
       'solar AMC',
     ],
-    authors: [{ name: 'Go Solar Index' }],
-    creator: 'Go Solar Index',
-    publisher: 'Go Solar Index',
+    authors: [{ name: siteName }],
+    creator: siteName,
+    publisher: siteName,
     metadataBase: new URL(siteUrl),
     openGraph: {
       type: 'website',
@@ -89,23 +94,25 @@ export function constructMetadata({
 }
 
 export function constructCityMetadata(city: string, state: string, count?: number): Metadata {
-  const displayCount = count ? `Top ${count}` : 'Best';
-  const title = `${displayCount} Solar Installers in ${city} (2026) — Free Quotes + Subsidy Help`;
-  const description = `Compare ${count || 'verified'} solar companies in ${city}. Get 3 free quotes, check PM Surya Ghar subsidy eligibility, and go solar in 2026. No spam, only verified installers.`;
+  // Keep total title ≤ 65 chars — use standalone so no brand suffix appended
+  const title = `Solar Installers in ${city} 2026 — ${count ? `${count} Verified` : 'Compare & Quote'} | GSI`;
+  const description = `Find ${count || 'verified'} solar companies in ${city}, ${state}. Get free quotes, claim PM Surya Ghar subsidy up to ₹78,000 & go solar in 2026. No spam.`;
   return constructMetadata({
     title,
     description,
     path: `/${city.toLowerCase().replace(/\s+/g, '-')}`,
+    standalone: true,
   });
 }
 
 export function constructCategoryMetadata(category: string, city?: string): Metadata {
-  const locationText = city ? `in ${city} India` : 'in India';
-  const title = `${category} ${locationText} (2026) — Verified ${category} Near You`;
+  const locationText = city ? `in ${city}` : 'in India';
+  const title = `${category} ${locationText} 2026 — Verified & Rated | GSI`;
   const description = `Find top-rated ${category} ${locationText}. Compare prices, read reviews, get free quotes. PM Surya Ghar subsidy available.`;
   return constructMetadata({
     title,
     description,
     path: `/categories/${category.toLowerCase().replace(/\s+/g, '-')}`,
+    standalone: true,
   });
 }

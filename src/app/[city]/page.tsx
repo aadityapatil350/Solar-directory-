@@ -78,22 +78,38 @@ export default async function CityPage({ params }: PageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://gosolarindex.in',
+        item: 'https://www.gosolarindex.in',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: cityData.state,
-        item: `https://gosolarindex.in/states/${cityData.state.toLowerCase().replace(/\s+/g, '-')}`,
+        item: `https://www.gosolarindex.in/states/${cityData.state.toLowerCase().replace(/\s+/g, '-')}`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: cityData.city,
-        item: `https://gosolarindex.in/${cityData.city.toLowerCase().replace(/\s+/g, '-')}`,
+        item: `https://www.gosolarindex.in/${cityData.city.toLowerCase().replace(/\s+/g, '-')}`,
       },
     ],
   };
+
+  // ItemList Schema for top listings (helps Google understand directory structure)
+  const itemListSchema = listings.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `Solar Installers in ${cityData.city}`,
+    description: `Verified solar companies in ${cityData.city}, ${cityData.state}`,
+    numberOfItems: listings.length,
+    itemListElement: listings.slice(0, 10).map((listing, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: listing.name,
+      url: `https://www.gosolarindex.in/listing/${listing.slug}`,
+      ...(listing.description && { description: listing.description }),
+    })),
+  } : null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,6 +118,13 @@ export default async function CityPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      {itemListSchema && (
+        <Script
+          id="itemlist-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+        />
+      )}
       <Header />
 
       <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-16">

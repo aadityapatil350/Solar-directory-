@@ -6,22 +6,14 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api/', '/installers/dashboard'],
+        disallow: ['/admin', '/api/', '/installers/dashboard', '/dashboard/'],
       },
       {
         userAgent: 'Googlebot',
         allow: '/',
-        disallow: ['/admin', '/api/', '/installers/dashboard'],
-        crawlDelay: 0,
-      },
-      {
-        userAgent: 'Bingbot',
-        allow: '/',
-        disallow: ['/admin', '/api/', '/installers/dashboard'],
-        crawlDelay: 1,
+        disallow: ['/admin', '/api/', '/installers/dashboard', '/dashboard/'],
       },
     ],
     sitemap: 'https://www.gosolarindex.in/sitemap.xml',
-    host: 'https://www.gosolarindex.in',
   };
 }

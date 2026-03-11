@@ -274,7 +274,8 @@ export default function AdminDashboard() {
   }, [auth]);
 
   const processClaim = async (claimId: string, action: 'approve' | 'reject') => {
-    if (action === 'approve' && !confirm('Approve this claim? A new installer account will be created.')) return;
+    if (action === 'approve' && !confirm('Approve this claim? The listing will be verified and the owner will get dashboard access.')) return;
+    if (action === 'reject' && !confirm('Reject this claim? The claimant will not get access to this listing.')) return;
     setProcessingClaim(claimId);
     try {
       const res = await fetch('/api/admin/claims', {
@@ -285,7 +286,7 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       if (action === 'approve') {
-        toast('success', `Claim approved! Installer account created. Temp password: ${data.tempPassword}`);
+        toast('success', `Claim approved! ${data.ownerName || data.ownerEmail} now has dashboard access.`);
       } else {
         toast('success', 'Claim rejected.');
       }

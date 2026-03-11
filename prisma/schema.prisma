@@ -52,6 +52,9 @@ model Listing {
   user        User?          @relation(fields: [userId], references: [id])
   installer   Installer?     @relation(fields: [installerId], references: [id])
   claimRequests ClaimRequest[]
+  youtubeUrl    String?
+  views         Int            @default(0)
+  images        ListingImage[]
 
   @@index([categoryId])
   @@index([locationId])
@@ -180,6 +183,30 @@ model BlogPost {
   @@index([slug])
   @@index([published])
   @@index([category])
+}
+
+model ListingImage {
+  id        String   @id @default(cuid())
+  listingId String
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+}
+
+model OtpVerification {
+  id        String   @id @default(cuid())
+  email     String
+  otp       String
+  listingId String
+  data      String   @db.Text
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
 }
 
 model SolarLead {

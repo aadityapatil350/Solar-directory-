@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: post.metaTitle || post.title,
     description: post.metaDescription || post.description,
     path: `/blog/${slug}`,
+    standalone: true,
   });
 }
 
@@ -44,11 +45,11 @@ export default async function BlogPostPage({ params }: Props) {
   });
   if (!post) notFound();
 
-  const siteUrl = 'https://gosolarindex.in';
+  const siteUrl = 'https://www.gosolarindex.in';
 
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
     datePublished: post.date.toISOString(),

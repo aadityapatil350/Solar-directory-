@@ -33,17 +33,35 @@
 
 1. **Category** — Solar service categories (5 types)
 2. **Location** — Indian cities with slug (10 cities in seed)
-3. **Listing** — Core business listings (89 in seed)
-4. **User** — User accounts (role: user/installer/admin)
-5. **Installer** — Extended installer profile with subscription
-6. **Lead** — Customer enquiries
-7. **LeadDelivery** — Junction: lead → installer assignments
+3. **Listing** — Core business listings (fields: youtubeUrl, views, verified, featured, installerId, userId)
+4. **ListingImage** — Photos for a listing (stored in Supabase Storage bucket `listing-images`)
+5. **OtpVerification** — Temp OTP records for claim flow (6-digit, 15min expiry)
+6. **User** — User accounts (role: user/installer/admin/**owner**)
+7. **Installer** — Extended installer profile with subscription
+8. **Lead** — Customer enquiries
+9. **LeadDelivery** — Junction: lead → installer assignments
+10. **ClaimRequest** — Listing claim records (status: pending/approved/rejected)
+11. **WhatsAppClick** — Tracks WhatsApp button clicks per listing
+12. **BlogPost** — Blog CMS posts
 
 **Admin email:** `aadityabiz350@gmail.com`
+
+## Three Separate Dashboards (DO NOT MIX)
+| Dashboard | URL | Role | Purpose |
+|-----------|-----|------|---------|
+| Admin | `/admin` | admin | Manage all listings, leads, installers, blog |
+| Installer | `/installers/dashboard` | installer | Leads, subscription, installer profile |
+| **Listing Owner** | `/dashboard` | **owner** | Edit listing, photos, YouTube, leads, analytics |
 
 ---
 
 ## All Routes
+
+### Pricing (2 tiers only)
+| Plan | Price | Features |
+|------|-------|---------|
+| Free (Claimed) | ₹0 | Edit details, 3 photos, verified badge |
+| Featured | ₹999/month | Unlimited photos, YouTube, leads, priority placement, analytics |
 
 ### Public Pages
 | Route | File | Notes |

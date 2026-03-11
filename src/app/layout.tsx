@@ -15,7 +15,7 @@ export const metadata: Metadata = constructMetadata({
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'GoSolarIndex',
+  name: 'Go Solar Index',
   url: 'https://gosolarindex.in',
   description: "India's trusted solar installer directory",
   potentialAction: {
@@ -28,7 +28,7 @@ const websiteSchema = {
 const orgSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'GoSolarIndex',
+  name: 'Go Solar Index',
   url: 'https://gosolarindex.in',
   logo: 'https://gosolarindex.in/logo.png',
   contactPoint: {
@@ -39,6 +39,8 @@ const orgSchema = {
   },
   sameAs: [
     'https://twitter.com/gosolarindex',
+    'https://www.facebook.com/gosolarindex',
+    'https://www.instagram.com/gosolarindex',
   ],
 };
 

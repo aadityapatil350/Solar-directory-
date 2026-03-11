@@ -276,6 +276,19 @@ export default function ListingCard({ listing, installerId, enquiryCount }: List
             </span>
           </div>
         )}
+
+        {/* Claim link */}
+        {!listing.verified && (
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <Link
+              href={`/claim/${listing.slug}`}
+              className="text-xs text-gray-400 hover:text-orange-500 transition"
+            >
+              Is this your business?{' '}
+              <span className="underline font-medium">Claim & get verified free</span>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

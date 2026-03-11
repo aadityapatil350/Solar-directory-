@@ -92,6 +92,19 @@ function toWhatsApp(phone: string | null, companyName: string, categoryName: str
   return `https://wa.me/${withCC}?text=${text}`;
 }
 
+function toYouTubeEmbed(url: string | null): string | null {
+  if (!url) return null;
+  // Handle youtu.be short links
+  const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+  // Handle watch?v=ID
+  const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  // Handle /embed/ already
+  if (url.includes('/embed/')) return url;
+  return null;
+}
+
 function toGoogleMapsEmbed(address: string | null, name: string, city: string, state: string): string {
   const query = encodeURIComponent(`${address || name} ${city} ${state} India`);
   return `https://maps.google.com/maps?q=${query}&output=embed&z=15`;
@@ -103,8 +116,19 @@ async function getListing(slug: string) {
   try {
     const listing = await prisma.listing.findUnique({
       where: { slug },
-      include: { category: true, location: true },
+      include: {
+        category: true,
+        location: true,
+        images: { orderBy: { order: 'asc' } },
+      },
     });
+    // Increment views (fire-and-forget, don't block render)
+    if (listing) {
+      prisma.listing.update({
+        where: { id: listing.id },
+        data: { views: { increment: 1 } },
+      }).catch(() => {}); // non-blocking
+    }
     return listing;
   } catch (error) {
     console.error('Error fetching listing:', error);
@@ -152,6 +176,10 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category?.name);
   const mapSrc = toGoogleMapsEmbed(listing.address, listing.name, listing.location.city, listing.location.state);
   const initials = getInitials(listing.name);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const listingImages: { id: string; url: string }[] = (listing as any).images ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const youtubeEmbedUrl = toYouTubeEmbed((listing as any).youtubeUrl ?? null);
 
   const siteUrl = 'https://www.gosolarindex.in';
 
@@ -380,6 +408,49 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                   )}
                 </div>
               </div>
+
+              {/* Photo Gallery */}
+              {listingImages.length > 0 && (
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Award className="h-5 w-5 text-orange-500" />
+                    Photos
+                  </h2>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {listingImages.map((img) => (
+                      <div key={img.id} className="aspect-square rounded-xl overflow-hidden bg-gray-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={img.url}
+                          alt={`${listing.name} photo`}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* YouTube Video */}
+              {youtubeEmbedUrl && (
+                <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                  <div className="px-6 pt-5 pb-3 flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-red-500" />
+                    <h2 className="text-lg font-bold text-gray-900">Watch Our Work</h2>
+                  </div>
+                  <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      src={youtubeEmbedUrl}
+                      title={`${listing.name} — Solar Installation Video`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 w-full h-full"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Google Map */}
               <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">

@@ -3,272 +3,268 @@ import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { Check, Star, Zap, Crown } from 'lucide-react';
+import { Check, X, Star, Zap, BadgeCheck, Shield, Clock } from 'lucide-react';
 
 export const metadata: Metadata = constructMetadata({
-  title: 'Pricing Plans — List Your Solar Business on GoSolarIndex',
-  description: 'Choose the perfect plan for your solar business. Get more leads with Featured or Premium listings. Starting from Free. Compare plans and features.',
+  title: 'Pricing — Free & Featured Plans | GoSolarIndex',
+  description: 'Claim your solar business listing for free on GoSolarIndex. Upgrade to Featured for ₹999/month to get priority placement, up to 5 photos, leads & more.',
   path: '/pricing',
 });
 
-export default function PricingPage() {
-  const plans = [
-    {
-      name: 'Free',
-      price: '₹0',
-      period: 'forever',
-      icon: Star,
-      color: 'gray',
-      features: [
-        'Basic business listing',
-        'Company name & address',
-        'Phone number display',
-        'Listed in search results',
-        'Category & location tags',
-        'Basic profile page',
-      ],
-      limitations: [
-        'No priority placement',
-        'No verified badge',
-        'No lead notifications',
-        'Limited visibility',
-      ],
-      cta: 'Get Started Free',
-      href: '/installers/signup',
-      popular: false,
-    },
-    {
-      name: 'Featured',
-      price: '₹2,999',
-      period: '/month',
-      icon: Zap,
-      color: 'orange',
-      features: [
-        'Everything in Free, plus:',
-        'Priority placement in search',
-        'Verified badge on listing',
-        'WhatsApp CTA button',
-        'Email lead notifications',
-        'Featured in category pages',
-        'Enhanced profile visibility',
-        'Logo & images display',
-        'Customer review section',
-        'Monthly performance report',
-      ],
-      limitations: [],
-      cta: 'Start Featured Plan',
-      href: '/installers/signup',
-      popular: true,
-    },
-    {
-      name: 'Premium',
-      price: '₹5,999',
-      period: '/month',
-      icon: Crown,
-      color: 'blue',
-      features: [
-        'Everything in Featured, plus:',
-        'Top of city page placement',
-        'Sponsored label & highlighting',
-        'Analytics dashboard access',
-        'ALL leads from your city',
-        'First in search results',
-        'Premium support (24/7)',
-        'Custom profile URL',
-        'Social media integration',
-        'Competitor analysis tools',
-        'Priority customer support',
-      ],
-      limitations: [],
-      cta: 'Go Premium',
-      href: '/installers/signup',
-      popular: false,
-    },
-  ];
+const FREE_FEATURES = [
+  { text: 'Claim & verify your listing', included: true },
+  { text: 'Edit all business details', included: true },
+  { text: 'Admin-verified badge on listing', included: true },
+  { text: 'Basic enquiry visibility', included: true },
+  { text: 'Photo uploads', included: false },
+  { text: 'YouTube "Show Your Work" video', included: false },
+  { text: 'Priority placement in search', included: false },
+  { text: 'Featured badge on listing card', included: false },
+  { text: 'Appear on Homepage Featured strip', included: false },
+  { text: 'Lead notifications (email)', included: false },
+  { text: 'Full analytics dashboard', included: false },
+];
 
+const FEATURED_FEATURES = [
+  { text: 'Everything in Free', included: true },
+  { text: 'Upload up to 5 photos', included: true },
+  { text: 'YouTube "Show Your Work" video', included: true },
+  { text: 'Priority placement in search', included: true },
+  { text: 'Featured badge on listing card', included: true },
+  { text: 'Appear on Homepage Featured strip', included: true },
+  { text: 'Lead notifications (email)', included: true },
+  { text: 'Full analytics dashboard (views, clicks)', included: true },
+  { text: 'Full contact details in leads tab', included: true },
+  { text: 'Dedicated support', included: true },
+];
+
+const FAQS = [
+  {
+    q: 'Is claiming my listing really free?',
+    a: 'Yes, 100% free. Submit your claim, verify your email with OTP, and our team will review and approve it — usually within 24–48 hours. Once approved, you get a Verified badge and full dashboard access at no cost.',
+  },
+  {
+    q: 'Why does the claim need admin approval?',
+    a: 'To keep GoSolarIndex trustworthy, we manually verify that claims come from genuine business owners. This protects your listing from being claimed by competitors and ensures customers always see accurate, owner-managed information.',
+  },
+  {
+    q: 'How long does approval take?',
+    a: 'Most claims are reviewed within 24–48 hours. You will receive an email notification as soon as your claim is approved.',
+  },
+  {
+    q: 'How do I claim my listing?',
+    a: 'Find your business on GoSolarIndex, click "Claim this listing", fill in your details, and verify your email with a 6-digit OTP. Your claim then goes to our team for review — takes under 2 minutes to submit.',
+  },
+  {
+    q: 'What is the Featured plan price?',
+    a: 'Featured is ₹999/month. No annual commitment, cancel anytime.',
+  },
+  {
+    q: 'What is the "Show Your Work" YouTube feature?',
+    a: 'Featured plan members can add a YouTube video link to their listing page. Customers can watch real installation videos directly on your profile — builds massive trust.',
+  },
+  {
+    q: 'How does priority placement work?',
+    a: 'Featured listings appear at the top of city and category search results, above free listings. You get significantly more profile views.',
+  },
+  {
+    q: 'What payment methods are accepted?',
+    a: 'UPI, credit/debit card, net banking, and all major wallets via Razorpay.',
+  },
+];
+
+export default function PricingPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Simple, Transparent Pricing
+      <main className="min-h-screen bg-gray-50">
+
+        {/* Hero */}
+        <section className="bg-white border-b py-14 px-4 text-center">
+          <span className="inline-block bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
+            Simple Pricing — 2 Plans Only
+          </span>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Claim Free. Grow with Featured.
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            Choose the perfect plan to grow your solar business. Get more leads, build trust, and dominate your local market.
-          </p>
-          <p className="text-sm text-gray-500">
-            All plans include GST. Cancel anytime. No hidden fees.
+          <p className="text-gray-500 text-lg max-w-xl mx-auto">
+            Get your solar business admin-verified for free. Upgrade to Featured when you want more leads and visibility.
           </p>
         </section>
 
-        {/* Pricing Cards */}
-        <section className="container mx-auto px-4 pb-20">
-          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {plans.map((plan) => {
-              const Icon = plan.icon;
-              const isPopular = plan.popular;
-
-              return (
-                <div
-                  key={plan.name}
-                  className={`relative bg-white rounded-2xl shadow-xl border-2 transition-all hover:shadow-2xl hover:scale-105 ${
-                    isPopular
-                      ? 'border-orange-500 ring-4 ring-orange-100'
-                      : 'border-gray-200'
-                  }`}
-                >
-                  {isPopular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-1.5 rounded-full text-sm font-bold shadow-lg">
-                      MOST POPULAR
-                    </div>
-                  )}
-
-                  <div className="p-8">
-                    {/* Icon */}
-                    <div
-                      className={`inline-flex p-3 rounded-xl mb-4 ${
-                        plan.color === 'orange'
-                          ? 'bg-orange-100'
-                          : plan.color === 'blue'
-                          ? 'bg-blue-100'
-                          : 'bg-gray-100'
-                      }`}
-                    >
-                      <Icon
-                        className={`h-8 w-8 ${
-                          plan.color === 'orange'
-                            ? 'text-orange-600'
-                            : plan.color === 'blue'
-                            ? 'text-blue-600'
-                            : 'text-gray-600'
-                        }`}
-                      />
-                    </div>
-
-                    {/* Plan Name */}
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      {plan.name}
-                    </h3>
-
-                    {/* Price */}
-                    <div className="mb-6">
-                      <span className="text-5xl font-bold text-gray-900">
-                        {plan.price}
-                      </span>
-                      <span className="text-gray-500 ml-2">{plan.period}</span>
-                    </div>
-
-                    {/* CTA Button */}
-                    <Link
-                      href={plan.href}
-                      className={`block w-full text-center py-3 px-6 rounded-lg font-semibold transition-all ${
-                        isPopular
-                          ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 shadow-lg'
-                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                      }`}
-                    >
-                      {plan.cta}
-                    </Link>
-
-                    {/* Features */}
-                    <ul className="mt-8 space-y-4">
-                      {plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-3">
-                          <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                          <span className="text-gray-700">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Limitations (if any) */}
-                    {plan.limitations.length > 0 && (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <p className="text-sm text-gray-500 font-semibold mb-3">
-                          Limitations:
-                        </p>
-                        <ul className="space-y-2">
-                          {plan.limitations.map((limitation, idx) => (
-                            <li
-                              key={idx}
-                              className="flex items-start gap-2 text-sm text-gray-500"
-                            >
-                              <span className="text-gray-400">•</span>
-                              {limitation}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="bg-white py-16">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Frequently Asked Questions
-            </h2>
-            <div className="space-y-6">
-              {[
-                {
-                  q: 'How do I upgrade or downgrade my plan?',
-                  a: 'You can upgrade or downgrade anytime from your installer dashboard. Changes take effect immediately, and billing is prorated.',
-                },
-                {
-                  q: 'What payment methods do you accept?',
-                  a: 'We accept all major credit/debit cards, UPI, net banking, and wallets via Razorpay. All transactions are secure and encrypted.',
-                },
-                {
-                  q: 'Can I cancel anytime?',
-                  a: 'Yes, you can cancel your subscription anytime. There are no long-term contracts. Your listing will remain active until the end of your billing period.',
-                },
-                {
-                  q: 'How many leads will I get?',
-                  a: 'Lead volume depends on your city, competition, and plan. Featured listings typically get 3-5x more leads than free listings. Premium listings get ALL leads from your city.',
-                },
-                {
-                  q: 'Is there a setup fee?',
-                  a: 'No setup fees. You only pay the monthly subscription. The first month starts when you activate your plan.',
-                },
-                {
-                  q: 'Do you offer refunds?',
-                  a: "We offer a 7-day money-back guarantee on Featured and Premium plans. If you're not satisfied, contact us at hello@gosolarindex.in for a full refund.",
-                },
-              ].map((faq, idx) => (
-                <div key={idx} className="border-b border-gray-200 pb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {faq.q}
-                  </h3>
-                  <p className="text-gray-600">{faq.a}</p>
-                </div>
-              ))}
+        {/* Admin approval notice */}
+        <section className="max-w-2xl mx-auto px-4 pt-10">
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl px-6 py-4 flex items-start gap-3">
+            <Clock className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-800">Claims are admin-reviewed (24–48 hrs)</p>
+              <p className="text-sm text-blue-700 mt-0.5">
+                After submitting your OTP-verified claim, our team reviews it to ensure only genuine business owners
+                get access. You receive an email once approved.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="bg-gradient-to-r from-orange-500 to-orange-600 py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Ready to Grow Your Solar Business?
-            </h2>
-            <p className="text-xl text-orange-100 mb-8 max-w-2xl mx-auto">
-              Join hundreds of verified solar installers getting quality leads every day.
-            </p>
+        {/* Plans */}
+        <section className="max-w-4xl mx-auto px-4 py-12">
+          <div className="grid md:grid-cols-2 gap-8">
+
+            {/* Free Plan */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col">
+              <div className="p-8 border-b">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-gray-600" />
+                  </div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Free</p>
+                </div>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="text-5xl font-bold text-gray-900">₹0</span>
+                </div>
+                <p className="text-gray-500 text-sm">Forever free · No credit card needed</p>
+              </div>
+
+              <div className="p-8 flex-1">
+                <ul className="space-y-3">
+                  {FREE_FEATURES.map((f) => (
+                    <li key={f.text} className="flex items-center gap-3 text-sm">
+                      {f.included ? (
+                        <Check className="h-4 w-4 text-green-500 shrink-0" />
+                      ) : (
+                        <X className="h-4 w-4 text-gray-300 shrink-0" />
+                      )}
+                      <span className={f.included ? 'text-gray-700' : 'text-gray-400'}>{f.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-8 pt-0">
+                <Link
+                  href="/"
+                  className="block w-full text-center border-2 border-orange-500 text-orange-600 font-semibold py-3 rounded-xl hover:bg-orange-50 transition"
+                >
+                  Find & Claim Your Listing
+                </Link>
+              </div>
+            </div>
+
+            {/* Featured Plan */}
+            <div className="bg-orange-500 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
+              {/* Popular badge */}
+              <div className="absolute top-4 right-4">
+                <span className="bg-white text-orange-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                  <Star className="h-3 w-3 fill-orange-500 text-orange-500" />
+                  Most Popular
+                </span>
+              </div>
+
+              <div className="p-8 border-b border-orange-400">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <Zap className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="text-sm font-semibold text-orange-100 uppercase tracking-wide">Featured</p>
+                </div>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="text-5xl font-bold text-white">₹999</span>
+                  <span className="text-orange-200 text-sm mb-2">/month</span>
+                </div>
+                <p className="text-orange-100 text-sm">Cancel anytime · No lock-in</p>
+              </div>
+
+              <div className="p-8 flex-1">
+                <ul className="space-y-3">
+                  {FEATURED_FEATURES.map((f) => (
+                    <li key={f.text} className="flex items-center gap-3 text-sm">
+                      <Check className="h-4 w-4 text-white shrink-0" />
+                      <span className="text-white">{f.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-8 pt-0">
+                <Link
+                  href="/dashboard"
+                  className="flex items-center justify-center gap-2 w-full bg-white text-orange-600 font-bold py-3 rounded-xl hover:bg-orange-50 transition shadow-md"
+                >
+                  <Zap className="h-4 w-4" />
+                  Upgrade to Featured
+                </Link>
+                <p className="text-orange-100 text-xs text-center mt-3">
+                  Claim must be approved first
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust strip */}
+          <div className="mt-10 text-center text-sm text-gray-500 flex flex-wrap justify-center gap-6">
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> 180+ verified businesses</span>
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> 52 cities covered</span>
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> Secure payments via Razorpay</span>
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> GST invoice provided</span>
+          </div>
+        </section>
+
+        {/* How It Works */}
+        <section className="max-w-3xl mx-auto px-4 pb-16">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">How Claiming Works</h2>
+          <div className="grid sm:grid-cols-4 gap-5">
+            {[
+              { step: '1', title: 'Find Your Listing', desc: 'Search GoSolarIndex for your business name or browse your city.' },
+              { step: '2', title: 'Submit Claim', desc: 'Fill in your details and verify your email with a 6-digit OTP. Takes under 2 minutes.' },
+              { step: '3', title: 'Admin Review', desc: 'Our team reviews your claim within 24–48 hours and sends an approval email.' },
+              { step: '4', title: 'Manage & Grow', desc: 'Log in to your dashboard, edit details, view leads, and optionally upgrade to Featured.' },
+            ].map((item) => (
+              <div key={item.step} className="bg-white rounded-xl border p-5 text-center">
+                <div className="w-10 h-10 bg-orange-500 text-white font-bold text-lg rounded-full flex items-center justify-center mx-auto mb-3">
+                  {item.step}
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-1 text-sm">{item.title}</h3>
+                <p className="text-gray-500 text-xs">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="max-w-2xl mx-auto px-4 pb-20">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {FAQS.map((item) => (
+              <div key={item.q} className="bg-white rounded-xl border p-6">
+                <p className="font-semibold text-gray-900 mb-2">{item.q}</p>
+                <p className="text-gray-600 text-sm">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="bg-orange-500 py-14 px-4 text-center">
+          <h2 className="text-3xl font-bold text-white mb-3">Is your business listed?</h2>
+          <p className="text-orange-100 mb-8 max-w-md mx-auto">
+            Claim it for free. Our team verifies and approves within 24–48 hours — then you&apos;re in full control.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/installers/signup"
-              className="inline-block bg-white text-orange-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all shadow-xl"
+              href="/"
+              className="bg-white text-orange-600 font-bold px-8 py-3 rounded-xl hover:bg-orange-50 transition shadow-md"
             >
-              Get Started Today
+              Claim Your Listing Free
+            </Link>
+            <Link
+              href="/contact"
+              className="border-2 border-white text-white font-semibold px-8 py-3 rounded-xl hover:bg-orange-600 transition"
+            >
+              Talk to Us
             </Link>
           </div>
         </section>
+
       </main>
       <Footer />
     </>

@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/verify-admin';
-import bcrypt from 'bcryptjs';
 
 // GET all claim requests
 export async function GET(request: Request) {
@@ -46,59 +45,45 @@ export async function PATCH(request: Request) {
 
   if (action === 'reject') {
     await prisma.claimRequest.update({ where: { id: claimId }, data: { status: 'rejected' } });
+    // Also update user role back if they're still pending
+    const user = await prisma.user.findUnique({ where: { email: claim.email } });
+    if (user && user.role === 'pending_owner') {
+      await prisma.user.update({ where: { id: user.id }, data: { role: 'user' } });
+    }
     return NextResponse.json({ success: true, status: 'rejected' });
   }
 
-  // APPROVE: create user + installer, link listing
-  // Check if user with this email already exists
-  let user = await prisma.user.findUnique({ where: { email: claim.email } });
-
+  // APPROVE: find the user account created during OTP verification, set role to 'owner', link listing
+  const user = await prisma.user.findUnique({ where: { email: claim.email } });
   if (!user) {
-    // Create a user account with a temp password = phone number (they can change later)
-    const hashedPassword = await bcrypt.hash(claim.phone, 12);
-    user = await prisma.user.create({
-      data: {
-        name: claim.name,
-        email: claim.email,
-        password: hashedPassword,
-        role: 'installer',
-      },
-    });
+    return NextResponse.json({ error: 'User account not found. The claimant may not have completed OTP verification.' }, { status: 404 });
   }
 
-  // Check if installer profile already exists for this user
-  let installer = await prisma.installer.findUnique({ where: { userId: user.id } });
-  if (!installer) {
-    installer = await prisma.installer.create({
-      data: {
-        userId: user.id,
-        companyName: claim.listing.name,
-        contactPerson: claim.name,
-        email: claim.email,
-        phone: claim.phone,
-        verified: true, // approved by admin
-        subscriptionType: 'basic',
-        paymentStatus: 'pending',
-      },
-    });
-  }
+  // Upgrade user role to owner
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { role: 'owner' },
+  });
 
-  // Link listing to this user
+  // Link listing to user and mark as verified
   await prisma.listing.update({
     where: { id: claim.listingId },
-    data: { userId: user.id },
+    data: {
+      userId: user.id,
+      verified: true,
+    },
   });
 
   // Mark claim approved
   await prisma.claimRequest.update({
     where: { id: claimId },
-    data: { status: 'approved', installerId: installer.id },
+    data: { status: 'approved' },
   });
 
   return NextResponse.json({
     success: true,
     status: 'approved',
-    installerEmail: user.email,
-    tempPassword: claim.phone, // admin sees this to share with installer
+    ownerEmail: user.email,
+    ownerName: user.name,
   });
 }

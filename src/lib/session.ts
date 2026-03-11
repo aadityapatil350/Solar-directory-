@@ -12,6 +12,7 @@ export interface SessionPayload {
   email: string;
   role: string;
   installerId?: string;
+  listingId?: string;
 }
 
 export async function createSession(payload: SessionPayload): Promise<string> {

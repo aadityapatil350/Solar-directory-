@@ -1,31 +1,67 @@
 import { prisma } from '@/lib/prisma';
+import { sendOtpEmail } from '@/lib/email';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { listingId, name, email, phone, message } = await request.json();
+    const { listingId, name, email, phone, password } = await request.json();
 
-    if (!listingId || !name || !email || !phone) {
-      return NextResponse.json({ error: 'listingId, name, email and phone are required' }, { status: 400 });
+    if (!listingId || !name || !email || !phone || !password) {
+      return NextResponse.json(
+        { error: 'listingId, name, email, phone and password are required' },
+        { status: 400 },
+      );
     }
 
     // Check listing exists
     const listing = await prisma.listing.findUnique({ where: { id: listingId } });
-    if (!listing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
-
-    // Check no pending/approved claim already
-    const existing = await prisma.claimRequest.findFirst({
-      where: { listingId, status: { in: ['pending', 'approved'] } },
-    });
-    if (existing) {
-      return NextResponse.json({ error: 'A claim is already pending or approved for this listing.' }, { status: 409 });
+    if (!listing) {
+      return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
     }
 
-    const claim = await prisma.claimRequest.create({
-      data: { listingId, name, email, phone, message: message || null },
+    // Check if already claimed
+    if (listing.userId) {
+      return NextResponse.json(
+        { error: 'This listing has already been claimed.' },
+        { status: 409 },
+      );
+    }
+
+    // Prevent spam: check if OTP was sent in last 5 minutes
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const recentOtp = await prisma.otpVerification.findFirst({
+      where: {
+        email,
+        listingId,
+        createdAt: { gte: fiveMinutesAgo },
+      },
+    });
+    if (recentOtp) {
+      return NextResponse.json(
+        { error: 'An OTP was already sent to this email. Please wait 5 minutes before requesting again.' },
+        { status: 429 },
+      );
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    // Store OTP record
+    await prisma.otpVerification.create({
+      data: {
+        email,
+        otp,
+        listingId,
+        data: JSON.stringify({ name, email, phone, password, listingId }),
+        expiresAt,
+      },
     });
 
-    return NextResponse.json({ success: true, claim }, { status: 201 });
+    // Send OTP email
+    await sendOtpEmail(email, otp, listing.name);
+
+    return NextResponse.json({ success: true, email });
   } catch (error) {
     console.error('Claim POST error:', error);
     return NextResponse.json({ error: 'Failed to submit claim' }, { status: 500 });
