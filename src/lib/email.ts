@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const FROM = 'GoSolarIndex <noreply@gosolarindex.in>';
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://gosolarindex.in';
+const APP_URL = 'https://gosolarindex.in';
 
 export async function sendClaimApprovedEmail(
   email: string,
@@ -69,7 +69,7 @@ export async function sendClaimApprovedEmail(
             </ol>
           </div>
 
-          <p style="margin-top:24px;color:#6b7280;font-size:13px;">If you have any questions, reply to this email or contact us at support@gosolarindex.in</p>
+          <p style="margin-top:24px;color:#6b7280;font-size:13px;">If you have any questions, reply to this email or contact us at <a href="mailto:adityabiz350@gmail.com" style="color:#f97316;">adityabiz350@gmail.com</a></p>
           <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
           <p style="font-size:12px;color:#9ca3af;margin:0;">GoSolarIndex — India's #1 Solar Business Directory</p>
         </div>
