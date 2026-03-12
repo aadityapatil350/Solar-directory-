@@ -58,8 +58,8 @@ export default function DashboardLoginPage() {
                 <Sun className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Listing Owner Login</h1>
-                <p className="text-xs text-gray-500">GoSolarIndex Dashboard</p>
+                <h1 className="text-lg font-bold text-gray-900">Business Owner Login</h1>
+                <p className="text-xs text-gray-500">GoSolarIndex — Owner Dashboard</p>
               </div>
             </div>
 
@@ -115,17 +115,11 @@ export default function DashboardLoginPage() {
               </button>
             </form>
 
-            <div className="mt-5 pt-5 border-t border-gray-100 text-center space-y-2">
+            <div className="mt-5 pt-5 border-t border-gray-100 text-center">
               <p className="text-sm text-gray-500">
-                Don&apos;t have an account?{' '}
+                Haven&apos;t claimed your listing yet?{' '}
                 <Link href="/" className="text-orange-600 hover:underline font-medium">
-                  Claim your listing
-                </Link>
-              </p>
-              <p className="text-xs text-gray-400">
-                Are you an installer?{' '}
-                <Link href="/installers/login" className="text-orange-600 hover:underline">
-                  Installer login
+                  Find &amp; claim your business
                 </Link>
               </p>
             </div>

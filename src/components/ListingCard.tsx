@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Star, MapPin, Phone, Verified, MessageCircle, Users, Globe } from 'lucide-react';
+import { Star, MapPin, Phone, Verified, MessageCircle, Globe } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface ListingCardProps {
@@ -17,17 +17,9 @@ interface ListingCardProps {
     reviews: number;
     verified: boolean;
     featured: boolean;
-    location: {
-      city: string;
-      state: string;
-    };
-    category: {
-      name: string;
-    };
-    installerId?: string | null;
+    location: { city: string; state: string };
+    category: { name: string };
   };
-  installerId?: string | null;
-  enquiryCount?: number | null;
 }
 
 interface Category {
@@ -48,7 +40,7 @@ async function trackWhatsAppClick(listingId: string, city: string) {
   }
 }
 
-export default function ListingCard({ listing, installerId, enquiryCount }: ListingCardProps) {
+export default function ListingCard({ listing }: ListingCardProps) {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
@@ -266,16 +258,6 @@ export default function ListingCard({ listing, installerId, enquiryCount }: List
             </button>
           )}
         </div>
-
-        {/* Enquiries counter */}
-        {enquiryCount !== null && enquiryCount !== undefined && enquiryCount > 0 && (
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-            <Users className="h-4 w-4 text-orange-500" />
-            <span className="text-sm text-gray-600 font-medium">
-              {enquiryCount} people enquired this week
-            </span>
-          </div>
-        )}
 
         {/* Claim link */}
         {!listing.verified && (

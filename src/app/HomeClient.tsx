@@ -64,7 +64,6 @@ interface Listing {
   featured: boolean;
   location: { id: string; city: string; state: string };
   category: { id: string; name: string };
-  installerId?: string | null;
 }
 
 interface Category { id: string; name: string; slug: string }
@@ -84,18 +83,16 @@ interface Props {
   initialCategories?: Category[];
   initialLocations?: Location[];
   children?: React.ReactNode;
-  initialInstallers?: Record<string, { enquiryCount: number | null; loading: boolean }>;
 }
 
 const PAGE_SIZE = 12;
 
-export default function HomeClient({ initialStats, initialListings = [], initialCategories = [], initialLocations = [], children, initialInstallers }: Props) {
+export default function HomeClient({ initialStats, initialListings = [], initialCategories = [], initialLocations = [], children }: Props) {
   const [listings, setListings] = useState<Listing[]>(initialListings);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [locations, setLocations] = useState<Location[]>(initialLocations);
   const [stats, setStats] = useState<InitialStats>(initialStats);
   const [loading, setLoading] = useState(false);
-  const [installerData, setInstallerData] = useState<Record<string, { enquiryCount: number | null; loading: boolean }>>(initialInstallers || {});
   const [currentPage, setCurrentPage] = useState(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [useClientRender, setUseClientRender] = useState(false);
@@ -514,8 +511,6 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                         <ListingCard
                           key={listing.id}
                           listing={listing}
-                          installerId={listing.installerId}
-                          enquiryCount={installerData[listing.installerId || '']?.enquiryCount}
                         />
                       ))}
                     </div>
@@ -650,7 +645,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
             Join India's fastest-growing solar directory and get quality leads
           </p>
           <Link
-            href="/installers/signup"
+            href="/dashboard/login"
             className="inline-flex items-center gap-2 bg-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-lg"
           >
             List Your Business

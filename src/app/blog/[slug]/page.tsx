@@ -141,7 +141,7 @@ export default async function BlogPostPage({ params }: Props) {
               <Link href="/" className="bg-white text-orange-600 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition">
                 Find Solar Installers
               </Link>
-              <Link href="/installers/signup" className="border border-white/40 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition">
+              <Link href="/dashboard/login" className="border border-white/40 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition">
                 List Your Business
               </Link>
             </div>

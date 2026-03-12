@@ -58,8 +58,8 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/installers/signup" className="text-sm text-orange-500 hover:text-orange-400 transition font-semibold">
-                  List Your Business →
+                <Link href="/dashboard/login" className="text-sm text-orange-500 hover:text-orange-400 transition font-semibold">
+                  Owner Dashboard →
                 </Link>
               </li>
             </ul>

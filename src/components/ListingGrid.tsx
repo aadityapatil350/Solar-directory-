@@ -18,7 +18,6 @@ interface Listing {
   featured: boolean;
   location: { id: string; city: string; state: string };
   category: { id: string; name: string };
-  installerId?: string | null;
 }
 
 interface ListingGridProps {

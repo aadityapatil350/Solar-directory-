@@ -4,36 +4,24 @@ import { verifySession } from '@/lib/session';
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isDashboard = pathname.startsWith('/dashboard');
-  const isInstallerDashboard = pathname.startsWith('/installers/dashboard');
+  if (!pathname.startsWith('/dashboard')) return NextResponse.next();
 
-  if (!isDashboard && !isInstallerDashboard) return NextResponse.next();
+  // /dashboard/login is public
+  if (pathname === '/dashboard/login') return NextResponse.next();
 
   const token = request.cookies.get('gsi_session')?.value;
-
-  if (isDashboard) {
-    if (!token) {
-      return NextResponse.redirect(new URL('/dashboard/login', request.url));
-    }
-    const session = await verifySession(token);
-    if (!session || session.role !== 'owner') {
-      return NextResponse.redirect(new URL('/dashboard/login', request.url));
-    }
+  if (!token) {
+    return NextResponse.redirect(new URL('/dashboard/login', request.url));
   }
 
-  if (isInstallerDashboard) {
-    if (!token) {
-      return NextResponse.redirect(new URL('/installers/login', request.url));
-    }
-    const session = await verifySession(token);
-    if (!session || (session.role !== 'installer' && session.role !== 'admin')) {
-      return NextResponse.redirect(new URL('/installers/login', request.url));
-    }
+  const session = await verifySession(token);
+  if (!session || session.role !== 'owner') {
+    return NextResponse.redirect(new URL('/dashboard/login', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/installers/dashboard/:path*', '/dashboard/:path*'],
+  matcher: ['/dashboard/:path*'],
 };

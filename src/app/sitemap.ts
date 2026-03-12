@@ -83,13 +83,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     // Installer Pages - Medium-High Priority
     {
-      url: `${baseUrl}/installers/signup`,
+      url: `${baseUrl}/dashboard/login`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/installers/login`,
+      url: `${baseUrl}/dashboard/login`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'yearly',
       priority: 0.3,

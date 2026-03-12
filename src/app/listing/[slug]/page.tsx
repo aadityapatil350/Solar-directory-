@@ -387,7 +387,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                       <Phone className="h-4 w-4" /> Call Now
                     </a>
                   )}
-                  <WhatsAppButton phone={listing.phone} listingId={listing.id} city={listing.location.city} name={listing.name} installerId={listing.installerId} />
+                  <WhatsAppButton phone={listing.phone} listingId={listing.id} city={listing.location.city} name={listing.name} />
                   {listing.email && (
                     <a
                       href={`mailto:${listing.email}`}

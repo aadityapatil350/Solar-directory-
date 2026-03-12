@@ -210,7 +210,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               <div className="bg-white rounded-xl p-12 text-center">
                 <p className="text-gray-500 mb-4">No listings in this category yet.</p>
                 <Link
-                  href="/installers/signup"
+                  href="/dashboard/login"
                   className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
                 >
                   List Your Business

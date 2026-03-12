@@ -8,6 +8,7 @@ import {
   ShieldCheck, Plus, Edit2, Send, ChevronDown, ChevronUp,
   CheckCircle2, X, Search, SlidersHorizontal, Building2,
   FileText, AlertTriangle, TrendingUp, Users2, XCircle, BookOpen,
+  ExternalLink, UserCheck, Crown,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -51,9 +52,18 @@ interface ClaimRequest {
     id: string;
     name: string;
     slug: string;
+    featured: boolean;
+    userId: string | null;
     category: { name: string };
     location: { city: string; state: string };
   };
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    role: string;
+    createdAt: string;
+  } | null;
 }
 
 interface Toast {
@@ -295,6 +305,23 @@ export default function AdminDashboard() {
       toast('error', err instanceof Error ? err.message : 'Failed to process claim');
     } finally {
       setProcessingClaim(null);
+    }
+  };
+
+  const deleteClaim = async (claimId: string) => {
+    if (!confirm('Delete this claim? This will unlink the user from the listing and remove their verified status.')) return;
+    try {
+      const res = await fetch('/api/admin/claims', {
+        method: 'DELETE',
+        headers: headers(),
+        body: JSON.stringify({ claimId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast('success', 'Claim deleted and listing unlinked.');
+      fetchClaims();
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'Failed to delete claim');
     }
   };
 
@@ -1311,7 +1338,7 @@ export default function AdminDashboard() {
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <div className="flex items-center gap-2 flex-wrap mb-2">
                               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                                 claim.status === 'pending'
                                   ? 'bg-blue-100 text-blue-700'
@@ -1321,6 +1348,11 @@ export default function AdminDashboard() {
                               }`}>
                                 {claim.status.toUpperCase()}
                               </span>
+                              {claim.listing.featured && (
+                                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 flex items-center gap-1">
+                                  <Crown className="h-3 w-3" /> Featured
+                                </span>
+                              )}
                               <span className="text-xs text-gray-400">
                                 {new Date(claim.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </span>
@@ -1341,7 +1373,7 @@ export default function AdminDashboard() {
                             </div>
 
                             {/* Claimant details */}
-                            <div className="grid sm:grid-cols-3 gap-3 text-sm">
+                            <div className="grid sm:grid-cols-3 gap-3 text-sm mb-3">
                               <div>
                                 <p className="text-xs text-gray-400 font-semibold uppercase">Name</p>
                                 <p className="text-gray-800 font-medium">{claim.name}</p>
@@ -1356,6 +1388,40 @@ export default function AdminDashboard() {
                               </div>
                             </div>
 
+                            {/* Linked user account */}
+                            {claim.user ? (
+                              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100">
+                                <UserCheck className="h-4 w-4 text-green-500 shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs text-gray-400 font-semibold uppercase mb-0.5">Logged-in User Account</p>
+                                  <p className="text-sm font-medium text-gray-800">
+                                    {claim.user.name || '—'}{' '}
+                                    <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
+                                      claim.user.role === 'owner' ? 'bg-green-100 text-green-700'
+                                      : claim.user.role === 'pending_owner' ? 'bg-yellow-100 text-yellow-700'
+                                      : 'bg-gray-100 text-gray-600'
+                                    }`}>{claim.user.role}</span>
+                                  </p>
+                                  <p className="text-xs text-gray-500">{claim.user.email}</p>
+                                </div>
+                                {claim.status === 'approved' && (
+                                  <a
+                                    href={`/dashboard/login`}
+                                    target="_blank"
+                                    className="flex items-center gap-1 text-xs bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg font-semibold transition shrink-0"
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    Dashboard Login
+                                  </a>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2 p-3 bg-yellow-50 rounded-lg border border-yellow-100 text-xs text-yellow-700">
+                                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                No user account found — claimant has not completed OTP verification yet.
+                              </div>
+                            )}
+
                             {claim.message && (
                               <div className="mt-3 p-3 bg-white rounded-lg border border-gray-100 text-sm text-gray-600 italic">
                                 &ldquo;{claim.message}&rdquo;
@@ -1364,26 +1430,35 @@ export default function AdminDashboard() {
                           </div>
 
                           {/* Action buttons */}
-                          {claim.status === 'pending' && (
-                            <div className="flex flex-col gap-2 shrink-0">
-                              <button
-                                onClick={() => processClaim(claim.id, 'approve')}
-                                disabled={processingClaim === claim.id}
-                                className="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition disabled:opacity-60"
-                              >
-                                <CheckCircle2 className="h-3.5 w-3.5" />
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => processClaim(claim.id, 'reject')}
-                                disabled={processingClaim === claim.id}
-                                className="flex items-center gap-1.5 bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xs font-semibold px-4 py-2 rounded-lg transition disabled:opacity-60"
-                              >
-                                <X className="h-3.5 w-3.5" />
-                                Reject
-                              </button>
-                            </div>
-                          )}
+                          <div className="flex flex-col gap-2 shrink-0">
+                            {claim.status === 'pending' && (
+                              <>
+                                <button
+                                  onClick={() => processClaim(claim.id, 'approve')}
+                                  disabled={processingClaim === claim.id}
+                                  className="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition disabled:opacity-60"
+                                >
+                                  <CheckCircle2 className="h-3.5 w-3.5" />
+                                  Approve
+                                </button>
+                                <button
+                                  onClick={() => processClaim(claim.id, 'reject')}
+                                  disabled={processingClaim === claim.id}
+                                  className="flex items-center gap-1.5 bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xs font-semibold px-4 py-2 rounded-lg transition disabled:opacity-60"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                  Reject
+                                </button>
+                              </>
+                            )}
+                            <button
+                              onClick={() => deleteClaim(claim.id)}
+                              className="flex items-center gap-1.5 bg-white hover:bg-red-50 text-red-500 border border-red-200 text-xs font-semibold px-4 py-2 rounded-lg transition"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}

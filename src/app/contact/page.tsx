@@ -115,7 +115,7 @@ export default function ContactPage() {
                 Get leads from homeowners and businesses in your city. Plans starting at ₹500/month.
               </p>
               <a
-                href="/installers/signup"
+                href="/dashboard/login"
                 className="inline-block bg-orange-500 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition"
               >
                 Sign Up Free

@@ -53,10 +53,10 @@ export default function Header() {
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Link
-              href="/installers/signup"
+              href="/dashboard/login"
               className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition text-sm font-medium"
             >
-              List Your Business
+              Owner Login
             </Link>
           </div>
 
@@ -94,11 +94,11 @@ export default function Header() {
               </Link>
             ))}
             <Link
-              href="/installers/signup"
+              href="/dashboard/login"
               onClick={() => setMobileOpen(false)}
               className="block bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition text-center font-medium mt-2"
             >
-              List Your Business
+              Owner Login
             </Link>
           </nav>
         )}

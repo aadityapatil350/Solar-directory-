@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/verify-admin';
+import { sendClaimApprovedEmail } from '@/lib/email';
 
-// GET all claim requests
+// GET all claim requests — includes linked user info
 export async function GET(request: Request) {
   if (!await verifyAdmin(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -13,7 +14,8 @@ export async function GET(request: Request) {
     include: {
       listing: {
         select: {
-          id: true, name: true, slug: true,
+          id: true, name: true, slug: true, featured: true,
+          userId: true,
           category: { select: { name: true } },
           location: { select: { city: true, state: true } },
         },
@@ -21,7 +23,18 @@ export async function GET(request: Request) {
     },
   });
 
-  return NextResponse.json({ claims });
+  // Attach user info for each claim (matched by email)
+  const claimsWithUser = await Promise.all(
+    claims.map(async (claim) => {
+      const user = await prisma.user.findUnique({
+        where: { email: claim.email },
+        select: { id: true, name: true, email: true, role: true, createdAt: true },
+      });
+      return { ...claim, user };
+    }),
+  );
+
+  return NextResponse.json({ claims: claimsWithUser });
 }
 
 // PATCH — approve or reject a claim
@@ -45,7 +58,6 @@ export async function PATCH(request: Request) {
 
   if (action === 'reject') {
     await prisma.claimRequest.update({ where: { id: claimId }, data: { status: 'rejected' } });
-    // Also update user role back if they're still pending
     const user = await prisma.user.findUnique({ where: { email: claim.email } });
     if (user && user.role === 'pending_owner') {
       await prisma.user.update({ where: { id: user.id }, data: { role: 'user' } });
@@ -53,37 +65,65 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ success: true, status: 'rejected' });
   }
 
-  // APPROVE: find the user account created during OTP verification, set role to 'owner', link listing
+  // APPROVE
   const user = await prisma.user.findUnique({ where: { email: claim.email } });
   if (!user) {
-    return NextResponse.json({ error: 'User account not found. The claimant may not have completed OTP verification.' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'User account not found. The claimant may not have completed OTP verification.' },
+      { status: 404 },
+    );
   }
 
-  // Upgrade user role to owner
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { role: 'owner' },
-  });
-
-  // Link listing to user and mark as verified
+  await prisma.user.update({ where: { id: user.id }, data: { role: 'owner' } });
   await prisma.listing.update({
     where: { id: claim.listingId },
-    data: {
-      userId: user.id,
-      verified: true,
-    },
+    data: { userId: user.id, verified: true },
+  });
+  await prisma.claimRequest.update({ where: { id: claimId }, data: { status: 'approved' } });
+
+  const updatedListing = await prisma.listing.findUnique({ where: { id: claim.listingId } });
+  try {
+    await sendClaimApprovedEmail(
+      user.email,
+      user.name || claim.name,
+      claim.listing.name,
+      updatedListing?.featured ?? false,
+    );
+  } catch (emailErr) {
+    console.error('Failed to send approval email:', emailErr);
+  }
+
+  return NextResponse.json({ success: true, status: 'approved', ownerEmail: user.email, ownerName: user.name });
+}
+
+// DELETE — remove a claim and optionally unlink the user from the listing
+export async function DELETE(request: Request) {
+  if (!await verifyAdmin(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { claimId } = await request.json();
+  if (!claimId) return NextResponse.json({ error: 'claimId required' }, { status: 400 });
+
+  const claim = await prisma.claimRequest.findUnique({ where: { id: claimId } });
+  if (!claim) return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
+
+  // Find the user linked to this claim
+  const user = await prisma.user.findUnique({ where: { email: claim.email } });
+
+  // Unlink the listing from the user and remove verified status
+  await prisma.listing.updateMany({
+    where: { id: claim.listingId },
+    data: { userId: null, verified: false },
   });
 
-  // Mark claim approved
-  await prisma.claimRequest.update({
-    where: { id: claimId },
-    data: { status: 'approved' },
-  });
+  // Downgrade user role back to 'user' if they were owner/pending_owner
+  if (user && (user.role === 'owner' || user.role === 'pending_owner')) {
+    await prisma.user.update({ where: { id: user.id }, data: { role: 'user' } });
+  }
 
-  return NextResponse.json({
-    success: true,
-    status: 'approved',
-    ownerEmail: user.email,
-    ownerName: user.name,
-  });
+  // Delete the claim record
+  await prisma.claimRequest.delete({ where: { id: claimId } });
+
+  return NextResponse.json({ success: true });
 }
