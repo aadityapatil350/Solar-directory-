@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { constructMetadata } from "@/lib/metadata";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const GA_ID = 'G-HRQJB0S57Q';
@@ -88,6 +89,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
         {children}
+        <Analytics />
       </body>
     </html>
   );
