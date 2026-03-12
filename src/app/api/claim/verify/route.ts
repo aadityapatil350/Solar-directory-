@@ -24,7 +24,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid or expired OTP' }, { status: 400 });
     }
 
-    // Parse stored data
     const data = JSON.parse(otpRecord.data) as {
       name: string;
       email: string;
@@ -33,27 +32,50 @@ export async function POST(request: Request) {
       listingId: string;
     };
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'Email already registered. Please login.' },
-        { status: 409 },
-      );
-    }
-
-    // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    // Create user with pending role — will be upgraded to 'owner' on admin approval
-    const user = await prisma.user.create({
-      data: {
-        email: data.email,
-        name: data.name,
-        password: hashedPassword,
-        role: 'pending_owner',
-      },
-    });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+
+    let user;
+
+    if (existingUser) {
+      // Only allow re-claim if the account was previously demoted (role='user')
+      // This happens when admin deletes a claim — user account stays but role is reset to 'user'
+      if (existingUser.role === 'pending_owner') {
+        return NextResponse.json(
+          { error: 'You already have a pending claim under review. Please wait for admin approval.' },
+          { status: 409 },
+        );
+      }
+      if (existingUser.role === 'owner') {
+        return NextResponse.json(
+          { error: 'This email already has an owner account. Please login at /dashboard/login.' },
+          { status: 409 },
+        );
+      }
+      if (existingUser.role === 'admin') {
+        return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+      }
+      // role === 'user': previously claimed but admin deleted it — allow re-claim
+      user = await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          name: data.name,
+          password: hashedPassword,
+          role: 'pending_owner',
+        },
+      });
+    } else {
+      // New user — create account
+      user = await prisma.user.create({
+        data: {
+          email: data.email,
+          name: data.name,
+          password: hashedPassword,
+          role: 'pending_owner',
+        },
+      });
+    }
 
     // Create ClaimRequest with status='pending' — admin must approve
     await prisma.claimRequest.create({
@@ -70,7 +92,6 @@ export async function POST(request: Request) {
     // Delete OTP record
     await prisma.otpVerification.delete({ where: { id: otpRecord.id } });
 
-    // Do NOT create session or link listing yet — admin must approve first
     return NextResponse.json({ success: true, status: 'pending' });
   } catch (error) {
     console.error('Claim verify error:', error);
