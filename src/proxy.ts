@@ -6,8 +6,10 @@ export async function proxy(request: NextRequest) {
 
   if (!pathname.startsWith('/dashboard')) return NextResponse.next();
 
-  // /dashboard/login is public
+  // Public dashboard pages (no auth required)
   if (pathname === '/dashboard/login') return NextResponse.next();
+  if (pathname === '/dashboard/forgot-password') return NextResponse.next();
+  if (pathname === '/dashboard/reset-password') return NextResponse.next();
 
   const token = request.cookies.get('gsi_session')?.value;
   if (!token) {

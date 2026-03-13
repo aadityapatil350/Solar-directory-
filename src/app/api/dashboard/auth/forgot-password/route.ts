@@ -3,8 +3,6 @@ import { sendPasswordResetEmail } from '@/lib/email';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://gosolarindex.in';
-
 export async function POST(request: Request) {
   try {
     const { email } = await request.json();
@@ -12,6 +10,11 @@ export async function POST(request: Request) {
     if (!email || typeof email !== 'string') {
       return NextResponse.json({ error: 'Email is required.' }, { status: 400 });
     }
+
+    // Derive base URL from the incoming request so the link always points to
+    // the correct domain (gosolarindex.in in prod, localhost in dev, etc.)
+    const reqUrl = new URL(request.url);
+    const baseUrl = `${reqUrl.protocol}//${reqUrl.host}`;
 
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
@@ -35,7 +38,7 @@ export async function POST(request: Request) {
       data: { email: user.email, token, expiresAt },
     });
 
-    const resetUrl = `${APP_URL}/dashboard/reset-password?token=${token}`;
+    const resetUrl = `${baseUrl}/dashboard/reset-password?token=${token}`;
     await sendPasswordResetEmail(user.email, resetUrl);
 
     return NextResponse.json({ success: true });
