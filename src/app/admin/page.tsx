@@ -138,6 +138,9 @@ export default function AdminDashboard() {
   // ── Listings state ──
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(false);
+  const [listingsPage, setListingsPage] = useState(1);
+  const [listingsTotalPages, setListingsTotalPages] = useState(1);
+  const [listingsTotal, setListingsTotal] = useState(0);
   const [categories, setCategories] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
   const [filterCategory, setFilterCategory] = useState('');
@@ -251,7 +254,7 @@ export default function AdminDashboard() {
     } catch { setLeads([]); } finally { setLeadsLoading(false); }
   }, [auth, leadsFilter]);
 
-  const fetchListings = useCallback(async (token = auth) => {
+  const fetchListings = useCallback(async (token = auth, page = listingsPage) => {
     setListingsLoading(true);
     try {
       const params = new URLSearchParams();
@@ -260,14 +263,17 @@ export default function AdminDashboard() {
       if (filterVerified) params.set('verified', filterVerified);
       if (filterFeatured) params.set('featured', filterFeatured);
       if (searchQuery) params.set('search', searchQuery);
+      params.set('page', String(page));
       const res = await fetch(`/api/admin/listings?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       setListings(data.listings || []);
+      setListingsTotalPages(data.totalPages || 1);
+      setListingsTotal(data.total || 0);
       setStats((prev) => ({ ...prev, ...(data.stats || {}) }));
     } catch { /* silent */ } finally { setListingsLoading(false); }
-  }, [auth, filterCategory, filterLocation, filterVerified, filterFeatured, searchQuery]);
+  }, [auth, listingsPage, filterCategory, filterLocation, filterVerified, filterFeatured, searchQuery]);
 
   const fetchCatsLocs = useCallback(async () => {
     const [catsRes, locsRes] = await Promise.all([
@@ -331,24 +337,34 @@ export default function AdminDashboard() {
     }
   };
 
-  // Load data when authenticated
+  // Load data when authenticated — only load active tab
   useEffect(() => {
     if (!isAuthenticated || !auth) return;
     fetchCatsLocs();
     fetchLeads(auth);
-    fetchListings(auth);
-    fetchClaims(auth);
   }, [isAuthenticated, auth]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Lazy-load tab data when switching tabs
+  useEffect(() => {
+    if (!isAuthenticated || !auth) return;
+    if (activeTab === 'listings' && listings.length === 0) fetchListings(auth, 1);
+    if (activeTab === 'claims' && claims.length === 0) fetchClaims(auth);
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reload leads when filter changes
   useEffect(() => {
     if (isAuthenticated && auth) fetchLeads(auth, leadsFilter);
   }, [leadsFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Reload listings when filters change
+  // Reload listings when filters change (reset to page 1)
   useEffect(() => {
-    if (isAuthenticated && auth) fetchListings(auth);
+    if (isAuthenticated && auth) { setListingsPage(1); fetchListings(auth, 1); }
   }, [filterCategory, filterLocation, filterVerified, filterFeatured]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reload listings when page changes
+  useEffect(() => {
+    if (isAuthenticated && auth && activeTab === 'listings') fetchListings(auth, listingsPage);
+  }, [listingsPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Listings actions (optimistic) ──
 
@@ -443,13 +459,16 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error(data.error);
       if (months === 0) {
         toast('success', 'Premium removed from listing.');
+        // Optimistic update
+        setListings((prev) => prev.map((l) => l.id === listingId ? { ...l, featured: false, premiumExpiresAt: null } : l));
       } else {
         const exp = new Date(data.expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-        toast('success', `⭐ Upgraded to Featured Premium! Expires ${exp}`);
+        toast('success', `Upgraded to Featured Premium! Expires ${exp}`);
+        // Optimistic update
+        setListings((prev) => prev.map((l) => l.id === listingId ? { ...l, featured: true, premiumExpiresAt: data.expiresAt } : l));
       }
       setUpgradeModal(null);
-      fetchListings();
-      fetchClaims();
+      fetchClaims(auth);
     } catch (err) {
       toast('error', err instanceof Error ? err.message : 'Upgrade failed');
     } finally {
@@ -1078,7 +1097,7 @@ export default function AdminDashboard() {
                         placeholder="Search…"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && fetchListings()}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { setListingsPage(1); fetchListings(auth, 1); } }}
                         className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-sm w-44 focus:ring-1 focus:ring-orange-400 focus:border-orange-400"
                       />
                     </div>
@@ -1146,7 +1165,7 @@ export default function AdminDashboard() {
                       {unfeaturing ? 'Unfeaturing…' : `Unfeature All (${stats.featuredListings})`}
                     </button>
                     <button
-                      onClick={() => fetchListings()}
+                      onClick={() => { setListingsPage(1); fetchListings(auth, 1); }}
                       className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />
@@ -1287,10 +1306,33 @@ export default function AdminDashboard() {
                   </div>
                 )}
 
-                {/* Listings count */}
-                <div className="text-xs text-gray-500 mb-3">
-                  Showing <span className="font-semibold text-gray-800">{listings.length}</span> listings
-                  {hasActiveFilters && ' (filtered)'}
+                {/* Listings count + pagination */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-xs text-gray-500">
+                    Showing <span className="font-semibold text-gray-800">{listings.length}</span> of <span className="font-semibold text-gray-800">{listingsTotal}</span> listings
+                    {hasActiveFilters && ' (filtered)'}
+                  </div>
+                  {listingsTotalPages > 1 && (
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setListingsPage((p) => Math.max(1, p - 1))}
+                        disabled={listingsPage === 1 || listingsLoading}
+                        className="px-2.5 py-1 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        ← Prev
+                      </button>
+                      <span className="text-xs text-gray-500">
+                        {listingsPage} / {listingsTotalPages}
+                      </span>
+                      <button
+                        onClick={() => setListingsPage((p) => Math.min(listingsTotalPages, p + 1))}
+                        disabled={listingsPage === listingsTotalPages || listingsLoading}
+                        className="px-2.5 py-1 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Table */}

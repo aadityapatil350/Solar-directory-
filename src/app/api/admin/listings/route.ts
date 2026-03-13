@@ -59,24 +59,34 @@ export async function GET(request: Request) {
       ];
     }
 
-    const listings = await prisma.listing.findMany({
-      where,
-      include: { category: true, location: true },
-      orderBy: [
-        { featured: 'desc' },
-        { verified: 'desc' },
-        { createdAt: 'desc' },
-      ],
-    });
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = 50;
+    const skip = (page - 1) * limit;
 
-    const [total, featured, verified] = await Promise.all([
+    const [listings, total, featured, verified] = await Promise.all([
+      prisma.listing.findMany({
+        where,
+        include: { category: true, location: true },
+        orderBy: [
+          { featured: 'desc' },
+          { verified: 'desc' },
+          { createdAt: 'desc' },
+        ],
+        skip,
+        take: limit,
+      }),
       prisma.listing.count(),
       prisma.listing.count({ where: { featured: true } }),
       prisma.listing.count({ where: { verified: true } }),
     ]);
 
+    const filteredTotal = await prisma.listing.count({ where });
+
     return NextResponse.json({
       listings,
+      total: filteredTotal,
+      page,
+      totalPages: Math.ceil(filteredTotal / limit),
       stats: { totalListings: total, featuredListings: featured, verifiedListings: verified },
     });
   } catch (error) {
