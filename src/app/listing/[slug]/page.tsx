@@ -3,6 +3,7 @@ import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import LeadForm from '@/components/LeadForm';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import PhotoGallery from '@/components/PhotoGallery';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -437,26 +438,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               </div>
 
               {/* Photo Gallery */}
-              {listingImages.length > 0 && (
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Award className="h-5 w-5 text-orange-500" />
-                    Photos
-                  </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {listingImages.map((img) => (
-                      <div key={img.id} className="aspect-square rounded-xl overflow-hidden bg-gray-100">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={img.url}
-                          alt={`${listing.name} photo`}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <PhotoGallery photos={listingImages} listingName={listing.name} />
 
               {/* YouTube Video */}
               {youtubeEmbedUrl && (

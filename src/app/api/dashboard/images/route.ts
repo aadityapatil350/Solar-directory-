@@ -10,14 +10,6 @@ const supabaseAdmin = createClient(
 
 const BUCKET = 'listing-images';
 
-async function ensureBucket() {
-  const { data: buckets } = await supabaseAdmin.storage.listBuckets();
-  const exists = buckets?.some((b) => b.name === BUCKET);
-  if (!exists) {
-    await supabaseAdmin.storage.createBucket(BUCKET, { public: true });
-  }
-}
-
 export async function GET() {
   try {
     const session = await getSession();
@@ -88,8 +80,6 @@ export async function POST(request: Request) {
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json({ error: 'File size must be under 5MB' }, { status: 400 });
     }
-
-    await ensureBucket();
 
     const ext = file.name.split('.').pop() || 'jpg';
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
