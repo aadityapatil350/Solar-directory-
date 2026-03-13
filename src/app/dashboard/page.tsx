@@ -44,6 +44,12 @@ interface ListingImage {
   order: number;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 interface Listing {
   id: string;
   name: string;
@@ -55,12 +61,13 @@ interface Listing {
   address: string | null;
   youtubeUrl: string | null;
   serviceTags: string | null;
+  extraCategoryIds: string | null;
   verified: boolean;
   featured: boolean;
   rating: number | null;
   reviews: number;
   views: number;
-  category: { name: string; slug: string };
+  category: { id: string; name: string; slug: string };
   location: { city: string; state: string };
   images: ListingImage[];
 }
@@ -130,6 +137,8 @@ export default function DashboardPage() {
     youtubeUrl: '',
   });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [selectedExtraCategoryIds, setSelectedExtraCategoryIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   // Image upload state
@@ -146,10 +155,11 @@ export default function DashboardPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [listingRes, analyticsRes, leadsRes] = await Promise.all([
+        const [listingRes, analyticsRes, leadsRes, catsRes] = await Promise.all([
           fetch('/api/dashboard/listing'),
           fetch('/api/dashboard/analytics'),
           fetch('/api/dashboard/leads'),
+          fetch('/api/categories'),
         ]);
 
         if (listingRes.status === 401) {
@@ -176,6 +186,11 @@ export default function DashboardPage() {
           } catch {
             setSelectedTags([]);
           }
+          try {
+            setSelectedExtraCategoryIds(l.extraCategoryIds ? JSON.parse(l.extraCategoryIds) : []);
+          } catch {
+            setSelectedExtraCategoryIds([]);
+          }
         }
 
         if (analyticsRes.ok) {
@@ -186,6 +201,10 @@ export default function DashboardPage() {
           const data = await leadsRes.json();
           setLeads(data.leads || []);
           setIsFeatured(data.isFeatured || false);
+        }
+
+        if (catsRes.ok) {
+          setAllCategories(await catsRes.json());
         }
       } catch (err) {
         console.error('Dashboard load error:', err);
@@ -205,7 +224,7 @@ export default function DashboardPage() {
       const res = await fetch('/api/dashboard/listing', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, serviceTags: JSON.stringify(selectedTags) }),
+        body: JSON.stringify({ ...form, serviceTags: JSON.stringify(selectedTags), extraCategoryIds: JSON.stringify(selectedExtraCategoryIds) }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -522,6 +541,50 @@ export default function DashboardPage() {
                   />
                   <p className="text-xs text-gray-400 mt-1">Paste a YouTube link — it will be shown on your listing page to showcase your solar installations.</p>
                 </div>
+
+                {/* Extra Categories */}
+                {allCategories.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                      <Building2 className="h-3.5 w-3.5 text-orange-500" />
+                      Additional Categories
+                    </label>
+                    <p className="text-xs text-gray-400 mb-3">
+                      Your primary category is <span className="font-semibold text-gray-600">{listing.category.name}</span>. Select any additional categories your business also covers.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {allCategories
+                        .filter((c) => c.id !== listing.category.id)
+                        .map((cat) => {
+                          const selected = selectedExtraCategoryIds.includes(cat.id);
+                          return (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={() =>
+                                setSelectedExtraCategoryIds(
+                                  selected
+                                    ? selectedExtraCategoryIds.filter((id) => id !== cat.id)
+                                    : [...selectedExtraCategoryIds, cat.id]
+                                )
+                              }
+                              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                                selected
+                                  ? 'bg-orange-500 text-white border-orange-500'
+                                  : 'bg-white text-gray-600 border-gray-300 hover:border-orange-400 hover:text-orange-600'
+                              }`}
+                            >
+                              {selected && <span className="mr-1">✓</span>}
+                              {cat.name}
+                            </button>
+                          );
+                        })}
+                    </div>
+                    {selectedExtraCategoryIds.length > 0 && (
+                      <p className="text-xs text-gray-400 mt-2">{selectedExtraCategoryIds.length} extra {selectedExtraCategoryIds.length !== 1 ? 'categories' : 'category'} selected</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Service Tags */}
                 <div>

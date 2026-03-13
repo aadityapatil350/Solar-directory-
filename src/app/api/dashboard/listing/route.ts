@@ -44,7 +44,7 @@ export async function PATCH(request: Request) {
     const body = await request.json();
 
     // Only allow specific fields to be updated
-    const allowedFields = ['name', 'phone', 'email', 'website', 'address', 'description', 'youtubeUrl', 'serviceTags'];
+    const allowedFields = ['name', 'phone', 'email', 'website', 'address', 'description', 'youtubeUrl', 'serviceTags', 'extraCategoryIds'];
     const updateData: Record<string, string> = {};
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
@@ -65,7 +65,7 @@ export async function PATCH(request: Request) {
 
     const updated = await prisma.listing.update({
       where: { id: existing.id },
-      data: updateData,
+      data: updateData as any,
       include: {
         category: true,
         location: true,

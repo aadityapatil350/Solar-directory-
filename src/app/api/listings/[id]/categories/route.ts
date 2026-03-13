@@ -8,33 +8,32 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Find all listings with the same name and location
     const listing = await prisma.listing.findUnique({
       where: { id },
-      include: {
-        location: true,
-      },
+      include: { category: true },
     });
 
     if (!listing) {
       return NextResponse.json({ categories: [] });
     }
 
-    // Find all categories this company is listed in
-    const allListings = await prisma.listing.findMany({
-      where: {
-        name: listing.name,
-        locationId: listing.locationId,
-      },
-      include: {
-        category: true,
-      },
-      distinct: ['categoryId'],
-    });
+    // Start with primary category
+    const categoryMap = new Map([[listing.category.id, listing.category]]);
 
-    const categories = allListings.map((l) => l.category);
+    // Add extra categories from extraCategoryIds field
+    const extraIds: string[] = (() => {
+      try { return JSON.parse((listing as any).extraCategoryIds || '[]'); }
+      catch { return []; }
+    })();
 
-    return NextResponse.json({ categories });
+    if (extraIds.length > 0) {
+      const extraCats = await prisma.category.findMany({
+        where: { id: { in: extraIds } },
+      });
+      for (const c of extraCats) categoryMap.set(c.id, c);
+    }
+
+    return NextResponse.json({ categories: Array.from(categoryMap.values()) });
   } catch (error) {
     console.error('Error fetching categories:', error);
     return NextResponse.json({ categories: [] });

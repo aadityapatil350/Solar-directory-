@@ -119,9 +119,12 @@ export default function ListingCard({ listing }: ListingCardProps) {
     : null;
 
   return (
-    <div className={`bg-white rounded-xl shadow-sm border-2 overflow-hidden hover:shadow-md transition ${
-      listing.featured ? 'border-orange-400 bg-orange-50/30' : 'border-gray-200 hover:border-orange-300'
-    }`}>
+    <div
+      className={`bg-white rounded-xl shadow-sm border-2 overflow-hidden hover:shadow-md transition cursor-pointer ${
+        listing.featured ? 'border-orange-400 bg-orange-50/30' : 'border-gray-200 hover:border-orange-300'
+      }`}
+      onClick={() => window.location.href = `/listing/${listing.slug}`}
+    >
       {listing.featured && (
         <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs font-bold px-3 py-1.5 text-center flex items-center justify-center gap-2">
           <Star className="h-3.5 w-3.5 fill-white" />
@@ -201,7 +204,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
         </div>
 
         {/* Action Buttons - Always show all 3 */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2" onClick={(e) => e.stopPropagation()}>
           {/* View Details Button */}
           <Link
             href={`/listing/${listing.slug}`}
@@ -261,7 +264,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
 
         {/* Claim link */}
         {!listing.verified && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="mt-3 pt-3 border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
             <Link
               href={`/claim/${listing.slug}`}
               className="text-xs text-gray-400 hover:text-orange-500 transition"

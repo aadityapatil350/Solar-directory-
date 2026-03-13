@@ -27,6 +27,7 @@ interface Listing {
   verified: boolean;
   featured: boolean;
   premiumExpiresAt: string | null;
+  extraCategoryIds: string | null;
   location: { id: string; city: string; state: string };
   category: { id: string; name: string };
 }
@@ -155,6 +156,7 @@ export default function AdminDashboard() {
     website: '', address: '', categoryId: '', locationId: '',
     verified: false, featured: false,
   });
+  const [formExtraCategoryIds, setFormExtraCategoryIds] = useState<string[]>([]);
   const [formSaving, setFormSaving] = useState(false);
   const [unfeaturing, setUnfeaturing] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -508,6 +510,11 @@ export default function AdminDashboard() {
       verified: listing.verified,
       featured: listing.featured,
     });
+    try {
+      setFormExtraCategoryIds(listing.extraCategoryIds ? JSON.parse(listing.extraCategoryIds) : []);
+    } catch {
+      setFormExtraCategoryIds([]);
+    }
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -515,6 +522,7 @@ export default function AdminDashboard() {
   const cancelForm = () => {
     setShowForm(false);
     setEditingListing(null);
+    setFormExtraCategoryIds([]);
     setListingForm({
       name: '', description: '', phone: '', email: '',
       website: '', address: '', categoryId: '', locationId: '',
@@ -527,8 +535,8 @@ export default function AdminDashboard() {
     setFormSaving(true);
     try {
       const body = editingListing
-        ? { id: editingListing.id, ...listingForm }
-        : listingForm;
+        ? { id: editingListing.id, ...listingForm, extraCategoryIds: formExtraCategoryIds }
+        : { ...listingForm, extraCategoryIds: formExtraCategoryIds };
 
       const res = await fetch('/api/admin/listings', {
         method: editingListing ? 'PATCH' : 'POST',
@@ -1233,6 +1241,35 @@ export default function AdminDashboard() {
                             {locations.map((l) => <option key={l.id} value={l.id}>{l.city}, {l.state}</option>)}
                           </select>
                         </div>
+                      </div>
+                      {/* Extra Categories */}
+                      {listingForm.categoryId && (
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Additional Categories</label>
+                          <div className="flex flex-wrap gap-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                            {categories
+                              .filter((c) => c.id !== listingForm.categoryId)
+                              .map((cat) => {
+                                const sel = formExtraCategoryIds.includes(cat.id);
+                                return (
+                                  <button
+                                    key={cat.id}
+                                    type="button"
+                                    onClick={() => setFormExtraCategoryIds(
+                                      sel ? formExtraCategoryIds.filter((id) => id !== cat.id) : [...formExtraCategoryIds, cat.id]
+                                    )}
+                                    className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
+                                      sel ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-600 border-gray-300 hover:border-orange-400'
+                                    }`}
+                                  >
+                                    {sel ? '✓ ' : ''}{cat.name}
+                                  </button>
+                                );
+                              })}
+                          </div>
+                        </div>
+                      )}
+                      <div className="grid sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">Email</label>
                           <input
@@ -1636,6 +1673,7 @@ export default function AdminDashboard() {
                                       verified: true,
                                       featured: claim.listing.featured,
                                       premiumExpiresAt: null,
+                                      extraCategoryIds: null,
                                       location: claim.listing.location,
                                       category: claim.listing.category,
                                     },
