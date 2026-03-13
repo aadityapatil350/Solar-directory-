@@ -79,8 +79,9 @@ interface Lead {
 
 interface Analytics {
   views: number;
-  whatsappClicks: number;
-  enquiries: number;
+  whatsappClicks: number | null;
+  enquiries: number | null;
+  featuredOnly: boolean;
 }
 
 type TabId = 'listing' | 'photos' | 'leads' | 'subscription';
@@ -362,21 +363,37 @@ export default function DashboardPage() {
                 <p className="text-2xl font-bold text-gray-900">{analytics.views.toLocaleString()}</p>
                 <p className="text-xs text-gray-400 mt-0.5">All time</p>
               </div>
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+              <div className={`rounded-xl p-4 shadow-sm border ${analytics.featuredOnly ? 'bg-amber-50 border-amber-100' : 'bg-white border-gray-100'}`}>
                 <div className="flex items-center gap-2 mb-1">
-                  <MessageSquare className="h-4 w-4 text-green-500" />
+                  <MessageSquare className={`h-4 w-4 ${analytics.featuredOnly ? 'text-amber-400' : 'text-green-500'}`} />
                   <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">WhatsApp Clicks</span>
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{analytics.whatsappClicks.toLocaleString()}</p>
-                <p className="text-xs text-gray-400 mt-0.5">Last 30 days</p>
+                {analytics.featuredOnly ? (
+                  <button onClick={() => setActiveTab('subscription')} className="flex items-center gap-1 text-xs text-amber-600 font-semibold hover:underline mt-1">
+                    <Star className="h-3 w-3" /> Upgrade to unlock
+                  </button>
+                ) : (
+                  <>
+                    <p className="text-2xl font-bold text-gray-900">{analytics.whatsappClicks!.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Last 30 days</p>
+                  </>
+                )}
               </div>
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+              <div className={`rounded-xl p-4 shadow-sm border ${analytics.featuredOnly ? 'bg-amber-50 border-amber-100' : 'bg-white border-gray-100'}`}>
                 <div className="flex items-center gap-2 mb-1">
-                  <Zap className="h-4 w-4 text-blue-500" />
+                  <Zap className={`h-4 w-4 ${analytics.featuredOnly ? 'text-amber-400' : 'text-blue-500'}`} />
                   <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">City Enquiries</span>
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{analytics.enquiries.toLocaleString()}</p>
-                <p className="text-xs text-gray-400 mt-0.5">Last 30 days</p>
+                {analytics.featuredOnly ? (
+                  <button onClick={() => setActiveTab('subscription')} className="flex items-center gap-1 text-xs text-amber-600 font-semibold hover:underline mt-1">
+                    <Star className="h-3 w-3" /> Upgrade to unlock
+                  </button>
+                ) : (
+                  <>
+                    <p className="text-2xl font-bold text-gray-900">{analytics.enquiries!.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Last 30 days</p>
+                  </>
+                )}
               </div>
             </div>
           )}

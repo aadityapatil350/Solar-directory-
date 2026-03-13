@@ -387,7 +387,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                 <Award className="h-7 w-7 text-orange-600" />
                 <h2 className="text-3xl font-bold text-gray-900">Featured Solar Partners</h2>
               </div>
-              <p className="text-gray-600">Top-rated companies with proven track records</p>
+              <p className="text-gray-600">Top-rated verified companies trusted by homeowners</p>
             </div>
             <Link
               href="/categories"
@@ -398,26 +398,61 @@ export default function HomeClient({ initialStats, initialListings = [], initial
             </Link>
           </div>
 
-          {/* Featured Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
-            {[...Array(5)].map((_, i) => (
-              <a
-                key={i}
-                href="mailto:aadityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex"
-                className="group relative border-2 border-dashed border-orange-300 bg-gradient-to-br from-orange-50/80 to-yellow-50/80 rounded-xl p-6 hover:border-orange-500 hover:shadow-lg transition-all text-center flex flex-col items-center justify-center gap-3 min-h-[140px]"
-              >
-                <div className="w-12 h-12 rounded-full bg-orange-100 group-hover:bg-orange-200 flex items-center justify-center transition-colors">
-                  <Star className="h-6 w-6 text-orange-500 group-hover:fill-orange-400 transition-colors" />
-                </div>
-                <div className="font-semibold text-gray-700 group-hover:text-orange-600 text-sm leading-snug transition-colors">
-                  Your Company Here
-                </div>
-                <span className="text-xs text-orange-600 font-medium group-hover:underline">
-                  Get Featured →
-                </span>
-              </a>
-            ))}
-          </div>
+          {/* Featured Grid — real featured listings + empty slots */}
+          {(() => {
+            const featured = listings.filter((l) => l.featured).slice(0, 5);
+            const emptySlots = Math.max(0, 5 - featured.length);
+            return (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
+                {featured.map((l) => (
+                  <Link
+                    key={l.id}
+                    href={`/listing/${l.slug}`}
+                    className="group relative border-2 border-orange-300 bg-white rounded-xl p-4 hover:border-orange-500 hover:shadow-lg transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
+                  >
+                    <div className="absolute top-2 right-2">
+                      <span className="bg-amber-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                        <Star className="h-2.5 w-2.5 fill-white" /> TOP
+                      </span>
+                    </div>
+                    <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">
+                      {l.name.slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="font-semibold text-gray-800 group-hover:text-orange-600 text-sm leading-snug transition-colors line-clamp-2">
+                      {l.name}
+                    </div>
+                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {l.location.city}
+                    </div>
+                    {l.rating && l.rating > 0 ? (
+                      <div className="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                        {l.rating}
+                      </div>
+                    ) : null}
+                  </Link>
+                ))}
+                {Array.from({ length: emptySlots }).map((_, i) => (
+                  <a
+                    key={`empty-${i}`}
+                    href="mailto:adityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex"
+                    className="group border-2 border-dashed border-orange-200 bg-orange-50/40 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-orange-100 group-hover:bg-orange-200 flex items-center justify-center transition-colors">
+                      <Star className="h-6 w-6 text-orange-400" />
+                    </div>
+                    <div className="font-medium text-gray-500 group-hover:text-orange-600 text-xs leading-snug transition-colors">
+                      Your Company Here
+                    </div>
+                    <span className="text-xs text-orange-500 font-semibold group-hover:underline">
+                      Get Featured →
+                    </span>
+                  </a>
+                ))}
+              </div>
+            );
+          })()}
         </div>
       </section>
 

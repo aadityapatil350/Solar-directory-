@@ -36,10 +36,21 @@ export async function GET() {
         })
       : 0;
 
+    // Analytics are a Featured plan feature
+    if (!listing.featured) {
+      return NextResponse.json({
+        views: listing.views, // views always shown (basic)
+        whatsappClicks: null,
+        enquiries: null,
+        featuredOnly: true,
+      });
+    }
+
     return NextResponse.json({
       views: listing.views,
       whatsappClicks,
       enquiries,
+      featuredOnly: false,
     });
   } catch (error) {
     console.error('Dashboard analytics GET error:', error);

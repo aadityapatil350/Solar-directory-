@@ -78,6 +78,60 @@ export async function sendClaimApprovedEmail(
   });
 }
 
+export async function sendLeadNotificationEmail(
+  ownerEmail: string,
+  ownerName: string,
+  lead: { name: string; phone: string; email: string | null; requirement: string | null; budget: string | null; city: string },
+): Promise<void> {
+  console.log(`\n===== LEAD NOTIFICATION TO ${ownerEmail} =====`);
+  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}`);
+  console.log(`===============================================\n`);
+
+  if (!resend) {
+    console.warn('RESEND_API_KEY not set — lead notification only logged to console');
+    return;
+  }
+
+  await resend.emails.send({
+    from: FROM,
+    to: ownerEmail,
+    subject: `🔔 New Lead in ${lead.city} — ${lead.name} wants a solar quote`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111;">
+        <div style="background:#f97316;padding:24px 32px;border-radius:8px 8px 0 0;">
+          <h1 style="color:#fff;margin:0;font-size:22px;">GoSolarIndex</h1>
+          <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">New Lead Notification</p>
+        </div>
+        <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          <h2 style="color:#111;margin-top:0;">🔔 New Lead in ${lead.city}!</h2>
+          <p>Hi <strong>${ownerName}</strong>, a new customer is looking for solar services in your area.</p>
+
+          <div style="background:#f9fafb;border-radius:8px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:120px;">Name</td><td style="padding:6px 0;font-weight:600;font-size:14px;">${lead.name}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Phone</td><td style="padding:6px 0;font-weight:600;font-size:14px;"><a href="tel:${lead.phone}" style="color:#f97316;">${lead.phone}</a></td></tr>
+              ${lead.email ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Email</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${lead.email}" style="color:#f97316;">${lead.email}</a></td></tr>` : ''}
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City</td><td style="padding:6px 0;font-size:14px;">${lead.city}</td></tr>
+              ${lead.requirement ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Requirement</td><td style="padding:6px 0;font-size:14px;">${lead.requirement}</td></tr>` : ''}
+              ${lead.budget ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Budget</td><td style="padding:6px 0;font-size:14px;">${lead.budget}</td></tr>` : ''}
+            </table>
+          </div>
+
+          <div style="margin:24px 0;text-align:center;">
+            <a href="${APP_URL}/dashboard" style="background:#f97316;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">
+              View in Dashboard →
+            </a>
+          </div>
+
+          <p style="color:#6b7280;font-size:13px;">Contact them quickly — leads go cold fast! This is a Featured plan benefit.</p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
+          <p style="font-size:12px;color:#9ca3af;margin:0;">GoSolarIndex — India's #1 Solar Business Directory</p>
+        </div>
+      </div>
+    `,
+  });
+}
+
 export async function sendPasswordResetEmail(email: string, resetUrl: string): Promise<void> {
   console.log(`\n===== PASSWORD RESET EMAIL TO ${email} =====`);
   console.log(`Reset URL: ${resetUrl}`);

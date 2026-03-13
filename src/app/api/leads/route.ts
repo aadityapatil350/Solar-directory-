@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { sendLeadNotificationEmail } from '@/lib/email';
 
 // How many verified installers to notify per lead
 const MAX_INSTALLERS_PER_LEAD = 3;
@@ -96,6 +97,39 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
   }
 }
 
+async function notifyFeaturedOwners(
+  lead: { name: string; phone: string; email: string | null; requirement: string | null; budget: string | null },
+  locationId: string | null,
+) {
+  try {
+    if (!locationId) return;
+
+    // Find featured listings in this city that have a linked owner
+    const featuredListings = await prisma.listing.findMany({
+      where: {
+        locationId,
+        featured: true,
+        userId: { not: null },
+      },
+      include: {
+        location: true,
+        user: { select: { email: true, name: true } },
+      },
+    });
+
+    for (const listing of featuredListings) {
+      if (!listing.user?.email) continue;
+      await sendLeadNotificationEmail(
+        listing.user.email,
+        listing.user.name || listing.name,
+        { ...lead, city: listing.location.city },
+      ).catch((err) => console.error('Lead notification email failed:', err));
+    }
+  } catch (err) {
+    console.error('notifyFeaturedOwners error:', err);
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -136,6 +170,9 @@ export async function POST(request: Request) {
 
     // Distribute lead to verified installers (async, non-blocking)
     distributeLeadToInstallers(lead.id, locationId);
+
+    // Notify featured listing owners in the same city (async, non-blocking)
+    notifyFeaturedOwners(lead, locationId);
 
     return NextResponse.json(
       {
