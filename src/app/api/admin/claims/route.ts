@@ -75,6 +75,14 @@ export async function PATCH(request: Request) {
   }
 
   await prisma.user.update({ where: { id: user.id }, data: { role: 'owner' } });
+
+  // Unlink this user from ANY previously linked listings before assigning the new one
+  // This prevents findFirst() from returning a stale/wrong listing in the dashboard
+  await prisma.listing.updateMany({
+    where: { userId: user.id, id: { not: claim.listingId } },
+    data: { userId: null },
+  });
+
   await prisma.listing.update({
     where: { id: claim.listingId },
     data: { userId: user.id, verified: true },

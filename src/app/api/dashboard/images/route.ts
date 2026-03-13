@@ -17,7 +17,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const listing = await prisma.listing.findFirst({ where: { userId: session.userId } });
+    if (!session.listingId) return NextResponse.json({ error: 'No listing linked to your account.' }, { status: 404 });
+    const listing = await prisma.listing.findFirst({ where: { id: session.listingId, userId: session.userId } });
     if (!listing) {
       return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
     }
@@ -41,7 +42,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const listing = await prisma.listing.findFirst({ where: { userId: session.userId } });
+    if (!session.listingId) return NextResponse.json({ error: 'No listing linked to your account.' }, { status: 404 });
+    const listing = await prisma.listing.findFirst({ where: { id: session.listingId, userId: session.userId } });
     if (!listing) {
       return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
     }

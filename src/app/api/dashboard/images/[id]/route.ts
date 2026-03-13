@@ -28,7 +28,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Image not found' }, { status: 404 });
     }
 
-    const listing = await prisma.listing.findFirst({ where: { userId: session.userId } });
+    if (!session.listingId) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const listing = await prisma.listing.findFirst({ where: { id: session.listingId, userId: session.userId } });
     if (!listing || image.listingId !== listing.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

@@ -9,8 +9,13 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Use listingId from session directly — never rely on findFirst which can return wrong listing
+    if (!session.listingId) {
+      return NextResponse.json({ error: 'No listing linked to your account. Please contact support.' }, { status: 404 });
+    }
+
     const listing = await prisma.listing.findFirst({
-      where: { userId: session.userId },
+      where: { id: session.listingId, userId: session.userId }, // both must match
       include: {
         category: true,
         location: true,
@@ -47,8 +52,12 @@ export async function PATCH(request: Request) {
       }
     }
 
+    if (!session.listingId) {
+      return NextResponse.json({ error: 'No listing linked to your account.' }, { status: 404 });
+    }
+
     const existing = await prisma.listing.findFirst({
-      where: { userId: session.userId },
+      where: { id: session.listingId, userId: session.userId }, // both must match
     });
     if (!existing) {
       return NextResponse.json({ error: 'Listing not found' }, { status: 404 });

@@ -9,8 +9,12 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (!session.listingId) {
+      return NextResponse.json({ error: 'No listing linked to your account.' }, { status: 404 });
+    }
+
     const listing = await prisma.listing.findFirst({
-      where: { userId: session.userId },
+      where: { id: session.listingId, userId: session.userId },
     });
 
     if (!listing) {
