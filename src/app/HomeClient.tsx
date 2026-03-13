@@ -180,16 +180,21 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       if (!existing) {
         seen.set(key, l);
       } else {
+        // Always prefer featured over non-featured; then higher rating; then more reviews
+        const existingFeatured = existing.featured ? 1 : 0;
+        const newFeatured = l.featured ? 1 : 0;
         const better =
-          (l.rating ?? 0) > (existing.rating ?? 0) ||
-          ((l.rating ?? 0) === (existing.rating ?? 0) && l.reviews > existing.reviews);
+          newFeatured > existingFeatured ||
+          (newFeatured === existingFeatured && (l.rating ?? 0) > (existing.rating ?? 0)) ||
+          (newFeatured === existingFeatured && (l.rating ?? 0) === (existing.rating ?? 0) && l.reviews > existing.reviews);
         if (better) seen.set(key, l);
       }
     }
     result = Array.from(seen.values());
 
-    // Sort: top-rated first, then by review count
+    // Sort: featured first, then by rating, then by review count
     result.sort((a, b) => {
+      if (b.featured !== a.featured) return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
       const ra = a.rating ?? 0;
       const rb = b.rating ?? 0;
       if (rb !== ra) return rb - ra;
