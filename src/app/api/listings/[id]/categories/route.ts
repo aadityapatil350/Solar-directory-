@@ -13,23 +13,21 @@ export async function GET(
       include: { category: true },
     });
 
-    if (!listing) {
-      return NextResponse.json({ categories: [] });
-    }
+    if (!listing) return NextResponse.json({ categories: [] });
 
-    // Start with primary category
+    // Primary category always included
     const categoryMap = new Map([[listing.category.id, listing.category]]);
 
-    // Add extra categories from extraCategoryIds field
+    // Extra category IDs stored in serviceTags JSON: { tags: [], categoryIds: [] }
     const extraIds: string[] = (() => {
-      try { return JSON.parse((listing as any).extraCategoryIds || '[]'); }
-      catch { return []; }
+      try {
+        const parsed = JSON.parse(listing.serviceTags || '{}');
+        return Array.isArray(parsed.categoryIds) ? parsed.categoryIds : [];
+      } catch { return []; }
     })();
 
     if (extraIds.length > 0) {
-      const extraCats = await prisma.category.findMany({
-        where: { id: { in: extraIds } },
-      });
+      const extraCats = await prisma.category.findMany({ where: { id: { in: extraIds } } });
       for (const c of extraCats) categoryMap.set(c.id, c);
     }
 

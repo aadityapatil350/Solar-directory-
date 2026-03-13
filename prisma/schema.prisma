@@ -55,8 +55,7 @@ model Listing {
   youtubeUrl      String?
   views           Int            @default(0)
   images          ListingImage[]
-  serviceTags      String?        // JSON array of service tag strings
-  extraCategoryIds String?        // JSON array of additional category IDs
+  serviceTags      String?        // JSON: { tags: string[], categoryIds: string[] }
   premiumExpiresAt DateTime?     // set when admin manually upgrades to featured
 
   @@index([categoryId])

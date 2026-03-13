@@ -185,7 +185,11 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   let serviceTags: string[] = [];
   try {
     const raw = (listing as any).serviceTags;
-    if (raw) serviceTags = JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Support both old format (plain array) and new format ({ tags, categoryIds })
+      serviceTags = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.tags) ? parsed.tags : []);
+    }
   } catch { /* ignore */ }
 
   const siteUrl = 'https://www.gosolarindex.in';

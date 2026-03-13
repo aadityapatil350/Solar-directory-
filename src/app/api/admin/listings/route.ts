@@ -85,8 +85,10 @@ export async function POST(request: Request) {
     }
 
     const slug = name.toLowerCase().replace(/[^a-z0-9\s]/g, '-').replace(/\s+/g, '-').replace(/-+/g, '-') + '-' + Date.now();
+    // Store extra category IDs in serviceTags JSON: { tags: [], categoryIds: [] }
+    const serviceTagsJson = extraCategoryIds?.length ? JSON.stringify({ tags: [], categoryIds: extraCategoryIds }) : null;
 
-    const listing = await (prisma.listing.create as any)({
+    const listing = await prisma.listing.create({
       data: {
         name: name.trim(), slug,
         description: description?.trim() || null,
@@ -98,7 +100,7 @@ export async function POST(request: Request) {
         featured: featured || false,
         rating: 0, reviews: 0,
         categoryId, locationId,
-        extraCategoryIds: extraCategoryIds?.length ? JSON.stringify(extraCategoryIds) : null,
+        serviceTags: serviceTagsJson,
       },
       include: { category: true, location: true },
     });
@@ -134,7 +136,13 @@ export async function PATCH(request: Request) {
     if (locationId !== undefined) updateData.locationId = locationId;
     if (rating !== undefined) updateData.rating = parseFloat(rating);
     if (reviews !== undefined) updateData.reviews = parseInt(reviews);
-    if (extraCategoryIds !== undefined) updateData.extraCategoryIds = JSON.stringify(extraCategoryIds);
+    if (extraCategoryIds !== undefined) {
+      // Merge categoryIds into serviceTags JSON, preserving existing tags
+      const existing = await prisma.listing.findUnique({ where: { id }, select: { serviceTags: true } });
+      let existingTags: string[] = [];
+      try { existingTags = JSON.parse(existing?.serviceTags || '{}').tags || []; } catch { /* */ }
+      updateData.serviceTags = JSON.stringify({ tags: existingTags, categoryIds: extraCategoryIds });
+    }
 
     const updatedListing = await prisma.listing.update({
       where: { id },

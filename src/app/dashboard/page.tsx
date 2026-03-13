@@ -60,8 +60,7 @@ interface Listing {
   website: string | null;
   address: string | null;
   youtubeUrl: string | null;
-  serviceTags: string | null;
-  extraCategoryIds: string | null;
+  serviceTags: string | null; // JSON: { tags: string[], categoryIds: string[] }
   verified: boolean;
   featured: boolean;
   rating: number | null;
@@ -182,13 +181,17 @@ export default function DashboardPage() {
             youtubeUrl: l.youtubeUrl || '',
           });
           try {
-            setSelectedTags(l.serviceTags ? JSON.parse(l.serviceTags) : []);
+            const st = JSON.parse(l.serviceTags || '{}');
+            // Support both old format (plain array) and new format ({ tags, categoryIds })
+            if (Array.isArray(st)) {
+              setSelectedTags(st);
+              setSelectedExtraCategoryIds([]);
+            } else {
+              setSelectedTags(Array.isArray(st.tags) ? st.tags : []);
+              setSelectedExtraCategoryIds(Array.isArray(st.categoryIds) ? st.categoryIds : []);
+            }
           } catch {
             setSelectedTags([]);
-          }
-          try {
-            setSelectedExtraCategoryIds(l.extraCategoryIds ? JSON.parse(l.extraCategoryIds) : []);
-          } catch {
             setSelectedExtraCategoryIds([]);
           }
         }
@@ -224,7 +227,7 @@ export default function DashboardPage() {
       const res = await fetch('/api/dashboard/listing', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, serviceTags: JSON.stringify(selectedTags), extraCategoryIds: JSON.stringify(selectedExtraCategoryIds) }),
+        body: JSON.stringify({ ...form, serviceTags: JSON.stringify({ tags: selectedTags, categoryIds: selectedExtraCategoryIds }) }),
       });
       if (res.ok) {
         const data = await res.json();

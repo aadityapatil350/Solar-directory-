@@ -27,7 +27,7 @@ interface Listing {
   verified: boolean;
   featured: boolean;
   premiumExpiresAt: string | null;
-  extraCategoryIds: string | null;
+  serviceTags: string | null; // JSON: { tags: string[], categoryIds: string[] }
   location: { id: string; city: string; state: string };
   category: { id: string; name: string };
 }
@@ -511,7 +511,8 @@ export default function AdminDashboard() {
       featured: listing.featured,
     });
     try {
-      setFormExtraCategoryIds(listing.extraCategoryIds ? JSON.parse(listing.extraCategoryIds) : []);
+      const st = JSON.parse(listing.serviceTags || '{}');
+      setFormExtraCategoryIds(Array.isArray(st.categoryIds) ? st.categoryIds : []);
     } catch {
       setFormExtraCategoryIds([]);
     }
@@ -1673,7 +1674,7 @@ export default function AdminDashboard() {
                                       verified: true,
                                       featured: claim.listing.featured,
                                       premiumExpiresAt: null,
-                                      extraCategoryIds: null,
+                                      serviceTags: null,
                                       location: claim.listing.location,
                                       category: claim.listing.category,
                                     },
