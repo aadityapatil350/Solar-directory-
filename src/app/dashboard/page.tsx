@@ -231,7 +231,18 @@ export default function DashboardPage() {
       });
       if (res.ok) {
         const data = await res.json();
-        setListing(data.listing);
+        const l = data.listing;
+        setListing(l);
+        // Sync form state from saved response so re-edits show correct values
+        setForm({
+          name: l.name || '',
+          phone: l.phone || '',
+          email: l.email || '',
+          website: l.website || '',
+          address: l.address || '',
+          description: l.description || '',
+          youtubeUrl: l.youtubeUrl || '',
+        });
         showToast('Listing saved successfully!', 'success');
       } else {
         const data = await res.json();
