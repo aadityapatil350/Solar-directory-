@@ -16,8 +16,8 @@ export async function GET(request: Request) {
         select: {
           id: true, name: true, slug: true, featured: true,
           userId: true,
-          category: { select: { name: true } },
-          location: { select: { city: true, state: true } },
+          category: { select: { id: true, name: true } },
+          location: { select: { id: true, city: true, state: true } },
         },
       },
     },

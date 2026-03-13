@@ -52,10 +52,11 @@ model Listing {
   user        User?          @relation(fields: [userId], references: [id])
   installer   Installer?     @relation(fields: [installerId], references: [id])
   claimRequests ClaimRequest[]
-  youtubeUrl    String?
-  views         Int            @default(0)
-  images        ListingImage[]
-  serviceTags   String?        // JSON array of service tag strings
+  youtubeUrl      String?
+  views           Int            @default(0)
+  images          ListingImage[]
+  serviceTags     String?        // JSON array of service tag strings
+  premiumExpiresAt DateTime?     // set when admin manually upgrades to featured
 
   @@index([categoryId])
   @@index([locationId])

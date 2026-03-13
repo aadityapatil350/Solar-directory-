@@ -26,6 +26,7 @@ interface Listing {
   reviews: number;
   verified: boolean;
   featured: boolean;
+  premiumExpiresAt: string | null;
   location: { id: string; city: string; state: string };
   category: { id: string; name: string };
 }
@@ -54,8 +55,8 @@ interface ClaimRequest {
     slug: string;
     featured: boolean;
     userId: string | null;
-    category: { name: string };
-    location: { city: string; state: string };
+    category: { id: string; name: string };
+    location: { id: string; city: string; state: string };
   };
   user: {
     id: string;
@@ -154,6 +155,11 @@ export default function AdminDashboard() {
   const [formSaving, setFormSaving] = useState(false);
   const [unfeaturing, setUnfeaturing] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  // ── Premium upgrade modal state ──
+  const [upgradeModal, setUpgradeModal] = useState<{ listing: Listing } | null>(null);
+  const [upgradeMonths, setUpgradeMonths] = useState(1);
+  const [upgrading, setUpgrading] = useState(false);
 
   // ── Helpers ──
   const toast = useCallback((type: 'success' | 'error', text: string) => {
@@ -425,6 +431,32 @@ export default function AdminDashboard() {
     }
   };
 
+  const upgradeListing = async (listingId: string, months: number) => {
+    setUpgrading(true);
+    try {
+      const res = await fetch('/api/admin/listings/upgrade', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({ listingId, months }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      if (months === 0) {
+        toast('success', 'Premium removed from listing.');
+      } else {
+        const exp = new Date(data.expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        toast('success', `⭐ Upgraded to Featured Premium! Expires ${exp}`);
+      }
+      setUpgradeModal(null);
+      fetchListings();
+      fetchClaims();
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'Upgrade failed');
+    } finally {
+      setUpgrading(false);
+    }
+  };
+
   const deleteListing = async (listing: Listing) => {
     if (!confirm(`Delete "${listing.name}"? This cannot be undone.`)) return;
     // Optimistic
@@ -630,6 +662,81 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <ToastList toasts={toasts} onDismiss={dismissToast} />
+
+      {/* ── Premium Upgrade Modal ── */}
+      {upgradeModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Crown className="h-5 w-5 text-amber-500" />
+              <h3 className="font-bold text-gray-900 text-base">Upgrade to Featured Premium</h3>
+            </div>
+            <p className="text-sm text-gray-500 mb-5">
+              <span className="font-semibold text-gray-800">{upgradeModal.listing.name}</span>
+              {upgradeModal.listing.premiumExpiresAt && new Date(upgradeModal.listing.premiumExpiresAt) > new Date() && (
+                <span className="block text-xs text-amber-600 mt-0.5">
+                  Currently expires: {new Date(upgradeModal.listing.premiumExpiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+              )}
+            </p>
+
+            <div className="mb-5">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 3, 6, 12, 24, 0].map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setUpgradeMonths(m)}
+                    className={`py-2 rounded-lg text-sm font-semibold border transition ${
+                      upgradeMonths === m
+                        ? m === 0
+                          ? 'bg-red-500 text-white border-red-500'
+                          : 'bg-amber-500 text-white border-amber-500'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-amber-400'
+                    }`}
+                  >
+                    {m === 0 ? 'Remove' : m === 1 ? '1 month' : m === 12 ? '1 year' : m === 24 ? '2 years' : `${m} months`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {upgradeMonths > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-5 text-sm text-amber-800">
+                <span className="font-semibold">Featured until: </span>
+                {(() => {
+                  const base = upgradeModal.listing.premiumExpiresAt && new Date(upgradeModal.listing.premiumExpiresAt) > new Date()
+                    ? new Date(upgradeModal.listing.premiumExpiresAt)
+                    : new Date();
+                  const exp = new Date(base);
+                  exp.setMonth(exp.getMonth() + upgradeMonths);
+                  return exp.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+                })()}
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => upgradeListing(upgradeModal.listing.id, upgradeMonths)}
+                disabled={upgrading}
+                className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition disabled:opacity-60 ${
+                  upgradeMonths === 0
+                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    : 'bg-amber-500 hover:bg-amber-600 text-white'
+                }`}
+              >
+                {upgrading ? 'Processing…' : upgradeMonths === 0 ? 'Remove Premium' : 'Confirm Upgrade'}
+              </button>
+              <button
+                onClick={() => setUpgradeModal(null)}
+                className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Header ── */}
       <header className="bg-white border-b shadow-sm sticky top-0 z-50">
@@ -1274,6 +1381,17 @@ export default function AdminDashboard() {
                             <td className="px-5 py-3.5">
                               <div className="flex items-center gap-1.5">
                                 <button
+                                  onClick={() => { setUpgradeMonths(1); setUpgradeModal({ listing }); }}
+                                  className={`p-1.5 rounded-lg transition ${
+                                    listing.featured
+                                      ? 'text-amber-500 hover:bg-amber-50'
+                                      : 'text-gray-400 hover:text-amber-600 hover:bg-amber-50'
+                                  }`}
+                                  title={listing.featured ? 'Manage premium' : 'Upgrade to premium'}
+                                >
+                                  <Crown className="h-3.5 w-3.5" />
+                                </button>
+                                <button
                                   onClick={() => handleEditListing(listing)}
                                   className="p-1.5 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition"
                                   title="Edit"
@@ -1288,6 +1406,11 @@ export default function AdminDashboard() {
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </button>
                               </div>
+                              {listing.premiumExpiresAt && (
+                                <p className="text-xs text-amber-600 mt-0.5 whitespace-nowrap">
+                                  Exp: {new Date(listing.premiumExpiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                </p>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -1450,6 +1573,41 @@ export default function AdminDashboard() {
                                   Reject
                                 </button>
                               </>
+                            )}
+                            {claim.status === 'approved' && (
+                              <button
+                                onClick={() => {
+                                  // Find the listing from claims data and open upgrade modal
+                                  setUpgradeMonths(1);
+                                  setUpgradeModal({
+                                    listing: {
+                                      id: claim.listing.id,
+                                      name: claim.listing.name,
+                                      slug: claim.listing.slug,
+                                      description: null,
+                                      phone: null,
+                                      email: null,
+                                      website: null,
+                                      address: null,
+                                      rating: null,
+                                      reviews: 0,
+                                      verified: true,
+                                      featured: claim.listing.featured,
+                                      premiumExpiresAt: null,
+                                      location: claim.listing.location,
+                                      category: claim.listing.category,
+                                    },
+                                  });
+                                }}
+                                className={`flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-lg transition border ${
+                                  claim.listing.featured
+                                    ? 'bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100'
+                                    : 'bg-white border-amber-300 text-amber-700 hover:bg-amber-50'
+                                }`}
+                              >
+                                <Crown className="h-3.5 w-3.5" />
+                                {claim.listing.featured ? 'Manage Premium' : 'Upgrade Premium'}
+                              </button>
                             )}
                             <button
                               onClick={() => deleteClaim(claim.id)}
