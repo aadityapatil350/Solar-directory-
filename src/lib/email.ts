@@ -78,6 +78,44 @@ export async function sendClaimApprovedEmail(
   });
 }
 
+export async function sendPasswordResetEmail(email: string, resetUrl: string): Promise<void> {
+  console.log(`\n===== PASSWORD RESET EMAIL TO ${email} =====`);
+  console.log(`Reset URL: ${resetUrl}`);
+  console.log(`============================================\n`);
+
+  if (!resend) {
+    console.warn('RESEND_API_KEY not set — reset link only logged to console');
+    return;
+  }
+
+  await resend.emails.send({
+    from: FROM,
+    to: email,
+    subject: 'Reset your GoSolarIndex password',
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;color:#111;">
+        <div style="background:#f97316;padding:24px 32px;border-radius:8px 8px 0 0;">
+          <h1 style="color:#fff;margin:0;font-size:22px;">GoSolarIndex</h1>
+          <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">India's Solar Directory</p>
+        </div>
+        <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          <h2 style="color:#111;margin-top:0;">Reset Your Password</h2>
+          <p>We received a request to reset your password for your GoSolarIndex owner account.</p>
+          <p>Click the button below to set a new password. This link is valid for <strong>30 minutes</strong>.</p>
+          <div style="margin:28px 0;text-align:center;">
+            <a href="${resetUrl}" style="background:#f97316;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">
+              Reset Password →
+            </a>
+          </div>
+          <p style="color:#6b7280;font-size:13px;">If you didn't request this, you can safely ignore this email. Your password will not change.</p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
+          <p style="font-size:12px;color:#9ca3af;margin:0;">GoSolarIndex — India's #1 Solar Business Directory</p>
+        </div>
+      </div>
+    `,
+  });
+}
+
 export async function sendOtpEmail(email: string, otp: string, listingName: string): Promise<void> {
   // Always log to console for debugging
   console.log(`\n========== OTP FOR ${email} ==========`);

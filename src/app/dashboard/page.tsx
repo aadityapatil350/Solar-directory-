@@ -10,8 +10,31 @@ import {
   Save, LogOut, Eye, Globe, Phone, Mail, MapPin,
   Star, ShieldCheck, Trash2, Upload, CheckCircle,
   AlertCircle, BarChart3, MessageSquare, Zap, X,
-  Youtube,
+  Youtube, Tag,
 } from 'lucide-react';
+
+const ALL_SERVICE_TAGS = [
+  'Residential Solar',
+  'Commercial Solar',
+  'Industrial Solar',
+  'Rooftop Installation',
+  'Ground-Mounted Solar',
+  'Solar Panel Supply',
+  'Solar Inverter Supply',
+  'Battery Storage',
+  'Net Metering',
+  'Solar Water Heater',
+  'Solar Pump',
+  'Solar Street Light',
+  'AMC & Maintenance',
+  'System Audit',
+  'EPC (Engineering, Procurement, Construction)',
+  'Subsidy Assistance',
+  'On-Grid Systems',
+  'Off-Grid Systems',
+  'Hybrid Systems',
+  'MNRE Certified',
+];
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -31,6 +54,7 @@ interface Listing {
   website: string | null;
   address: string | null;
   youtubeUrl: string | null;
+  serviceTags: string | null;
   verified: boolean;
   featured: boolean;
   rating: number | null;
@@ -104,6 +128,7 @@ export default function DashboardPage() {
     description: '',
     youtubeUrl: '',
   });
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   // Image upload state
@@ -145,6 +170,11 @@ export default function DashboardPage() {
             description: l.description || '',
             youtubeUrl: l.youtubeUrl || '',
           });
+          try {
+            setSelectedTags(l.serviceTags ? JSON.parse(l.serviceTags) : []);
+          } catch {
+            setSelectedTags([]);
+          }
         }
 
         if (analyticsRes.ok) {
@@ -174,7 +204,7 @@ export default function DashboardPage() {
       const res = await fetch('/api/dashboard/listing', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, serviceTags: JSON.stringify(selectedTags) }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -474,6 +504,44 @@ export default function DashboardPage() {
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                   <p className="text-xs text-gray-400 mt-1">Paste a YouTube link — it will be shown on your listing page to showcase your solar installations.</p>
+                </div>
+
+                {/* Service Tags */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                    <Tag className="h-3.5 w-3.5 text-orange-500" />
+                    Services Offered
+                  </label>
+                  <p className="text-xs text-gray-400 mb-3">Select all services your business provides. These appear as tags on your listing.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {ALL_SERVICE_TAGS.map((tag) => {
+                      const selected = selectedTags.includes(tag);
+                      return (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() =>
+                            setSelectedTags(
+                              selected
+                                ? selectedTags.filter((t) => t !== tag)
+                                : [...selectedTags, tag]
+                            )
+                          }
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                            selected
+                              ? 'bg-orange-500 text-white border-orange-500'
+                              : 'bg-white text-gray-600 border-gray-300 hover:border-orange-400 hover:text-orange-600'
+                          }`}
+                        >
+                          {selected && <span className="mr-1">✓</span>}
+                          {tag}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {selectedTags.length > 0 && (
+                    <p className="text-xs text-gray-400 mt-2">{selectedTags.length} service{selectedTags.length !== 1 ? 's' : ''} selected</p>
+                  )}
                 </div>
 
                 <button

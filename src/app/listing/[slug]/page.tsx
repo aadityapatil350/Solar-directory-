@@ -180,6 +180,12 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const listingImages: { id: string; url: string }[] = (listing as any).images ?? [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const youtubeEmbedUrl = toYouTubeEmbed((listing as any).youtubeUrl ?? null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let serviceTags: string[] = [];
+  try {
+    const raw = (listing as any).serviceTags;
+    if (raw) serviceTags = JSON.parse(raw);
+  } catch { /* ignore */ }
 
   const siteUrl = 'https://www.gosolarindex.in';
 
@@ -312,8 +318,29 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                 </div>
               )}
 
-              {/* Services */}
-              {services.length > 0 && (
+              {/* Service Tags (owner-selected) */}
+              {serviceTags.length > 0 && (
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Wrench className="h-5 w-5 text-orange-500" />
+                    Services Offered
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {serviceTags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 border border-orange-200 text-sm font-medium px-3 py-1.5 rounded-full"
+                      >
+                        <CheckCircle className="h-3.5 w-3.5 text-orange-500 shrink-0" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Default category services (fallback) */}
+              {serviceTags.length === 0 && services.length > 0 && (
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                   <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <Wrench className="h-5 w-5 text-orange-500" />

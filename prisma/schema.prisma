@@ -55,6 +55,7 @@ model Listing {
   youtubeUrl    String?
   views         Int            @default(0)
   images        ListingImage[]
+  serviceTags   String?        // JSON array of service tag strings
 
   @@index([categoryId])
   @@index([locationId])
@@ -207,6 +208,18 @@ model OtpVerification {
 
   @@index([email])
   @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([email])
 }
 
 model SolarLead {
