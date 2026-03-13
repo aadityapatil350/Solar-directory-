@@ -323,7 +323,7 @@ export default function AdminDashboard() {
   };
 
   const deleteClaim = async (claimId: string) => {
-    if (!confirm('Delete this claim? This will unlink the user from the listing and remove their verified status.')) return;
+    if (!confirm('Delete this claim? This will:\n• Unlink and unverify the listing\n• Delete the owner user account permanently\n\nThis cannot be undone.')) return;
     try {
       const res = await fetch('/api/admin/claims', {
         method: 'DELETE',
@@ -332,7 +332,7 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      toast('success', 'Claim deleted and listing unlinked.');
+      toast('success', `Claim deleted. Listing unlinked${data.deletedUser ? ` and user ${data.deletedUser} removed` : ''}.`);
       fetchClaims();
     } catch (err) {
       toast('error', err instanceof Error ? err.message : 'Failed to delete claim');

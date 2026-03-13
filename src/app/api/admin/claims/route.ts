@@ -104,7 +104,7 @@ export async function PATCH(request: Request) {
   return NextResponse.json({ success: true, status: 'approved', ownerEmail: user.email, ownerName: user.name });
 }
 
-// DELETE — remove a claim and optionally unlink the user from the listing
+// DELETE — remove a claim, unlink + unverify the listing, and delete the owner user account
 export async function DELETE(request: Request) {
   if (!await verifyAdmin(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -116,22 +116,29 @@ export async function DELETE(request: Request) {
   const claim = await prisma.claimRequest.findUnique({ where: { id: claimId } });
   if (!claim) return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
 
-  // Find the user linked to this claim
+  // Find the user linked to this claim by email
   const user = await prisma.user.findUnique({ where: { email: claim.email } });
 
-  // Unlink the listing from the user and remove verified status
+  // 1. Unlink ALL listings from this user and remove verified status
   await prisma.listing.updateMany({
-    where: { id: claim.listingId },
+    where: { userId: user?.id ?? undefined },
     data: { userId: null, verified: false },
   });
 
-  // Downgrade user role back to 'user' if they were owner/pending_owner
-  if (user && (user.role === 'owner' || user.role === 'pending_owner')) {
-    await prisma.user.update({ where: { id: user.id }, data: { role: 'user' } });
-  }
-
-  // Delete the claim record
+  // 2. Delete the claim record first (FK ref to listing)
   await prisma.claimRequest.delete({ where: { id: claimId } });
 
-  return NextResponse.json({ success: true });
+  // 3. Delete the user and all their dependent records
+  if (user) {
+    // Delete password reset tokens
+    await prisma.passwordResetToken.deleteMany({ where: { email: user.email } });
+    // Delete OTP verifications
+    await prisma.otpVerification.deleteMany({ where: { email: user.email } });
+    // Delete any remaining claim requests for this user
+    await prisma.claimRequest.deleteMany({ where: { email: user.email } });
+    // Now delete the user
+    await prisma.user.delete({ where: { id: user.id } });
+  }
+
+  return NextResponse.json({ success: true, deletedUser: user ? user.email : null });
 }
