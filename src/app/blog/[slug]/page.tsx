@@ -8,7 +8,7 @@ import Script from 'next/script';
 import { Clock, Tag, ChevronRight, ArrowLeft, MapPin, Zap } from 'lucide-react';
 
 export const revalidate = 3600;   // ISR — revalidate every hour
-export const dynamicParams = true; // Allow new slugs created via CMS
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -29,13 +29,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export async function generateStaticParams() {
-  const posts = await prisma.blogPost.findMany({
-    where: { published: true },
-    select: { slug: true },
-  });
-  return posts.map((p) => ({ slug: p.slug }));
-}
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;

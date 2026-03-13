@@ -24,10 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export async function generateStaticParams() {
-  const categories = await prisma.category.findMany({ select: { slug: true } });
-  return categories.map((c) => ({ slug: c.slug }));
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;

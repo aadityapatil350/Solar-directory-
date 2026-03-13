@@ -30,13 +30,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export async function generateStaticParams() {
-  const locations = await prisma.location.findMany({ select: { state: true } });
-  const uniqueStates = [...new Set(locations.map((l) => l.state))];
-  return uniqueStates.map((state) => ({
-    slug: state.toLowerCase().replace(/\s+/g, '-'),
-  }));
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export default async function StatePage({ params }: Props) {
   const { slug } = await params;

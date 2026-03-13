@@ -10,18 +10,12 @@ import Script from 'next/script';
 
 // Use ISR for better SEO - revalidate every 1 hour
 export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{
     city: string;
   }>;
-}
-
-export async function generateStaticParams() {
-  const locations = await prisma.location.findMany({
-    select: { city: true },
-  });
-  return locations.map((l) => ({ city: l.city.toLowerCase().replace(/\s+/g, '-') }));
 }
 
 function slugToSearch(slug: string) {
