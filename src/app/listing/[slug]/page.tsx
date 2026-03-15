@@ -3,6 +3,7 @@ import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import LeadForm from '@/components/LeadForm';
 import ServicesSection from '@/components/ServicesSection';
+import PhotoGalleryModal from '@/components/PhotoGalleryModal';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -498,28 +499,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
               {/* Section 5 — Photos */}
               {listingImages.length > 0 && (
-                <div className="bg-white rounded-xl p-6 border border-gray-200">
-                  <div className="flex items-center gap-2 text-sm font-medium border-b border-gray-200 pb-2 mb-4">
-                    <Zap className="h-4 w-4 text-orange-500" />
-                    <h2>Photos</h2>
-                  </div>
-                  <div className="flex gap-2 overflow-x-auto pb-2">
-                    {listingImages.slice(0, 8).map((img, idx) => (
-                      <div key={img.id} className="relative shrink-0">
-                        <img
-                          src={img.url}
-                          alt={`${listing.name} photo ${idx + 1}`}
-                          className="w-24 h-18 rounded-lg object-cover border border-gray-200"
-                        />
-                        {idx === 7 && listingImages.length > 8 && (
-                          <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
-                            +{listingImages.length - 8} more
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <PhotoGalleryModal photos={listingImages} listingName={listing.name} />
               )}
 
               {/* Section 6 — Reviews */}
