@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Star, MapPin, Phone, Verified, MessageCircle, Globe } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -41,6 +42,7 @@ async function trackWhatsAppClick(listingId: string, city: string) {
 }
 
 export default function ListingCard({ listing }: ListingCardProps) {
+  const router = useRouter();
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
@@ -123,7 +125,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
       className={`bg-white rounded-xl shadow-sm border-2 overflow-hidden hover:shadow-md transition cursor-pointer ${
         listing.featured ? 'border-orange-400 bg-orange-50/30' : 'border-gray-200 hover:border-orange-300'
       }`}
-      onClick={() => window.location.href = `/listing/${listing.slug}`}
+      onClick={() => router.push(`/listing/${listing.slug}`)}
     >
       {listing.featured && (
         <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs font-bold px-3 py-1.5 text-center flex items-center justify-center gap-2">

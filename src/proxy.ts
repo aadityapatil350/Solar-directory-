@@ -13,10 +13,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${cityName}`, request.url), 301);
   }
 
-  // Redirect all /listing/* pages to homepage (listings removed from sitemap)
-  if (pathname.startsWith('/listing/')) {
-    return NextResponse.redirect(new URL('/', request.url), 301);
-  }
+  // REMOVED: Don't redirect listing pages - they need to work!
+  // if (pathname.startsWith('/listing/')) {
+  //   return NextResponse.redirect(new URL('/', request.url), 301);
+  // }
 
   if (!pathname.startsWith('/dashboard')) return NextResponse.next();
 
@@ -31,7 +31,8 @@ export async function proxy(request: NextRequest) {
   }
 
   const session = await verifySession(token);
-  if (!session || session.role !== 'owner') {
+  // Allow both 'owner' and 'admin' roles to access dashboard
+  if (!session || (session.role !== 'owner' && session.role !== 'admin')) {
     return NextResponse.redirect(new URL('/dashboard/login', request.url));
   }
 
@@ -39,5 +40,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/locations/:path*', '/listing/:path*'],
+  matcher: ['/dashboard/:path*', '/locations/:path*'],
 };
