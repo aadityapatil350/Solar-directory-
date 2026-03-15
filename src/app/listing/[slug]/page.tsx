@@ -2,75 +2,21 @@ import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import LeadForm from '@/components/LeadForm';
-import WhatsAppButton from '@/components/WhatsAppButton';
-import PhotoGallery from '@/components/PhotoGallery';
+import ServicesSection from '@/components/ServicesSection';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { unstable_cache } from 'next/cache';
 import {
   Phone, Mail, Globe, MapPin, Star, ShieldCheck,
-  ChevronRight, Clock, Award, Zap,
-  CheckCircle, Building2, Wrench, Users,
+  ChevronRight, Zap,
+  CheckCircle, Building2, Users,
+  MessageCircle, TrendingUp,
 } from 'lucide-react';
 import Script from 'next/script';
 
 export const revalidate = 3600;    // ISR — revalidate every hour
 export const dynamicParams = true; // serve new slugs on-demand
-
-// ─── Services mapped from category name ───────────────────────────────────────
-const CATEGORY_SERVICES: Record<string, string[]> = {
-  'Residential Solar Installers': [
-    'Rooftop Solar Installation',
-    'Grid-Tied Solar Systems',
-    'Off-Grid & Hybrid Systems',
-    'Net Metering Setup',
-    'PM Surya Ghar Subsidy Assistance',
-    'Solar Financing & EMI Options',
-    'Rooftop Assessment & Site Survey',
-    'Solar Performance Monitoring',
-  ],
-  'Commercial Solar Installers': [
-    'Commercial & Industrial Solar',
-    'Large-Scale Ground Mount Systems',
-    'Power Purchase Agreements (PPA)',
-    'Solar Energy Audits',
-    'MNRE Approval Assistance',
-    'EPC Turnkey Projects',
-    'Open Access Solar',
-    'Carbon Credit Advisory',
-  ],
-  'Solar Panel Dealers': [
-    'Monocrystalline Solar Panels',
-    'Polycrystalline Solar Panels',
-    'Bifacial Solar Panels',
-    'Panel Brand Consultation',
-    'Bulk Supply for Installers',
-    'Warranty & After-Sale Support',
-    'Panel Performance Testing',
-    'Import & Domestic Panels',
-  ],
-  'Solar Inverter Specialists': [
-    'Solar Inverter Installation',
-    'String Inverter Supply & Service',
-    'Micro-Inverter Systems',
-    'Hybrid Inverter Setup',
-    'MPPT Charge Controllers',
-    'Inverter Repair & Replacement',
-    'Battery Storage Integration',
-    'Remote Monitoring Setup',
-  ],
-  'Solar AMC & Maintenance': [
-    'Annual Maintenance Contracts',
-    'Solar Panel Cleaning',
-    'Performance & Yield Monitoring',
-    'Fault Detection & Repair',
-    'Inverter Servicing',
-    'String & Module Testing',
-    'Warranty Claim Support',
-    'System Efficiency Audits',
-  ],
-};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -86,7 +32,6 @@ function getInitials(name: string) {
 function toWhatsApp(phone: string | null, companyName: string, categoryName: string): string | null {
   if (!phone) return null;
   const digits = phone.replace(/\D/g, '');
-  // Ensure it has country code 91
   const withCC = digits.length === 10 ? `91${digits}` : digits.startsWith('91') ? digits : `91${digits}`;
   const text = encodeURIComponent(
     `Hi ${companyName}, I found your listing on GoSolarIndex and would like to enquire about your ${categoryName} services.`,
@@ -96,13 +41,10 @@ function toWhatsApp(phone: string | null, companyName: string, categoryName: str
 
 function toYouTubeEmbed(url: string | null): string | null {
   if (!url) return null;
-  // Handle youtu.be short links
   const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
   if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
-  // Handle watch?v=ID
   const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
   if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
-  // Handle /embed/ already
   if (url.includes('/embed/')) return url;
   return null;
 }
@@ -114,7 +56,6 @@ function toGoogleMapsEmbed(address: string | null, name: string, city: string, s
 
 // ─── Data fetching with caching ────────────────────────────────────────────────
 
-// Cache listing data for 5 minutes
 const getListing = unstable_cache(
   async (slug: string) => {
     try {
@@ -125,11 +66,10 @@ const getListing = unstable_cache(
           location: true,
           images: {
             orderBy: { order: 'asc' },
-            take: 10, // Limit to first 10 images
+            take: 10,
           },
         },
       });
-      // Increment views (fire-and-forget)
       if (listing) {
         prisma.listing.update({
           where: { id: listing.id },
@@ -146,14 +86,13 @@ const getListing = unstable_cache(
   { revalidate: 300, tags: ['listings'] }
 );
 
-// Cache related listings for 10 minutes
 const getRelated = unstable_cache(
   async (categoryId: string, locationId: string, excludeId: string) => {
     try {
       const listings = await prisma.listing.findMany({
         where: { categoryId, locationId, id: { not: excludeId } },
         orderBy: [{ featured: 'desc' }, { verified: 'desc' }],
-        take: 3,
+        take: 4,
         select: {
           id: true,
           name: true,
@@ -162,8 +101,6 @@ const getRelated = unstable_cache(
           rating: true,
           reviews: true,
           featured: true,
-          category: { select: { name: true } },
-          location: { select: { city: true } },
         },
       });
       return listings;
@@ -197,7 +134,6 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   if (!listing) notFound();
 
   const related = await getRelated(listing.categoryId, listing.locationId, listing.id);
-  const services = CATEGORY_SERVICES[listing.category?.name] ?? [];
   const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category?.name);
   const mapSrc = toGoogleMapsEmbed(listing.address, listing.name, listing.location.city, listing.location.state);
   const initials = getInitials(listing.name);
@@ -211,10 +147,20 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
     const raw = (listing as any).serviceTags;
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Support both old format (plain array) and new format ({ tags, categoryIds })
       serviceTags = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.tags) ? parsed.tags : []);
     }
   } catch { /* ignore */ }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const installationsCount = (listing as any).installationsCount;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const yearsExperience = (listing as any).yearsExperience;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const capacityMw = (listing as any).capacityMw;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const citiesCount = (listing as any).citiesCount;
+
+  const listedYear = new Date(listing.createdAt).getFullYear();
 
   const siteUrl = 'https://www.gosolarindex.in';
 
@@ -259,8 +205,12 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
     ],
   };
 
+  // Show only first 12 services initially
+  const visibleServices = serviceTags.slice(0, 12);
+  const hiddenServices = serviceTags.slice(12);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
       <Script id="lb-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       <Script id="bc-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
@@ -280,176 +230,205 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
-      {/* ── Hero Banner ── */}
+      {/* ── HERO SECTION ── */}
       <div className="bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white">
-        <div className="container mx-auto px-4 py-10">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-            {/* Initials avatar */}
-            <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-2xl font-bold text-white shrink-0 border border-white/30">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row items-start gap-5">
+            {/* Avatar - 72x72, rounded-2xl */}
+            <div className="w-18 h-18 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-2xl font-bold text-white shrink-0 border border-white/30">
               {initials}
             </div>
+
+            {/* Center block - flex-1 */}
             <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">{listing.name}</h1>
+              {/* Business name */}
+              <h1 className="text-2xl font-medium text-white mb-2">{listing.name}</h1>
+
+              {/* Badges row */}
+              <div className="flex flex-wrap items-center gap-2 mb-2">
                 {listing.featured && (
                   <span className="flex items-center gap-1 bg-yellow-400/20 border border-yellow-300/40 text-yellow-100 text-xs font-semibold px-2 py-0.5 rounded-full">
                     <Star className="h-3 w-3 fill-yellow-300" /> Featured
                   </span>
                 )}
-              </div>
-              <div className="flex flex-wrap items-center gap-3 text-orange-100 text-sm">
-                <span className="flex items-center gap-1">
-                  <Zap className="h-3.5 w-3.5" />
-                  {listing.category.name}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {listing.location.city}, {listing.location.state}
-                </span>
-                {listing.rating != null && listing.reviews > 0 && (
-                  <span className="flex items-center gap-1">
-                    <Star className="h-3.5 w-3.5 fill-yellow-300 text-yellow-300" />
-                    {listing.rating} ({listing.reviews} reviews)
+                {listing.verified && (
+                  <span className="flex items-center gap-1 bg-green-400/20 border border-green-300/40 text-green-100 text-xs font-semibold px-2 py-0.5 rounded-full">
+                    <CheckCircle className="h-3 w-3" /> Verified
                   </span>
+                )}
+                <span className="flex items-center gap-1 bg-blue-400/20 border border-blue-300/40 text-blue-100 text-xs font-semibold px-2 py-0.5 rounded-full">
+                  <ShieldCheck className="h-3 w-3" /> MNRE Certified
+                </span>
+              </div>
+
+              {/* Subtitle row */}
+              <div className="flex flex-wrap items-center gap-2 text-sm text-white/85">
+                <span>{listing.category.name}</span>
+                <span>·</span>
+                <span>{listing.location.city}</span>
+                {listing.rating != null && listing.reviews > 0 && (
+                  <>
+                    <span>·</span>
+                    <span className="flex items-center gap-1">
+                      <Star className="h-3.5 w-3.5 fill-yellow-300 text-yellow-300" />
+                      {listing.rating} ({listing.reviews} reviews)
+                    </span>
+                  </>
                 )}
               </div>
             </div>
-            {/* Quick CTA in hero */}
-            {listing.phone && (
-              <a
-                href={`tel:${listing.phone}`}
-                className="shrink-0 bg-white text-orange-600 font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-orange-50 transition flex items-center gap-2"
-              >
-                <Phone className="h-4 w-4" />
-                Call Now
-              </a>
-            )}
+
+            {/* Right block - stacked buttons */}
+            <div className="flex flex-col gap-2 shrink-0">
+              {listing.phone && (
+                <a
+                  href={`tel:${listing.phone}`}
+                  className="flex items-center justify-center gap-2 bg-white text-orange-600 font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-orange-50 transition"
+                >
+                  <Phone className="h-4 w-4" />
+                  Call Now
+                </a>
+              )}
+              {whatsappUrl && (
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 bg-white/15 text-white font-bold text-sm px-5 py-2.5 rounded-xl border border-white/30 hover:bg-white/25 transition"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  WhatsApp
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Trust Bar */}
+          <div className="mt-6 pt-3 border-t border-white/12 bg-black/12 -mx-4 px-4 sm:mx-0 sm:px-8 py-2.5 rounded-b-lg">
+            <div className="flex flex-wrap items-center gap-6 text-xs text-white/90">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+                <span>Responds within 24 hrs</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+                <span>Accepts UPI, Cash, Bank</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
+                <span>Listed since {listedYear}</span>
+              </div>
+              {yearsExperience && (
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+                  <span>{yearsExperience} years experience</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ── Main Content ── */}
+      {/* ── MAIN CONTENT ── */}
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-6">
 
-            {/* ── Left Column ── */}
-            <div className="lg:col-span-2 space-y-5">
+            {/* ── LEFT COLUMN (Main Content) ── */}
+            <div className="flex-1 space-y-6">
 
-              {/* About */}
+              {/* Section 1 — About */}
               {listing.description && (
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-orange-500" />
-                    About {listing.name}
-                  </h2>
-                  <p className="text-gray-600 leading-relaxed">{listing.description}</p>
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <div className="flex items-center gap-2 text-sm font-medium border-b border-gray-200 pb-2 mb-3">
+                    <Building2 className="h-4 w-4 text-orange-500" />
+                    <h2>About</h2>
+                  </div>
+                  <p className="text-sm leading-relaxed text-gray-600">{listing.description}</p>
                 </div>
               )}
 
-              {/* Service Tags (owner-selected) */}
+              {/* Section 2 — At a Glance */}
+              {(installationsCount || yearsExperience || capacityMw || citiesCount) && (
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <div className="flex items-center gap-2 text-sm font-medium border-b border-gray-200 pb-2 mb-4">
+                    <TrendingUp className="h-4 w-4 text-orange-500" />
+                    <h2>At a Glance</h2>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {installationsCount && (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                        <div className="text-lg font-medium text-orange-600">{installationsCount}+</div>
+                        <div className="text-xs text-gray-600 mt-0.5">Total Installations</div>
+                      </div>
+                    )}
+                    {yearsExperience && (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                        <div className="text-lg font-medium text-orange-600">{yearsExperience}</div>
+                        <div className="text-xs text-gray-600 mt-0.5">Years Experience</div>
+                      </div>
+                    )}
+                    {capacityMw && (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                        <div className="text-lg font-medium text-orange-600">{capacityMw} MW</div>
+                        <div className="text-xs text-gray-600 mt-0.5">Capacity Installed</div>
+                      </div>
+                    )}
+                    {citiesCount && (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                        <div className="text-lg font-medium text-orange-600">{citiesCount}+</div>
+                        <div className="text-xs text-gray-600 mt-0.5">Cities Serviceable</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Section 3 — Services Offered */}
               {serviceTags.length > 0 && (
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Wrench className="h-5 w-5 text-orange-500" />
-                    Services Offered
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {serviceTags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 border border-orange-200 text-sm font-medium px-3 py-1.5 rounded-full"
-                      >
-                        <CheckCircle className="h-3.5 w-3.5 text-orange-500 shrink-0" />
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                <ServicesSection services={serviceTags} />
               )}
 
-              {/* Default category services (fallback) */}
-              {serviceTags.length === 0 && services.length > 0 && (
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Wrench className="h-5 w-5 text-orange-500" />
-                    Services Offered
-                  </h2>
-                  <div className="grid sm:grid-cols-2 gap-2">
-                    {services.map((s) => (
-                      <div key={s} className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
-                        {s}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Contact Information */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-orange-500" />
-                  Contact Information
-                </h2>
-                <div className="space-y-3">
-                  {listing.address && (
-                    <div className="flex items-start gap-3">
-                      <MapPin className="h-5 w-5 text-gray-400 mt-0.5 shrink-0" />
-                      <div>
-                        <p className="text-gray-800">{listing.address}</p>
-                        <p className="text-gray-500 text-sm">{listing.location.city}, {listing.location.state}</p>
-                      </div>
-                    </div>
-                  )}
-                  {listing.phone && (
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-gray-400 shrink-0" />
-                      <a href={`tel:${listing.phone}`} className="text-gray-800 hover:text-orange-500 transition font-medium">
-                        {listing.phone}
-                      </a>
-                    </div>
-                  )}
-                  {listing.email && (
-                    <div className="flex items-center gap-3">
-                      <Mail className="h-5 w-5 text-gray-400 shrink-0" />
-                      <a href={`mailto:${listing.email}`} className="text-gray-800 hover:text-orange-500 transition">
-                        {listing.email}
-                      </a>
-                    </div>
-                  )}
-                  {listing.website && (
-                    <div className="flex items-center gap-3">
-                      <Globe className="h-5 w-5 text-gray-400 shrink-0" />
-                      <a
-                        href={listing.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-orange-600 hover:text-orange-700 transition"
-                      >
-                        {listing.website.replace(/^https?:\/\//, '')}
-                      </a>
-                    </div>
-                  )}
+              {/* Section 4 — Contact */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <div className="flex items-center gap-2 text-sm font-medium border-b border-gray-200 pb-2 mb-4">
+                  <Phone className="h-4 w-4 text-orange-500" />
+                  <h2>Contact</h2>
                 </div>
 
-                {/* Action buttons */}
-                <div className="flex flex-wrap gap-3 mt-5 pt-5 border-t border-gray-100">
+                {/* CTA buttons row */}
+                <div className="flex gap-2 mb-4">
                   {listing.phone && (
                     <a
                       href={`tel:${listing.phone}`}
-                      className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition"
+                      className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-4 py-3 rounded-lg transition"
                     >
-                      <Phone className="h-4 w-4" /> Call Now
+                      <Phone className="h-4 w-4" />
+                      Call Now
                     </a>
                   )}
-                  <WhatsAppButton phone={listing.phone} listingId={listing.id} city={listing.location.city} name={listing.name} />
+                  {whatsappUrl && (
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white font-semibold text-sm px-4 py-3 rounded-lg transition"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Chat on WhatsApp
+                    </a>
+                  )}
+                </div>
+
+                {/* Secondary actions */}
+                <div className="flex gap-2 mb-4">
                   {listing.email && (
                     <a
                       href={`mailto:${listing.email}`}
-                      className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition"
+                      className="flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-3 py-2 rounded-lg transition"
                     >
-                      <Mail className="h-4 w-4" /> Email
+                      <Mail className="h-3.5 w-3.5" />
+                      Email
                     </a>
                   )}
                   {listing.website && (
@@ -457,190 +436,287 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                       href={listing.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition"
+                      className="flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-3 py-2 rounded-lg transition"
                     >
-                      <Globe className="h-4 w-4" /> Website
+                      <Globe className="h-3.5 w-3.5" />
+                      Website
                     </a>
+                  )}
+                  <button className="flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-3 py-2 rounded-lg transition">
+                    <Zap className="h-3.5 w-3.5" />
+                    Get Quote
+                  </button>
+                </div>
+
+                {/* Contact details grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {listing.address && (
+                    <div className="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <MapPin className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[10px] text-gray-500">Address</div>
+                        <div className="text-xs font-medium text-gray-900 leading-relaxed">{listing.address}</div>
+                      </div>
+                    </div>
+                  )}
+                  {listing.phone && (
+                    <div className="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <Phone className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[10px] text-gray-500">Phone</div>
+                        <a href={`tel:${listing.phone}`} className="text-xs font-medium text-orange-600 hover:underline">{listing.phone}</a>
+                      </div>
+                    </div>
+                  )}
+                  {listing.email && (
+                    <div className="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <Mail className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[10px] text-gray-500">Email</div>
+                        <a href={`mailto:${listing.email}`} className="text-xs font-medium text-gray-900 hover:text-orange-600 break-all">{listing.email}</a>
+                      </div>
+                    </div>
+                  )}
+                  {listing.website && (
+                    <div className="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <Globe className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[10px] text-gray-500">Website</div>
+                        <a
+                          href={listing.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-medium text-orange-600 hover:underline break-all"
+                        >
+                          {listing.website.replace(/^https?:\/\//, '')}
+                        </a>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Photo Gallery */}
-              <PhotoGallery photos={listingImages} listingName={listing.name} />
-
-              {/* YouTube Video */}
-              {youtubeEmbedUrl && (
-                <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-                  <div className="px-6 pt-5 pb-3 flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-red-500" />
-                    <h2 className="text-lg font-bold text-gray-900">Watch Our Work</h2>
+              {/* Section 5 — Photos */}
+              {listingImages.length > 0 && (
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <div className="flex items-center gap-2 text-sm font-medium border-b border-gray-200 pb-2 mb-4">
+                    <Zap className="h-4 w-4 text-orange-500" />
+                    <h2>Photos</h2>
                   </div>
-                  <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                    <iframe
-                      src={youtubeEmbedUrl}
-                      title={`${listing.name} — Solar Installation Video`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="absolute inset-0 w-full h-full"
-                      style={{ border: 0 }}
-                      loading="lazy"
-                    />
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {listingImages.slice(0, 8).map((img, idx) => (
+                      <div key={img.id} className="relative shrink-0">
+                        <img
+                          src={img.url}
+                          alt={`${listing.name} photo ${idx + 1}`}
+                          className="w-24 h-18 rounded-lg object-cover border border-gray-200"
+                        />
+                        {idx === 7 && listingImages.length > 8 && (
+                          <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
+                            +{listingImages.length - 8} more
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {/* Google Map */}
-              <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-                <div className="px-6 pt-5 pb-3 flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-orange-500" />
-                  <h2 className="text-lg font-bold text-gray-900">Location</h2>
+              {/* Section 6 — Reviews */}
+              {listing.reviews > 0 && (
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <div className="flex items-center gap-2 text-sm font-medium border-b border-gray-200 pb-2 mb-4">
+                    <Star className="h-4 w-4 text-orange-500" />
+                    <h2>Reviews</h2>
+                  </div>
+
+                  {/* Rating summary */}
+                  <div className="flex gap-6 mb-6">
+                    <div className="text-4xl font-medium text-gray-900">{listing.rating}</div>
+                    <div className="flex-1 space-y-1">
+                      {[5, 4, 3].map((stars) => {
+                        const percentage = 80; // Mock data - replace with actual
+                        return (
+                          <div key={stars} className="flex items-center gap-2 text-xs">
+                            <span className="w-8 text-gray-600">{stars} ★</span>
+                            <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+                              <div className="h-full bg-orange-500 rounded-full" style={{ width: `${percentage}%` }}></div>
+                            </div>
+                            <span className="w-8 text-right text-gray-500">{Math.round(listing.reviews * percentage / 100)}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Review cards - mock for now */}
+                  <div className="space-y-3 mb-4">
+                    {[1, 2].map((i) => (
+                      <div key={i} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-medium text-gray-900">Rajesh Kumar</span>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
+                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
+                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
+                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
+                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
+                          </div>
+                          <span className="text-[10px] text-gray-500">2 months ago</span>
+                        </div>
+                        <p className="text-xs leading-relaxed text-gray-600">
+                          Excellent service! Installed a 5kW system at my home. Very professional team and quick installation.
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 rounded-lg transition">
+                    View all {listing.reviews} reviews
+                  </button>
+                </div>
+              )}
+
+              {/* Section 7 — Location / Map */}
+              <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
+                <div className="px-6 pt-5 pb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <MapPin className="h-4 w-4 text-orange-500" />
+                    <h2>Location</h2>
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps/search/${encodeURIComponent(`${listing.name} ${listing.location.city}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-orange-600 hover:text-orange-700 font-medium"
+                  >
+                    Open in Google Maps →
+                  </a>
                 </div>
                 <iframe
                   title={`${listing.name} location map`}
                   src={mapSrc}
                   width="100%"
-                  height="320"
+                  height="280"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
-                <div className="px-6 py-3 flex items-center justify-between border-t border-gray-100">
-                  <p className="text-sm text-gray-500">{listing.location.city}, {listing.location.state}</p>
-                  <a
-                    href={`https://www.google.com/maps/search/${encodeURIComponent(`${listing.name} ${listing.location.city}`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-orange-600 hover:text-orange-700 font-medium"
-                  >
-                    Open in Google Maps →
-                  </a>
-                </div>
               </div>
             </div>
 
-            {/* ── Right Sidebar ── */}
-            <div className="space-y-5">
+            {/* ── RIGHT SIDEBAR ── */}
+            <div className="w-full lg:w-[340px] space-y-4 lg:sticky lg:top-4 lg:self-start">
 
-              {/* Quick Info Card */}
-              <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">Business Details</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5"><Zap className="h-3.5 w-3.5" /> Category</span>
-                    <span className="font-medium text-gray-800 text-right max-w-[140px]">{listing.category.name}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> City</span>
-                    <Link href={`/${listing.location.city.toLowerCase()}`} className="font-medium text-orange-600 hover:underline">
-                      {listing.location.city}
-                    </Link>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5" /> State</span>
-                    <span className="font-medium text-gray-800">{listing.location.state}</span>
-                  </div>
-                  {listing.reviews > 0 && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500 flex items-center gap-1.5"><Star className="h-3.5 w-3.5" /> Rating</span>
-                      <span className="font-medium text-gray-800">{listing.rating} / 5 ({listing.reviews})</span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Response</span>
-                    <span className="font-medium text-gray-800">Within 24 hrs</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> Accepts</span>
-                    <span className="font-medium text-gray-800">UPI, Cash, Bank</span>
-                  </div>
-                </div>
-
-                {/* Badges */}
-                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
-                  {listing.featured && (
-                    <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-amber-200">
-                      <Award className="h-3 w-3" /> Premium Partner
-                    </span>
-                  )}
-                  <span className="flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-green-200">
-                    <CheckCircle className="h-3 w-3" /> Listed on GoSolarIndex
-                  </span>
-                </div>
-
-                {/* Claim this listing */}
-                {!listing.userId && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <Link
-                      href={`/claim/${listing.slug}`}
-                      className="flex items-center gap-2 text-xs text-gray-500 hover:text-orange-600 transition"
-                    >
-                      <Building2 className="h-3.5 w-3.5" />
-                      Is this your business? <span className="underline font-medium">Claim this listing</span>
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              {/* Lead Form */}
+              {/* Sidebar Card 1 — Lead Form */}
               <LeadForm
                 prefill={{
                   requirement: listing.category.name,
                   city: listing.location?.city,
                 }}
               />
+
+              {/* Sidebar Card 2 — Business Details */}
+              <div className="bg-white border border-gray-200 rounded-xl p-4">
+                <h3 className="text-[11px] font-medium text-gray-500 tracking-wider mb-3">BUSINESS DETAILS</h3>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                    <span className="text-gray-500">Category</span>
+                    <span className="font-medium text-gray-900 text-right">{listing.category.name}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                    <span className="text-gray-500">City</span>
+                    <Link href={`/${listing.location.city.toLowerCase()}`} className="font-medium text-orange-600 hover:underline">
+                      {listing.location.city}
+                    </Link>
+                  </div>
+                  {listing.reviews > 0 && (
+                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                      <span className="text-gray-500">Rating</span>
+                      <span className="font-medium text-gray-900">
+                        <Star className="h-3 w-3 inline fill-orange-400 text-orange-400" /> {listing.rating}/5 ({listing.reviews})
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center pt-1">
+                    <span className="text-gray-500">Status</span>
+                    <span className="font-medium text-green-600 flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                      Premium Partner
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar Card 3 — More Installers */}
+              {related.length > 0 && (
+                <div>
+                  <h3 className="text-[11px] font-medium text-gray-500 tracking-wider mb-3">
+                    MORE {listing.category.name.toUpperCase()} IN {listing.location.city.toUpperCase()}
+                  </h3>
+                  <div className="space-y-2">
+                    {related.map((r: typeof related[0]) => (
+                      <Link
+                        key={r.id}
+                        href={`/listing/${r.slug}`}
+                        className="bg-white border border-gray-200 rounded-xl p-3 flex gap-3 hover:border-orange-300 hover:shadow-sm transition"
+                      >
+                        <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-medium text-blue-600 shrink-0">
+                          {getInitials(r.name)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-medium text-gray-900 truncate">{r.name}</div>
+                          <div className="text-[11px] text-gray-500">
+                            {r.reviews > 0 && (
+                              <>
+                                <Star className="h-2.5 w-2.5 inline fill-orange-400 text-orange-400" /> {r.rating} ({r.reviews})
+                              </>
+                            )}
+                            {r.phone && <> · {r.phone}</>}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="mt-3 text-center">
+                    <Link
+                      href={`/${listing.location.city.toLowerCase()}`}
+                      className="text-xs text-orange-600 hover:text-orange-700 font-medium"
+                    >
+                      View all solar companies in {listing.location.city} →
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* ── Related Companies ── */}
-          {related.length > 0 && (
-            <div className="mt-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                More {listing.category.name} in {listing.location.city}
-              </h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {related.map((r: typeof related[0]) => (
-                  <Link
-                    key={r.id}
-                    href={`/listing/${r.slug}`}
-                    className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-orange-300 hover:shadow-md transition-all group"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-sm font-bold text-orange-600 shrink-0 group-hover:bg-orange-500 group-hover:text-white transition-colors">
-                        {getInitials(r.name)}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="font-semibold text-gray-900 text-sm leading-snug group-hover:text-orange-600 transition-colors truncate">
-                          {r.name}
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          {r.featured && <Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-400" />}
-                          {r.reviews > 0 && (
-                            <span className="text-xs text-gray-500">{r.rating} ★ ({r.reviews})</span>
-                          )}
-                        </div>
-                        {r.phone && (
-                          <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
-                            <Phone className="h-3 w-3" /> {r.phone}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-4 text-center">
-                <Link
-                  href={`/${listing.location.city.toLowerCase()}`}
-                  className="text-sm text-orange-600 hover:text-orange-700 font-medium"
-                >
-                  View all solar companies in {listing.location.city} →
-                </Link>
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* ── MOBILE STICKY BOTTOM BAR ── */}
+      {listing.phone && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex gap-2 z-50 md:hidden">
+          <a
+            href={`tel:${listing.phone}`}
+            className="flex-[2] flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm px-4 py-3 rounded-lg transition"
+          >
+            <Phone className="h-4 w-4" />
+            Call {listing.name.split(' ')[0]}
+          </a>
+          {whatsappUrl && (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm px-4 py-3 rounded-lg transition"
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -160,16 +160,14 @@ export default function LeadForm({ prefill, onSuccess, compact = false }: LeadFo
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
             Your City <span className="text-red-500">*</span>
           </label>
-          <select
+          <input
+            type="text"
+            required
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-base appearance-none"
-          >
-            <option value="">Select your city</option>
-            {CITIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+            placeholder="Your city"
+            className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-base"
+          />
         </div>
 
         {/* Requirement — pill buttons */}
@@ -221,7 +219,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false }: LeadFo
         {/* Urgency toggle */}
         <div
           onClick={() => setUrgent(!urgent)}
-          className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
+          className={`flex items-center gap-3 p-2.5 px-3 rounded-lg border cursor-pointer transition-all ${
             urgent ? 'bg-red-50 border-red-300' : 'bg-gray-50 border-gray-200'
           }`}
         >
@@ -230,7 +228,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false }: LeadFo
           }`}>
             {urgent && <span className="text-white text-xs font-bold">✓</span>}
           </div>
-          <div>
+          <div className="flex-1">
             <p className={`text-sm font-semibold ${urgent ? 'text-red-700' : 'text-gray-700'}`}>
               This is urgent — I need help ASAP
             </p>
@@ -251,14 +249,14 @@ export default function LeadForm({ prefill, onSuccess, compact = false }: LeadFo
             </>
           ) : (
             <>
-              <Phone className="h-4 w-4" />
-              Get Free Quotes
+              <Zap className="h-4 w-4" />
+              ⚡ Get Free Quotes
             </>
           )}
         </button>
 
-        <p className="text-xs text-gray-400 text-center">
-          No spam · No charges · Only verified installers · You control who calls you
+        <p className="text-[10px] text-gray-400 text-center leading-relaxed">
+          No spam · No charges · Only verified installers · You control who calls
         </p>
       </form>
     </div>

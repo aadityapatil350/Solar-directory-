@@ -58,6 +58,12 @@ model Listing {
   serviceTags      String?        // JSON: { tags: string[], categoryIds: string[] }
   premiumExpiresAt DateTime?     // set when admin manually upgrades to featured
 
+  // At a Glance stats
+  installationsCount Int?         // Total installations completed
+  yearsExperience    Int?         // Years of experience
+  capacityMw         Float?       // Total capacity installed (in MW)
+  citiesCount        Int?         // Number of cities serviceable
+
   @@index([categoryId])
   @@index([locationId])
   @@index([featured])
