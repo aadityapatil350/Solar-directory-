@@ -502,62 +502,8 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                 <PhotoGalleryModal photos={listingImages} listingName={listing.name} />
               )}
 
-              {/* Section 6 — Reviews */}
-              {listing.reviews > 0 && (
-                <div className="bg-white rounded-xl p-6 border border-gray-200">
-                  <div className="flex items-center gap-2 text-sm font-medium border-b border-gray-200 pb-2 mb-4">
-                    <Star className="h-4 w-4 text-orange-500" />
-                    <h2>Reviews</h2>
-                  </div>
 
-                  {/* Rating summary */}
-                  <div className="flex gap-6 mb-6">
-                    <div className="text-4xl font-medium text-gray-900">{listing.rating}</div>
-                    <div className="flex-1 space-y-1">
-                      {[5, 4, 3].map((stars) => {
-                        const percentage = 80; // Mock data - replace with actual
-                        return (
-                          <div key={stars} className="flex items-center gap-2 text-xs">
-                            <span className="w-8 text-gray-600">{stars} ★</span>
-                            <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                              <div className="h-full bg-orange-500 rounded-full" style={{ width: `${percentage}%` }}></div>
-                            </div>
-                            <span className="w-8 text-right text-gray-500">{Math.round(listing.reviews * percentage / 100)}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Review cards - mock for now */}
-                  <div className="space-y-3 mb-4">
-                    {[1, 2].map((i) => (
-                      <div key={i} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-medium text-gray-900">Rajesh Kumar</span>
-                          <div className="flex items-center gap-1">
-                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
-                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
-                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
-                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
-                            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
-                          </div>
-                          <span className="text-[10px] text-gray-500">2 months ago</span>
-                        </div>
-                        <p className="text-xs leading-relaxed text-gray-600">
-                          Excellent service! Installed a 5kW system at my home. Very professional team and quick installation.
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 rounded-lg transition">
-                    View all {listing.reviews} reviews
-                  </button>
-                </div>
-              )}
-
-              {/* Section 7 — Location / Map */}
+              {/* Section 6 — Location / Map */}
               <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
                 <div className="px-6 pt-5 pb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm font-medium">
