@@ -288,7 +288,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
 
             {/* Search Bar */}
             <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-3xl mx-auto">
-              <SearchBar onSearch={handleSearch} />
+              <SearchBar onSearch={handleSearch} locations={locations} listings={listings} />
 
               {/* Location Filter - Yellow Pages Style */}
               <div className="mt-4 pt-4 border-t border-gray-200">
