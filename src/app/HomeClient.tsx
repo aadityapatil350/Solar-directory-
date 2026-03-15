@@ -801,19 +801,19 @@ export default function HomeClient({ initialStats, initialListings = [], initial
             <h2 className="text-4xl font-bold mb-4">
               Ready to Go Solar? Get Free Quotes Today
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-xl text-orange-100 mb-8">
               Compare quotes from multiple verified installers. Save up to 30% on your solar installation.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/solar-calculator"
-                className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:scale-105"
+                className="bg-white text-orange-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:scale-105"
               >
                 Calculate Your Savings
               </Link>
               <Link
                 href="/subsidy-checker"
-                className="bg-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-400 transition border-2 border-white/30"
+                className="bg-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-orange-400 transition border-2 border-white/30"
               >
                 Check Subsidy Eligibility
               </Link>
