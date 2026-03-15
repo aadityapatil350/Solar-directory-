@@ -45,7 +45,7 @@ export default async function StatePage({ params }: Props) {
 
   if (stateLocations.length === 0) notFound();
 
-  const locationIds = stateLocations.map((l) => l.id);
+  const locationIds = stateLocations.map((l: typeof stateLocations[0]) => l.id);
 
   const listings = await prisma.listing.findMany({
     where: { locationId: { in: locationIds } },
@@ -89,7 +89,7 @@ export default async function StatePage({ params }: Props) {
 
           {/* City chips */}
           <div className="flex flex-wrap gap-2 mt-6">
-            {stateLocations.map((loc) => (
+            {stateLocations.map((loc: typeof stateLocations[0]) => (
               <Link
                 key={loc.id}
                 href={`/${loc.city.toLowerCase().replace(/\s+/g, '-')}`}
@@ -111,8 +111,8 @@ export default async function StatePage({ params }: Props) {
             <div className="bg-white rounded-xl shadow-md p-5">
               <h3 className="font-semibold text-gray-900 mb-3">Cities in {state}</h3>
               <ul className="space-y-1">
-                {stateLocations.map((loc) => {
-                  const count = listings.filter((l) => l.locationId === loc.id).length;
+                {stateLocations.map((loc: typeof stateLocations[0]) => {
+                  const count = listings.filter((l: typeof listings[0]) => l.locationId === loc.id).length;
                   return (
                     <li key={loc.id}>
                       <Link
@@ -132,7 +132,7 @@ export default async function StatePage({ params }: Props) {
             <div className="bg-white rounded-xl shadow-md p-5">
               <h3 className="font-semibold text-gray-900 mb-3">Service Types</h3>
               <ul className="space-y-1">
-                {categories.map((cat) => (
+                {categories.map((cat: typeof categories[0]) => (
                   <li key={cat.id}>
                     <Link
                       href={`/categories/${cat.slug}`}
@@ -156,7 +156,7 @@ export default async function StatePage({ params }: Props) {
 
             {listings.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-6">
-                {listings.map((listing) => (
+                {listings.map((listing: typeof listings[0]) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
               </div>

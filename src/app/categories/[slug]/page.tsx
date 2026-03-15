@@ -112,8 +112,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
                       All Cities ({totalListings})
                     </Link>
                   </li>
-                  {locations.map((loc) => {
-                    const count = listings.filter((l) => l.locationId === loc.id).length;
+                  {locations.map((loc: typeof locations[0]) => {
+                    const count = listings.filter((l: typeof listings[0]) => l.locationId === loc.id).length;
                     return (
                       <li key={loc.id}>
                         <Link
@@ -144,7 +144,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             {listings.length > 0 ? (
               <>
                 <div className="grid md:grid-cols-2 gap-6">
-                  {listings.map((listing) => (
+                  {listings.map((listing: typeof listings[0]) => (
                     <ListingCard key={listing.id} listing={listing} />
                   ))}
                 </div>

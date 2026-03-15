@@ -42,7 +42,7 @@ export default async function CategoriesPage() {
           </p>
 
           <div className="grid md:grid-cols-2 gap-5">
-            {categories.map((category) => (
+            {categories.map((category: typeof categories[0]) => (
               <Link
                 key={category.id}
                 href={`/categories/${category.slug}`}

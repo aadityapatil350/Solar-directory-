@@ -58,7 +58,7 @@ export async function GET(request: Request) {
 
     const stats = {
       totalInstallers: installers.length,
-      verifiedInstallers: installers.filter((i) => i.verified).length,
+      verifiedInstallers: installers.filter((i: typeof installers[0]) => i.verified).length,
     };
 
     return NextResponse.json({

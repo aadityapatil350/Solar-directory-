@@ -55,7 +55,7 @@ export default async function HomePage() {
     >
       {/* Server-rendered initial listings for SEO */}
       <div className="grid md:grid-cols-2 gap-6">
-        {listings.map((listing) => (
+        {listings.map((listing: typeof listings[0]) => (
           <ListingCard key={listing.id} listing={listing} />
         ))}
       </div>

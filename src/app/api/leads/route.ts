@@ -52,7 +52,7 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
 
     // If not enough city-level installers, top up with any verified installers
     if (installers.length < MAX_INSTALLERS_PER_LEAD) {
-      const existingIds = installers.map((i) => i.id);
+      const existingIds = installers.map((i: typeof installers[0]) => i.id);
       const extra = await prisma.installer.findMany({
         where: {
           verified: true,
@@ -68,7 +68,7 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
 
     // Increment enquiry count for each installer and reset the weekly counter
     await prisma.installer.updateMany({
-      where: { id: { in: installers.map((i) => i.id) } },
+      where: { id: { in: installers.map((i: typeof installers[0]) => i.id) } },
       data: {
         enquiryCount: { increment: 1 },
         enquiryCountResetAt: null, // Clear the reset timestamp
@@ -77,7 +77,7 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
 
     // Create LeadDelivery records for each installer
     await prisma.leadDelivery.createMany({
-      data: installers.map((installer) => ({
+      data: installers.map((installer: typeof installers[0]) => ({
         leadId,
         installerId: installer.id,
         status: 'pending',

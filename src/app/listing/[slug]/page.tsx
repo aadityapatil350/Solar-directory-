@@ -575,7 +575,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                 More {listing.category.name} in {listing.location.city}
               </h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {related.map((r) => (
+                {related.map((r: typeof related[0]) => (
                   <Link
                     key={r.id}
                     href={`/listing/${r.slug}`}

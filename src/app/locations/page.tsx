@@ -34,7 +34,7 @@ export default async function LocationsPage() {
           </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {locations.map((location) => (
+            {locations.map((location: typeof locations[0]) => (
               <Link
                 key={location.id}
                 href={`/${location.city.toLowerCase().replace(/\s+/g, '-')}`}

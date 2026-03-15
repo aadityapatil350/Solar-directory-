@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
   // Attach user info for each claim (matched by email)
   const claimsWithUser = await Promise.all(
-    claims.map(async (claim) => {
+    claims.map(async (claim: typeof claims[0]) => {
       const user = await prisma.user.findUnique({
         where: { email: claim.email },
         select: { id: true, name: true, email: true, role: true, createdAt: true },

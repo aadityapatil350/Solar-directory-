@@ -20,7 +20,7 @@ export default async function BlogPage() {
     select: { slug: true, title: true, description: true, category: true, readTime: true, date: true },
   });
 
-  const categories = [...new Set(posts.map((p) => p.category))];
+  const categories: string[] = [...new Set<string>(posts.map((p: typeof posts[0]) => p.category))];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,7 +39,7 @@ export default async function BlogPage() {
         {/* Category chips */}
         <div className="flex flex-wrap gap-2 mb-8">
           <span className="bg-orange-500 text-white text-sm px-4 py-1.5 rounded-full font-medium">All</span>
-          {categories.map((cat) => (
+          {categories.map((cat: string) => (
             <span key={cat} className="bg-white border border-gray-200 text-gray-600 text-sm px-4 py-1.5 rounded-full hover:border-orange-400 hover:text-orange-600 cursor-pointer transition">
               {cat}
             </span>
@@ -47,7 +47,7 @@ export default async function BlogPage() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post) => (
+          {posts.map((post: typeof posts[0]) => (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}

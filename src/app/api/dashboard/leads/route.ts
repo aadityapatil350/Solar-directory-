@@ -41,7 +41,7 @@ export async function GET() {
 
     const isFeatured = listing.featured;
 
-    const maskedLeads = leads.map((lead) => ({
+    const maskedLeads = leads.map((lead: typeof leads[0]) => ({
       id: lead.id,
       name: lead.name,
       phone: isFeatured ? lead.phone : maskPhone(lead.phone),

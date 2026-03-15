@@ -96,7 +96,7 @@ export default async function CityPage({ params }: PageProps) {
     name: `Solar Installers in ${cityData.city}`,
     description: `Verified solar companies in ${cityData.city}, ${cityData.state}`,
     numberOfItems: listings.length,
-    itemListElement: listings.slice(0, 10).map((listing, index) => ({
+    itemListElement: listings.slice(0, 10).map((listing: typeof listings[0], index: number) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: listing.name,
@@ -150,12 +150,12 @@ export default async function CityPage({ params }: PageProps) {
                 </h2>
                 <span className="flex items-center gap-2 text-green-600">
                   <Zap className="h-5 w-5" />
-                  {listings.filter((l) => l.verified).length} Verified
+                  {listings.filter((l: typeof listings[0]) => l.verified).length} Verified
                 </span>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                {listings.map((listing) => (
+                {listings.map((listing: typeof listings[0]) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
               </div>

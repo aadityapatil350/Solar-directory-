@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   // Get unique states from locations
-  const uniqueStates = [...new Set(locations.map((l) => l.state))];
+  const uniqueStates: string[] = [...new Set<string>(locations.map((l: typeof locations[0]) => l.state))];
 
   // Define top cities for higher priority
   const topCities = [
@@ -116,7 +116,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   // Blog posts
-  blogPosts.forEach((post) => {
+  blogPosts.forEach((post: typeof blogPosts[0]) => {
     pages.push({
       url: `${baseUrl}/blog/${post.slug}`,
       lastModified: post.updatedAt.toISOString(),
@@ -126,7 +126,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // Listing pages - Higher priority for verified/featured
-  listings.forEach((listing) => {
+  listings.forEach((listing: typeof listings[0]) => {
     let priority = 0.5; // Default
     if (listing.verified && listing.featured) {
       priority = 0.7; // Verified + Featured
@@ -145,7 +145,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // Category pages
-  categories.forEach((category) => {
+  categories.forEach((category: typeof categories[0]) => {
     pages.push({
       url: `${baseUrl}/categories/${category.slug}`,
       lastModified: category.updatedAt.toISOString(),
@@ -155,7 +155,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // City pages — Higher priority for top metro cities
-  locations.forEach((location) => {
+  locations.forEach((location: typeof locations[0]) => {
     const citySlug = location.city.toLowerCase().replace(/\s+/g, '-');
     const isTopCity = topCities.includes(citySlug);
 
@@ -168,7 +168,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // State pages — Medium-High Priority
-  uniqueStates.forEach((state) => {
+  uniqueStates.forEach((state: string) => {
     const stateSlug = state.toLowerCase().replace(/\s+/g, '-');
     pages.push({
       url: `${baseUrl}/states/${stateSlug}`,

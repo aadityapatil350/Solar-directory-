@@ -36,7 +36,7 @@ export async function GET(request: Request) {
   const sameCityLocationIds = await prisma.location.findMany({
     where: { city: { equals: location.city, mode: 'insensitive' } },
     select: { id: true },
-  }).then((locs) => locs.map((l) => l.id));
+  }).then((locs: Array<{ id: string }>) => locs.map((l: { id: string }) => l.id));
 
   // Find installers with a listing in any of those locations
   const installers = await prisma.installer.findMany({
@@ -70,9 +70,9 @@ export async function GET(request: Request) {
         select: { installerId: true },
       })
     : [];
-  const alreadySentIds = new Set(existingDeliveries.map((d) => d.installerId));
+  const alreadySentIds = new Set(existingDeliveries.map((d: typeof existingDeliveries[0]) => d.installerId));
 
-  const result = installers.map((inst) => ({
+  const result = installers.map((inst: typeof installers[0]) => ({
     id:             inst.id,
     companyName:    inst.companyName,
     contactPerson:  inst.contactPerson,

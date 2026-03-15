@@ -192,7 +192,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="mt-10">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Related Articles</h2>
               <div className="grid md:grid-cols-3 gap-4">
-                {related.map((p) => (
+                {related.map((p: typeof related[0]) => (
                   <Link key={p.slug} href={`/blog/${p.slug}`} className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition group">
                     <span className="text-xs text-orange-600 font-medium">{p.category}</span>
                     <h3 className="font-semibold text-gray-900 mt-1 text-sm leading-snug group-hover:text-orange-600 transition line-clamp-3">
