@@ -4,6 +4,20 @@ import { verifySession } from '@/lib/session';
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Handle redirects for old URLs to prevent 404s in GSC
+  // Redirect /locations/{slug} to /{city-name}
+  if (pathname.startsWith('/locations/')) {
+    const slug = pathname.replace('/locations/', '');
+    // Extract city name from slug (e.g., "salem-tamil-nadu" -> "salem")
+    const cityName = slug.split('-').slice(0, -2).join('-') || slug.split('-')[0];
+    return NextResponse.redirect(new URL(`/${cityName}`, request.url), 301);
+  }
+
+  // Redirect all /listing/* pages to homepage (listings removed from sitemap)
+  if (pathname.startsWith('/listing/')) {
+    return NextResponse.redirect(new URL('/', request.url), 301);
+  }
+
   if (!pathname.startsWith('/dashboard')) return NextResponse.next();
 
   // Public dashboard pages (no auth required)
@@ -25,5 +39,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/locations/:path*', '/listing/:path*'],
 };
