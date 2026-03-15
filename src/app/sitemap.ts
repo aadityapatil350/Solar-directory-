@@ -4,14 +4,10 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.gosolarindex.in';
+  const baseUrl = 'https://gosolarindex.in';
 
-  // Get all listings, categories, locations, blog posts, and states
-  const [listings, categories, locations, blogPosts] = await Promise.all([
-    prisma.listing.findMany({
-      select: { slug: true, updatedAt: true, verified: true, featured: true },
-      take: 5000,
-    }),
+  // Get categories, locations, blog posts, and states (excluding individual listings)
+  const [categories, locations, blogPosts] = await Promise.all([
     prisma.category.findMany({
       select: { slug: true, updatedAt: true },
     }),
@@ -88,12 +84,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
-    {
-      url: `${baseUrl}/dashboard/login`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
     // Business Pages - Medium Priority
     {
       url: `${baseUrl}/pricing`,
@@ -125,24 +115,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  // Listing pages - Higher priority for verified/featured
-  listings.forEach((listing: typeof listings[0]) => {
-    let priority = 0.5; // Default
-    if (listing.verified && listing.featured) {
-      priority = 0.7; // Verified + Featured
-    } else if (listing.verified) {
-      priority = 0.6; // Just verified
-    } else if (listing.featured) {
-      priority = 0.6; // Just featured
-    }
-
-    pages.push({
-      url: `${baseUrl}/listing/${listing.slug}`,
-      lastModified: listing.updatedAt.toISOString(),
-      changeFrequency: 'weekly',
-      priority,
-    });
-  });
+  // NOTE: Individual listing pages are intentionally excluded from sitemap
+  // to avoid thin content issues. Users can find listings through:
+  // - City pages (/{city})
+  // - Category pages (/categories/{category})
+  // - State pages (/states/{state})
 
   // Category pages
   categories.forEach((category: typeof categories[0]) => {
