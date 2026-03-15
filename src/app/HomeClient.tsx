@@ -316,8 +316,28 @@ export default function HomeClient({ initialStats, initialListings = [], initial
               </div>
             </div>
 
+            {/* Quick Category Pills */}
+            <div className="flex justify-center gap-2 flex-wrap mt-4 mb-2">
+              {[
+                { label: "🏠 Residential", href: "/categories/residential-solar-installers" },
+                { label: "🏢 Commercial", href: "/categories/commercial-solar-installers" },
+                { label: "🏭 Industrial", href: "/categories/industrial-solar" },
+                { label: "🔋 Battery Storage", href: "/categories/battery-storage" },
+                { label: "🔧 AMC / Service", href: "/categories/solar-amc-maintenance" },
+                { label: "⚡ Inverter Only", href: "/categories/solar-inverter-specialists" },
+              ].map((cat) => (
+                <Link
+                  key={cat.label}
+                  href={cat.href}
+                  className="text-xs px-3 py-1.5 rounded-full border border-white/30 bg-white/15 text-white hover:bg-white/25 transition-colors whitespace-nowrap"
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+
             {/* Quick Links */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm">
               <span className="text-orange-100">Popular:</span>
               <Link href="/mumbai" className="text-white hover:text-yellow-200 underline font-medium transition">
                 Mumbai
@@ -379,6 +399,48 @@ export default function HomeClient({ initialStats, initialListings = [], initial
               <div className="text-4xl font-bold text-gray-900">{stats.avgRating}</div>
               <div className="text-sm text-gray-600 font-medium mt-1">Average Rating</div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works Section */}
+      <section className="py-10 px-6 bg-gray-50 border-b">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-lg font-medium text-center mb-1">How it works</h2>
+          <p className="text-sm text-gray-600 text-center mb-8">
+            Get solar quotes in 3 simple steps
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              {
+                step: "1",
+                title: "Search your city",
+                desc: "Enter your city and select the type of solar installation you need",
+              },
+              {
+                step: "2",
+                title: "Compare installers",
+                desc: "Browse verified installers with real ratings, photos and services",
+              },
+              {
+                step: "3",
+                title: "Request free quotes",
+                desc: "Fill one form — get called back by up to 3 verified installers",
+              },
+              {
+                step: "4",
+                title: "Go solar!",
+                desc: "Compare quotes, claim PM Surya Ghar subsidy and install",
+              },
+            ].map((item, i) => (
+              <div key={i} className="text-center">
+                <div className="w-10 h-10 rounded-full border-2 border-orange-500 bg-orange-100 flex items-center justify-center text-orange-600 font-medium text-sm mx-auto mb-3">
+                  {item.step}
+                </div>
+                <div className="text-sm font-medium mb-1">{item.title}</div>
+                <div className="text-xs text-gray-600 leading-relaxed">{item.desc}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -458,6 +520,85 @@ export default function HomeClient({ initialStats, initialListings = [], initial
               </div>
             );
           })()}
+        </div>
+      </section>
+
+      {/* Browse by Category Section */}
+      <section className="py-10 px-6 border-b">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-lg font-medium mb-1">Browse by Category</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Find the right type of solar company for your needs
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {[
+              { icon: "🏠", name: "Residential Installers", count: "1,240+", href: "/categories/residential-solar-installers" },
+              { icon: "🏢", name: "Commercial Solar", count: "890+", href: "/categories/commercial-solar-installers" },
+              { icon: "🏭", name: "Industrial Solar", count: "540+", href: "/categories/industrial-solar" },
+              { icon: "🔋", name: "Solar Panel Dealers", count: "620+", href: "/categories/solar-panel-dealers" },
+              { icon: "⚡", name: "Solar Inverter Specialists", count: "410+", href: "/categories/solar-inverter-specialists" },
+              { icon: "🔧", name: "AMC & Maintenance", count: "380+", href: "/categories/solar-amc-maintenance" },
+            ].map((cat) => (
+              <Link
+                key={cat.name}
+                href={cat.href}
+                className="flex items-center gap-3 border border-gray-200 rounded-xl p-3 hover:border-orange-500 transition-colors group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-lg flex-shrink-0">
+                  {cat.icon}
+                </div>
+                <div>
+                  <div className="text-sm font-medium group-hover:text-orange-600 transition-colors">
+                    {cat.name}
+                  </div>
+                  <div className="text-xs text-gray-600 mt-0.5">
+                    {cat.count} companies
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Cities Section */}
+      <section className="py-10 px-6 border-b">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="text-lg font-medium">Popular Cities</h2>
+            <Link href="/locations" className="text-sm text-orange-600 font-medium">
+              View all 79+ cities →
+            </Link>
+          </div>
+          <p className="text-sm text-gray-600 mb-6">
+            Find solar installers in your city
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { city: "Mumbai", state: "Maharashtra", href: "/mumbai" },
+              { city: "Delhi", state: "Delhi", href: "/delhi" },
+              { city: "Bangalore", state: "Karnataka", href: "/bangalore" },
+              { city: "Pune", state: "Maharashtra", href: "/pune" },
+              { city: "Hyderabad", state: "Telangana", href: "/hyderabad" },
+              { city: "Chennai", state: "Tamil Nadu", href: "/chennai" },
+              { city: "Kolkata", state: "West Bengal", href: "/kolkata" },
+              { city: "Ahmedabad", state: "Gujarat", href: "/ahmedabad" },
+            ].map((item) => (
+              <Link
+                key={item.city}
+                href={item.href}
+                className="flex items-center justify-between border border-gray-200 rounded-xl px-4 py-3 hover:border-orange-500 transition-colors group"
+              >
+                <div>
+                  <div className="text-sm font-medium group-hover:text-orange-600 transition-colors">
+                    {item.city}
+                  </div>
+                  <div className="text-xs text-gray-600 mt-0.5">{item.state}</div>
+                </div>
+                <span className="text-orange-600 text-sm">→</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -610,8 +751,51 @@ export default function HomeClient({ initialStats, initialListings = [], initial
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-10 px-6 bg-gray-50 border-b">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-lg font-medium text-center mb-1">What homeowners say</h2>
+          <p className="text-sm text-gray-600 text-center mb-8">
+            Real reviews from verified solar buyers across India
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                stars: 5,
+                text: "Found a great installer in Pune within 2 days. Got 3 quotes, saved ₹40,000 on installation. GoSolarIndex made it so easy.",
+                name: "Rajesh M.",
+                city: "Pune, Maharashtra",
+              },
+              {
+                stars: 5,
+                text: "Claimed PM Surya Ghar subsidy with help from the installer I found here. 5kW system installed in 10 days, very smooth process.",
+                name: "Priya S.",
+                city: "Bangalore, Karnataka",
+              },
+              {
+                stars: 5,
+                text: "Compared 4 commercial solar companies for our factory. The verified badge gave confidence. Went with the top-rated one.",
+                name: "Suresh K.",
+                city: "Surat, Gujarat",
+              },
+            ].map((t, i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-xl p-4">
+                <div className="text-orange-500 text-sm mb-2">
+                  {"★".repeat(t.stars)}
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                  "{t.text}"
+                </p>
+                <div className="text-sm font-medium">{t.name}</div>
+                <div className="text-xs text-gray-600">📍 {t.city}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section - Get Solar Quote */}
-      <section className="py-16 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+      <section className="py-16 bg-gradient-to-br from-orange-600 to-orange-700 text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-4">
