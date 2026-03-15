@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { constructCityMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Link from 'next/link';
-import ListingCard from '@/components/ListingCard';
-import { MapPin, Zap } from 'lucide-react';
+import CityClient from './CityClient';
+import { MapPin } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
@@ -61,6 +61,11 @@ export default async function CityPage({ params }: PageProps) {
       { rating: 'desc' },
     ],
     take: 500,
+  });
+
+  // Fetch all categories to populate filter dropdown
+  const categories = await prisma.category.findMany({
+    orderBy: { name: 'asc' },
   });
 
   // BreadcrumbList Schema
@@ -143,23 +148,11 @@ export default async function CityPage({ params }: PageProps) {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           {listings.length > 0 ? (
-            <>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {listings.length}+ Solar Companies in {cityData.city}
-                </h2>
-                <span className="flex items-center gap-2 text-green-600">
-                  <Zap className="h-5 w-5" />
-                  {listings.filter((l: typeof listings[0]) => l.verified).length} Verified
-                </span>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {listings.map((listing: typeof listings[0]) => (
-                  <ListingCard key={listing.id} listing={listing} />
-                ))}
-              </div>
-            </>
+            <CityClient
+              initialListings={listings}
+              categories={categories}
+              cityName={cityData.city}
+            />
           ) : (
             <div className="bg-white rounded-xl p-12 text-center">
               <p className="text-gray-600 mb-4">

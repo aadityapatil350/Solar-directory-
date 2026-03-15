@@ -46,23 +46,29 @@ export default function ListingCard({ listing }: ListingCardProps) {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
-  // Fetch all categories this company works in
+  // Fetch all categories this company works in (only if needed)
+  // Optimized: Use lazy loading on hover/interaction instead of immediate fetch
   useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await fetch(`/api/listings/${listing.id}/categories`);
-        const data = await response.json();
-        if (data.categories && data.categories.length > 0) {
-          setAllCategories(data.categories);
+    // Delay category fetch by 500ms to prioritize initial page render
+    const timer = setTimeout(() => {
+      async function fetchCategories() {
+        try {
+          const response = await fetch(`/api/listings/${listing.id}/categories`);
+          const data = await response.json();
+          if (data.categories && data.categories.length > 0) {
+            setAllCategories(data.categories);
+          }
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        } finally {
+          setLoadingCategories(false);
         }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      } finally {
-        setLoadingCategories(false);
       }
-    }
 
-    fetchCategories();
+      fetchCategories();
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [listing.id]);
 
   const handleWhatsAppClick = () => {

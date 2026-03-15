@@ -3,9 +3,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
+    // Fetch all locations (no limit) - we have ~79 cities which is manageable
     const locations = await prisma.location.findMany({
       orderBy: { city: 'asc' },
-      take: 50,
     });
 
     return NextResponse.json(locations);

@@ -7,6 +7,7 @@ import PhotoGallery from '@/components/PhotoGallery';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { unstable_cache } from 'next/cache';
 import {
   Phone, Mail, Globe, MapPin, Star, ShieldCheck,
   ChevronRight, Clock, Award, Zap,
@@ -111,46 +112,69 @@ function toGoogleMapsEmbed(address: string | null, name: string, city: string, s
   return `https://maps.google.com/maps?q=${query}&output=embed&z=15`;
 }
 
-// ─── Data fetching ─────────────────────────────────────────────────────────────
+// ─── Data fetching with caching ────────────────────────────────────────────────
 
-async function getListing(slug: string) {
-  try {
-    const listing = await prisma.listing.findUnique({
-      where: { slug },
-      include: {
-        category: true,
-        location: true,
-        images: { orderBy: { order: 'asc' } },
-      },
-    });
-    // Increment views (fire-and-forget, don't block render)
-    if (listing) {
-      prisma.listing.update({
-        where: { id: listing.id },
-        data: { views: { increment: 1 } },
-      }).catch(() => {}); // non-blocking
+// Cache listing data for 5 minutes
+const getListing = unstable_cache(
+  async (slug: string) => {
+    try {
+      const listing = await prisma.listing.findUnique({
+        where: { slug },
+        include: {
+          category: true,
+          location: true,
+          images: {
+            orderBy: { order: 'asc' },
+            take: 10, // Limit to first 10 images
+          },
+        },
+      });
+      // Increment views (fire-and-forget)
+      if (listing) {
+        prisma.listing.update({
+          where: { id: listing.id },
+          data: { views: { increment: 1 } },
+        }).catch(() => {});
+      }
+      return listing;
+    } catch (error) {
+      console.error('Error fetching listing:', error);
+      return null;
     }
-    return listing;
-  } catch (error) {
-    console.error('Error fetching listing:', error);
-    return null;
-  }
-}
+  },
+  ['listing-detail'],
+  { revalidate: 300, tags: ['listings'] }
+);
 
-async function getRelated(categoryId: string, locationId: string, excludeId: string) {
-  try {
-    const listings = await prisma.listing.findMany({
-      where: { categoryId, locationId, id: { not: excludeId } },
-      orderBy: [{ featured: 'desc' }, { verified: 'desc' }],
-      take: 3,
-      include: { category: true, location: true },
-    });
-    return listings;
-  } catch (error) {
-    console.error('Error fetching related listings:', error);
-    return [];
-  }
-}
+// Cache related listings for 10 minutes
+const getRelated = unstable_cache(
+  async (categoryId: string, locationId: string, excludeId: string) => {
+    try {
+      const listings = await prisma.listing.findMany({
+        where: { categoryId, locationId, id: { not: excludeId } },
+        orderBy: [{ featured: 'desc' }, { verified: 'desc' }],
+        take: 3,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          phone: true,
+          rating: true,
+          reviews: true,
+          featured: true,
+          category: { select: { name: true } },
+          location: { select: { city: true } },
+        },
+      });
+      return listings;
+    } catch (error) {
+      console.error('Error fetching related listings:', error);
+      return [];
+    }
+  },
+  ['related-listings'],
+  { revalidate: 600, tags: ['listings'] }
+);
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 

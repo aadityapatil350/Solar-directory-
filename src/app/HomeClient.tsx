@@ -410,7 +410,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
             return (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
                 {featured.map((l) => (
-                  <Link
+                  <a
                     key={l.id}
                     href={`/listing/${l.slug}`}
                     className="group relative border-2 border-orange-300 bg-white rounded-xl p-4 hover:border-orange-500 hover:shadow-lg transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
@@ -436,7 +436,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                         {l.rating}
                       </div>
                     ) : null}
-                  </Link>
+                  </a>
                 ))}
                 {Array.from({ length: emptySlots }).map((_, i) => (
                   <a
