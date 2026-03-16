@@ -3,8 +3,9 @@ import HomeClient from './HomeClient';
 import ListingCard from '@/components/ListingCard';
 import { unstable_cache } from 'next/cache';
 
-// Use ISR for better SEO - revalidate every 1 hour
-export const revalidate = 3600;
+// Skip static generation during build, use runtime ISR instead
+export const dynamic = 'force-dynamic';
+export const revalidate = 300; // Cache for 5 minutes at runtime
 
 // Cache homepage data for 5 minutes to reduce database load
 const getHomePageData = unstable_cache(
