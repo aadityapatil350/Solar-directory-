@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         passwordLength: password.length,
         hashPrefix: user.password.substring(0, 7),
         hashLength: user.password.length,
-        bcryptVersion: require('bcryptjs/package.json').version
+        bcryptVersion: 'bcryptjs@2.x'
       }
     });
   } catch (error) {
