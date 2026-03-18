@@ -38,6 +38,7 @@ model Listing {
   address     String?
   verified    Boolean  @default(false)
   featured    Boolean  @default(false)
+  // isTest      Boolean  @default(false)  // TODO: Uncomment after DB migration
   rating      Float?   @default(0)
   reviews     Int      @default(0)
   categoryId  String
@@ -68,6 +69,7 @@ model Listing {
   @@index([featured])
   @@index([verified])
   @@index([installerId])
+  // @@index([isTest]) // TODO: Uncomment after DB migration
 }
 
 model User {

@@ -71,6 +71,13 @@ const getListing = unstable_cache(
           },
         },
       });
+
+      // TODO: Uncomment after running database migration (see MIGRATION_REQUIRED.md)
+      // Hide test listings from public (they'll only be accessible to admins via direct access)
+      // if (listing && listing.isTest) {
+      //   return null;
+      // }
+
       if (listing) {
         prisma.listing.update({
           where: { id: listing.id },
@@ -495,6 +502,22 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                     </div>
                   )}
                 </div>
+
+                {/* Claim this listing button */}
+                {!listing.userId && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <Link
+                      href={`/claim/${listing.slug}`}
+                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600 transition group"
+                    >
+                      <Building2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <div>
+                        <div className="font-medium">Own this business?</div>
+                        <div className="text-xs text-gray-500">Claim your listing and manage it</div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
               </div>
 
               {/* Section 5 — Photos */}

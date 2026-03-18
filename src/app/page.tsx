@@ -15,7 +15,7 @@ const getHomePageData = unstable_cache(
       prisma.listing.aggregate({
         _count: true,
         _avg: { rating: true },
-        where: {},
+        where: {}, // TODO: Add isTest: false after migration
       }).then(async (agg) => ({
         totalListings: agg._count,
         avgRating: agg._avg.rating ? Math.round(agg._avg.rating * 10) / 10 : 4.5,
@@ -25,6 +25,7 @@ const getHomePageData = unstable_cache(
       })),
       // Fetch initial listings WITHOUT installer data (not needed for cards)
       prisma.listing.findMany({
+        where: {}, // TODO: Add isTest: false after migration
         include: {
           category: true,
           location: true,
