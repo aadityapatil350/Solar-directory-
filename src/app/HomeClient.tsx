@@ -532,12 +532,11 @@ export default function HomeClient({ initialStats, initialListings = [], initial
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[
-              { icon: "🏠", name: "Residential Installers", count: "1,240+", href: "/categories/residential-solar-installers" },
-              { icon: "🏢", name: "Commercial Solar", count: "890+", href: "/categories/commercial-solar-installers" },
-              { icon: "🏭", name: "Industrial Solar", count: "540+", href: "/categories/industrial-solar" },
-              { icon: "🔋", name: "Solar Panel Dealers", count: "620+", href: "/categories/solar-panel-dealers" },
-              { icon: "⚡", name: "Solar Inverter Specialists", count: "410+", href: "/categories/solar-inverter-specialists" },
-              { icon: "🔧", name: "AMC & Maintenance", count: "380+", href: "/categories/solar-amc-maintenance" },
+              { icon: "🏠", name: "Residential Installers", count: "1,240+", href: "/categories/residential-installers" },
+              { icon: "🏢", name: "Commercial Solar", count: "890+", href: "/categories/commercial-installers" },
+              { icon: "🔋", name: "Solar Panel Dealers", count: "620+", href: "/categories/solar-dealers" },
+              { icon: "⚡", name: "Solar Inverter Specialists", count: "410+", href: "/categories/inverter-specialists" },
+              { icon: "🔧", name: "AMC & Maintenance", count: "380+", href: "/categories/maintenance-services" },
             ].map((cat) => (
               <Link
                 key={cat.name}
