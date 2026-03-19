@@ -26,6 +26,7 @@ interface Listing {
   reviews: number;
   verified: boolean;
   featured: boolean;
+  // isTest: boolean; // TODO: Uncomment after migration
   premiumExpiresAt: string | null;
   serviceTags: string | null; // JSON: { tags: string[], categoryIds: string[] }
   location: { id: string; city: string; state: string };
@@ -427,6 +428,27 @@ export default function AdminDashboard() {
       setTogglingId(null);
     }
   };
+
+  // TODO: Uncomment after migration
+  // const toggleTest = async (listing: Listing) => {
+  //   const newVal = !listing.isTest;
+  //   setListings((prev) => prev.map((l) => l.id === listing.id ? { ...l, isTest: newVal } : l));
+  //   try {
+  //     setTogglingId(listing.id + '-test');
+  //     const res = await fetch('/api/admin/listings/toggle-test', {
+  //       method: 'POST',
+  //       headers: headers(),
+  //       body: JSON.stringify({ listingId: listing.id, isTest: newVal }),
+  //     });
+  //     if (!res.ok) throw new Error();
+  //     toast('success', newVal ? `🧪 "${listing.name}" marked as TEST (hidden from public)` : `✓ "${listing.name}" is now PUBLIC`);
+  //   } catch {
+  //     setListings((prev) => prev.map((l) => l.id === listing.id ? { ...l, isTest: !newVal } : l));
+  //     toast('error', 'Failed to update test status');
+  //   } finally {
+  //     setTogglingId(null);
+  //   }
+  // };
 
   const unfeatureAll = async () => {
     if (!confirm('Remove Featured status from ALL listings? This affects what shows on the homepage.')) return;
@@ -1394,6 +1416,7 @@ export default function AdminDashboard() {
                           <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Location / Category</th>
                           <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Featured</th>
                           <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Verified</th>
+                          {/* TODO: Uncomment Visibility column after migration */}
                           <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                       </thead>
@@ -1401,7 +1424,16 @@ export default function AdminDashboard() {
                         {listings.map((listing) => (
                           <tr key={listing.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition">
                             <td className="px-5 py-3.5">
-                              <div className="font-semibold text-gray-900 leading-snug">{listing.name}</div>
+                              <div className="flex items-center gap-2">
+                                <div className="font-semibold text-gray-900 leading-snug">{listing.name}</div>
+                                {/* TODO: Uncomment after migration
+                                {listing.isTest && (
+                                  <span className="px-1.5 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 rounded uppercase">
+                                    TEST
+                                  </span>
+                                )}
+                                */}
+                              </div>
                               {listing.rating ? (
                                 <div className="flex items-center gap-1 text-xs text-amber-600 mt-0.5">
                                   <Star className="h-3 w-3 fill-amber-400" />
@@ -1458,6 +1490,22 @@ export default function AdminDashboard() {
                                 {listing.verified ? 'Verified' : 'Verify'}
                               </button>
                             </td>
+                            {/* TODO: Uncomment Visibility toggle after migration
+                            <td className="px-5 py-3.5">
+                              <button
+                                onClick={() => toggleTest(listing)}
+                                disabled={togglingId === listing.id + '-test'}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border ${
+                                  listing.isTest
+                                    ? 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'
+                                    : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700'
+                                } disabled:opacity-50`}
+                                title={listing.isTest ? 'Click to make PUBLIC' : 'Click to mark as TEST (hidden from public)'}
+                              >
+                                {listing.isTest ? '🧪 Test' : 'Public'}
+                              </button>
+                            </td>
+                            */}
                             <td className="px-5 py-3.5">
                               <div className="flex items-center gap-1.5">
                                 <button

@@ -1,62 +1,87 @@
-import { config } from 'dotenv';
-config({ path: '.env.local' });
+import { PrismaClient } from '@prisma/client';
+import * as dotenv from 'dotenv';
+import { resolve } from 'path';
 
-import { prisma } from '../src/lib/prisma';
+// Load .env.local
+dotenv.config({ path: resolve(process.cwd(), '.env.local') });
 
-async function check() {
-  const all = await prisma.listing.findMany({
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-      verified: true,
-      featured: true,
-      category: { select: { name: true } },
-      location: { select: { city: true } }
-    }
-  });
+const prisma = new PrismaClient();
 
-  console.log('Total listings:', all.length);
+async function checkDuplicates() {
+  try {
+    console.log('Checking for duplicate listings...\n');
 
-  // Group by phone
-  const byPhone = new Map<string, typeof all>();
-  all.forEach(l => {
-    if (l.phone) {
-      const key = l.phone.replace(/\s+/g, '');
-      const existing = byPhone.get(key);
-      if (!existing) {
-        byPhone.set(key, []);
+    // Get all locations
+    const locations = await prisma.location.findMany({
+      include: {
+        listings: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          }
+        }
+      },
+      orderBy: {
+        state: 'asc'
       }
-      byPhone.get(key)?.push(l);
+    });
+
+    let totalDuplicates = 0;
+    const duplicatesByLocation: any[] = [];
+
+    for (const location of locations) {
+      // Group listings by name
+      const listingsByName: { [key: string]: any[] } = {};
+
+      location.listings.forEach(listing => {
+        const name = listing.name.toLowerCase().trim();
+        if (!listingsByName[name]) {
+          listingsByName[name] = [];
+        }
+        listingsByName[name].push(listing);
+      });
+
+      // Find duplicates
+      const duplicates = Object.entries(listingsByName).filter(([_, listings]) => listings.length > 1);
+
+      if (duplicates.length > 0) {
+        console.log(`\n📍 ${location.city}, ${location.state}`);
+        console.log(`   Total listings: ${location.listings.length}`);
+        console.log(`   Duplicate business names: ${duplicates.length}\n`);
+
+        duplicates.forEach(([name, listings]) => {
+          console.log(`   - "${name}" appears ${listings.length} times`);
+          listings.forEach(listing => {
+            console.log(`     ID: ${listing.id} | Slug: ${listing.slug}`);
+          });
+          totalDuplicates += listings.length - 1; // Count extras only
+        });
+
+        duplicatesByLocation.push({
+          location: `${location.city}, ${location.state}`,
+          locationId: location.id,
+          duplicates: duplicates.map(([name, listings]) => ({
+            businessName: name,
+            count: listings.length,
+            ids: listings.map(l => l.id)
+          }))
+        });
+      }
     }
-  });
 
-  const phoneDupes = Array.from(byPhone.entries()).filter(([_, arr]) => arr.length > 1);
-  console.log('\nDuplicate phone numbers:', phoneDupes.length);
-  phoneDupes.forEach(([phone, listings]) => {
-    console.log('\n📞', phone, '- Listings:', listings.length);
-    listings.forEach(l => console.log('  -', l.name, '|', l.location.city, '|', l.category.name));
-  });
+    console.log(`\n\n📊 SUMMARY`);
+    console.log(`Total locations checked: ${locations.length}`);
+    console.log(`Locations with duplicates: ${duplicatesByLocation.length}`);
+    console.log(`Total duplicate entries to remove: ${totalDuplicates}\n`);
 
-  // Group by name
-  const byName = new Map<string, typeof all>();
-  all.forEach(l => {
-    const key = l.name.toLowerCase().trim();
-    const existing = byName.get(key);
-    if (!existing) {
-      byName.set(key, []);
-    }
-    byName.get(key)?.push(l);
-  });
+    return duplicatesByLocation;
 
-  const nameDupes = Array.from(byName.entries()).filter(([_, arr]) => arr.length > 1);
-  console.log('\nDuplicate names:', nameDupes.length);
-  nameDupes.forEach(([name, listings]) => {
-    console.log('\n🏢', listings[0].name, '- Listings:', listings.length);
-    listings.forEach(l => console.log('  -', l.id.slice(0, 8), '|', l.location.city, '|', l.category.name, '|', l.phone || 'no phone'));
-  });
-
-  await prisma.$disconnect();
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
-check().catch(console.error);
+checkDuplicates();
