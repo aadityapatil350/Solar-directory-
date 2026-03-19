@@ -21,7 +21,7 @@ export async function getAuthUser(): Promise<DecodedToken | null> {
     }
 
     const { payload } = await jwtVerify(token, SECRET_KEY);
-    return payload as DecodedToken;
+    return payload as unknown as DecodedToken;
   } catch (error) {
     return null;
   }

@@ -2,9 +2,44 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { isAdmin } from '@/lib/auth-helpers';
 
+/**
+ * API Route for toggling test listings
+ *
+ * NOTE: This route is DISABLED until database migration is complete.
+ * See MIGRATION_REQUIRED.md for details.
+ *
+ * To enable after migration:
+ * 1. Uncomment isTest field in prisma/schema.prisma
+ * 2. Run database migration
+ * 3. Uncomment all code below and delete the disabled versions
+ */
+
+export async function POST(_request: Request) {
+  return NextResponse.json(
+    {
+      error: 'Test listings feature is disabled pending database migration',
+      message: 'See MIGRATION_REQUIRED.md for details',
+    },
+    { status: 503 }
+  );
+}
+
+export async function GET() {
+  return NextResponse.json(
+    {
+      error: 'Test listings feature is disabled pending database migration',
+      message: 'See MIGRATION_REQUIRED.md for details',
+    },
+    { status: 503 }
+  );
+}
+
+/* eslint-disable */
+/*
+// ENABLED VERSION - Uncomment after migration:
+
 export async function POST(request: Request) {
   try {
-    // Check if user is admin
     const userIsAdmin = await isAdmin();
     if (!userIsAdmin) {
       return NextResponse.json(
@@ -23,7 +58,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update the listing
     const updated = await prisma.listing.update({
       where: { id: listingId },
       data: { isTest },
@@ -49,7 +83,6 @@ export async function POST(request: Request) {
   }
 }
 
-// Get all test listings (admin only)
 export async function GET() {
   try {
     const userIsAdmin = await isAdmin();
@@ -81,3 +114,5 @@ export async function GET() {
     );
   }
 }
+*/
+/* eslint-enable */

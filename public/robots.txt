@@ -1,0 +1,16 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Allow Google AdSense bot
+User-agent: Mediapartners-Google*
+Disallow:
+
+# Sitemap
+Sitemap: https://gosolarindex.in/sitemap.xml
+
+# Block admin pages
+Disallow: /admin
+Disallow: /api/admin
+Disallow: /installers/dashboard
+Disallow: /dashboard

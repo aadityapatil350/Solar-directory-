@@ -5,8 +5,8 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const GA_ID = 'G-HRQJB0S57Q';
-// Replace with your AdSense Publisher ID after approval: ca-pub-XXXXXXXXXXXXXXXXX
-const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || '';
+// Google AdSense Publisher ID
+const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-3540617055322931';
 
 export const metadata: Metadata = constructMetadata({
   title: 'Find Solar Installers in India (2026) — 3948+ Verified Companies, Free Quotes',
@@ -23,6 +23,11 @@ const websiteSchema = {
     '@type': 'SearchAction',
     target: { '@type': 'EntryPoint', urlTemplate: 'https://gosolarindex.in/?query={search_term_string}' },
     'query-input': 'required name=search_term_string',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Go Solar Index',
+    url: 'https://gosolarindex.in',
   },
 };
 
@@ -52,6 +57,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="google-adsense-account" content="ca-pub-3540617055322931" />
+      </head>
       <body className="antialiased">
         {/* Google Analytics 4 */}
         <Script
@@ -67,15 +75,13 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Google AdSense — only loads after you have an approved Publisher ID */}
-        {ADSENSE_ID && (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
-        )}
+        {/* Google AdSense — Auto Ads */}
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
 
         {/* Schema.org */}
         <Script
