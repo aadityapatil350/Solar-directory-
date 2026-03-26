@@ -136,9 +136,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const canonicalSlug = isDuplicate ? baseSlug : slug;
   const canonicalUrl = `https://gosolarindex.in/listing/${canonicalSlug}`;
 
+  // Generate dynamic description using available data
+  let description = `${listing.name} is a ${listing.verified ? 'verified ' : ''}${listing.category.name.toLowerCase()} in ${listing.location.city}, ${listing.location.state}.`;
+
+  // Add rating and review info if available
+  if (listing.reviews > 0 && listing.rating) {
+    description += ` With a ${listing.rating} star rating based on ${listing.reviews} review${listing.reviews > 1 ? 's' : ''}, they are a trusted choice for solar solutions.`;
+  }
+
+  // Add service area info
+  description += ` They serve residential and commercial clients in ${listing.location.city} and surrounding areas.`;
+
+  // Add custom description snippet if available
+  if (listing.description) {
+    const snippet = listing.description.slice(0, 80).trim();
+    description += ` ${snippet}${snippet.length < listing.description.length ? '...' : ''}`;
+  }
+
   return constructMetadata({
     title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,
-    description: `${listing.name} is a ${listing.category.name.toLowerCase()} in ${listing.location.city}, ${listing.location.state}. ${listing.description?.slice(0, 120) || 'Get a free quote today.'}`,
+    description,
     path: `/listing/${slug}`,
     canonicalUrl: canonicalUrl,
   });

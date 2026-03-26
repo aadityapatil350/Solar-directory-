@@ -97,7 +97,7 @@ export function constructMetadata({
 
 export function constructCityMetadata(city: string, state: string, count?: number): Metadata {
   // Keep total title ≤ 65 chars — use standalone so no brand suffix appended
-  const title = `Solar Installers in ${city} 2026 — ${count ? `${count} Verified` : 'Compare & Quote'} | GSI`;
+  const title = `Solar Installers in ${city} 2026 — ${count ? `${count} Verified` : 'Compare & Quote'} | GoSolarIndex`;
   const description = `Find ${count || 'verified'} solar companies in ${city}, ${state}. Get free quotes, claim PM Surya Ghar subsidy up to ₹78,000 & go solar in 2026. No spam.`;
   return constructMetadata({
     title,
@@ -109,7 +109,7 @@ export function constructCityMetadata(city: string, state: string, count?: numbe
 
 export function constructCategoryMetadata(category: string, city?: string): Metadata {
   const locationText = city ? `in ${city}` : 'in India';
-  const title = `${category} ${locationText} 2026 — Verified & Rated | GSI`;
+  const title = `${category} ${locationText} 2026 — Verified & Rated | GoSolarIndex`;
   const description = `Find top-rated ${category} ${locationText}. Compare prices, read reviews, get free quotes. PM Surya Ghar subsidy available.`;
   return constructMetadata({
     title,
