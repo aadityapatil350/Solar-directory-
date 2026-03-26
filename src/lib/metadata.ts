@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const siteName = 'Go Solar Index';
 export const siteDescription = "India's most trusted solar directory. Find verified solar installers, dealers, and service providers in your city. Compare prices, read reviews, go solar today!";
-export const siteUrl = 'https://www.gosolarindex.in';
+export const siteUrl = 'https://gosolarindex.in';
 
 export function constructMetadata({
   title,
@@ -10,12 +10,14 @@ export function constructMetadata({
   path = '',
   ogImage = '/og-image.png',
   standalone = false,
+  canonicalUrl,
 }: {
   title?: string;
   description?: string;
   path?: string;
   ogImage?: string;
   standalone?: boolean;
+  canonicalUrl?: string;
 }): Metadata {
   // standalone=true: use title as-is (for blog posts/city pages that are already fully formed)
   const fullTitle = title
@@ -28,7 +30,7 @@ export function constructMetadata({
     title: fullTitle,
     description: fullDescription,
     alternates: {
-      canonical: url,
+      canonical: canonicalUrl || url,
     },
     icons: {
       icon: '/icon.svg',

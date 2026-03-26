@@ -14,6 +14,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin', '/api/', '/dashboard', '/dashboard/'],
       },
     ],
-    sitemap: 'https://www.gosolarindex.in/sitemap.xml',
+    sitemap: 'https://gosolarindex.in/sitemap.xml',
   };
 }

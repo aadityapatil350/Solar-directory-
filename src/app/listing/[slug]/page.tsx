@@ -5,7 +5,7 @@ import LeadForm from '@/components/LeadForm';
 import ServicesSection from '@/components/ServicesSection';
 import PhotoGalleryModal from '@/components/PhotoGalleryModal';
 import { prisma } from '@/lib/prisma';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { unstable_cache } from 'next/cache';
 import {
@@ -127,10 +127,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const listing = await getListing(slug);
   if (!listing) return {};
+
+  // Determine canonical URL
+  // If slug ends with -\d+ (e.g., company-name-2), canonical points to base slug
+  // Otherwise, self-referencing canonical
+  const baseSlug = slug.replace(/-\d+$/, '');
+  const isDuplicate = baseSlug !== slug;
+  const canonicalSlug = isDuplicate ? baseSlug : slug;
+  const canonicalUrl = `https://gosolarindex.in/listing/${canonicalSlug}`;
+
   return constructMetadata({
     title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,
     description: `${listing.name} is a ${listing.category.name.toLowerCase()} in ${listing.location.city}, ${listing.location.state}. ${listing.description?.slice(0, 120) || 'Get a free quote today.'}`,
     path: `/listing/${slug}`,
+    canonicalUrl: canonicalUrl,
   });
 }
 
@@ -139,7 +149,30 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ListingPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const listing = await getListing(slug);
-  if (!listing) notFound();
+
+  // If listing not found, check if it's a duplicate pattern (-2, -3, etc.)
+  if (!listing) {
+    const baseSlug = slug.replace(/-\d+$/, '');
+    const isDuplicate = baseSlug !== slug;
+
+    if (isDuplicate) {
+      // Check if primary listing exists - if so, redirect there
+      const primaryListing = await prisma.listing.findUnique({
+        where: { slug: baseSlug },
+        select: { slug: true }
+      });
+
+      if (primaryListing) {
+        // 308 Permanent Redirect - tells search engines this is permanently moved
+        permanentRedirect(`/listing/${baseSlug}`);
+      }
+
+      // Primary doesn't exist either - this duplicate was deleted
+      // Return 404 (Google will eventually remove from index)
+    }
+
+    notFound();
+  }
 
   const related = await getRelated(listing.categoryId, listing.locationId, listing.id);
   const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category?.name);
@@ -170,7 +203,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
   const listedYear = new Date(listing.createdAt).getFullYear();
 
-  const siteUrl = 'https://www.gosolarindex.in';
+  const siteUrl = 'https://gosolarindex.in';
 
   const localBusinessSchema = {
     '@context': 'https://schema.org',

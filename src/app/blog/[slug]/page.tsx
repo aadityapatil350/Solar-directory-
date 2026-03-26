@@ -38,7 +38,7 @@ export default async function BlogPostPage({ params }: Props) {
   });
   if (!post) notFound();
 
-  const siteUrl = 'https://www.gosolarindex.in';
+  const siteUrl = 'https://gosolarindex.in';
 
   const articleSchema = {
     '@context': 'https://schema.org',

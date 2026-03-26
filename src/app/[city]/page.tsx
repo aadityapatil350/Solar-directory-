@@ -77,19 +77,19 @@ export default async function CityPage({ params }: PageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://www.gosolarindex.in',
+        item: 'https://gosolarindex.in',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: cityData.state,
-        item: `https://www.gosolarindex.in/states/${cityData.state.toLowerCase().replace(/\s+/g, '-')}`,
+        item: `https://gosolarindex.in/states/${cityData.state.toLowerCase().replace(/\s+/g, '-')}`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: cityData.city,
-        item: `https://www.gosolarindex.in/${cityData.city.toLowerCase().replace(/\s+/g, '-')}`,
+        item: `https://gosolarindex.in/${cityData.city.toLowerCase().replace(/\s+/g, '-')}`,
       },
     ],
   };
@@ -105,7 +105,7 @@ export default async function CityPage({ params }: PageProps) {
       '@type': 'ListItem',
       position: index + 1,
       name: listing.name,
-      url: `https://www.gosolarindex.in/listing/${listing.slug}`,
+      url: `https://gosolarindex.in/listing/${listing.slug}`,
       ...(listing.description && { description: listing.description }),
     })),
   } : null;

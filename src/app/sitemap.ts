@@ -77,13 +77,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 0.8,
     },
-    // Installer Pages - Medium-High Priority
-    {
-      url: `${baseUrl}/dashboard/login`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
     // Business Pages - Medium Priority
     {
       url: `${baseUrl}/pricing`,
