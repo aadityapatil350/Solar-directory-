@@ -103,8 +103,8 @@ export default async function StatePage({ params }: Props) {
   };
 
   return (
-    <>
-      {/* Structured Data - Rendered in Head */}
+    <div className="min-h-screen bg-gray-50">
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
@@ -113,9 +113,7 @@ export default async function StatePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-
-      <div className="min-h-screen bg-gray-50">
-        <Header />
+      <Header />
 
       {/* Breadcrumb */}
       <div className="bg-white border-b">
@@ -263,6 +261,5 @@ export default async function StatePage({ params }: Props) {
         </div>
       </div>
     </div>
-    </>
   );
 }
