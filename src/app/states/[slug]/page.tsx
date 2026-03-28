@@ -7,7 +7,6 @@ import ListingCard from '@/components/ListingCard';
 import LeadForm from '@/components/LeadForm';
 import Link from 'next/link';
 import { ChevronRight, MapPin } from 'lucide-react';
-import Script from 'next/script';
 import { getStateDescription, getStateFAQs } from '@/lib/stateData';
 
 interface Props {
@@ -32,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export const dynamic = 'force-dynamic';
+// Remove force-dynamic to allow proper SSR
 export const revalidate = 3600;
 
 export default async function StatePage({ params }: Props) {
@@ -104,18 +103,19 @@ export default async function StatePage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Script
-        id="breadcrumb-schema"
+    <>
+      {/* Structured Data - Rendered in Head */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Script
-        id="faq-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <Header />
+
+      <div className="min-h-screen bg-gray-50">
+        <Header />
 
       {/* Breadcrumb */}
       <div className="bg-white border-b">
@@ -263,5 +263,6 @@ export default async function StatePage({ params }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }
