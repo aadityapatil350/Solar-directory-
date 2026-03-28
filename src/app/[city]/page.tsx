@@ -7,7 +7,7 @@ import { MapPin, CheckCircle, Info } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
-import { citySpecificData, getCityFAQs } from '@/lib/cityData';
+import { citySpecificData, getCityFAQs, getCityDescription } from '@/lib/cityData';
 
 // Use ISR for better SEO - revalidate every 1 hour
 export const revalidate = 3600;
@@ -150,10 +150,10 @@ export default async function CityPage({ params }: PageProps) {
       <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <MapPin className="h-8 w-8" />
-              <h1 className="text-4xl md:text-5xl font-bold">
-                {cityData.city}
+            <div className="mb-4">
+              <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">
+                <MapPin className="h-7 w-7" />
+                Best Solar Installers in {cityData.city} (2026)
               </h1>
             </div>
             <p className="text-xl mb-4 text-orange-100">
@@ -191,8 +191,15 @@ export default async function CityPage({ params }: PageProps) {
           {/* City-Specific Information */}
           <div className="mt-12 bg-white rounded-xl p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              About Solar Installation in {cityData.city}
+              About Solar in {cityData.city}
             </h2>
+
+            {/* City-Specific Description */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg">
+              <p className="text-gray-800 leading-relaxed">
+                {getCityDescription(cityData.city)}
+              </p>
+            </div>
 
             {(() => {
               const cityInfo = citySpecificData[cityData.city.toLowerCase()];

@@ -163,8 +163,73 @@ export const citySpecificData: Record<string, CityInfo> = {
       'Average 5-5.5 hours of peak sunlight',
       'State government encouraging solar adoption'
     ]
+  },
+  'nashik': {
+    city: 'Nashik',
+    state: 'Maharashtra',
+    discoms: ['MSEDCL'],
+    avgCost3kW: '₹42,000 - ₹75,000',
+    avgCost5kW: '₹70,000 - ₹1,24,000',
+    topAreas: ['Pathardi Phata', 'Satpur', 'College Road', 'Gangapur Road', 'Panchavati', 'Adgaon', 'Makhmalabad', 'CIDCO'],
+    subsidyInfo: 'Maharashtra residents can claim up to ₹78,000 subsidy under PM Surya Ghar Yojana via MSEDCL',
+    highlights: [
+      'MSEDCL net metering process same as Mumbai/Pune',
+      'Average 5.5-6 hours of peak sunlight daily',
+      'Wine capital of India with growing solar adoption',
+      'Favorable net metering policies for home installations'
+    ]
+  },
+  'nagpur': {
+    city: 'Nagpur',
+    state: 'Maharashtra',
+    discoms: ['MSEDCL'],
+    avgCost3kW: '₹40,000 - ₹72,000',
+    avgCost5kW: '₹66,000 - ₹1,19,000',
+    topAreas: ['Dharampeth', 'Sadar', 'Sitabuldi', 'Laxmi Nagar', 'Pratap Nagar', 'Wardha Road', 'Kamptee Road', 'Hingna'],
+    subsidyInfo: 'Central subsidy up to ₹78,000 available through MSEDCL net metering scheme',
+    highlights: [
+      'Second capital of Maharashtra with excellent solar potential',
+      'MSEDCL offers streamlined net metering approval',
+      'Average 6-6.5 hours of peak sunlight (higher than coastal areas)',
+      'Lower installation costs compared to Mumbai/Pune'
+    ]
+  },
+  'surat': {
+    city: 'Surat',
+    state: 'Gujarat',
+    discoms: ['DGVCL', 'Torrent Power'],
+    avgCost3kW: '₹35,000 - ₹65,000',
+    avgCost5kW: '₹58,000 - ₹1,08,000',
+    topAreas: ['Vesu', 'Adajan', 'Pal', 'Athwa', 'Piplod', 'Althan', 'Citylight', 'Bhatar'],
+    subsidyInfo: 'PM Surya Ghar Yojana subsidy up to ₹78,000 + Additional Gujarat state benefits',
+    highlights: [
+      'Diamond city with high commercial solar adoption',
+      'Gujarat offers some of India\'s lowest solar installation costs',
+      'Excellent solar irradiation (6-6.5 hours peak sunlight)',
+      'DGVCL and Torrent Power provide efficient net metering'
+    ]
   }
 };
+
+/**
+ * Generate city-specific "About Solar" description
+ */
+export function getCityDescription(city: string): string {
+  const cityInfo = citySpecificData[city.toLowerCase()];
+
+  if (!cityInfo) {
+    return `${city} offers excellent solar potential with abundant sunshine throughout the year. Installing solar panels in ${city} can help you reduce electricity bills significantly while contributing to a greener environment. Contact verified solar installers in ${city} for free quotes and start your solar journey today.`;
+  }
+
+  // Calculate typical post-subsidy cost range
+  const costLower = cityInfo.avgCost3kW.split(' - ')[0];
+  const costUpper = cityInfo.avgCost3kW.split(' - ')[1];
+
+  // Extract peak sun hours from highlights
+  const sunHours = cityInfo.highlights.find(h => h.includes('hours'))?.match(/[\d.]+-?[\d.]*\s*hours?/)?.[0] || '5-6 hours';
+
+  return `${city} receives ${sunHours} of peak sun hours daily, making it ideal for solar. A 3kW system in ${city} typically costs ${costLower}–${costUpper} after PM Surya Ghar subsidy via ${cityInfo.discoms[0]}. Popular areas include ${cityInfo.topAreas.slice(0, 4).join(', ')}, and ${cityInfo.topAreas[4] || cityInfo.topAreas[cityInfo.topAreas.length - 1]}. ${cityInfo.subsidyInfo}`;
+}
 
 export interface CityFAQ {
   question: string;
@@ -176,24 +241,24 @@ export function getCityFAQs(city: string, state: string): CityFAQ[] {
 
   return [
     {
-      question: `How much does solar installation cost in ${city}?`,
+      question: `How much does solar installation cost in ${city} in 2026?`,
       answer: cityInfo
-        ? `In ${city}, a 3kW residential solar system costs ${cityInfo.avgCost3kW} on average, while a 5kW system ranges from ${cityInfo.avgCost5kW}. Costs vary based on panel brand, inverter type, and installation complexity. With PM Surya Ghar Yojana subsidy of up to ₹78,000, your net cost reduces significantly. Most ${city} homeowners recover their investment in 3-5 years through electricity bill savings.`
-        : `In ${city}, solar installation costs typically range from ₹40,000 to ₹80,000 for a 3kW system. With PM Surya Ghar Yojana subsidy of up to ₹78,000, your net investment reduces significantly. Contact verified installers for accurate quotes based on your requirements.`
+        ? `In ${city}, a 3kW residential solar system costs ${cityInfo.avgCost3kW} on average in 2026. After applying the PM Surya Ghar Yojana subsidy of up to ₹78,000, your net cost comes down to approximately ₹1.2L–₹1.8L. A 5kW system ranges from ${cityInfo.avgCost5kW}. Costs vary based on panel brand (Tata, Adani, Waaree, etc.), inverter type (string vs micro), and installation complexity. Most ${city} homeowners recover their investment in 3-4 years through electricity bill savings. Get free quotes from verified installers to find the best deal.`
+        : `In ${city}, solar installation costs typically range from ₹40,000 to ₹80,000 for a 3kW system in 2026. With PM Surya Ghar Yojana subsidy of up to ₹78,000, your net investment reduces to ₹1.2L–₹1.8L. Contact verified installers for accurate quotes based on your requirements.`
     },
     {
-      question: `Which solar companies are verified in ${city}?`,
-      answer: `GoSolarIndex lists only verified and MNRE-certified solar installers in ${city}. All companies on our platform have been background-checked, customer reviews are authentic, and they comply with ${state} DISCOM net metering requirements. Look for the "Verified" badge on listing pages. You can filter by rating, reviews, and featured status to find the best installer for your needs.`
+      question: `Which are the best solar companies in ${city}?`,
+      answer: `The best solar companies in ${city} are those verified by GoSolarIndex with proven track records. We list only MNRE-certified installers who have completed successful installations in ${city}. Top-rated companies have 4+ star ratings, authentic customer reviews, and comply with ${cityInfo?.discoms[0] || state + ' DISCOM'} net metering requirements. Look for the "Verified" badge and check reviews before choosing. ${cityInfo ? `Popular installers serve areas like ${cityInfo.topAreas.slice(0, 3).join(', ')}.` : ''} Filter by rating and reviews to find the best fit for your needs.`
     },
     {
       question: `Is PM Surya Ghar subsidy available in ${city}?`,
-      answer: `Yes! PM Surya Ghar Yojana subsidy is available throughout ${city}, ${state}. You can get up to ₹78,000 subsidy (₹30,000 for 1-2kW, ₹60,000 for 2-3kW, and ₹78,000 for 3kW and above). ${cityInfo?.subsidyInfo || 'The subsidy is credited directly to your bank account after installation and inspection.'} Our verified installers help you with the complete subsidy application process.`
+      answer: `Yes! PM Surya Ghar Yojana subsidy is fully available in ${city}, ${state}. You can get up to ₹78,000 central government subsidy (₹30,000 for 1-2kW, ₹60,000 for 2-3kW, and ₹78,000 for 3kW+). ${cityInfo?.subsidyInfo || 'The subsidy is credited directly to your bank account after installation and inspection by DISCOM officials.'} ${cityInfo?.discoms[0] ? `Applications are processed through ${cityInfo.discoms[0]}.` : ''} Our verified installers help you with documentation, subsidy application, and follow-ups to ensure you receive the full amount.`
     },
     {
-      question: `How long does net metering approval take in ${city}?`,
+      question: `How does net metering work in ${city}?`,
       answer: cityInfo
-        ? `In ${city}, net metering approval from ${cityInfo.discoms.join('/')} typically takes 15-45 days depending on the DISCOM and application completeness. ${cityInfo.discoms.length > 1 ? 'Different DISCOMs may have slightly different timelines.' : `${cityInfo.discoms[0]} has streamlined the process.`} Our verified installers handle all paperwork and follow-ups to ensure quick approval. Once approved, you can start earning credits for excess electricity exported to the grid.`
-        : `Net metering approval in ${city} typically takes 2-6 weeks depending on your DISCOM and documentation. Verified installers on our platform handle the complete process including application submission, technical inspection coordination, and approval follow-ups.`
+        ? `Net metering in ${city} is managed by ${cityInfo.discoms.join('/')}. After installing solar panels, you export excess electricity to the grid during the day and consume grid power at night. Your meter runs backward when exporting, earning you credits. ${cityInfo.discoms[0]} approval takes 15-45 days on average. You'll need: solar installation completion certificate, ${cityInfo.discoms[0]} application form, building NOC, and technical drawings. ${cityInfo.discoms.length > 1 ? 'Process varies slightly by DISCOM area.' : ''} Our verified installers handle all ${cityInfo.discoms[0]} paperwork and inspections. You get billed only for net consumption (consumed - exported).`
+        : `Net metering in ${city} allows you to export excess solar electricity to the grid and earn credits. Your DISCOM installs a bi-directional meter that tracks both consumption and export. Applications typically take 2-6 weeks for approval. You'll need installation certificates, DISCOM application, and building approvals. Verified installers handle all paperwork and coordinate with ${state} DISCOM for smooth approval.`
     }
   ];
 }

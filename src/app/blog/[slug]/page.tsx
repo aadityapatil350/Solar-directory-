@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { constructMetadata } from '@/lib/metadata';
 import { prisma } from '@/lib/prisma';
 import Header from '@/components/Header';
+import BlogCTABox from '@/components/BlogCTABox';
 import Link from 'next/link';
 import Script from 'next/script';
 import { Clock, Tag, ChevronRight, ArrowLeft, MapPin, Zap } from 'lucide-react';
@@ -75,6 +76,29 @@ export default async function BlogPostPage({ params }: Props) {
     select: { slug: true, title: true, category: true },
   });
 
+  // Detect cities mentioned in the post for internal linking
+  const cityData = [
+    { name: 'Pune', slug: 'pune' },
+    { name: 'Mumbai', slug: 'mumbai' },
+    { name: 'Delhi', slug: 'delhi' },
+    { name: 'Bangalore', slug: 'bangalore' },
+    { name: 'Chennai', slug: 'chennai' },
+    { name: 'Hyderabad', slug: 'hyderabad' },
+    { name: 'Kolkata', slug: 'kolkata' },
+    { name: 'Ahmedabad', slug: 'ahmedabad' },
+    { name: 'Jaipur', slug: 'jaipur' },
+    { name: 'Lucknow', slug: 'lucknow' },
+    { name: 'Nashik', slug: 'nashik' },
+    { name: 'Nagpur', slug: 'nagpur' },
+    { name: 'Surat', slug: 'surat' },
+  ];
+
+  // Find cities mentioned in title or slug
+  const mentionedCities = cityData.filter(city =>
+    post.title.toLowerCase().includes(city.slug) ||
+    post.slug.includes(city.slug)
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Script id="article-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
@@ -123,6 +147,34 @@ export default async function BlogPostPage({ params }: Props) {
             className="bg-white rounded-2xl shadow-sm p-8 md:p-12 article-body"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
+
+          {/* CTA Box - injected after 2nd paragraph via client component */}
+          <BlogCTABox />
+
+          {/* City-Specific Internal Links - only show if cities are mentioned */}
+          {mentionedCities.length > 0 && (
+            <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-lg p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-blue-600" />
+                Find Solar Installers in {mentionedCities.map(c => c.name).join(' & ')}
+              </h3>
+              <p className="text-sm text-gray-700 mb-4">
+                Looking for verified solar installers? Browse our directory of trusted companies in your city:
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {mentionedCities.map(city => (
+                  <Link
+                    key={city.slug}
+                    href={`/${city.slug}`}
+                    className="flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-100 hover:text-blue-800 px-4 py-2.5 rounded-lg font-semibold transition shadow-sm border border-blue-200"
+                  >
+                    <MapPin className="h-4 w-4" />
+                    Solar Installers in {city.name} →
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* CTA Box */}
           <div className="mt-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-8 text-white text-center">

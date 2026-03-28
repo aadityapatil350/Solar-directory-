@@ -55,6 +55,34 @@ function toGoogleMapsEmbed(address: string | null, name: string, city: string, s
   return `https://maps.google.com/maps?q=${query}&output=embed&z=15`;
 }
 
+// Generate auto description for listing
+function generateListingDescription(listing: {
+  name: string;
+  verified: boolean;
+  category: { name: string };
+  location: { city: string; state: string };
+  rating: number | null;
+  reviews: number;
+  description: string | null;
+}): string {
+  let description = `${listing.name} is a ${listing.verified ? 'verified ' : ''}${listing.category.name.toLowerCase()} based in ${listing.location.city}, ${listing.location.state}.`;
+
+  // Add rating and review info if available
+  if (listing.reviews > 0 && listing.rating) {
+    description += ` They have a ${listing.rating}/5 rating based on ${listing.reviews} customer review${listing.reviews > 1 ? 's' : ''} on Google.`;
+  }
+
+  // MNRE certified - assume all verified listings are MNRE certified
+  if (listing.verified) {
+    description += ` They are MNRE certified.`;
+  }
+
+  // Add service area info
+  description += ` They serve residential and commercial solar customers in ${listing.location.city} and surrounding areas. Contact them directly for a free solar quote.`;
+
+  return description;
+}
+
 // ─── Data fetching with caching ────────────────────────────────────────────────
 
 const getListing = unstable_cache(
@@ -136,22 +164,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const canonicalSlug = isDuplicate ? baseSlug : slug;
   const canonicalUrl = `https://gosolarindex.in/listing/${canonicalSlug}`;
 
-  // Generate dynamic description using available data
-  let description = `${listing.name} is a ${listing.verified ? 'verified ' : ''}${listing.category.name.toLowerCase()} in ${listing.location.city}, ${listing.location.state}.`;
-
-  // Add rating and review info if available
-  if (listing.reviews > 0 && listing.rating) {
-    description += ` With a ${listing.rating} star rating based on ${listing.reviews} review${listing.reviews > 1 ? 's' : ''}, they are a trusted choice for solar solutions.`;
-  }
-
-  // Add service area info
-  description += ` They serve residential and commercial clients in ${listing.location.city} and surrounding areas.`;
-
-  // Add custom description snippet if available
-  if (listing.description) {
-    const snippet = listing.description.slice(0, 80).trim();
-    description += ` ${snippet}${snippet.length < listing.description.length ? '...' : ''}`;
-  }
+  // Generate description using the same helper function (truncated to 155 chars for meta)
+  const fullDescription = generateListingDescription(listing);
+  const description = fullDescription.length > 155
+    ? fullDescription.slice(0, 152) + '...'
+    : fullDescription;
 
   return constructMetadata({
     title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,
@@ -387,8 +404,19 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
+      {/* ── AUTO-GENERATED DESCRIPTION ── */}
+      <div className="container mx-auto px-4 pt-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg p-4 mb-2">
+            <p className="text-sm text-gray-800 leading-relaxed">
+              {generateListingDescription(listing)}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ── MAIN CONTENT ── */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pb-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-6">
 

@@ -7,6 +7,8 @@ import ListingCard from '@/components/ListingCard';
 import LeadForm from '@/components/LeadForm';
 import Link from 'next/link';
 import { ChevronRight, MapPin } from 'lucide-react';
+import Script from 'next/script';
+import { getStateDescription, getStateFAQs } from '@/lib/stateData';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -56,8 +58,63 @@ export default async function StatePage({ params }: Props) {
 
   const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } });
 
+  // Get state-specific content
+  const faqs = getStateFAQs(state);
+
+  const siteUrl = 'https://gosolarindex.in';
+
+  // BreadcrumbList Schema
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Locations',
+        item: `${siteUrl}/locations`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: state,
+        item: `${siteUrl}/states/${slug}`,
+      },
+    ],
+  };
+
+  // FAQPage Schema
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <Header />
 
       {/* Breadcrumb */}
@@ -103,6 +160,37 @@ export default async function StatePage({ params }: Props) {
       </section>
 
       <div className="container mx-auto px-4 py-10">
+        {/* About Solar Section */}
+        <div className="mb-10 bg-white rounded-xl p-6 shadow-md">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            About Solar in {state}
+          </h2>
+          <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg">
+            <p className="text-gray-800 leading-relaxed">
+              {getStateDescription(state)}
+            </p>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="mb-10 bg-white rounded-xl p-6 shadow-md">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Frequently Asked Questions - Solar in {state}
+          </h2>
+          <div className="space-y-6">
+            {faqs.map((faq, index) => (
+              <div key={index} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  {faq.question}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {faq.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-4 gap-8">
 
           {/* Sidebar */}

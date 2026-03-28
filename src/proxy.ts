@@ -3,6 +3,16 @@ import { verifySession } from '@/lib/session';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = request.headers.get('host') || '';
+
+  // PRIORITY 1: Enforce non-www canonical domain (gosolarindex.in)
+  // If request comes from www.gosolarindex.in, redirect to gosolarindex.in
+  if (hostname.startsWith('www.')) {
+    const url = request.nextUrl.clone();
+    url.host = hostname.replace('www.', '');
+    url.protocol = 'https:';
+    return NextResponse.redirect(url, 301); // Permanent redirect
+  }
 
   // Handle redirects for old URLs to prevent 404s in GSC
   // Redirect /locations/{slug} to /{city-name}
@@ -40,5 +50,14 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/locations/:path*'],
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, icon.svg (icons)
+     * - public assets (images, etc.)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|icon.svg|.*\\.(?:jpg|jpeg|gif|png|svg|ico|webp)).*)',
+  ],
 };
