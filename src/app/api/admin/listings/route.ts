@@ -151,8 +151,8 @@ export async function PATCH(request: Request) {
       include: { category: true, location: true },
     });
 
-    revalidateTag('listings');
-    revalidateTag('homepage');
+    revalidateTag('listings', 'max');
+    revalidateTag('homepage', 'max');
     return NextResponse.json({ success: true, listing: updatedListing });
   } catch (error) {
     console.error('Error updating listing:', error);

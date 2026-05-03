@@ -74,8 +74,8 @@ export async function PATCH(request: Request) {
       },
     });
 
-    revalidateTag('listings');
-    revalidateTag('homepage');
+    revalidateTag('listings', 'max');
+    revalidateTag('homepage', 'max');
     return NextResponse.json({ listing: updated });
   } catch (error) {
     console.error('Dashboard listing PATCH error:', error);
