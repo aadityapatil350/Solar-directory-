@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export async function GET() {
   try {
@@ -73,6 +74,7 @@ export async function PATCH(request: Request) {
       },
     });
 
+    revalidateTag('listings');
     return NextResponse.json({ listing: updated });
   } catch (error) {
     console.error('Dashboard listing PATCH error:', error);

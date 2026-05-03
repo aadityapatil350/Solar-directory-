@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 async function verifyAuth(request: Request): Promise<{ success: boolean; user?: any }> {
   const authHeader = request.headers.get('authorization');
@@ -150,6 +151,7 @@ export async function PATCH(request: Request) {
       include: { category: true, location: true },
     });
 
+    revalidateTag('listings');
     return NextResponse.json({ success: true, listing: updatedListing });
   } catch (error) {
     console.error('Error updating listing:', error);

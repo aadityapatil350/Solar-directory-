@@ -139,6 +139,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
     }
 
+    if (!city && !rawLocationId) {
+      return NextResponse.json({ error: 'City is required' }, { status: 400 });
+    }
+
     if (!/^[6-9]\d{9}$/.test(phone) && phone !== '0000000000') {
       return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 });
     }
