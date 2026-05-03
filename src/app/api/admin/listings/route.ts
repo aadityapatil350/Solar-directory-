@@ -152,6 +152,7 @@ export async function PATCH(request: Request) {
     });
 
     revalidateTag('listings');
+    revalidateTag('homepage');
     return NextResponse.json({ success: true, listing: updatedListing });
   } catch (error) {
     console.error('Error updating listing:', error);
