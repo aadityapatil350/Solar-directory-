@@ -11,7 +11,7 @@ import { unstable_cache } from 'next/cache';
 import {
   Phone, Mail, Globe, MapPin, Star, ShieldCheck,
   ChevronRight, Zap,
-  CheckCircle, Building2, Users,
+  CheckCircle, Building2,
   MessageCircle, TrendingUp,
 } from 'lucide-react';
 import Script from 'next/script';
@@ -53,6 +53,105 @@ function toYouTubeEmbed(url: string | null): string | null {
 function toGoogleMapsEmbed(address: string | null, name: string, city: string, state: string): string {
   const query = encodeURIComponent(`${address || name} ${city} ${state} India`);
   return `https://maps.google.com/maps?q=${query}&output=embed&z=15`;
+}
+
+// Generate category-specific buyer's guide content
+function getCategoryGuide(categoryName: string, city: string, state: string): { title: string; intro: string; points: { heading: string; text: string }[]; faqs: { q: string; a: string }[] } {
+  const lc = categoryName.toLowerCase();
+
+  if (lc.includes('residential')) {
+    return {
+      title: `Residential Solar Installation in ${city} — Buyer's Guide`,
+      intro: `Installing solar panels on your home in ${city}, ${state} is one of the best financial decisions you can make in 2025. With rising electricity tariffs and generous subsidies under PM Surya Ghar Yojana, most homeowners see payback in 3–6 years and then enjoy free electricity for 20+ more years.`,
+      points: [
+        { heading: 'Right System Size', text: `For a typical ${city} home consuming 300–500 units per month, a 3–5 kW system is ideal. Smaller 1–2 kW systems suit apartments. Your installer will calculate the exact size based on your electricity bill and roof space.` },
+        { heading: 'PM Surya Ghar Subsidy', text: `Residential buyers in ${state} can claim up to ₹78,000 subsidy under PM Surya Ghar Muft Bijli Yojana — register at pmsuryaghar.gov.in before signing with any installer.` },
+        { heading: 'Net Metering', text: `${city} homeowners with on-grid solar systems can export excess power to the ${state} grid and receive credit on their electricity bill, reducing your annual bill to near zero.` },
+        { heading: 'Panel & Inverter Quality', text: `Insist on MNRE ALMM-listed panels (Waaree, Adani Solar, Tata Power Solar, Vikram Solar) and reputed inverters (Sungrow, Growatt, SMA). Avoid unknown brands with no Indian service centers.` },
+        { heading: 'Workmanship Warranty', text: `Beyond the 25-year panel performance warranty, ensure your installer provides at least 2–5 years workmanship warranty on installation quality. Get this in writing in the contract.` },
+      ],
+      faqs: [
+        { q: `What is the average cost of residential solar in ${city}?`, a: `A 3 kW residential solar system in ${city} typically costs ₹1,50,000–₹1,95,000 before subsidy. After the PM Surya Ghar subsidy of ₹78,000, your net cost is ₹72,000–₹1,17,000. Prices vary based on panel brand and installer.` },
+        { q: 'How long does residential solar installation take?', a: 'From signing the contract to final commissioning, the process typically takes 45–90 days. The physical installation takes just 1–3 days; the majority of time is DISCOM application and net meter installation.' },
+        { q: `Is ${city} a good location for solar panels?`, a: `Yes. ${city} receives 4.5–6.5 peak sun hours daily depending on the season, making it suitable for rooftop solar. Peak generation occurs in the summer months (March–May), which coincides with highest AC usage — maximizing self-consumption.` },
+      ],
+    };
+  }
+
+  if (lc.includes('commercial')) {
+    return {
+      title: `Commercial Solar Installation in ${city} — Business Guide`,
+      intro: `For businesses in ${city}, commercial rooftop solar delivers compelling returns — typically 3–5 year payback with 40% accelerated depreciation tax benefit in Year 1 and GST input credit recovery. With commercial electricity tariffs at ₹8–₹17/unit in ${state}, every unit of self-generated solar power represents significant savings.`,
+      points: [
+        { heading: 'System Sizing for Businesses', text: `Commercial systems range from 10 kW for small shops to 500 kW+ for factories. The right size depends on your rooftop area, sanctioned load, and daytime consumption pattern. A detailed energy audit is recommended before sizing.` },
+        { heading: 'Tax Benefits', text: `Under Section 32 of the Income Tax Act, solar assets qualify for 40% accelerated depreciation in Year 1. For a ₹50 lakh investment at 30% tax rate, this saves ₹6 lakh in taxes in the first year alone. Combined with GST input credit, effective cost drops significantly.` },
+        { heading: 'Financing Options', text: `Commercial solar can be financed via equipment loans (SBI Surya Shakti, PNB, HDFC Green Loans), RESCO/PPA model (zero capex), or operating lease. RESCO is increasingly popular for businesses that want solar without upfront investment.` },
+        { heading: 'Net Metering for Commercial', text: `${state} allows commercial net metering up to 500 kW per connection. Excess solar power is exported at rates set by ${state} Electricity Regulatory Commission, credited on your monthly bill.` },
+        { heading: 'EPC Quality Matters More', text: `For large commercial installations, choose only experienced EPC contractors with references from similar capacity projects. Poor installation on a 100 kW+ system can cost crores in lost generation and roof damage.` },
+      ],
+      faqs: [
+        { q: `What is the ROI for commercial solar in ${city}?`, a: `Typical commercial solar in ${city} delivers 20–33% IRR with 3–5 year payback. Exact ROI depends on your electricity tariff slab, system size, and financing structure. High-tariff consumers (above ₹10/unit) see the fastest payback.` },
+        { q: 'Does my business qualify for PM Surya Ghar subsidy?', a: 'No — PM Surya Ghar is for residential consumers only. However, commercial installations benefit from much larger tax advantages (40% accelerated depreciation, GST ITC) which often exceed the residential subsidy in financial value.' },
+        { q: 'How much rooftop area does my business need for solar?', a: 'Approximately 80–100 sq ft (7.5–9 sq meters) of shadow-free rooftop per kW of solar capacity. A 50 kW system needs roughly 4,000–5,000 sq ft. Your installer will do a detailed layout to maximize your rooftop utilization.' },
+      ],
+    };
+  }
+
+  if (lc.includes('dealer') || lc.includes('panel')) {
+    return {
+      title: `How to Buy Solar Panels in ${city} — Dealer's Guide`,
+      intro: `Buying solar panels from the right dealer in ${city} ensures you get genuine, high-quality products with valid warranties. ${state} has numerous authorized dealers for top brands — understanding what to look for helps you avoid counterfeit panels and overpriced installations.`,
+      points: [
+        { heading: 'MNRE ALMM Certification', text: `Only purchase panels listed on the MNRE Approved List of Models and Manufacturers (ALMM). ALMM-listed panels are mandatory for PM Surya Ghar subsidy claims. Verify your panel model at mnre.gov.in/almm before purchasing.` },
+        { heading: 'Top Brands Available in ${city}', text: `Major solar panel brands with dealer networks in ${city} include Waaree, Adani Solar, Tata Power Solar, Vikram Solar, Luminous, and Havells. Each has its own pricing and warranty structure.` },
+        { heading: 'Price per Watt', text: `In ${city}, standard mono PERC panels are priced at ₹22–₹32 per watt for Tier 1 brands. TOPCon panels command a premium at ₹28–₹38 per watt. Always compare price per watt, not just system cost.` },
+        { heading: 'Warranty Documentation', text: `Ensure you receive official warranty documentation from the manufacturer — not just from the dealer. The product warranty (10 years for defects) and performance warranty (25 years at 80%+ output) should be clearly documented with the manufacturer's letterhead.` },
+        { heading: 'Authorized vs Unauthorized', text: `Buy only from authorized dealers. Unauthorized dealers may offer lower prices but often sell refurbished or out-of-spec panels. Check brand websites for official dealer lists in ${city}.` },
+      ],
+      faqs: [
+        { q: `What is the price of solar panels in ${city} in 2025?`, a: `Solar panels in ${city} are priced between ₹22–₹36 per watt for branded Tier 1 panels (Waaree, Adani, Tata). A complete 3 kW panel set (8–10 panels) costs ₹65,000–₹1,05,000. Prices vary by brand, wattage, and technology (mono PERC vs TOPCon).` },
+        { q: 'Should I buy panels separately or as a package?', a: 'For most homeowners, buying a complete package from an installer (panels + inverter + installation + subsidy assistance) is more practical than buying panels separately. Individual panel purchase makes sense only if you have your own installer or are replacing specific panels in an existing system.' },
+        { q: 'How do I verify a solar panel is genuine?', a: 'Check the serial number on the panel against the manufacturer\'s database (available on most brand websites). Verify the ALMM model number matches exactly. Genuine panels have clear brand markings, specifications printed on the back, and come with manufacturer seal intact.' },
+      ],
+    };
+  }
+
+  if (lc.includes('inverter')) {
+    return {
+      title: `Solar Inverters in ${city} — Buyer's Guide`,
+      intro: `The solar inverter is the most critical component of your solar system — it converts DC power from panels to AC power for your home and manages grid connectivity. Choosing the right inverter brand and type in ${city} determines your system's reliability, efficiency, and after-sales service experience.`,
+      points: [
+        { heading: 'Types of Inverters', text: `String inverters (most affordable, best for standard rooftops), microinverters (panel-level optimization, best for complex rooftops with shading), and hybrid inverters (integrated battery management, best for homes with power cuts) are the three main types available in ${city}.` },
+        { heading: 'Top Brands in ${city}', text: `Sungrow leads the market with the best service network in India. Growatt offers excellent value. SMA (Germany) commands a premium for reliability. Delta and ABB/Fimer serve the commercial segment. Local brands like Luminous have wide service centers.` },
+        { heading: 'Warranty and Service', text: `Standard warranty is 5 years for most brands; Sungrow offers 10 years. Crucially, verify the brand has a service center in ${city} or ${state} — a warranty from a company with no local presence is hard to claim.` },
+        { heading: 'Monitoring Apps', text: `Good inverters come with free mobile apps: iSolarCloud (Sungrow), ShinePhone (Growatt), mySMA (SMA). These let you track daily generation, detect underperformance, and get alerts for faults. Don't buy an inverter without a monitoring solution.` },
+        { heading: 'Grid Compliance', text: `Inverters for Indian grid must comply with IEC 62116 (anti-islanding), IEC 61727, and CEA grid code. All reputed brands comply. Avoid cheap inverters that may not have proper grid protection — they can damage your home wiring or create safety hazards.` },
+      ],
+      faqs: [
+        { q: `What is the price of solar inverters in ${city}?`, a: `Solar inverter prices in ${city}: String inverters range from ₹14,000–₹50,000 for 3–5 kW residential units (depending on brand). Hybrid inverters cost ₹35,000–₹1,10,000 for 3–5 kW. Microinverters cost 3–5x more than string inverters.` },
+        { q: 'How long does a solar inverter last?', a: 'Quality string inverters last 10–15 years. Hybrid inverters also last 10–15 years. When budgeting for solar, plan for one inverter replacement during the 25-year panel life. Budget ₹18,000–₹50,000 for replacement around year 12–15.' },
+        { q: 'What happens to my solar system if the inverter fails?', a: 'The system stops generating usable power (though panels still produce DC). Contact your installer or the inverter brand\'s service center. Most brands resolve inverter issues within 3–7 days if within warranty.' },
+      ],
+    };
+  }
+
+  // Default: AMC / Maintenance
+  return {
+    title: `Solar Panel Maintenance in ${city} — What to Know`,
+    intro: `Solar systems in ${city} require periodic maintenance to ensure they generate maximum power throughout their 25+ year lifespan. ${state}'s climate — whether dusty, humid, or variable — affects how frequently your panels need attention. A proactive maintenance approach protects your investment.`,
+    points: [
+      { heading: 'Cleaning Frequency', text: `In ${city}, solar panels should be cleaned every 3–6 weeks during dry season, and after dust storms or monsoon. Dirty panels can lose 10–25% output. Use soft cloth and clean water — never abrasive materials or pressure washers.` },
+      { heading: 'Annual Inspection', text: `Schedule one comprehensive annual inspection: check inverter performance, wiring connections, mounting bolts, earthing system, and panel condition. This catches issues before they become expensive problems.` },
+      { heading: 'AMC Plans', text: `Annual Maintenance Contracts (AMC) in ${city} cost ₹3,000–₹8,000 per year for a 3–5 kW system, typically including 2–4 cleaning visits and priority fault response. AMC is recommended for systems above 3 kW or owners who can't access the rooftop easily.` },
+      { heading: 'Monitoring for Issues', text: `Use your inverter's monitoring app to track daily generation. If generation drops more than 15% without weather explanation, investigate promptly. Common causes: soiling, shading from new construction, inverter fault, or failed panel.` },
+      { heading: 'Warranty Claims', text: `Keep all documentation — installation contract, commissioning certificate, inverter and panel warranties. For warranty claims, contact the original installer first, then the brand's service center directly if the installer is unresponsive.` },
+    ],
+    faqs: [
+      { q: `How much does solar panel maintenance cost per year in ${city}?`, a: `Annual maintenance costs for a 3 kW system in ${city} range from ₹2,000–₹6,000 depending on your cleaning frequency and whether you have an AMC. The biggest cost is professional cleaning — ₹300–₹600 per visit for a standard residential system.` },
+      { q: 'How often should I service my solar inverter?', a: 'Inverters are largely self-maintaining but should be checked annually: clean the cooling vents, check for error codes, and verify monitoring data. A full service by a technician every 2–3 years is recommended for inverters above 5 kW.' },
+      { q: 'What are signs my solar system needs maintenance?', a: 'Key warning signs: generation consistently lower than expected by 10%+, inverter showing error codes or red lights, visible physical damage to panels (cracks, discoloration), loose mounting structure, or any burning smell near the inverter.' },
+    ],
+  };
 }
 
 // Generate auto description for listing
@@ -720,6 +819,60 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
       </div>
+
+      {/* ── BUYER'S GUIDE & FAQ SECTION ── */}
+      {(() => {
+        const guide = getCategoryGuide(listing.category.name, listing.location.city, listing.location.state);
+        return (
+          <div className="container mx-auto px-4 pb-8">
+            <div className="max-w-7xl mx-auto space-y-6">
+              {/* Buyer's Guide */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900 mb-3">{guide.title}</h2>
+                <p className="text-sm text-gray-600 leading-relaxed mb-5">{guide.intro}</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {guide.points.map((p, i) => (
+                    <div key={i} className="bg-orange-50 border border-orange-100 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <CheckCircle className="h-4 w-4 text-orange-500 shrink-0" />
+                        <h3 className="text-sm font-semibold text-gray-900">{p.heading}</h3>
+                      </div>
+                      <p className="text-xs text-gray-600 leading-relaxed ml-6">{p.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* FAQ Section */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900 mb-5">
+                  Frequently Asked Questions — {listing.category.name} in {listing.location.city}
+                </h2>
+                <div className="space-y-5">
+                  {guide.faqs.map((faq, i) => (
+                    <div key={i} className="border-b border-gray-100 last:border-b-0 pb-5 last:pb-0">
+                      <h3 className="text-sm font-semibold text-gray-900 mb-2">{faq.q}</h3>
+                      <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Internal links */}
+              <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-100">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Helpful Resources</h3>
+                <div className="flex flex-wrap gap-3">
+                  <Link href="/blog/pm-surya-ghar-yojana-application-guide" className="text-sm text-orange-600 hover:underline">→ PM Surya Ghar Subsidy Guide</Link>
+                  <Link href="/blog/solar-system-size-guide-india" className="text-sm text-orange-600 hover:underline">→ How to Size Your Solar System</Link>
+                  <Link href="/blog/how-to-choose-solar-installer-india" className="text-sm text-orange-600 hover:underline">→ How to Choose an Installer</Link>
+                  <Link href="/blog/solar-energy-savings-india-calculator-guide" className="text-sm text-orange-600 hover:underline">→ Calculate Your Solar Savings</Link>
+                  <Link href={`/${listing.location.city.toLowerCase()}`} className="text-sm text-orange-600 hover:underline">→ More Solar Companies in {listing.location.city}</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── MOBILE STICKY BOTTOM BAR ── */}
       {listing.phone && (
