@@ -109,9 +109,9 @@ export default function HomeClient({ initialStats, initialListings = [], initial
     async function fetchData() {
       try {
         const [listingsRes, categoriesRes, locationsRes] = await Promise.all([
-          fetch('/api/listings?take=4000'),
-          fetch('/api/categories'),
-          fetch('/api/locations'),
+          fetch('/api/listings?take=4000', { cache: 'no-store' }),
+          fetch('/api/categories', { cache: 'no-store' }),
+          fetch('/api/locations', { cache: 'no-store' }),
         ]);
         const listingsData: Listing[] = await listingsRes.json();
         const categoriesData: Category[] = await categoriesRes.json();

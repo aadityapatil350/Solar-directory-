@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 // import { isAdmin } from '@/lib/auth-helpers'; // TODO: Uncomment after migration
 
 export async function GET(request: Request) {
