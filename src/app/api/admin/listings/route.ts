@@ -106,6 +106,8 @@ export async function POST(request: Request) {
       include: { category: true, location: true },
     });
 
+    revalidateTag('listings', 'max');
+    revalidateTag('homepage', 'max');
     return NextResponse.json({ success: true, listing }, { status: 201 });
   } catch (error) {
     console.error('Error creating listing:', error);
@@ -171,6 +173,8 @@ export async function DELETE(request: Request) {
     if (!listingId) return NextResponse.json({ error: 'Listing ID is required' }, { status: 400 });
 
     await prisma.listing.delete({ where: { id: listingId } });
+    revalidateTag('listings', 'max');
+    revalidateTag('homepage', 'max');
     return NextResponse.json({ success: true, message: 'Listing deleted' });
   } catch (error) {
     console.error('Error deleting listing:', error);
