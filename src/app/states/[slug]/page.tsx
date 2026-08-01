@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { constructMetadata } from '@/lib/metadata';
+import { constructStateMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import ListingCard from '@/components/ListingCard';
 import LeadForm from '@/components/LeadForm';
 import Link from 'next/link';
 import { ChevronRight, MapPin } from 'lucide-react';
-import { getStateDescription, getStateFAQs } from '@/lib/stateData';
+
+import { getStateDescription, getStateFAQs, stateSpecificData } from '@/lib/stateData';
+import { CheckCircle, Info } from 'lucide-react';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -24,11 +26,14 @@ function slugToState(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const state = slugToState(slug);
-  return constructMetadata({
-    title: `Best Solar Installers in ${state} — Top Companies`,
-    description: `Find verified solar installers, dealers, and service providers across ${state}. Get free quotes, compare prices, and switch to solar today. PM Surya Ghar Yojana eligible.`,
-    path: `/states/${slug}`,
+  const locs = await prisma.location.findMany({
+    where: { state: { equals: state, mode: 'insensitive' } },
+    select: { id: true },
   });
+  const listingCount = locs.length
+    ? await prisma.listing.count({ where: { locationId: { in: locs.map((l) => l.id) } } })
+    : 0;
+  return constructStateMetadata(state, locs.length, listingCount);
 }
 
 // Remove force-dynamic to allow proper SSR
@@ -168,6 +173,39 @@ export default async function StatePage({ params }: Props) {
               {getStateDescription(state)}
             </p>
           </div>
+
+          {(() => {
+            const s = stateSpecificData[state.toLowerCase()];
+            if (!s) return null;
+            return (
+              <div className="mt-6 grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Info className="h-5 w-5 text-orange-500" />
+                    Solar Installation Costs in {state}
+                  </h3>
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-2">
+                    <div className="flex justify-between"><span className="text-gray-700 font-medium">3kW System:</span><span className="text-orange-600 font-bold">{s.avgCost3kW}</span></div>
+                    <div className="flex justify-between"><span className="text-gray-700 font-medium">5kW System:</span><span className="text-orange-600 font-bold">{s.avgCost5kW}</span></div>
+                    <p className="text-sm text-gray-600 mt-2 pt-2 border-t border-orange-200">💡 {s.subsidyScheme}</p>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Net Metering & DISCOMs</h3>
+                  <p className="text-gray-700 text-sm mb-2"><span className="font-medium">DISCOMs:</span> {s.discoms.join(', ')}</p>
+                  <p className="text-gray-700 text-sm mb-3"><span className="font-medium">Solar Potential:</span> {s.solarPotential}</p>
+                  <ul className="space-y-1.5">
+                    {s.highlights.map((h, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* FAQ Section */}

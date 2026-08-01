@@ -11,7 +11,6 @@ import { citySpecificData, getCityFAQs, getCityDescription } from '@/lib/cityDat
 
 // Use ISR for better SEO - revalidate every 1 hour
 export const revalidate = 3600;
-export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{
@@ -68,6 +67,24 @@ export default async function CityPage({ params }: PageProps) {
   const categories = await prisma.category.findMany({
     orderBy: { name: 'asc' },
   });
+
+  // Group listings by brand keyword found in name (for brand+city SEO)
+  const brandKeywords: { label: string; slug: string; patterns: RegExp }[] = [
+    { label: 'Waaree', slug: 'waaree', patterns: /waaree/i },
+    { label: 'Tata Power Solar', slug: 'tata', patterns: /\btata\b/i },
+    { label: 'Adani Solar', slug: 'adani', patterns: /adani/i },
+    { label: 'Luminous', slug: 'luminous', patterns: /luminous/i },
+    { label: 'Microtek', slug: 'microtek', patterns: /microtek/i },
+    { label: 'Exide', slug: 'exide', patterns: /exide/i },
+    { label: 'Loom Solar', slug: 'loom', patterns: /loom\s*solar/i },
+    { label: 'Vikram Solar', slug: 'vikram', patterns: /vikram/i },
+  ];
+  const brandGroups = brandKeywords
+    .map((b) => ({
+      ...b,
+      dealers: listings.filter((l) => b.patterns.test(l.name)).slice(0, 6),
+    }))
+    .filter((b) => b.dealers.length > 0);
 
   // BreadcrumbList Schema
   const breadcrumbSchema = {
@@ -185,6 +202,38 @@ export default async function CityPage({ params }: PageProps) {
               >
                 Browse All Locations
               </Link>
+            </div>
+          )}
+
+          {/* Brand-authorised dealer sections (captures brand+city long-tail) */}
+          {brandGroups.length > 0 && (
+            <div className="mt-12 space-y-6">
+              {brandGroups.map((brand) => (
+                <div key={brand.slug} className="bg-white rounded-xl p-6">
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+                    Authorised {brand.label} Dealers in {cityData.city}
+                  </h2>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Verified {brand.label} channel partners & dealers in {cityData.city}, {cityData.state}. Get genuine panels/inverters with manufacturer warranty and PM Surya Ghar subsidy assistance.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {brand.dealers.map((d) => (
+                      <Link
+                        key={d.id}
+                        href={`/listing/${d.slug}`}
+                        className="block border border-gray-200 hover:border-orange-400 hover:bg-orange-50 rounded-lg p-3 transition"
+                      >
+                        <p className="font-medium text-gray-900 text-sm line-clamp-2">{d.name}</p>
+                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {cityData.city}
+                          {d.verified && <span className="ml-2 text-green-600">✓ Verified</span>}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 

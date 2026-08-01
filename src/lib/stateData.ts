@@ -224,6 +224,96 @@ export const stateSpecificData: Record<string, StateInfo> = {
       'Government subsidies for agricultural solar pumps'
     ]
   },
+  'chhattisgarh': {
+    state: 'Chhattisgarh',
+    topCities: ['Raipur', 'Bilaspur', 'Bhilai', 'Korba', 'Durg'],
+    discoms: ['CSPDCL'],
+    solarPotential: '5.5-6 peak sun hours daily',
+    avgCost3kW: '₹42,000 - ₹75,000',
+    avgCost5kW: '₹68,000 - ₹1,22,000',
+    subsidyScheme: 'PM Surya Ghar Yojana (₹78,000) + CREDA Chhattisgarh solar policy',
+    highlights: [
+      'CREDA (Chhattisgarh Renewable Energy Dev. Agency) coordinates state subsidy',
+      'CSPDCL offers streamlined net metering (20-30 days)',
+      'Central India location with excellent solar irradiation',
+      'Growing state solar market with competitive pricing'
+    ]
+  },
+  'bihar': {
+    state: 'Bihar',
+    topCities: ['Patna', 'Gaya', 'Muzaffarpur', 'Bhagalpur', 'Darbhanga'],
+    discoms: ['SBPDCL', 'NBPDCL'],
+    solarPotential: '5-5.5 peak sun hours daily',
+    avgCost3kW: '₹42,000 - ₹76,000',
+    avgCost5kW: '₹70,000 - ₹1,25,000',
+    subsidyScheme: 'PM Surya Ghar Yojana (₹78,000) via BREDA assistance',
+    highlights: [
+      'BREDA (Bihar Renewable Energy Development Agency) coordinates subsidy',
+      'SBPDCL covers south Bihar, NBPDCL covers north Bihar for net metering',
+      'Approval takes 15-45 days depending on DISCOM',
+      'Rapidly growing state solar market'
+    ]
+  },
+  'odisha': {
+    state: 'Odisha',
+    topCities: ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Berhampur', 'Sambalpur'],
+    discoms: ['TPCODL', 'TPWODL', 'TPNODL', 'TPSODL'],
+    solarPotential: '5.5-6 peak sun hours daily',
+    avgCost3kW: '₹42,000 - ₹75,000',
+    avgCost5kW: '₹68,000 - ₹1,22,000',
+    subsidyScheme: 'PM Surya Ghar Yojana (₹78,000) + Odisha Renewable Energy Policy',
+    highlights: [
+      'Tata Power operates 4 regional DISCOMs (TPCODL/TPWODL/TPNODL/TPSODL)',
+      'Fastest net metering approvals in Eastern India (20-30 days)',
+      'OREDA (Odisha Renewable Energy) assists with applications',
+      'Strong state-level push for rooftop solar'
+    ]
+  },
+  'jharkhand': {
+    state: 'Jharkhand',
+    topCities: ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro'],
+    discoms: ['JBVNL'],
+    solarPotential: '5-5.5 peak sun hours daily',
+    avgCost3kW: '₹44,000 - ₹78,000',
+    avgCost5kW: '₹72,000 - ₹1,26,000',
+    subsidyScheme: 'PM Surya Ghar Yojana (₹78,000) via JREDA',
+    highlights: [
+      'JBVNL handles all Jharkhand net metering (30-45 days)',
+      'JREDA (Jharkhand Renewable Energy Dev. Agency) coordinates subsidy',
+      'Industrial cities (Jamshedpur, Bokaro) drive commercial solar',
+      'Growing residential adoption in Ranchi'
+    ]
+  },
+  'assam': {
+    state: 'Assam',
+    topCities: ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon'],
+    discoms: ['APDCL'],
+    solarPotential: '4.5-5 peak sun hours daily',
+    avgCost3kW: '₹46,000 - ₹80,000',
+    avgCost5kW: '₹75,000 - ₹1,30,000',
+    subsidyScheme: 'PM Surya Ghar Yojana (₹78,000) via AEDA',
+    highlights: [
+      'APDCL handles all Assam net metering (30-45 days)',
+      'AEDA (Assam Energy Development Agency) assists with subsidy',
+      'Higher rainfall region — panel cleaning less frequent needed',
+      'Northeast gateway with growing solar demand'
+    ]
+  },
+  'uttarakhand': {
+    state: 'Uttarakhand',
+    topCities: ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rudrapur'],
+    discoms: ['UPCL'],
+    solarPotential: '5-5.5 peak sun hours daily',
+    avgCost3kW: '₹44,000 - ₹78,000',
+    avgCost5kW: '₹72,000 - ₹1,26,000',
+    subsidyScheme: 'PM Surya Ghar Yojana (₹78,000) + Uttarakhand solar policy',
+    highlights: [
+      'UPCL handles Uttarakhand net metering (30-45 days)',
+      'UREDA (Uttarakhand Renewable Energy) coordinates subsidy',
+      'Hill state — installations optimized for panel angle',
+      'Growing solar market in Dehradun & Haridwar valley'
+    ]
+  },
 };
 
 /**
