@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { verifyAdmin } from '@/lib/verify-admin';
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 // POST /api/admin/listings/upgrade
 // Body: { listingId, months } — months = 0 means downgrade (remove featured)
@@ -26,6 +27,8 @@ export async function POST(request: Request) {
       where: { id: listingId },
       data: { featured: false, premiumExpiresAt: null },
     });
+    revalidateTag('listings', 'max');
+    revalidateTag('homepage', 'max');
     return NextResponse.json({ success: true, listing: updated, action: 'downgraded' });
   }
 
@@ -44,5 +47,7 @@ export async function POST(request: Request) {
     include: { category: true, location: true },
   });
 
+  revalidateTag('listings', 'max');
+  revalidateTag('homepage', 'max');
   return NextResponse.json({ success: true, listing: updated, expiresAt, action: 'upgraded' });
 }

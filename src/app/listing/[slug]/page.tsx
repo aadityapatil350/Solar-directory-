@@ -256,9 +256,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!listing) return {};
 
   // Determine canonical URL
-  // If slug ends with -\d+ (e.g., company-name-2), canonical points to base slug
-  // Otherwise, self-referencing canonical
-  const baseSlug = slug.replace(/-\d+$/, '');
+  // If slug ends with -<1-2 digits> (e.g., company-name-2), canonical points to base slug
+  // Only match small suffixes so timestamp-based slugs (e.g. -1780146714660) are preserved
+  const baseSlug = slug.replace(/-\d{1,2}$/, '');
   const isDuplicate = baseSlug !== slug;
   const canonicalSlug = isDuplicate ? baseSlug : slug;
   const canonicalUrl = `https://gosolarindex.in/listing/${canonicalSlug}`;
@@ -284,8 +284,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const listing = await getListing(slug);
 
   // If listing not found, check if it's a duplicate pattern (-2, -3, etc.)
+  // Only match 1-2 digit suffixes to avoid stripping timestamp-based slugs (e.g. -1780146714660)
   if (!listing) {
-    const baseSlug = slug.replace(/-\d+$/, '');
+    const baseSlug = slug.replace(/-\d{1,2}$/, '');
     const isDuplicate = baseSlug !== slug;
 
     if (isDuplicate) {

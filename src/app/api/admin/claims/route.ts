@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/verify-admin';
 import { sendClaimApprovedEmail } from '@/lib/email';
+import { revalidateTag } from 'next/cache';
 
 // GET all claim requests — includes linked user info
 export async function GET(request: Request) {
@@ -101,6 +102,8 @@ export async function PATCH(request: Request) {
     console.error('Failed to send approval email:', emailErr);
   }
 
+  revalidateTag('listings', 'max');
+  revalidateTag('homepage', 'max');
   return NextResponse.json({ success: true, status: 'approved', ownerEmail: user.email, ownerName: user.name });
 }
 
