@@ -9,13 +9,13 @@ async function main() {
   const hashedPassword = await bcrypt.hash('Gara771!@', 10);
 
   const admin = await prisma.user.upsert({
-    where: { email: 'aadityabiz350@gmail.com' },
+    where: { email: 'adityabiz350@gmail.com' },
     update: {
       password: hashedPassword,
       role: 'admin',
     },
     create: {
-      email: 'aadityabiz350@gmail.com',
+      email: 'adityabiz350@gmail.com',
       name: 'Admin User',
       role: 'admin',
       password: hashedPassword,
@@ -24,7 +24,7 @@ async function main() {
 
   console.log('Admin user created/updated:', admin.email);
   console.log('\n✅ Admin credentials:');
-  console.log('   Email: aadityabiz350@gmail.com');
+  console.log('   Email: adityabiz350@gmail.com');
   console.log('   Password: [secured with bcrypt]');
   console.log('\n   Login at: https://gosolarindex.in/admin');
 }

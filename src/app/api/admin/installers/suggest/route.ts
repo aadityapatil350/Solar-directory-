@@ -6,7 +6,7 @@ async function verifyAuth(request: Request) {
   const auth = request.headers.get('authorization');
   if (!auth?.startsWith('Bearer ')) return false;
   const user = await prisma.user.findUnique({
-    where: { email: 'aadityabiz350@gmail.com', role: 'admin' },
+    where: { email: 'adityabiz350@gmail.com', role: 'admin' },
   });
   if (!user?.password) return false;
   return bcrypt.compare(auth.substring(7), user.password);

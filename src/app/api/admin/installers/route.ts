@@ -13,7 +13,7 @@ async function verifyAuth(request: Request): Promise<{ success: boolean; user?: 
 
   const user = await prisma.user.findUnique({
     where: {
-      email: 'aadityabiz350@gmail.com',
+      email: 'adityabiz350@gmail.com',
       role: 'admin',
     },
   });

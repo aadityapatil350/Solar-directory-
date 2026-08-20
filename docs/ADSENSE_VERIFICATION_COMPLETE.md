@@ -72,7 +72,7 @@ This ID is now:
 ### Step 1: Verify Site in AdSense Dashboard
 
 1. Go to [Google AdSense](https://www.google.com/adsense/)
-2. Sign in with `aadityabiz350@gmail.com`
+2. Sign in with `adityabiz350@gmail.com`
 3. The verification should now show as ✅ Complete
 
 ### Step 2: Create Ad Units

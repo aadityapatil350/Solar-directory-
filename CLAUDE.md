@@ -44,7 +44,7 @@
 11. **WhatsAppClick** — Tracks WhatsApp button clicks per listing
 12. **BlogPost** — Blog CMS posts
 
-**Admin email:** `aadityabiz350@gmail.com`
+**Admin email:** `adityabiz350@gmail.com`
 
 ## Three Separate Dashboards (DO NOT MIX)
 | Dashboard | URL | Role | Purpose |

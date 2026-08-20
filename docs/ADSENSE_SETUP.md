@@ -50,7 +50,7 @@ Disallow:
 ### Step 1: Verify Your Site in AdSense
 
 1. Go to [Google AdSense](https://www.google.com/adsense/)
-2. Sign in with `aadityabiz350@gmail.com`
+2. Sign in with `adityabiz350@gmail.com`
 3. Click "Add site"
 4. Enter: `https://gosolarindex.in`
 5. Click "Verify"
