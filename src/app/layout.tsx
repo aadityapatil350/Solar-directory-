@@ -9,8 +9,8 @@ const GA_ID = 'G-HRQJB0S57Q';
 const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-3540617055322931';
 
 export const metadata: Metadata = constructMetadata({
-  title: 'Find Solar Installers in India (2026) — 3948+ Verified Companies, Free Quotes',
-  description: 'Discover top-rated solar panel installers, dealers, and service providers across India. Compare prices, read reviews, get free quotes. PM Surya Ghar Yojana available.',
+  title: 'GoSolarIndex — Verified Solar Installers in India',
+  description: 'Compare verified solar installers, dealers and AMC providers across India. Free quotes, real reviews, and PM Surya Ghar subsidy guidance.',
 });
 
 const websiteSchema = {

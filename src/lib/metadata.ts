@@ -37,20 +37,6 @@ export function constructMetadata({
       shortcut: '/icon.svg',
       apple: '/icon.svg',
     },
-    keywords: [
-      'solar installers India',
-      'solar panel dealers',
-      'residential solar',
-      'commercial solar',
-      'solar subsidy',
-      'PM Surya Ghar',
-      'solar companies',
-      'solar installation',
-      'solar energy India',
-      'solar inverter',
-      'solar battery',
-      'solar AMC',
-    ],
     authors: [{ name: siteName }],
     creator: siteName,
     publisher: siteName,
@@ -95,11 +81,12 @@ export function constructMetadata({
   };
 }
 
+const currentYear = () => new Date().getFullYear();
+
 export function constructCityMetadata(city: string, state: string, count?: number): Metadata {
-  // Target multiple query intents in one title: "solar installers", "companies", "dealers", city, year.
-  // Keep under ~60 chars where possible to avoid Google truncation.
-  const countLabel = count ? `${count}+ ` : '';
-  const title = `Solar Panel Installers in ${city} — ${countLabel}Companies & Prices (2026)`;
+  const year = currentYear();
+  const countLabel = count ? `${count} Verified` : 'Verified';
+  const title = `Solar Installers in ${city} (${year}) — ${countLabel} Companies`;
   const description = `Compare ${count ? `${count} verified` : 'top'} solar companies, panel dealers & installers in ${city}, ${state}. 3kW from ₹42k after ₹78,000 PM Surya Ghar subsidy. Free quotes, no spam calls.`;
   return constructMetadata({
     title,
@@ -110,8 +97,9 @@ export function constructCityMetadata(city: string, state: string, count?: numbe
 }
 
 export function constructCategoryMetadata(category: string, city?: string): Metadata {
+  const year = currentYear();
   const locationText = city ? `in ${city}` : 'in India';
-  const title = `${category} ${locationText} — Verified Companies, Prices & Reviews (2026)`;
+  const title = `${category} ${locationText} — Verified Companies (${year})`;
   const description = `Find top-rated ${category.toLowerCase()} ${locationText}. Compare prices, read verified reviews, get 3 free quotes. PM Surya Ghar subsidy up to ₹78,000 available.`;
   return constructMetadata({
     title,
@@ -122,8 +110,9 @@ export function constructCategoryMetadata(category: string, city?: string): Meta
 }
 
 export function constructStateMetadata(state: string, cityCount?: number, listingCount?: number): Metadata {
-  const cLabel = listingCount ? `${listingCount}+ ` : '';
-  const title = `Solar Installers in ${state} — ${cLabel}Verified Companies & Dealers (2026)`;
+  const year = currentYear();
+  const cLabel = listingCount ? `${listingCount} Verified` : 'Verified';
+  const title = `Solar Installers in ${state} (${year}) — ${cLabel} Companies`;
   const desc = `Compare ${listingCount ? `${listingCount} verified` : 'top'} solar installers & panel dealers across ${cityCount ? `${cityCount}+ cities in ` : ''}${state}. PM Surya Ghar subsidy up to ₹78,000, free quotes, DISCOM approved.`;
   return constructMetadata({
     title,

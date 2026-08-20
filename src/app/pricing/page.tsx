@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { Check, X, Star, Zap, BadgeCheck, Shield, Clock } from 'lucide-react';
+import { getDirectoryStats } from '@/lib/stats';
 
 export const metadata: Metadata = constructMetadata({
   title: 'Pricing — Free & Featured Plans | GoSolarIndex',
@@ -73,7 +74,8 @@ const FAQS = [
   },
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const stats = await getDirectoryStats();
   return (
     <>
       <Header />
@@ -202,8 +204,8 @@ export default function PricingPage() {
 
           {/* Trust strip */}
           <div className="mt-10 text-center text-sm text-gray-500 flex flex-wrap justify-center gap-6">
-            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> 180+ verified businesses</span>
-            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> 52 cities covered</span>
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> {stats.verifiedListings.toLocaleString()}+ verified businesses</span>
+            <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> {stats.cityCount} cities covered</span>
             <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> Secure payments via Razorpay</span>
             <span className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-green-500" /> GST invoice provided</span>
           </div>

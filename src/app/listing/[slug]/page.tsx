@@ -60,7 +60,7 @@ function getCategoryGuide(categoryName: string, city: string, state: string): { 
   if (lc.includes('residential')) {
     return {
       title: `Residential Solar Installation in ${city} — Buyer's Guide`,
-      intro: `Installing solar panels on your home in ${city}, ${state} is one of the best financial decisions you can make in 2025. With rising electricity tariffs and generous subsidies under PM Surya Ghar Yojana, most homeowners see payback in 3–6 years and then enjoy free electricity for 20+ more years.`,
+      intro: `Installing solar panels on your home in ${city}, ${state} is one of the best financial decisions you can make right now. With rising electricity tariffs and generous subsidies under PM Surya Ghar Yojana, most homeowners see payback in 3–6 years and then enjoy free electricity for 20+ more years.`,
       points: [
         { heading: 'Right System Size', text: `For a typical ${city} home consuming 300–500 units per month, a 3–5 kW system is ideal. Smaller 1–2 kW systems suit apartments. Your installer will calculate the exact size based on your electricity bill and roof space.` },
         { heading: 'PM Surya Ghar Subsidy', text: `Residential buyers in ${state} can claim up to ₹78,000 subsidy under PM Surya Ghar Muft Bijli Yojana — register at pmsuryaghar.gov.in before signing with any installer.` },
@@ -107,7 +107,7 @@ function getCategoryGuide(categoryName: string, city: string, state: string): { 
         { heading: 'Authorized vs Unauthorized', text: `Buy only from authorized dealers. Unauthorized dealers may offer lower prices but often sell refurbished or out-of-spec panels. Check brand websites for official dealer lists in ${city}.` },
       ],
       faqs: [
-        { q: `What is the price of solar panels in ${city} in 2025?`, a: `Solar panels in ${city} are priced between ₹22–₹36 per watt for branded Tier 1 panels (Waaree, Adani, Tata). A complete 3 kW panel set (8–10 panels) costs ₹65,000–₹1,05,000. Prices vary by brand, wattage, and technology (mono PERC vs TOPCon).` },
+        { q: `What is the current price of solar panels in ${city}?`, a: `Solar panels in ${city} are priced between ₹22–₹36 per watt for branded Tier 1 panels (Waaree, Adani, Tata). A complete 3 kW panel set (8–10 panels) costs ₹65,000–₹1,05,000. Prices vary by brand, wattage, and technology (mono PERC vs TOPCon).` },
         { q: 'Should I buy panels separately or as a package?', a: 'For most homeowners, buying a complete package from an installer (panels + inverter + installation + subsidy assistance) is more practical than buying panels separately. Individual panel purchase makes sense only if you have your own installer or are replacing specific panels in an existing system.' },
         { q: 'How do I verify a solar panel is genuine?', a: 'Check the serial number on the panel against the manufacturer\'s database (available on most brand websites). Verify the ALMM model number matches exactly. Genuine panels have clear brand markings, specifications printed on the back, and come with manufacturer seal intact.' },
       ],

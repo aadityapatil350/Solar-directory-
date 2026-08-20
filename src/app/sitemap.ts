@@ -2,151 +2,128 @@ import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
+
+const BASE_URL = 'https://gosolarindex.in';
+
+// City slugs that get bumped priority (top metros)
+const TOP_CITIES = new Set([
+  'mumbai', 'delhi', 'bangalore', 'pune', 'hyderabad',
+  'chennai', 'kolkata', 'ahmedabad', 'jaipur', 'lucknow',
+]);
+
+// A city with fewer than this many listings is a thin page — exclude from sitemap.
+const MIN_LISTINGS_PER_CITY = 3;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://gosolarindex.in';
-
-  // Get categories, locations, blog posts, and states (excluding individual listings)
-  const [categories, locations, blogPosts] = await Promise.all([
-    prisma.category.findMany({
-      select: { slug: true, updatedAt: true },
-    }),
-    prisma.location.findMany({
-      select: { city: true, state: true, updatedAt: true },
-    }),
+  const [categories, locations, blogPosts, listings, cityCounts] = await Promise.all([
+    prisma.category.findMany({ select: { slug: true, updatedAt: true } }),
+    prisma.location.findMany({ select: { city: true, state: true, updatedAt: true } }),
     prisma.blogPost.findMany({
       where: { published: true },
       select: { slug: true, updatedAt: true },
     }),
+    prisma.listing.findMany({
+      // Only include listings with at least a phone or an address — otherwise thin.
+      where: {
+        OR: [
+          { phone: { not: null } },
+          { address: { not: null } },
+        ],
+      },
+      select: {
+        slug: true,
+        updatedAt: true,
+        featured: true,
+        verified: true,
+        location: { select: { city: true } },
+      },
+    }),
+    prisma.listing.groupBy({
+      by: ['locationId'],
+      _count: true,
+    }),
   ]);
 
-  // Get unique states from locations
-  const uniqueStates: string[] = [...new Set<string>(locations.map((l: typeof locations[0]) => l.state))];
+  const now = new Date().toISOString();
+  const pages: MetadataRoute.Sitemap = [];
 
-  // Define top cities for higher priority
-  const topCities = [
-    'mumbai', 'delhi', 'bangalore', 'pune', 'hyderabad',
-    'chennai', 'kolkata', 'ahmedabad', 'jaipur', 'lucknow'
+  // Static pages
+  const staticPages: Array<{ path: string; priority: number }> = [
+    { path: '',                    priority: 1.0 },
+    { path: '/solar-calculator',   priority: 0.9 },
+    { path: '/subsidy-checker',    priority: 0.9 },
+    { path: '/categories',         priority: 0.8 },
+    { path: '/locations',          priority: 0.8 },
+    { path: '/blog',               priority: 0.8 },
+    { path: '/pricing',            priority: 0.6 },
+    { path: '/about',              priority: 0.5 },
+    { path: '/contact',            priority: 0.5 },
   ];
+  for (const p of staticPages) {
+    pages.push({ url: `${BASE_URL}${p.path}`, lastModified: now, priority: p.priority });
+  }
 
-  const pages: Array<{
-    url: string;
-    lastModified: string;
-    changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
-    priority: number;
-  }> = [];
-
-  // Static pages - Critical & High Priority
-  pages.push(
-    // Homepage - Critical
-    {
-      url: baseUrl,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    // Tools - High Priority
-    {
-      url: `${baseUrl}/solar-calculator`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/subsidy-checker`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    // Directory Pages - High Priority
-    {
-      url: `${baseUrl}/categories`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/locations`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    // Business Pages - Medium Priority
-    {
-      url: `${baseUrl}/pricing`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-  );
-
-  // Blog posts
-  blogPosts.forEach((post: typeof blogPosts[0]) => {
+  // Blog posts — real updatedAt
+  for (const post of blogPosts) {
     pages.push({
-      url: `${baseUrl}/blog/${post.slug}`,
+      url: `${BASE_URL}/blog/${post.slug}`,
       lastModified: post.updatedAt.toISOString(),
-      changeFrequency: 'monthly',
       priority: 0.7,
     });
-  });
-
-  // NOTE: Individual listing pages are intentionally excluded from sitemap
-  // to avoid thin content issues. Users can find listings through:
-  // - City pages (/{city})
-  // - Category pages (/categories/{category})
-  // - State pages (/states/{state})
+  }
 
   // Category pages
-  categories.forEach((category: typeof categories[0]) => {
+  for (const category of categories) {
     pages.push({
-      url: `${baseUrl}/categories/${category.slug}`,
+      url: `${BASE_URL}/categories/${category.slug}`,
       lastModified: category.updatedAt.toISOString(),
-      changeFrequency: 'monthly',
       priority: 0.6,
     });
+  }
+
+  // City listing counts — used to exclude thin/empty city pages
+  const locationIdToCount: Record<string, number> = {};
+  for (const row of cityCounts) {
+    locationIdToCount[row.locationId] = row._count;
+  }
+  const locationsWithId = await prisma.location.findMany({
+    select: { id: true, city: true, state: true, updatedAt: true },
   });
 
-  // City pages — Higher priority for top metro cities
-  locations.forEach((location: typeof locations[0]) => {
-    const citySlug = location.city.toLowerCase().replace(/\s+/g, '-');
-    const isTopCity = topCities.includes(citySlug);
-
+  const includedCitySlugs = new Set<string>();
+  for (const loc of locationsWithId) {
+    const count = locationIdToCount[loc.id] ?? 0;
+    if (count < MIN_LISTINGS_PER_CITY) continue;
+    const citySlug = loc.city.toLowerCase().replace(/\s+/g, '-');
+    if (includedCitySlugs.has(citySlug)) continue;
+    includedCitySlugs.add(citySlug);
     pages.push({
-      url: `${baseUrl}/${citySlug}`,
-      lastModified: location.updatedAt.toISOString(),
-      changeFrequency: 'weekly',
-      priority: isTopCity ? 0.9 : 0.7, // Top cities get 0.9, others get 0.7
+      url: `${BASE_URL}/${citySlug}`,
+      lastModified: loc.updatedAt.toISOString(),
+      priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.7,
     });
-  });
+  }
 
-  // State pages — Medium-High Priority
-  uniqueStates.forEach((state: string) => {
+  // State pages (all unique states)
+  const uniqueStates = Array.from(new Set(locations.map((l) => l.state)));
+  for (const state of uniqueStates) {
     const stateSlug = state.toLowerCase().replace(/\s+/g, '-');
     pages.push({
-      url: `${baseUrl}/states/${stateSlug}`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: 'weekly',
+      url: `${BASE_URL}/states/${stateSlug}`,
+      lastModified: now,
       priority: 0.7,
     });
-  });
+  }
+
+  // Listing detail pages — critical for indexing since they drive most search impressions.
+  for (const listing of listings) {
+    pages.push({
+      url: `${BASE_URL}/listing/${listing.slug}`,
+      lastModified: listing.updatedAt.toISOString(),
+      priority: listing.featured ? 0.9 : listing.verified ? 0.7 : 0.5,
+    });
+  }
 
   return pages;
 }

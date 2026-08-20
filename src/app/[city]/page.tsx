@@ -344,7 +344,7 @@ export default async function CityPage({ params }: PageProps) {
             <div className="mt-6 pt-6 border-t border-gray-200">
               <h4 className="font-semibold text-gray-900 mb-3">Helpful Resources</h4>
               <div className="flex flex-wrap gap-2">
-                <Link href="/blog/solar-panel-cost-india-2025" className="text-sm text-orange-600 hover:underline">
+                <Link href="/blog/solar-panel-installation-cost-home-india-2026" className="text-sm text-orange-600 hover:underline">
                   → Solar Panel Costs in India
                 </Link>
                 <Link href="/blog/pm-surya-ghar-yojana-complete-guide" className="text-sm text-orange-600 hover:underline">

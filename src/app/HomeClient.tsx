@@ -618,7 +618,11 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                     )}
                   </h2>
                   <p className="text-gray-600">
-                    {filteredListings.length.toLocaleString()} verified installers found
+                    {(() => {
+                      const hasFilter = !!(filterLocationId || filterCategoryId || filterVerified || filterFeatured || searchQuery || searchLocation);
+                      const count = hasFilter ? filteredListings.length : stats.totalListings;
+                      return `${count.toLocaleString()} verified installers found`;
+                    })()}
                     {filterCategoryId && (
                       <> • {categories.find((c) => c.id === filterCategoryId)?.name}</>
                     )}

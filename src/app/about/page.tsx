@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = constructMetadata({
   title: 'About GoSolarIndex — India\'s Solar Directory',
-  description: 'GoSolarIndex is India\'s largest solar installer directory with 3900+ verified listings across 78 cities. Connecting homeowners with trusted solar professionals.',
+  description: 'GoSolarIndex connects Indian homeowners and businesses with verified solar installers, dealers and AMC providers. Learn how we vet listings.',
   path: '/about',
 });
 
