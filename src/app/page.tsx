@@ -18,7 +18,7 @@ const getHomePageData = unstable_cache(
         where: {}, // TODO: Add isTest: false after migration
       }).then(async (agg) => ({
         totalListings: agg._count,
-        avgRating: agg._avg.rating ? Math.round(agg._avg.rating * 10) / 10 : 4.5,
+        avgRating: agg._avg.rating ? Math.round(agg._avg.rating * 10) / 10 : null,
         cities: await prisma.location.count(),
         verified: await prisma.listing.count({ where: { verified: true } }),
         featured: await prisma.listing.count({ where: { featured: true } }),

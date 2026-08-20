@@ -15,6 +15,7 @@ import {
   MessageCircle, TrendingUp,
 } from 'lucide-react';
 import Script from 'next/script';
+import { whatsappUrl as buildWhatsappUrl, telUrl, normalizeIndianPhone } from '@/lib/phone';
 
 export const revalidate = 3600;    // ISR — revalidate every hour
 export const dynamicParams = true; // serve new slugs on-demand
@@ -31,13 +32,10 @@ function getInitials(name: string) {
 }
 
 function toWhatsApp(phone: string | null, companyName: string, categoryName: string): string | null {
-  if (!phone) return null;
-  const digits = phone.replace(/\D/g, '');
-  const withCC = digits.length === 10 ? `91${digits}` : digits.startsWith('91') ? digits : `91${digits}`;
-  const text = encodeURIComponent(
+  return buildWhatsappUrl(
+    phone,
     `Hi ${companyName}, I found your listing on GoSolarIndex and would like to enquire about your ${categoryName} services.`,
   );
-  return `https://wa.me/${withCC}?text=${text}`;
 }
 
 function toYouTubeEmbed(url: string | null): string | null {
@@ -310,6 +308,8 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
   const related = await getRelated(listing.categoryId, listing.locationId, listing.id);
   const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category?.name);
+  const phoneNormalized = normalizeIndianPhone(listing.phone);
+  const telHref = telUrl(listing.phone);
   const mapSrc = toGoogleMapsEmbed(listing.address, listing.name, listing.location.city, listing.location.state);
   const initials = getInitials(listing.name);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -345,7 +345,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
     name: listing.name,
     description: listing.description || undefined,
     url: listing.website || `${siteUrl}/listing/${listing.slug}`,
-    telephone: listing.phone || undefined,
+    telephone: phoneNormalized.e164 || undefined,
     email: listing.email || undefined,
     address: {
       '@type': 'PostalAddress',
@@ -455,9 +455,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
             {/* Right block - stacked buttons */}
             <div className="flex flex-col gap-2 shrink-0">
-              {listing.phone && (
+              {telHref && (
                 <a
-                  href={`tel:${listing.phone}`}
+                  href={telHref}
                   className="flex items-center justify-center gap-2 bg-white text-orange-600 font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-orange-50 transition"
                 >
                   <Phone className="h-4 w-4" />
@@ -584,9 +584,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
                 {/* CTA buttons row */}
                 <div className="flex gap-2 mb-4">
-                  {listing.phone && (
+                  {telHref && (
                     <a
-                      href={`tel:${listing.phone}`}
+                      href={telHref}
                       className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-4 py-3 rounded-lg transition"
                     >
                       <Phone className="h-4 w-4" />
@@ -645,12 +645,12 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                       </div>
                     </div>
                   )}
-                  {listing.phone && (
+                  {telHref && (
                     <div className="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                       <Phone className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
                       <div>
                         <div className="text-[10px] text-gray-500">Phone</div>
-                        <a href={`tel:${listing.phone}`} className="text-xs font-medium text-orange-600 hover:underline">{listing.phone}</a>
+                        <a href={telHref} className="text-xs font-medium text-orange-600 hover:underline">{phoneNormalized.e164}</a>
                       </div>
                     </div>
                   )}
@@ -876,10 +876,10 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
       })()}
 
       {/* ── MOBILE STICKY BOTTOM BAR ── */}
-      {listing.phone && (
+      {telHref && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex gap-2 z-50 md:hidden">
           <a
-            href={`tel:${listing.phone}`}
+            href={telHref}
             className="flex-[2] flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm px-4 py-3 rounded-lg transition"
           >
             <Phone className="h-4 w-4" />

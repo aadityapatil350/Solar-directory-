@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Star, MapPin, Phone, Verified, MessageCircle, Globe } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { whatsappUrl as buildWhatsappUrl } from '@/lib/phone';
 
 interface ListingCardProps {
   listing: {
@@ -77,54 +78,10 @@ export default function ListingCard({ listing }: ListingCardProps) {
     }
   };
 
-  const formatPhoneNumber = (phone: string): string | null => {
-    // Remove all non-numeric characters except +
-    let cleaned = phone.replace(/[^\d+]/g, '');
-
-    // Remove leading zeros
-    cleaned = cleaned.replace(/^0+/, '');
-
-    // If it starts with +91, keep it
-    if (cleaned.startsWith('+91')) {
-      return cleaned;
-    }
-
-    // If it starts with 91 and is 12 digits or more, add +
-    if (cleaned.startsWith('91') && cleaned.length >= 12) {
-      return '+' + cleaned;
-    }
-
-    // If it's 10 digits starting with 6-9 (mobile), add +91
-    if (cleaned.length === 10 && cleaned[0] >= '6') {
-      return '+91' + cleaned;
-    }
-
-    // If it's 10-11 digits (landline with STD code), add +91
-    if (cleaned.length >= 10 && cleaned.length <= 11) {
-      return '+91' + cleaned;
-    }
-
-    // If it's 11+ digits starting with 91, add +
-    if (cleaned.startsWith('91') && cleaned.length >= 11) {
-      return '+' + cleaned;
-    }
-
-    // Invalid format - too short or doesn't match patterns
-    if (cleaned.length < 10) {
-      console.warn(`Phone too short: ${phone}`);
-      return null;
-    }
-
-    // Default: add +91 for any 10+ digit number
-    return '+91' + cleaned;
-  };
-
-  const formattedPhone = listing.phone ? formatPhoneNumber(listing.phone) : null;
-  const whatsappUrl = formattedPhone
-    ? `https://wa.me/${formattedPhone}?text=${encodeURIComponent(
-        `Hi, I found you on GoSolarIndex. I'm interested in a solar quote for my home.`
-      )}`
-    : null;
+  const whatsappUrl = buildWhatsappUrl(
+    listing.phone,
+    `Hi, I found you on GoSolarIndex. I'm interested in a solar quote for my home.`,
+  );
 
   return (
     <div

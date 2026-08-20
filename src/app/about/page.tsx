@@ -21,7 +21,7 @@ export default async function AboutPage() {
     prisma.listing.aggregate({ _avg: { rating: true } }),
   ]);
 
-  const avg = avgRating._avg.rating ? avgRating._avg.rating.toFixed(1) : '4.8';
+  const avg = avgRating._avg.rating ? avgRating._avg.rating.toFixed(1) : null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,10 +52,12 @@ export default async function AboutPage() {
               <div className="text-3xl font-bold text-orange-500">{totalVerified.toLocaleString()}+</div>
               <div className="text-sm text-gray-600 mt-1">Verified Companies</div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-500">{avg}</div>
-              <div className="text-sm text-gray-600 mt-1">Avg Google Rating</div>
-            </div>
+            {avg && (
+              <div>
+                <div className="text-3xl font-bold text-orange-500">{avg}</div>
+                <div className="text-sm text-gray-600 mt-1">Avg Google Rating</div>
+              </div>
+            )}
           </div>
         </div>
       </section>

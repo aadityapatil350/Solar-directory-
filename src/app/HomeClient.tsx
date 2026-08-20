@@ -73,7 +73,7 @@ export interface InitialStats {
   totalListings: number;
   featured: number;
   verified: number;
-  avgRating: number;
+  avgRating: number | null;
   cities: number;
 }
 
@@ -390,15 +390,17 @@ export default function HomeClient({ initialStats, initialListings = [], initial
               <div className="text-4xl font-bold text-gray-900">{stats.cities}+</div>
               <div className="text-sm text-gray-600 font-medium mt-1">Cities Covered</div>
             </div>
-            <div className="text-center">
-              <div className="flex justify-center mb-3">
-                <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Star className="h-7 w-7 text-yellow-600 fill-yellow-600" />
+            {stats.avgRating && (
+              <div className="text-center">
+                <div className="flex justify-center mb-3">
+                  <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <Star className="h-7 w-7 text-yellow-600 fill-yellow-600" />
+                  </div>
                 </div>
+                <div className="text-4xl font-bold text-gray-900">{stats.avgRating}</div>
+                <div className="text-sm text-gray-600 font-medium mt-1">Avg Google Rating</div>
               </div>
-              <div className="text-4xl font-bold text-gray-900">{stats.avgRating}</div>
-              <div className="text-sm text-gray-600 font-medium mt-1">Average Rating</div>
-            </div>
+            )}
           </div>
         </div>
       </section>
@@ -746,49 +748,6 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-10 px-6 bg-gray-50 border-b">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-lg font-medium text-center mb-1">What homeowners say</h2>
-          <p className="text-sm text-gray-600 text-center mb-8">
-            Real reviews from verified solar buyers across India
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              {
-                stars: 5,
-                text: "Found a great installer in Pune within 2 days. Got 3 quotes, saved ₹40,000 on installation. GoSolarIndex made it so easy.",
-                name: "Rajesh M.",
-                city: "Pune, Maharashtra",
-              },
-              {
-                stars: 5,
-                text: "Claimed PM Surya Ghar subsidy with help from the installer I found here. 5kW system installed in 10 days, very smooth process.",
-                name: "Priya S.",
-                city: "Bangalore, Karnataka",
-              },
-              {
-                stars: 5,
-                text: "Compared 4 commercial solar companies for our factory. The verified badge gave confidence. Went with the top-rated one.",
-                name: "Suresh K.",
-                city: "Surat, Gujarat",
-              },
-            ].map((t, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="text-orange-500 text-sm mb-2">
-                  {"★".repeat(t.stars)}
-                </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                  "{t.text}"
-                </p>
-                <div className="text-sm font-medium">{t.name}</div>
-                <div className="text-xs text-gray-600">📍 {t.city}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
