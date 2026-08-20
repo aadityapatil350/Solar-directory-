@@ -10,6 +10,7 @@ import ListingCard from '@/components/ListingCard';
 import Filter from '@/components/Filter';
 import LeadForm from '@/components/LeadForm';
 import CalcPopup from '@/components/CalcPopup';
+import { CATEGORIES } from '@/lib/categories';
 import {
   Zap, ShieldCheck, Star, TrendingUp, MapPin, ChevronLeft, ChevronRight, ChevronDown,
   Award, CheckCircle, Users, Clock, Phone, Mail, Shield, BadgeCheck, Search, Building2
@@ -75,6 +76,7 @@ export interface InitialStats {
   verified: number;
   avgRating: number | null;
   cities: number;
+  perCategoryCounts?: Record<string, number>;
 }
 
 interface Props {
@@ -318,20 +320,13 @@ export default function HomeClient({ initialStats, initialListings = [], initial
 
             {/* Quick Category Pills */}
             <div className="flex justify-center gap-2 flex-wrap mt-4 mb-2">
-              {[
-                { label: "🏠 Residential", href: "/categories/residential-solar-installers" },
-                { label: "🏢 Commercial", href: "/categories/commercial-solar-installers" },
-                { label: "🏭 Industrial", href: "/categories/industrial-solar" },
-                { label: "🔋 Battery Storage", href: "/categories/battery-storage" },
-                { label: "🔧 AMC / Service", href: "/categories/solar-amc-maintenance" },
-                { label: "⚡ Inverter Only", href: "/categories/solar-inverter-specialists" },
-              ].map((cat) => (
+              {CATEGORIES.map((cat) => (
                 <Link
-                  key={cat.label}
-                  href={cat.href}
+                  key={cat.slug}
+                  href={`/categories/${cat.slug}`}
                   className="text-xs px-3 py-1.5 rounded-full border border-white/30 bg-white/15 text-white hover:bg-white/25 transition-colors whitespace-nowrap"
                 >
-                  {cat.label}
+                  {cat.icon} {cat.shortLabel}
                 </Link>
               ))}
             </div>
@@ -503,9 +498,9 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                   </a>
                 ))}
                 {Array.from({ length: emptySlots }).map((_, i) => (
-                  <a
+                  <Link
                     key={`empty-${i}`}
-                    href="mailto:adityabiz350@gmail.com?subject=Feature%20My%20Business%20on%20GoSolarIndex"
+                    href="/pricing"
                     className="group border-2 border-dashed border-orange-200 bg-orange-50/40 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
                   >
                     <div className="w-12 h-12 rounded-full bg-orange-100 group-hover:bg-orange-200 flex items-center justify-center transition-colors">
@@ -517,7 +512,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                     <span className="text-xs text-orange-500 font-semibold group-hover:underline">
                       Get Featured →
                     </span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             );
@@ -533,31 +528,30 @@ export default function HomeClient({ initialStats, initialListings = [], initial
             Find the right type of solar company for your needs
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {[
-              { icon: "🏠", name: "Residential Installers", count: "1,240+", href: "/categories/residential-installers" },
-              { icon: "🏢", name: "Commercial Solar", count: "890+", href: "/categories/commercial-installers" },
-              { icon: "🔋", name: "Solar Panel Dealers", count: "620+", href: "/categories/solar-dealers" },
-              { icon: "⚡", name: "Solar Inverter Specialists", count: "410+", href: "/categories/inverter-specialists" },
-              { icon: "🔧", name: "AMC & Maintenance", count: "380+", href: "/categories/maintenance-services" },
-            ].map((cat) => (
-              <Link
-                key={cat.name}
-                href={cat.href}
-                className="flex items-center gap-3 border border-gray-200 rounded-xl p-3 hover:border-orange-500 transition-colors group"
-              >
-                <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-lg flex-shrink-0">
-                  {cat.icon}
-                </div>
-                <div>
-                  <div className="text-sm font-medium group-hover:text-orange-600 transition-colors">
-                    {cat.name}
+            {CATEGORIES.map((cat) => {
+              const count = initialStats.perCategoryCounts?.[cat.slug];
+              return (
+                <Link
+                  key={cat.slug}
+                  href={`/categories/${cat.slug}`}
+                  className="flex items-center gap-3 border border-gray-200 rounded-xl p-3 hover:border-orange-500 transition-colors group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-lg flex-shrink-0">
+                    {cat.icon}
                   </div>
-                  <div className="text-xs text-gray-600 mt-0.5">
-                    {cat.count} companies
+                  <div>
+                    <div className="text-sm font-medium group-hover:text-orange-600 transition-colors">
+                      {cat.label}
+                    </div>
+                    {typeof count === 'number' && (
+                      <div className="text-xs text-gray-600 mt-0.5">
+                        {count.toLocaleString()} companies
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

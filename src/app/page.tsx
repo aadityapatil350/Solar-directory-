@@ -16,13 +16,33 @@ const getHomePageData = unstable_cache(
         _count: true,
         _avg: { rating: true },
         where: {}, // TODO: Add isTest: false after migration
-      }).then(async (agg) => ({
-        totalListings: agg._count,
-        avgRating: agg._avg.rating ? Math.round(agg._avg.rating * 10) / 10 : null,
-        cities: await prisma.location.count(),
-        verified: await prisma.listing.count({ where: { verified: true } }),
-        featured: await prisma.listing.count({ where: { featured: true } }),
-      })),
+      }).then(async (agg) => {
+        const [cities, verified, featured, byCategory] = await Promise.all([
+          prisma.location.count(),
+          prisma.listing.count({ where: { verified: true } }),
+          prisma.listing.count({ where: { featured: true } }),
+          prisma.listing.groupBy({
+            by: ['categoryId'],
+            _count: true,
+          }),
+        ]);
+        const categoryIdToSlug = Object.fromEntries(
+          (await prisma.category.findMany({ select: { id: true, slug: true } })).map((c) => [c.id, c.slug]),
+        );
+        const perCategoryCounts: Record<string, number> = {};
+        for (const row of byCategory) {
+          const slug = categoryIdToSlug[row.categoryId];
+          if (slug) perCategoryCounts[slug] = row._count;
+        }
+        return {
+          totalListings: agg._count,
+          avgRating: agg._avg.rating ? Math.round(agg._avg.rating * 10) / 10 : null,
+          cities,
+          verified,
+          featured,
+          perCategoryCounts,
+        };
+      }),
       // Fetch initial listings WITHOUT installer data (not needed for cards)
       prisma.listing.findMany({
         where: {}, // TODO: Add isTest: false after migration
