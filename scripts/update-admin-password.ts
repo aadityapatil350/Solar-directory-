@@ -8,8 +8,13 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const newPassword = 'Gara771!@';
+  const newPassword = process.env.ADMIN_PASSWORD;
   const adminEmail = 'adityabiz350@gmail.com';
+
+  if (!newPassword) {
+    console.error('❌ ADMIN_PASSWORD env var required. Run: ADMIN_PASSWORD=yourpass npx tsx scripts/update-admin-password.ts');
+    process.exit(1);
+  }
 
   const hash = await bcrypt.hash(newPassword, 12);
 
