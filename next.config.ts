@@ -34,6 +34,40 @@ const cityRedirects = [
   { source: '/mysuru', destination: '/mysore', permanent: true },
 ];
 
+// Consolidated blog duplicates — loser 301s to the SEO winner in each cluster.
+const blogRedirects = [
+  // PM Surya Ghar cluster
+  { source: '/blog/pm-surya-ghar-yojana-subsidy-guide', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
+  { source: '/blog/pm-surya-ghar-muft-bijli-yojana-2026-complete-guide', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
+  { source: '/blog/pm-surya-ghar-yojana-application-guide', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
+  // Net metering cluster
+  { source: '/blog/net-metering-india-complete-guide', destination: '/blog/net-metering-india-2026-state-rules-guide', permanent: true },
+  { source: '/blog/how-net-metering-works-india', destination: '/blog/net-metering-india-2026-state-rules-guide', permanent: true },
+  { source: '/blog/solar-net-metering-state-rules-india-2026', destination: '/blog/net-metering-india-2026-state-rules-guide', permanent: true },
+  // PM-KUSUM cluster
+  { source: '/blog/pm-kusum-solar-subsidy-farmers-india', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
+  { source: '/blog/solar-pump-agriculture-india-pm-kusum', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
+  { source: '/blog/pm-kusum-2-0-india-farm-solar-next-phase', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
+  { source: '/blog/solar-energy-agriculture-pm-kusum-2026', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
+  // Panel brands cluster (winner = comparison, the #1 traffic post)
+  { source: '/blog/best-solar-panels-india-2025', destination: '/blog/solar-panel-brand-comparison-india-2026', permanent: true },
+  { source: '/blog/best-solar-panel-brands-india-2025', destination: '/blog/solar-panel-brand-comparison-india-2026', permanent: true },
+  { source: '/blog/top-rated-solar-panels-residential-homes-india-2026', destination: '/blog/solar-panel-brand-comparison-india-2026', permanent: true },
+  // Installation cost cluster
+  { source: '/blog/solar-panel-installation-cost-india-2025', destination: '/blog/solar-panel-installation-cost-home-india-2026', permanent: true },
+  { source: '/blog/solar-panel-cost-india-2025', destination: '/blog/solar-panel-installation-cost-home-india-2026', permanent: true },
+  // Choosing an installer cluster
+  { source: '/blog/how-to-check-solar-installer-genuine-india', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
+  { source: '/blog/how-to-verify-solar-installer-india-2026', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
+  // Maintenance cluster
+  { source: '/blog/solar-maintenance-tips-india', destination: '/blog/solar-amc-maintenance-guide-india-2026', permanent: true },
+  { source: '/blog/solar-panel-maintenance-guide-india', destination: '/blog/solar-amc-maintenance-guide-india-2026', permanent: true },
+  // On/off-grid cluster
+  { source: '/blog/on-grid-off-grid-hybrid-solar-comparison', destination: '/blog/on-grid-off-grid-hybrid-solar-system-india-comparison', permanent: true },
+  // Housing society cluster
+  { source: '/blog/solar-rooftop-housing-society-india', destination: '/blog/solar-rooftop-housing-society-india-2026', permanent: true },
+];
+
 const nextConfig: NextConfig = {
   trailingSlash: false,
   skipTrailingSlashRedirect: false,
@@ -46,7 +80,12 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return [...listingDuplicateRedirects, ...categorySlugRedirects, ...cityRedirects];
+    return [
+      ...listingDuplicateRedirects,
+      ...categorySlugRedirects,
+      ...cityRedirects,
+      ...blogRedirects,
+    ];
   },
 };
 
