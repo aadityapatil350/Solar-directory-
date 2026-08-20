@@ -29,6 +29,11 @@ const categorySlugRedirects = [
   { source: '/categories/solar-panel-dealers', destination: '/categories/solar-dealers', permanent: true },
 ];
 
+// Merged duplicate city routes.
+const cityRedirects = [
+  { source: '/mysuru', destination: '/mysore', permanent: true },
+];
+
 const nextConfig: NextConfig = {
   trailingSlash: false,
   skipTrailingSlashRedirect: false,
@@ -41,7 +46,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return [...listingDuplicateRedirects, ...categorySlugRedirects];
+    return [...listingDuplicateRedirects, ...categorySlugRedirects, ...cityRedirects];
   },
 };
 

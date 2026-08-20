@@ -29,9 +29,11 @@ interface LeadFormProps {
   prefill?: { requirement?: string; city?: string };
   onSuccess?: () => void;
   compact?: boolean;
+  /** Where the form was submitted from — e.g. "city-page:mumbai", "listing:acme-solar" */
+  source?: string;
 }
 
-export default function LeadForm({ prefill, onSuccess, compact = false }: LeadFormProps) {
+export default function LeadForm({ prefill, onSuccess, compact = false, source }: LeadFormProps) {
   const [name,        setName]        = useState('');
   const [phone,       setPhone]       = useState('');
   const [city,        setCity]        = useState(prefill?.city || '');
@@ -68,6 +70,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false }: LeadFo
           requirement,
           budget,
           urgency: urgent ? 'urgent' : 'normal',
+          source,
         }),
       });
       const data = await res.json();

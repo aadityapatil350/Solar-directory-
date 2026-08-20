@@ -61,10 +61,15 @@ const getHomePageData = unstable_cache(
       prisma.category.findMany({
         orderBy: { name: 'asc' },
       }),
-      // Cache locations (rarely change)
+      // Cache locations (rarely change) — only cities with 3+ listings
       prisma.location.findMany({
         orderBy: { city: 'asc' },
-      }),
+        include: { _count: { select: { listings: true } } },
+      }).then((rows) =>
+        rows
+          .filter((l) => l._count.listings >= 3)
+          .map(({ _count, ...rest }) => rest),
+      ),
     ]);
 
     return { stats, listings, categories, locations };

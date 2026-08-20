@@ -13,11 +13,15 @@ export const metadata: Metadata = constructMetadata({
   path: '/locations',
 });
 
+const MIN_LISTINGS = 3;
+
 export default async function LocationsPage() {
-  const locations = await prisma.location.findMany({
+  const allLocations = await prisma.location.findMany({
     orderBy: { city: 'asc' },
     include: { _count: { select: { listings: true } } },
   });
+  // Hide thin/empty city pages from browse (e.g. /bikaner with 0 listings)
+  const locations = allLocations.filter((l) => l._count.listings >= MIN_LISTINGS);
 
   return (
     <div className="min-h-screen bg-gray-50">

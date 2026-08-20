@@ -133,7 +133,7 @@ async function notifyFeaturedOwners(
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone, email, requirement, locationId: rawLocationId, city, budget, urgency } = body;
+    const { name, phone, email, requirement, locationId: rawLocationId, city, budget, urgency, source } = body;
 
     if (!name || !phone) {
       return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
@@ -160,12 +160,19 @@ export async function POST(request: Request) {
       locationId = location?.id || null;
     }
 
+    // Tag requirement with source so we can attribute leads by page type
+    // until a dedicated `source` column ships (avoids a schema migration).
+    const trimmedRequirement = requirement?.trim() || null;
+    const requirementWithSource = source
+      ? `[${String(source).slice(0, 40)}] ${trimmedRequirement ?? ''}`.trim()
+      : trimmedRequirement;
+
     const lead = await prisma.lead.create({
       data: {
         name: name.trim(),
         phone: phone.trim(),
         email: email?.trim() || null,
-        requirement: requirement?.trim() || null,
+        requirement: requirementWithSource,
         locationId: locationId || null,
         budget: budget || null,
         urgency: urgency || 'normal',

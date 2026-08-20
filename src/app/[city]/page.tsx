@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Link from 'next/link';
 import CityClient from './CityClient';
 import { MapPin, CheckCircle, Info } from 'lucide-react';
+import LeadForm from '@/components/LeadForm';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
@@ -22,6 +23,8 @@ function slugToSearch(slug: string) {
   return slug.replace(/-/g, ' ');
 }
 
+const MIN_LISTINGS_FOR_INDEX = 3;
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { city: citySlug } = await params;
   const location = await prisma.location.findFirst({
@@ -33,7 +36,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     where: { location: { city: location.city } },
   });
 
-  return constructCityMetadata(location.city, location.state, listingsCount);
+  const base = constructCityMetadata(location.city, location.state, listingsCount);
+  // Thin city pages (<3 listings) get noindex so they don't dilute search authority.
+  if (listingsCount < MIN_LISTINGS_FOR_INDEX) {
+    return { ...base, robots: { index: false, follow: true } };
+  }
+  return base;
 }
 
 export default async function CityPage({ params }: PageProps) {
@@ -380,6 +388,23 @@ export default async function CityPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {/* Lead capture — city pages get more search impressions than listings */}
+      <section className="bg-orange-50 border-t border-orange-100 py-14">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+              Get Free Solar Quotes in {cityData.city}
+            </h2>
+            <p className="text-gray-600">
+              Compare quotes from verified installers in {cityData.city}. No spam calls.
+            </p>
+          </div>
+          <div className="max-w-xl mx-auto">
+            <LeadForm prefill={{ city: cityData.city }} source={`city-page:${cityData.city.toLowerCase()}`} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

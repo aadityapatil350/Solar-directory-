@@ -131,17 +131,23 @@ export default function ListingCard({ listing }: ListingCardProps) {
           )}
         </div>
 
-        {/* Rating */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="font-bold text-gray-900">
-              {listing.rating?.toFixed(1) || 'New'}
-            </span>
+        {/* Rating — hidden if no real reviews */}
+        {listing.rating && listing.rating > 0 && listing.reviews > 0 ? (
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="font-bold text-gray-900">
+                {listing.rating.toFixed(1)}
+              </span>
+            </div>
+            <span className="text-gray-400">•</span>
+            <span className="text-gray-600 text-sm">{listing.reviews} review{listing.reviews === 1 ? '' : 's'}</span>
           </div>
-          <span className="text-gray-400">•</span>
-          <span className="text-gray-600 text-sm">{listing.reviews} reviews</span>
-        </div>
+        ) : (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xs text-gray-500 italic">New listing</span>
+          </div>
+        )}
 
         {listing.description && (
           <p className="text-gray-600 text-sm mb-3 line-clamp-2">
