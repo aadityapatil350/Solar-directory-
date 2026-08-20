@@ -103,6 +103,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: loc.updatedAt.toISOString(),
       priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.7,
     });
+    // City × service pages — cleaning is the highest-ROI cluster per GSC.
+    pages.push({
+      url: `${BASE_URL}/${citySlug}/solar-panel-cleaning`,
+      lastModified: now,
+      priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.7,
+    });
   }
 
   // State pages (all unique states)

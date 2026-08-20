@@ -523,6 +523,42 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             {/* ── LEFT COLUMN (Main Content) ── */}
             <div className="flex-1 space-y-6">
 
+              {/* Prominent Google Reviews block — before About */}
+              {listing.rating != null && listing.reviews > 0 && (
+                <a
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(`${listing.name} ${listing.location.city}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white rounded-xl p-5 border border-gray-200 hover:border-orange-300 hover:shadow-md transition group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl px-5 py-4 min-w-[100px]">
+                      <div className="text-3xl font-bold text-gray-900">{listing.rating.toFixed(1)}</div>
+                      <div className="flex items-center gap-0.5 my-1">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <Star
+                            key={i}
+                            className={`h-3.5 w-3.5 ${i <= Math.round(listing.rating ?? 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                          />
+                        ))}
+                      </div>
+                      <div className="text-xs text-gray-600">{listing.reviews} reviews</div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-gray-900 mb-1">
+                        Rated {listing.rating.toFixed(1)}★ on Google
+                      </div>
+                      <div className="text-xs text-gray-600 leading-relaxed">
+                        Based on {listing.reviews} verified customer review{listing.reviews === 1 ? '' : 's'} of {listing.name} in {listing.location.city}.
+                      </div>
+                      <div className="mt-2 text-xs font-semibold text-orange-600 group-hover:underline">
+                        Read reviews on Google →
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              )}
+
               {/* Section 1 — About */}
               {listing.description && (
                 <div className="bg-white rounded-xl p-6 border border-gray-200">
