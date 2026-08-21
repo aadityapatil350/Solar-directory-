@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { sendLeadNotificationEmail } from '@/lib/email';
+import { validateLeadName, validateLeadCity } from '@/lib/lead-validation';
 
 // How many verified installers to notify per lead
 const MAX_INSTALLERS_PER_LEAD = 3;
@@ -135,16 +136,24 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, phone, email, requirement, locationId: rawLocationId, city, budget, urgency, source } = body;
 
-    if (!name || !phone) {
-      return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
+    const nameError = validateLeadName(name);
+    if (nameError) {
+      return NextResponse.json({ error: nameError }, { status: 400 });
     }
 
-    if (!city && !rawLocationId) {
-      return NextResponse.json({ error: 'City is required' }, { status: 400 });
+    if (!phone) {
+      return NextResponse.json({ error: 'Phone is required' }, { status: 400 });
     }
 
     if (!/^[6-9]\d{9}$/.test(phone) && phone !== '0000000000') {
       return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 });
+    }
+
+    if (!rawLocationId) {
+      const cityError = validateLeadCity(city);
+      if (cityError) {
+        return NextResponse.json({ error: cityError }, { status: 400 });
+      }
     }
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

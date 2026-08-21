@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Phone, CheckCircle, Zap, AlertCircle } from 'lucide-react';
+import { validateLeadName, validateLeadCity } from '@/lib/lead-validation';
 
 const CITIES = [
   'Ahmedabad', 'Bangalore', 'Bhopal', 'Chandigarh', 'Chennai',
@@ -48,13 +49,21 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
     e.preventDefault();
     setError('');
 
+    const nameError = validateLeadName(name);
+    if (nameError) {
+      setError(nameError);
+      return;
+    }
+
     const cleanPhone = phone.replace(/\s+/g, '');
     if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
       setError('Enter a valid 10-digit mobile number starting with 6–9.');
       return;
     }
-    if (!city) {
-      setError('Please select your city.');
+
+    const cityError = validateLeadCity(city);
+    if (cityError) {
+      setError(cityError);
       return;
     }
 
