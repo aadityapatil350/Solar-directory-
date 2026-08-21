@@ -352,6 +352,9 @@ export default async function CityPage({ params }: PageProps) {
             <div className="mt-6 pt-6 border-t border-gray-200">
               <h4 className="font-semibold text-gray-900 mb-3">Helpful Resources</h4>
               <div className="flex flex-wrap gap-2">
+                <Link href={`/best-solar-companies/${citySlug}`} className="text-sm text-orange-600 hover:underline font-semibold">
+                  → Best Solar Companies in {cityData.city}
+                </Link>
                 <Link href={`/${citySlug}/solar-panel-cleaning`} className="text-sm text-orange-600 hover:underline font-semibold">
                   → Solar Panel Cleaning in {cityData.city}
                 </Link>

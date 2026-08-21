@@ -66,6 +66,27 @@ const blogRedirects = [
   { source: '/blog/on-grid-off-grid-hybrid-solar-comparison', destination: '/blog/on-grid-off-grid-hybrid-solar-system-india-comparison', permanent: true },
   // Housing society cluster
   { source: '/blog/solar-rooftop-housing-society-india', destination: '/blog/solar-rooftop-housing-society-india-2026', permanent: true },
+  // Phase A1: city guides redirect to real city pages (avoids duplicate)
+  { source: '/blog/solar-panel-installation-ahmedabad-2026', destination: '/ahmedabad', permanent: true },
+  { source: '/blog/rooftop-solar-mumbai-guide', destination: '/mumbai', permanent: true },
+  { source: '/blog/solar-panels-delhi-guide', destination: '/delhi', permanent: true },
+  { source: '/blog/solar-panel-installation-bangalore', destination: '/bangalore', permanent: true },
+  { source: '/blog/solar-panel-installation-chennai-2026', destination: '/chennai', permanent: true },
+  { source: '/blog/solar-panel-installation-hyderabad-2026', destination: '/hyderabad', permanent: true },
+  { source: '/blog/solar-panel-installation-jaipur-2026', destination: '/jaipur', permanent: true },
+  { source: '/blog/solar-panel-installation-kolkata-2026', destination: '/kolkata', permanent: true },
+  { source: '/blog/solar-panel-installation-lucknow-2026', destination: '/lucknow', permanent: true },
+  { source: '/blog/solar-panel-installation-pune-2026', destination: '/pune', permanent: true },
+  { source: '/blog/solar-panel-installation-surat-2026', destination: '/surat', permanent: true },
+  // Duplicate topic consolidation
+  { source: '/blog/solar-for-commercial-business-india', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
+  { source: '/blog/solar-for-factories-warehouses-india-2026', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
+  { source: '/blog/commercial-solar-india-roi-tax-benefits', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
+  { source: '/blog/solar-rooftop-installation-indian-households-2026', destination: '/blog/solar-panel-installation-cost-home-india-2026', permanent: true },
+  { source: '/blog/solar-battery-storage-india-2025', destination: '/blog/solar-battery-buying-guide-india-2026', permanent: true },
+  { source: '/blog/gujarat-solar-subsidy-surya-yojana-2026', destination: '/blog/surya-gujarat-yojana-2026-guide', permanent: true },
+  { source: '/blog/best-solar-panel-installation-companies-india-2026', destination: '/blog/best-solar-company-india-2026', permanent: true },
+  { source: '/blog/solar-system-size-guide-india', destination: '/blog/1kw-2kw-3kw-5kw-solar-system-india-which-size', permanent: true },
 ];
 
 const nextConfig: NextConfig = {

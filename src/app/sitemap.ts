@@ -109,6 +109,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.7,
     });
+    // Commercial "best solar companies in X" landing page (buyer-intent).
+    pages.push({
+      url: `${BASE_URL}/best-solar-companies/${citySlug}`,
+      lastModified: now,
+      priority: TOP_CITIES.has(citySlug) ? 0.95 : 0.8,
+    });
   }
 
   // State pages (all unique states)
