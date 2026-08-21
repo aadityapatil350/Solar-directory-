@@ -84,6 +84,18 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+      // Fire GA4 conversion event so we can see per-page conversion rates
+      if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
+        (window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'generate_lead', {
+          currency: 'INR',
+          value: 100,
+          source: source || 'unknown',
+          city,
+          requirement: requirement || 'unspecified',
+        });
+      }
+
       setSuccess(true);
       onSuccess?.();
     } catch (err) {
