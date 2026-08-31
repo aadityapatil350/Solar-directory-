@@ -16,11 +16,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = await prisma.category.findUnique({ where: { slug } });
   if (!category) return {};
-  return constructMetadata({
-    title: `${category.name} in India — Top Companies`,
-    description: `Find the best ${category.name.toLowerCase()} across India. Verified professionals, competitive prices, free quotes. Browse ${category.name} listings now.`,
-    path: `/categories/${slug}`,
-  });
+  
+  const count = await prisma.listing.count({ where: { categoryId: category.id } });
+  
+  return constructCategoryMetadata(category.name, undefined, count);
 }
 
 export const dynamic = 'force-dynamic';

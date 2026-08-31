@@ -11,6 +11,7 @@ export function constructMetadata({
   ogImage = '/og-image.png',
   standalone = false,
   canonicalUrl,
+  noindex = false,
 }: {
   title?: string;
   description?: string;
@@ -18,6 +19,7 @@ export function constructMetadata({
   ogImage?: string;
   standalone?: boolean;
   canonicalUrl?: string;
+  noindex?: boolean;
 }): Metadata {
   // standalone=true: use title as-is (for blog posts/city pages that are already fully formed)
   const fullTitle = title
@@ -65,10 +67,10 @@ export function constructMetadata({
       creator: '@gosolarindex',
     },
     robots: {
-      index: true,
+      index: !noindex,
       follow: true,
       googleBot: {
-        index: true,
+        index: !noindex,
         follow: true,
         'max-video-preview': -1,
         'max-image-preview': 'large',
@@ -93,10 +95,11 @@ export function constructCityMetadata(city: string, state: string, count?: numbe
     description,
     path: `/${city.toLowerCase().replace(/\s+/g, '-')}`,
     standalone: true,
+    noindex: count === 0, // Noindex cities with 0 listings to prevent Soft 404s
   });
 }
 
-export function constructCategoryMetadata(category: string, city?: string): Metadata {
+export function constructCategoryMetadata(category: string, city?: string, count?: number): Metadata {
   const year = currentYear();
   const locationText = city ? `in ${city}` : 'in India';
   const title = `${category} ${locationText} — Verified Companies (${year})`;
@@ -106,6 +109,7 @@ export function constructCategoryMetadata(category: string, city?: string): Meta
     description,
     path: `/categories/${category.toLowerCase().replace(/\s+/g, '-')}`,
     standalone: true,
+    noindex: count === 0, // Noindex if empty to prevent Soft 404s
   });
 }
 
@@ -119,5 +123,6 @@ export function constructStateMetadata(state: string, cityCount?: number, listin
     description: desc,
     path: `/states/${state.toLowerCase().replace(/\s+/g, '-')}`,
     standalone: true,
+    noindex: listingCount === 0, // Noindex if empty to prevent Soft 404s
   });
 }

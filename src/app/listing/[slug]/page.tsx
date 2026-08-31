@@ -267,11 +267,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? fullDescription.slice(0, 152) + '...'
     : fullDescription;
 
+  // If a listing has no custom description and is not claimed, it's considered "thin content"
+  // We noindex these to protect the site's overall SEO health for AdSense approval.
+  const isThinContent = !listing.description && !listing.userId;
+
   return constructMetadata({
     title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,
     description,
     path: `/listing/${slug}`,
     canonicalUrl: canonicalUrl,
+    noindex: isThinContent,
   });
 }
 
