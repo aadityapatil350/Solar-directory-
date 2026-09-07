@@ -11,7 +11,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
 
     if (!user || !user.password) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
@@ -28,14 +29,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    console.log('🔍 DEBUG LOGIN:');
-    console.log('Email:', email);
-    console.log('Password entered length:', password?.length);
-    console.log('Hash from DB:', user.password);
-    console.log('Hash starts with $2a$ or $2b$:', user.password.startsWith('$2a$') || user.password.startsWith('$2b$'));
-
     const valid = await bcrypt.compare(password, user.password);
-    console.log('Password comparison result:', valid);
 
     if (!valid) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });

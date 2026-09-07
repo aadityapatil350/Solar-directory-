@@ -162,7 +162,14 @@ export default function DashboardPage() {
         ]);
 
         if (listingRes.status === 401) {
-          router.push('/dashboard/login');
+          window.location.href = '/dashboard/login';
+          return;
+        }
+
+        if (!listingRes.ok) {
+          const errData = await listingRes.json().catch(() => ({}));
+          console.error('Dashboard listing error:', listingRes.status, errData);
+          setLoading(false);
           return;
         }
 
@@ -308,7 +315,7 @@ export default function DashboardPage() {
 
   async function handleLogout() {
     await fetch('/api/dashboard/auth/logout', { method: 'POST' });
-    router.push('/dashboard/login');
+    window.location.href = '/dashboard/login';
   }
 
   // ─── Render ───────────────────────────────────────────────────────────────────
@@ -330,9 +337,31 @@ export default function DashboardPage() {
         <Header />
         <div className="max-w-lg mx-auto px-4 py-24 text-center">
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">No listing found</h1>
-          <p className="text-gray-500 mb-6">Your account is not linked to any listing.</p>
-          <Link href="/" className="text-orange-600 hover:underline">Go to homepage</Link>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">No listing linked to your account</h1>
+          <p className="text-gray-500 mb-2">Your account is not linked to any listing yet.</p>
+          <p className="text-gray-500 mb-6">
+            If you recently had your claim approved, please{' '}
+            <button
+              onClick={() => { window.location.href = '/dashboard/login'; }}
+              className="text-orange-600 hover:underline"
+            >
+              log out and log back in
+            </button>
+            {' '}to refresh your session. If the issue persists, contact us at{' '}
+            <a href="mailto:support@gosolarindex.in" className="text-orange-600 hover:underline">
+              support@gosolarindex.in
+            </a>
+            .
+          </p>
+          <button
+            onClick={async () => {
+              await fetch('/api/dashboard/auth/logout', { method: 'POST' });
+              window.location.href = '/dashboard/login';
+            }}
+            className="inline-block bg-orange-500 text-white font-semibold px-6 py-2.5 rounded-xl hover:bg-orange-600 transition text-sm"
+          >
+            Log out &amp; try again
+          </button>
         </div>
       </div>
     );

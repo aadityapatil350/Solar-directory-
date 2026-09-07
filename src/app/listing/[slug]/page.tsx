@@ -253,12 +253,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const listing = await getListing(slug);
   if (!listing) return {};
 
-  // Determine canonical URL
-  // If slug ends with -<1-2 digits> (e.g., company-name-2), canonical points to base slug
-  // Only match small suffixes so timestamp-based slugs (e.g. -1780146714660) are preserved
+  // Determine canonical URL.
+  // If slug ends with -<1-2 digits> (e.g. company-name-2) AND the base slug is a
+  // real listing, canonical points to the base. Otherwise the -N listing is a
+  // genuinely distinct business (e.g. a second franchise branch) and must
+  // self-canonicalise — pointing at a non-existent base makes Google ignore the tag.
   const baseSlug = slug.replace(/-\d{1,2}$/, '');
-  const isDuplicate = baseSlug !== slug;
-  const canonicalSlug = isDuplicate ? baseSlug : slug;
+  let canonicalSlug = slug;
+  if (baseSlug !== slug) {
+    const base = await prisma.listing.findUnique({
+      where: { slug: baseSlug },
+      select: { id: true },
+    });
+    if (base) canonicalSlug = baseSlug;
+  }
   const canonicalUrl = `https://gosolarindex.in/listing/${canonicalSlug}`;
 
   // Generate description using the same helper function (truncated to 155 chars for meta)
@@ -267,9 +275,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? fullDescription.slice(0, 152) + '...'
     : fullDescription;
 
-  // If a listing has no custom description and is not claimed, it's considered "thin content"
-  // We noindex these to protect the site's overall SEO health for AdSense approval.
-  const isThinContent = !listing.description && !listing.userId;
+  // Noindex only a listing that genuinely has nothing useful on the page: no phone,
+  // no address, no reviews, no description and unclaimed. A listing with a real
+  // address + Google rating + contact details is a valid local-business page and
+  // must stay indexable — that catalogue is the whole point of the directory.
+  const isThinContent =
+    !listing.description &&
+    !listing.userId &&
+    !listing.phone &&
+    !listing.address &&
+    (listing.reviews ?? 0) === 0;
 
   return constructMetadata({
     title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,

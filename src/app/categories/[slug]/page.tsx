@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { constructMetadata } from '@/lib/metadata';
+import { constructCategoryMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import CategoryClient from './CategoryClient';
 import LeadForm from '@/components/LeadForm';

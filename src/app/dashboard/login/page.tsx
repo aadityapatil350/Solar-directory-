@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Sun, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 export default function DashboardLoginPage() {
-  const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -33,7 +31,9 @@ export default function DashboardLoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push('/dashboard');
+        // Full page navigation so the browser sends the fresh cookie to middleware
+        window.location.href = '/dashboard';
+        return;
       } else {
         setError(data.error || 'Login failed. Please try again.');
       }

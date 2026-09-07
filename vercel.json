@@ -26,6 +26,15 @@
           "value": "public, s-maxage=86400, stale-while-revalidate=604800"
         }
       ]
+    },
+    {
+      "source": "/(admin|api|dashboard|installers/dashboard|installers/login|claim)(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }

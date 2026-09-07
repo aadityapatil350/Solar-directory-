@@ -24,18 +24,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true, updatedAt: true },
     }),
     prisma.listing.findMany({
-      // Only include listings with at least a phone or an address — otherwise thin.
-      where: {
-        OR: [
-          { phone: { not: null } },
-          { address: { not: null } },
-        ],
-      },
       select: {
         slug: true,
         updatedAt: true,
         featured: true,
         verified: true,
+        phone: true,
+        address: true,
+        reviews: true,
+        description: true,
+        userId: true,
         location: { select: { city: true } },
       },
     }),
@@ -129,7 +127,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Listing detail pages — critical for indexing since they drive most search impressions.
+  // Only emit URLs that are actually indexable: the thinness test here MUST match the
+  // `isThinContent` rule in src/app/listing/[slug]/page.tsx, and "-N" duplicate slugs
+  // are dropped when their base slug is a real listing (Google indexes the base).
+  const allListingSlugs = new Set(listings.map((l) => l.slug));
   for (const listing of listings) {
+    const isThin =
+      !listing.description &&
+      !listing.userId &&
+      !listing.phone &&
+      !listing.address &&
+      (listing.reviews ?? 0) === 0;
+    if (isThin) continue;
+
+    const baseSlug = listing.slug.replace(/-\d{1,2}$/, '');
+    if (baseSlug !== listing.slug && allListingSlugs.has(baseSlug)) continue;
+
     pages.push({
       url: `${BASE_URL}/listing/${listing.slug}`,
       lastModified: listing.updatedAt.toISOString(),
