@@ -5,7 +5,6 @@ import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
-import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { Droplets, Sun, ShieldCheck, CheckCircle, Phone, ChevronRight } from 'lucide-react';
@@ -132,8 +131,8 @@ export default async function CityCleaningPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Script id="faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <Script id="breadcrumb-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
 
       {/* Breadcrumbs */}

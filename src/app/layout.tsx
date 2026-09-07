@@ -83,14 +83,12 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
 
-        {/* Schema.org */}
-        <Script
-          id="website-schema"
+        {/* Schema.org — plain <script> so it lands in the SSR HTML, not deferred to the client */}
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-        <Script
-          id="org-schema"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchBar from '@/components/SearchBar';
@@ -834,9 +833,8 @@ export default function HomeClient({ initialStats, initialListings = [], initial
         </div>
       </section>
 
-      {/* FAQPage Schema */}
-      <Script
-        id="faq-schema"
+      {/* FAQPage Schema — plain <script> so it renders in the SSR HTML */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({

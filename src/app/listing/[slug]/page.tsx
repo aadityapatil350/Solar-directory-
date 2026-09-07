@@ -14,7 +14,6 @@ import {
   CheckCircle, Building2,
   MessageCircle, TrendingUp,
 } from 'lucide-react';
-import Script from 'next/script';
 import { whatsappUrl as buildWhatsappUrl, telUrl, normalizeIndianPhone } from '@/lib/phone';
 
 export const revalidate = 3600;    // ISR — revalidate every hour
@@ -152,32 +151,75 @@ function getCategoryGuide(categoryName: string, city: string, state: string): { 
   };
 }
 
-// Generate auto description for listing
-function generateListingDescription(listing: {
-  name: string;
-  verified: boolean;
-  category: { name: string };
-  location: { city: string; state: string };
-  rating: number | null;
-  reviews: number;
-  description: string | null;
-}): string {
-  let description = `${listing.name} is a ${listing.verified ? 'verified ' : ''}${listing.category.name.toLowerCase()} based in ${listing.location.city}, ${listing.location.state}.`;
+// Parse the serviceTags JSON blob into a string[] (stored as {tags:[...]} or a bare array).
+function parseServiceTags(raw: string | null | undefined): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    const arr = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.tags) ? parsed.tags : [];
+    return arr.filter((t: unknown): t is string => typeof t === 'string' && t.trim().length > 0);
+  } catch {
+    return [];
+  }
+}
 
-  // Add rating and review info if available
-  if (listing.reviews > 0 && listing.rating) {
-    description += ` They have a ${listing.rating}/5 rating based on ${listing.reviews} customer review${listing.reviews > 1 ? 's' : ''} on Google.`;
+// Build a substantive, per-listing-unique summary. Every listing has a different
+// mix of city, category, rating, address, services and stats, so no two of these
+// read alike — which is what keeps the page out of Google's thin / soft-404 bucket.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function generateListingDescription(listing: any): string {
+  const city: string = listing.location.city;
+  const state: string = listing.location.state;
+  const catName: string = listing.category.name;
+  const cat = catName.toLowerCase();
+  const isMaintenance = /maintenance|amc|cleaning/i.test(catName);
+  const s: string[] = [];
+
+  s.push(`${listing.name} is a ${listing.verified ? 'verified ' : ''}${cat} operating in ${city}, ${state}.`);
+
+  if (listing.address) {
+    s.push(`It is located at ${listing.address}.`);
   }
 
-  // MNRE certified - assume all verified listings are MNRE certified
+  const rating = listing.rating as number | null;
+  if (listing.reviews > 0 && rating) {
+    const tier = rating >= 4.5 ? 'an excellent' : rating >= 4 ? 'a strong' : rating >= 3 ? 'a mixed' : 'a below-average';
+    s.push(`It holds ${tier} ${rating.toFixed(1)}/5 rating across ${listing.reviews} Google review${listing.reviews === 1 ? '' : 's'}.`);
+  } else {
+    s.push(`It has no Google reviews yet — ask for recent customer references before you commit.`);
+  }
+
+  const tags = parseServiceTags(listing.serviceTags).slice(0, 6);
+  if (tags.length) {
+    s.push(`Services listed include ${tags.join(', ')}.`);
+  }
+
+  const stats: string[] = [];
+  if (listing.yearsExperience) stats.push(`${listing.yearsExperience} years in business`);
+  if (listing.installationsCount) stats.push(`${listing.installationsCount}+ installations completed`);
+  if (listing.capacityMw) stats.push(`${listing.capacityMw} MW installed`);
+  if (listing.citiesCount) stats.push(`coverage across ${listing.citiesCount}+ cities`);
+  if (stats.length) s.push(`The company reports ${stats.join(', ')}.`);
+
+  const channels = [
+    listing.phone ? 'by phone' : null,
+    listing.email ? 'by email' : null,
+    listing.website ? 'through their website' : null,
+  ].filter(Boolean) as string[];
+  const work = isMaintenance
+    ? 'panel cleaning, servicing and annual maintenance contracts'
+    : 'rooftop solar panels, inverters and installation';
+  s.push(
+    channels.length
+      ? `You can reach ${listing.name} ${channels.join(', ')} for a quote on ${work} in ${city}.`
+      : `Contact ${listing.name} directly for a quote on ${work} in ${city}.`,
+  );
+
   if (listing.verified) {
-    description += ` They are MNRE certified.`;
+    s.push(`Listed on GoSolarIndex since ${new Date(listing.createdAt).getFullYear()} and marked MNRE-certified.`);
   }
 
-  // Add service area info
-  description += ` They serve residential and commercial solar customers in ${listing.location.city} and surrounding areas. Contact them directly for a free solar quote.`;
-
-  return description;
+  return s.join(' ');
 }
 
 // ─── Data fetching with caching ────────────────────────────────────────────────
@@ -336,15 +378,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const listingImages: { id: string; url: string }[] = (listing as any).images ?? [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const youtubeEmbedUrl = toYouTubeEmbed((listing as any).youtubeUrl ?? null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let serviceTags: string[] = [];
-  try {
-    const raw = (listing as any).serviceTags;
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      serviceTags = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.tags) ? parsed.tags : []);
-    }
-  } catch { /* ignore */ }
+  const serviceTags: string[] = parseServiceTags((listing as { serviceTags?: string | null }).serviceTags);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const installationsCount = (listing as any).installationsCount;
@@ -356,6 +390,68 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const citiesCount = (listing as any).citiesCount;
 
   const listedYear = new Date(listing.createdAt).getFullYear();
+
+  // ── Business-specific FAQ ──────────────────────────────────────────────────
+  // Built entirely from this listing's own data, so every page's Q&A is unique.
+  // Rendered on the page AND emitted as FAQPage schema.
+  const cityName = listing.location.city;
+  const stateName = listing.location.state;
+  const isMaintenanceCat = /maintenance|amc|cleaning/i.test(listing.category.name);
+  const contactBits = [
+    phoneNormalized.e164 ? `call ${phoneNormalized.e164}` : null,
+    whatsappUrl ? 'message on WhatsApp' : null,
+    listing.email ? `email ${listing.email}` : null,
+    listing.website ? `visit ${listing.website.replace(/^https?:\/\//, '')}` : null,
+  ].filter(Boolean) as string[];
+
+  const businessFaqs: { q: string; a: string }[] = [
+    {
+      q: `Where is ${listing.name} located?`,
+      a: listing.address
+        ? `${listing.name} is at ${listing.address}, ${cityName}, ${stateName}. Directions are on the map above.`
+        : `${listing.name} operates in ${cityName}, ${stateName}. Contact them for their exact address and the areas they cover.`,
+    },
+    {
+      q: `How do I contact ${listing.name}?`,
+      a: `${contactBits.length
+        ? `You can ${contactBits.join(', ').replace(/, ([^,]*)$/, ' or $1')}.`
+        : `Use the enquiry form on this page.`} You can also send an enquiry through the form on this page for a free, no-obligation quote.`,
+    },
+    serviceTags.length
+      ? {
+          q: `What services does ${listing.name} offer?`,
+          a: `${listing.name} lists: ${serviceTags.slice(0, 10).join(', ')}. Confirm scope and pricing directly with the business.`,
+        }
+      : {
+          q: `What does ${listing.name} do?`,
+          a: `${listing.name} is a ${listing.category.name.toLowerCase()} serving ${cityName} and nearby areas — ${isMaintenanceCat
+            ? 'solar panel cleaning, servicing and annual maintenance contracts'
+            : 'rooftop solar panels, inverters, installation and net-metering support'}.`,
+        },
+  ];
+  if (listing.reviews > 0 && listing.rating != null) {
+    businessFaqs.push({
+      q: `Is ${listing.name} a good solar company in ${cityName}?`,
+      a: `${listing.name} has a ${listing.rating.toFixed(1)}/5 rating from ${listing.reviews} Google review${listing.reviews === 1 ? '' : 's'}${listing.verified ? ' and is a verified, MNRE-certified listing' : ''}. Compare quotes from 2–3 companies before deciding.`,
+    });
+  }
+  businessFaqs.push({
+    q: `Does ${listing.name} help with the PM Surya Ghar subsidy?`,
+    a: `Most solar companies in ${stateName} assist with PM Surya Ghar Muft Bijli Yojana paperwork (subsidy up to ₹78,000 for homes). Ask ${listing.name} to confirm they handle the national portal registration and the DISCOM net-metering application.`,
+  });
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      ...businessFaqs,
+      ...getCategoryGuide(listing.category.name, cityName, stateName).faqs.slice(0, 2),
+    ].map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
 
   const siteUrl = 'https://gosolarindex.in';
 
@@ -406,8 +502,11 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
-      <Script id="lb-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
-      <Script id="bc-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      {/* JSON-LD as plain <script> so it's in the server-rendered HTML (next/script
+          defers to the client, which kept structured data out of Google's first fetch). */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <Header />
 
       {/* Breadcrumb */}
@@ -503,12 +602,18 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             <div className="flex flex-wrap items-center gap-6 text-xs text-white/90">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                <span>Responds within 24 hrs</span>
+                <span>{listing.category.name}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                <span>Accepts UPI, Cash, Bank</span>
+                <span>Serving {listing.location.city}, {listing.location.state}</span>
               </div>
+              {listing.reviews > 0 && listing.rating != null && (
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
+                  <span>{listing.rating.toFixed(1)}★ on Google ({listing.reviews})</span>
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
                 <span>Listed since {listedYear}</span>
@@ -900,13 +1005,13 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                 </div>
               </div>
 
-              {/* FAQ Section */}
+              {/* FAQ Section — business-specific questions first, then category context */}
               <div className="bg-white rounded-xl p-6 border border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900 mb-5">
-                  Frequently Asked Questions — {listing.category.name} in {listing.location.city}
+                  Frequently Asked Questions about {listing.name}
                 </h2>
                 <div className="space-y-5">
-                  {guide.faqs.map((faq, i) => (
+                  {[...businessFaqs, ...guide.faqs.slice(0, 2)].map((faq, i) => (
                     <div key={i} className="border-b border-gray-100 last:border-b-0 pb-5 last:pb-0">
                       <h3 className="text-sm font-semibold text-gray-900 mb-2">{faq.q}</h3>
                       <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>

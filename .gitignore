@@ -36,3 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# GSC CLI (local only — service-account key lives in ~/.secrets)
+scripts/gsc.ts

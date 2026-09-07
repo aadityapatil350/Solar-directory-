@@ -5,7 +5,6 @@ import { prisma } from '@/lib/prisma';
 import Header from '@/components/Header';
 import BlogCTABox from '@/components/BlogCTABox';
 import Link from 'next/link';
-import Script from 'next/script';
 import { Clock, Tag, ChevronRight, ArrowLeft, MapPin, Zap } from 'lucide-react';
 
 export const revalidate = 3600;   // ISR — revalidate every hour
@@ -101,8 +100,8 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Script id="article-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      <Script id="bc-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
 
       {/* Breadcrumb */}

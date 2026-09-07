@@ -7,7 +7,6 @@ import { MapPin, CheckCircle, Info } from 'lucide-react';
 import LeadForm from '@/components/LeadForm';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
-import Script from 'next/script';
 import { citySpecificData, getCityFAQs, getCityDescription } from '@/lib/cityData';
 
 // Use ISR for better SEO - revalidate every 1 hour
@@ -153,20 +152,17 @@ export default async function CityPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Script
-        id="breadcrumb-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       {itemListSchema && (
-        <Script
-          id="itemlist-schema"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
       )}
-      <Script
-        id="faq-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
