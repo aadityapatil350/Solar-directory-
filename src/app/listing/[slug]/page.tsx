@@ -253,8 +253,13 @@ const getListing = unstable_cache(
       }
       return listing;
     } catch (error) {
+      // Do NOT swallow this into `return null` — the caller treats null as
+      // "listing doesn't exist" and calls notFound(), which (now that status
+      // codes stream correctly) serves a real 404 to Google for a listing
+      // that actually exists. A DB/pool error must surface as a 500 instead,
+      // which search engines treat as transient rather than "page is gone".
       console.error('Error fetching listing:', error);
-      return null;
+      throw error;
     }
   },
   ['listing-detail'],
