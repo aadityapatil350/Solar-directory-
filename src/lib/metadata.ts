@@ -99,7 +99,7 @@ export function constructCityMetadata(city: string, state: string, count?: numbe
   });
 }
 
-export function constructCategoryMetadata(category: string, city?: string, count?: number): Metadata {
+export function constructCategoryMetadata(category: string, city?: string, count?: number, categorySlug?: string): Metadata {
   const year = currentYear();
   const locationText = city ? `in ${city}` : 'in India';
   const title = `${category} ${locationText} — Verified Companies (${year})`;
@@ -107,7 +107,11 @@ export function constructCategoryMetadata(category: string, city?: string, count
   return constructMetadata({
     title,
     description,
-    path: `/categories/${category.toLowerCase().replace(/\s+/g, '-')}`,
+    // Use the category's real slug for the canonical path — deriving it from the
+    // display name here previously produced a slug that didn't match the actual
+    // route (e.g. "residential-solar-installers" instead of "residential-installers"),
+    // self-canonicalizing to a URL that 301-redirects away from the page itself.
+    path: `/categories/${categorySlug || category.toLowerCase().replace(/\s+/g, '-')}`,
     standalone: true,
     noindex: count === 0, // Noindex if empty to prevent Soft 404s
   });

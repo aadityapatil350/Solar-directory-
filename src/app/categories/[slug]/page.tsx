@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   const count = await prisma.listing.count({ where: { categoryId: category.id } });
   
-  return constructCategoryMetadata(category.name, undefined, count);
+  return constructCategoryMetadata(category.name, undefined, count, category.slug);
 }
 
 export const dynamic = 'force-dynamic';
