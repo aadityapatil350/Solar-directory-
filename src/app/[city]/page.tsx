@@ -1,13 +1,29 @@
 import type { Metadata } from 'next';
 import { constructCityMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import Link from 'next/link';
 import CityClient from './CityClient';
-import { MapPin, CheckCircle, Info } from 'lucide-react';
+import {
+  MapPin,
+  CheckCircle,
+  Info,
+  ShieldCheck,
+  Zap,
+  Building2,
+  FileCheck2,
+  BadgeCheck,
+  Star,
+  Phone,
+  ArrowRight,
+  ExternalLink,
+} from 'lucide-react';
 import LeadForm from '@/components/LeadForm';
+import SolarSubsidyCalculator from '@/components/SolarSubsidyCalculator';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { citySpecificData, getCityFAQs, getCityDescription } from '@/lib/cityData';
+import { getStateSolarConfig } from '@/lib/solarConfig';
 
 // Use ISR for better SEO - revalidate every 1 hour
 export const revalidate = 3600;
@@ -70,6 +86,25 @@ export default async function CityPage({ params }: PageProps) {
     take: 500,
   });
 
+  // If 0 listings exist, query regional/statewide verified installers for enriched fallback
+  const fallbackListings =
+    listings.length === 0
+      ? await prisma.listing.findMany({
+          where: {
+            location: { state: cityData.state },
+            verified: true,
+          },
+          include: {
+            category: true,
+            location: true,
+          },
+          orderBy: [{ rating: 'desc' }, { reviews: 'desc' }],
+          take: 6,
+        })
+      : [];
+
+  const stateConfig = getStateSolarConfig(cityData.state);
+
   // Fetch all categories to populate filter dropdown
   const categories = await prisma.category.findMany({
     orderBy: { name: 'asc' },
@@ -86,6 +121,7 @@ export default async function CityPage({ params }: PageProps) {
     { label: 'Loom Solar', slug: 'loom', patterns: /loom\s*solar/i },
     { label: 'Vikram Solar', slug: 'vikram', patterns: /vikram/i },
   ];
+
   const brandGroups = brandKeywords
     .map((b) => ({
       ...b,
@@ -120,20 +156,24 @@ export default async function CityPage({ params }: PageProps) {
   };
 
   // ItemList Schema for top listings (helps Google understand directory structure)
-  const itemListSchema = listings.length > 0 ? {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: `Solar Installers in ${cityData.city}`,
-    description: `Verified solar companies in ${cityData.city}, ${cityData.state}`,
-    numberOfItems: listings.length,
-    itemListElement: listings.slice(0, 10).map((listing: typeof listings[0], index: number) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: listing.name,
-      url: `https://gosolarindex.in/listing/${listing.slug}`,
-      ...(listing.description && { description: listing.description }),
-    })),
-  } : null;
+  const activeListings = listings.length > 0 ? listings : fallbackListings;
+  const itemListSchema =
+    activeListings.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: `Solar Installers in ${cityData.city}`,
+          description: `Verified solar companies in ${cityData.city}, ${cityData.state}`,
+          numberOfItems: activeListings.length,
+          itemListElement: activeListings.slice(0, 10).map((listing, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: listing.name,
+            url: `https://gosolarindex.in/listing/${listing.slug}`,
+            ...(listing.description && { description: listing.description }),
+          })),
+        }
+      : null;
 
   // FAQ Schema
   const faqs = getCityFAQs(cityData.city, cityData.state);
@@ -151,7 +191,7 @@ export default async function CityPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-zinc-50 flex flex-col justify-between">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
@@ -166,247 +206,388 @@ export default async function CityPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <Header />
 
-      <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="mb-4">
-              <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">
-                <MapPin className="h-7 w-7" />
-                Best Solar Installers in {cityData.city} (2026)
-              </h1>
-            </div>
-            <p className="text-xl mb-4 text-orange-100">
-              {cityData.state}, India
-            </p>
-            <p className="text-lg text-orange-200">
-              Find verified solar installers, dealers, and service providers in {cityData.city}
-            </p>
+      <div>
+        <Header />
+
+        {/* ── BREADCRUMB ── */}
+        <div className="bg-white border-b border-zinc-200">
+          <div className="container mx-auto px-4 py-2.5">
+            <nav className="flex items-center gap-1.5 text-xs text-zinc-500">
+              <Link href="/" className="hover:text-zinc-900 transition">
+                Home
+              </Link>
+              <span>/</span>
+              <Link
+                href={`/states/${cityData.state.toLowerCase().replace(/\s+/g, '-')}`}
+                className="hover:text-zinc-900 transition"
+              >
+                {cityData.state}
+              </Link>
+              <span>/</span>
+              <span className="text-zinc-900 font-medium">{cityData.city}</span>
+            </nav>
           </div>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-6xl mx-auto">
-          {listings.length > 0 ? (
-            <CityClient
-              initialListings={listings}
-              categories={categories}
-              cityName={cityData.city}
-            />
-          ) : (
-            <div className="bg-white rounded-xl p-12 text-center">
-              <p className="text-gray-600 mb-4">
-                No solar companies found in {cityData.city} yet.
+        {/* ── HERO SECTION (Vercel Pastel Aesthetic) ── */}
+        <div className="bg-zinc-900 text-white py-14 border-b border-zinc-800">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center space-y-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium">
+                <MapPin className="h-3.5 w-3.5 text-emerald-400" />
+                {cityData.city}, {cityData.state} Solar Directory
+              </div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+                Best Solar Installers in {cityData.city} (2026)
+              </h1>
+              <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                Connect with verified solar EPC contractors, authorized dealers, and PM Surya Ghar
+                empanelled vendors serving {cityData.city}, {cityData.state}.
               </p>
-              <Link
-                href="/"
-                className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
-              >
-                Browse All Locations
-              </Link>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Brand-authorised dealer sections (captures brand+city long-tail) */}
-          {brandGroups.length > 0 && (
-            <div className="mt-12 space-y-6">
-              {brandGroups.map((brand) => (
-                <div key={brand.slug} className="bg-white rounded-xl p-6">
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-                    Authorised {brand.label} Dealers in {cityData.city}
-                  </h2>
-                  <p className="text-gray-600 text-sm mb-4">
-                    Verified {brand.label} channel partners & dealers in {cityData.city}, {cityData.state}. Get genuine panels/inverters with manufacturer warranty and PM Surya Ghar subsidy assistance.
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {brand.dealers.map((d) => (
-                      <Link
-                        key={d.id}
-                        href={`/listing/${d.slug}`}
-                        className="block border border-gray-200 hover:border-orange-400 hover:bg-orange-50 rounded-lg p-3 transition"
-                      >
-                        <p className="font-medium text-gray-900 text-sm line-clamp-2">{d.name}</p>
-                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {cityData.city}
-                          {d.verified && <span className="ml-2 text-green-600">✓ Verified</span>}
-                        </p>
-                      </Link>
-                    ))}
+        {/* ── MAIN DIRECTORY / REGIONAL FALLBACK ── */}
+        <div className="container mx-auto px-4 py-10">
+          <div className="max-w-6xl mx-auto space-y-10">
+            {listings.length > 0 ? (
+              <CityClient
+                initialListings={listings}
+                categories={categories}
+                cityName={cityData.city}
+              />
+            ) : (
+              /* ── ENRICHED REGIONAL FALLBACK (Fixes 418 Soft 404s per Phase 1.2) ── */
+              <div className="space-y-8">
+                {/* Notice Banner */}
+                <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-6 text-zinc-800">
+                  <div className="flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-zinc-900 text-base">
+                        Direct Installer Network Expanding in {cityData.city}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-zinc-600 mt-1 leading-relaxed">
+                        While hyper-local office registrations in {cityData.city} are being verified,
+                        the empanelled regional installers below provide full site surveys, equipment delivery,
+                        and {stateConfig.state} DISCOM net-metering liaison across {cityData.city}.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
 
-          {/* City-Specific Information */}
-          <div className="mt-12 bg-white rounded-xl p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              About Solar in {cityData.city}
-            </h2>
+                {/* Regional Installers Grid */}
+                {fallbackListings.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-bold text-zinc-900">
+                        Verified Regional Installers Serving {cityData.city} &amp; {cityData.state}
+                      </h2>
+                      <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 font-medium px-2.5 py-1 rounded-full">
+                        MNRE Empanelled
+                      </span>
+                    </div>
 
-            {/* City-Specific Description */}
-            <div className="mb-6 p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg">
-              <p className="text-gray-800 leading-relaxed">
-                {getCityDescription(cityData.city)}
-              </p>
-            </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {fallbackListings.map((installer) => (
+                        <div
+                          key={installer.id}
+                          className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <h3 className="font-bold text-zinc-900 text-base line-clamp-1">
+                                {installer.name}
+                              </h3>
+                              <span className="shrink-0 text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full">
+                                ✓ Verified
+                              </span>
+                            </div>
 
-            {(() => {
-              const cityInfo = citySpecificData[cityData.city.toLowerCase()];
+                            <p className="text-xs text-zinc-500 mb-3 flex items-center gap-1">
+                              <MapPin className="w-3.5 h-3.5 text-zinc-400" />
+                              Regional Office: {installer.location.city}, {installer.location.state}
+                            </p>
 
-              if (cityInfo) {
-                return (
-                  <>
-                    {/* Cost Information */}
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                        <Info className="h-5 w-5 text-orange-500" />
-                        Solar Installation Costs in {cityData.city}
-                      </h3>
-                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-700 font-medium">3kW System (Avg. Home):</span>
-                          <span className="text-orange-600 font-bold">{cityInfo.avgCost3kW}</span>
+                            {installer.reviews > 0 && installer.rating != null && (
+                              <div className="flex items-center gap-1 text-xs mb-3 text-amber-600 font-medium">
+                                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                                <span>{installer.rating.toFixed(1)}</span>
+                                <span className="text-zinc-400">({installer.reviews} reviews)</span>
+                              </div>
+                            )}
+
+                            <p className="text-xs text-zinc-600 line-clamp-2 leading-relaxed">
+                              {installer.description ||
+                                `Professional solar rooftop EPC and installation provider serving residential and commercial projects across ${cityData.state}.`}
+                            </p>
+                          </div>
+
+                          <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between gap-2">
+                            {installer.phone ? (
+                              <a
+                                href={`tel:${installer.phone}`}
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-900 hover:text-emerald-700 transition"
+                              >
+                                <Phone className="w-3.5 h-3.5" /> Call Installer
+                              </a>
+                            ) : (
+                              <span className="text-xs text-zinc-400">Verified Partner</span>
+                            )}
+                            <Link
+                              href={`/listing/${installer.slug}`}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-800"
+                            >
+                              View Profile <ArrowRight className="w-3 h-3" />
+                            </Link>
+                          </div>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-700 font-medium">5kW System (Large Home):</span>
-                          <span className="text-orange-600 font-bold">{cityInfo.avgCost5kW}</span>
-                        </div>
-                        <p className="text-sm text-gray-600 mt-2 pt-2 border-t border-orange-200">
-                          💡 {cityInfo.subsidyInfo}
-                        </p>
-                      </div>
+                      ))}
                     </div>
+                  </div>
+                )}
 
-                    {/* DISCOM & Net Metering */}
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                        Net Metering & DISCOM Information
+                {/* State DISCOM Net-Metering & Subsidy Rates Card */}
+                <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8 space-y-4">
+                  <div className="flex items-center justify-between border-b border-zinc-100 pb-3 flex-wrap gap-2">
+                    <div>
+                      <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+                        <FileCheck2 className="w-5 h-5 text-emerald-600" />
+                        {stateConfig.state} DISCOM Net-Metering &amp; PM Surya Ghar Rules
                       </h3>
-                      <div className="space-y-2">
-                        <p className="text-gray-700">
-                          <span className="font-medium">Distribution Companies (DISCOMs):</span>{' '}
-                          {cityInfo.discoms.join(', ')}
-                        </p>
-                        <ul className="space-y-1.5 ml-4">
-                          {cityInfo.highlights.map((highlight, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-gray-600">
-                              <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                              <span>{highlight}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      <p className="text-xs text-zinc-500 mt-0.5">
+                        Official regulatory parameters for solar connections in {cityData.city}
+                      </p>
+                    </div>
+                    <span className="text-xs font-semibold text-zinc-700 bg-zinc-100 px-2.5 py-1 rounded-md">
+                      {stateConfig.netMeteringAuthority}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+                    <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+                      <span className="text-zinc-500 block text-xs">Regional Utility DISCOMs</span>
+                      <span className="font-semibold text-zinc-900 mt-1 block">
+                        {stateConfig.discoms.join(', ')}
+                      </span>
                     </div>
 
-                    {/* Top Areas Served */}
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                        Popular Areas for Solar Installation
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {cityInfo.topAreas.map((area) => (
-                          <span
-                            key={area}
-                            className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full"
-                          >
-                            <MapPin className="h-3.5 w-3.5 text-gray-500" />
-                            {area}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+                      <span className="text-zinc-500 block text-xs">Max PM Surya Ghar Subsidy</span>
+                      <span className="font-semibold text-emerald-700 mt-1 block">
+                        ₹{stateConfig.centralSubsidyMax.toLocaleString('en-IN')} (Direct DBT)
+                      </span>
                     </div>
-                  </>
-                );
-              }
 
-              // Fallback content for cities without specific data
-              return (
-                <div className="space-y-3 text-gray-600">
-                  <p>
-                    {cityData.city} offers excellent solar potential with abundant sunshine throughout the year.
-                    Installing solar panels in {cityData.city} can help you reduce electricity bills
-                    significantly while contributing to a greener environment.
-                  </p>
-                  <p>
-                    The {cityData.state} government offers various solar subsidies and incentives
-                    through PM Surya Ghar Yojana, making solar installation more affordable.
-                  </p>
-                  <p>
-                    Our directory features verified solar installers in {cityData.city} with proven
-                    track records. Compare prices, read reviews, and choose the right solar
-                    company for your needs.
+                    <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+                      <span className="text-zinc-500 block text-xs">Net Metering Turnaround</span>
+                      <span className="font-semibold text-zinc-900 mt-1 block">
+                        ~{stateConfig.netMeteringApprovalDays} Business Days
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-zinc-600 leading-relaxed pt-2">
+                    {stateConfig.stateSubsidyNotes ||
+                      `Homeowners in ${cityData.city} are eligible for bi-directional net meters where surplus daytime generation is exported into the grid and credited against nighttime consumption.`}
                   </p>
                 </div>
-              );
-            })()}
 
-            {/* Internal links to blog */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <h4 className="font-semibold text-gray-900 mb-3">Helpful Resources</h4>
-              <div className="flex flex-wrap gap-2">
-                <Link href={`/best-solar-companies/${citySlug}`} className="text-sm text-orange-600 hover:underline font-semibold">
-                  → Best Solar Companies in {cityData.city}
-                </Link>
-                <Link href={`/${citySlug}/solar-panel-cleaning`} className="text-sm text-orange-600 hover:underline font-semibold">
-                  → Solar Panel Cleaning in {cityData.city}
-                </Link>
-                <Link href="/blog/solar-panel-installation-cost-home-india-2026" className="text-sm text-orange-600 hover:underline">
-                  → Solar Panel Costs in India
-                </Link>
-                <Link href="/blog/pm-surya-ghar-yojana-complete-guide" className="text-sm text-orange-600 hover:underline">
-                  → PM Surya Ghar Subsidy Guide
-                </Link>
-                <Link href="/solar-calculator" className="text-sm text-orange-600 hover:underline">
-                  → Calculate Your Savings
-                </Link>
-                <Link href="/subsidy-checker" className="text-sm text-orange-600 hover:underline">
-                  → Check Subsidy Eligibility
-                </Link>
+                {/* High-Visibility Lead Form (Regional Fallback) */}
+                <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8 space-y-4">
+                  <div className="text-center max-w-xl mx-auto mb-4">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
+                      Free Site Feasibility
+                    </span>
+                    <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 mt-1">
+                      Request Verified Installer Quotes in {cityData.city}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-zinc-500 mt-1">
+                      Our dispatch team will connect you with up to 3 verified solar engineers licensed
+                      for {cityData.city} and {stateConfig.state}.
+                    </p>
+                  </div>
+                  <div className="max-w-xl mx-auto">
+                    <LeadForm
+                      prefill={{ city: cityData.city }}
+                      source={`city-fallback:${cityData.city.toLowerCase()}`}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Brand-authorised dealer sections (captures brand+city long-tail) */}
+            {brandGroups.length > 0 && (
+              <div className="space-y-4">
+                {brandGroups.map((brand) => (
+                  <div key={brand.slug} className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+                    <h2 className="text-xl font-bold text-zinc-900 mb-1.5">
+                      Authorised {brand.label} Dealers in {cityData.city}
+                    </h2>
+                    <p className="text-zinc-600 text-xs sm:text-sm mb-4">
+                      Verified {brand.label} channel partners &amp; dealers in {cityData.city}, {cityData.state}. Get genuine panels/inverters with manufacturer warranty and PM Surya Ghar subsidy assistance.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {brand.dealers.map((d) => (
+                        <Link
+                          key={d.id}
+                          href={`/listing/${d.slug}`}
+                          className="block border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 rounded-xl p-3.5 transition"
+                        >
+                          <p className="font-semibold text-zinc-900 text-sm line-clamp-1">{d.name}</p>
+                          <p className="text-xs text-zinc-500 mt-1.5 flex items-center justify-between">
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-3 w-3 text-zinc-400" />
+                              {cityData.city}
+                            </span>
+                            {d.verified && (
+                              <span className="text-emerald-700 font-medium">✓ Verified</span>
+                            )}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* ── PHASE 3: EMBEDDED SOLAR SUBSIDY CALCULATOR ON CITY HUB ── */}
+            <div className="pt-2">
+              <SolarSubsidyCalculator
+                initialState={cityData.state}
+                initialCity={cityData.city}
+                embedded={true}
+              />
+            </div>
+
+            {/* City-Specific Information & Costs */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8 space-y-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-zinc-900">
+                About Solar Rooftop in {cityData.city}
+              </h2>
+
+              <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200/80">
+                <p className="text-sm text-zinc-700 leading-relaxed">
+                  {getCityDescription(cityData.city)}
+                </p>
+              </div>
+
+              {(() => {
+                const cityInfo = citySpecificData[cityData.city.toLowerCase()];
+                if (cityInfo) {
+                  return (
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-base font-bold text-zinc-900 mb-3 flex items-center gap-2">
+                          <Info className="h-4 w-4 text-emerald-600" />
+                          Average System Installation Cost in {cityData.city}
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                          <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 flex justify-between items-center">
+                            <span className="text-zinc-600">3 kW System (Avg. Home):</span>
+                            <span className="font-bold text-zinc-900">{cityInfo.avgCost3kW}</span>
+                          </div>
+                          <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 flex justify-between items-center">
+                            <span className="text-zinc-600">5 kW System (Large Home):</span>
+                            <span className="font-bold text-zinc-900">{cityInfo.avgCost5kW}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-base font-bold text-zinc-900 mb-2">
+                          Net Metering Utilities in {cityData.city}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-zinc-600">
+                          <strong>Active DISCOMs:</strong> {cityInfo.discoms.join(', ')}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
+              {/* Related internal navigation */}
+              <div className="pt-4 border-t border-zinc-100">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
+                  Solar Guides &amp; Related Links
+                </h3>
+                <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+                  <Link
+                    href={`/best-solar-companies/${citySlug}`}
+                    className="text-emerald-700 hover:text-emerald-800 font-medium bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200/60"
+                  >
+                    Top Rated Solar Companies in {cityData.city} →
+                  </Link>
+                  <Link
+                    href={`/${citySlug}/solar-panel-cleaning`}
+                    className="text-zinc-700 hover:text-zinc-900 font-medium bg-zinc-100 px-3 py-1 rounded-lg border border-zinc-200"
+                  >
+                    Panel Cleaning in {cityData.city} →
+                  </Link>
+                  <Link
+                    href="/tools/solar-subsidy-calculator"
+                    className="text-zinc-700 hover:text-zinc-900 font-medium bg-zinc-100 px-3 py-1 rounded-lg border border-zinc-200"
+                  >
+                    Solar Subsidy Calculator →
+                  </Link>
+                  <Link
+                    href="/guides/best-solar-panel-cleaning-kits-india"
+                    className="text-zinc-700 hover:text-zinc-900 font-medium bg-zinc-100 px-3 py-1 rounded-lg border border-zinc-200"
+                  >
+                    Cleaning Kits Review →
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8">
+              <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 mb-6">
+                Frequently Asked Questions — Solar in {cityData.city}
+              </h2>
+              <div className="space-y-6">
+                {faqs.map((faq, index) => (
+                  <div
+                    key={index}
+                    className="border-b border-zinc-100 last:border-b-0 pb-5 last:pb-0"
+                  >
+                    <h3 className="text-base font-semibold text-zinc-900 mb-1.5">{faq.question}</h3>
+                    <p className="text-sm text-zinc-600 leading-relaxed">{faq.answer}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* FAQ Section */}
-          <div className="mt-8 bg-white rounded-xl p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Frequently Asked Questions - Solar in {cityData.city}
-            </h2>
-            <div className="space-y-6">
-              {faqs.map((faq, index) => (
-                <div key={index} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    {faq.question}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </div>
-              ))}
+        {/* Sticky/Bottom Lead capture */}
+        <section className="bg-zinc-900 text-white py-14 border-t border-zinc-800">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto text-center mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                Get Free Rooftop Solar Quotes in {cityData.city}
+              </h2>
+              <p className="text-sm text-zinc-400">
+                Compare verified quotes from empanelled installers in {cityData.city}. No spam, 100% privacy protected.
+              </p>
+            </div>
+            <div className="max-w-xl mx-auto">
+              <LeadForm
+                prefill={{ city: cityData.city }}
+                source={`city-page:${cityData.city.toLowerCase()}`}
+              />
             </div>
           </div>
-        </div>
+        </section>
       </div>
 
-      {/* Lead capture — city pages get more search impressions than listings */}
-      <section className="bg-orange-50 border-t border-orange-100 py-14">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-              Get Free Solar Quotes in {cityData.city}
-            </h2>
-            <p className="text-gray-600">
-              Compare quotes from verified installers in {cityData.city}. No spam calls.
-            </p>
-          </div>
-          <div className="max-w-xl mx-auto">
-            <LeadForm prefill={{ city: cityData.city }} source={`city-page:${cityData.city.toLowerCase()}`} />
-          </div>
-        </div>
-      </section>
+      <Footer />
     </div>
   );
 }

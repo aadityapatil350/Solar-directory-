@@ -172,6 +172,13 @@ const blogRedirects = [
   { source: '/blog/solar-system-size-guide-india', destination: '/blog/1kw-2kw-3kw-5kw-solar-system-india-which-size', permanent: true },
 ];
 
+const toolAndMiscRedirects = [
+  { source: '/tools/subsidy-calculator', destination: '/tools/solar-subsidy-calculator', permanent: true },
+  { source: '/installers/signup', destination: '/for-installers', permanent: true },
+  { source: '/for-installer', destination: '/for-installers', permanent: true },
+  { source: '/guides', destination: '/blog', permanent: true },
+];
+
 const nextConfig: NextConfig = {
   trailingSlash: false,
   skipTrailingSlashRedirect: false,
@@ -185,6 +192,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      ...toolAndMiscRedirects,
       ...listingDuplicateRedirects,
       ...categorySlugRedirects,
       ...cityRedirects,

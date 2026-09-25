@@ -26,7 +26,7 @@ input,
 select,
 textarea,
 button {
-  accent-color: #f97316; /* orange-500 */
+  accent-color: #18181b; /* zinc-900 Vercel standard */
 }
 
 /* Custom select styling — removes OS default arrow color tint */
@@ -40,12 +40,12 @@ select {
   padding-right: 2.5rem;
 }
 
-/* Focus ring — ensure orange not browser default blue/purple */
+/* Focus ring */
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  ring-color: #f97316;
+  ring-color: #18181b;
 }
 
 /* Blog article body styles — no prose plugin needed */
@@ -96,11 +96,11 @@ textarea:focus {
   font-style: italic;
 }
 .article-body a {
-  color: #ea580c;
+  color: #059669;
   text-decoration: underline;
 }
 .article-body a:hover {
-  color: #c2410c;
+  color: #047857;
 }
 .article-body table {
   width: 100%;
@@ -125,7 +125,7 @@ textarea:focus {
   background: #f9fafb;
 }
 .article-body blockquote {
-  border-left: 4px solid #f97316;
+  border-left: 4px solid #059669;
   padding-left: 1rem;
   margin: 1rem 0;
   color: #6b7280;

@@ -248,53 +248,52 @@ export default function HomeClient({ initialStats, initialListings = [], initial
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <Header />
 
-      {/* Hero Section - Premium Design */}
-      <section className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 text-white overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-700/20 rounded-full blur-3xl"></div>
+      {/* Hero Section - Vercel Design Aesthetic */}
+      <section className="relative bg-zinc-950 text-white border-b border-zinc-800 overflow-hidden">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="container mx-auto px-4 py-16 sm:py-20 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             {/* Trust Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-white/30">
-              <Shield className="h-4 w-4" />
-              <span className="text-sm font-medium">India's Most Trusted Solar Directory</span>
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-3.5 py-1.5 rounded-full mb-5 text-xs font-semibold">
+              <Shield className="h-3.5 w-3.5 text-emerald-400" />
+              <span>India&apos;s Premier Solar Directory &amp; PM Surya Ghar Portal</span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
-              Find <span className="text-yellow-200">Verified</span> Solar Installers
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4 tracking-tight leading-tight text-white">
+              Find <span className="text-emerald-400">Verified</span> Solar Installers
               <br />Near You in Minutes
             </h1>
 
-            <p className="text-xl md:text-2xl mb-4 text-orange-50 font-light">
-              Compare quotes from {stats.verified}+ verified solar companies across {stats.cities}+ cities
+            <p className="text-base sm:text-lg md:text-xl mb-6 text-zinc-400 font-normal max-w-2xl mx-auto">
+              Compare transparent quotes from {stats.verified}+ verified solar EPCs &amp; dealers across {stats.cities}+ Indian cities
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-6 mb-10">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-300" />
-                <span className="font-medium">100% Free Quotes</span>
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-8 text-xs sm:text-sm text-zinc-300">
+              <div className="flex items-center gap-1.5 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <span>100% Free Site Feasibility</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-300" />
-                <span className="font-medium">PM Surya Ghar Eligible</span>
+              <div className="flex items-center gap-1.5 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <span>PM Surya Ghar DBT Eligible</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-300" />
-                <span className="font-medium">MNRE Approved</span>
+              <div className="flex items-center gap-1.5 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <span>MNRE ALMM Approved Panels</span>
               </div>
             </div>
 
             {/* Search Bar */}
-            <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl border border-zinc-200/90 p-5 sm:p-6 max-w-3xl mx-auto text-left">
               <SearchBar onSearch={handleSearch} locations={locations} listings={listings} />
 
-              {/* Location Filter - Yellow Pages Style */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Or browse by location:
+              {/* Location Filter */}
+              <div className="mt-4 pt-4 border-t border-zinc-100">
+                <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">
+                  Or select your city directly:
                 </label>
                 <select
                   value={filterLocationId || ''}
@@ -303,9 +302,9 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                     setFilterLocationId(val || null);
                     setCurrentPage(1);
                   }}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 bg-white"
+                  className="w-full p-2.5 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 text-zinc-900 bg-white text-sm"
                 >
-                  <option value="">All Cities in India</option>
+                  <option value="">All 78+ Cities in India</option>
                   {locations
                     .sort((a, b) => a.city.localeCompare(b.city))
                     .map((location) => (
@@ -318,12 +317,12 @@ export default function HomeClient({ initialStats, initialListings = [], initial
             </div>
 
             {/* Quick Category Pills */}
-            <div className="flex justify-center gap-2 flex-wrap mt-4 mb-2">
+            <div className="flex justify-center gap-2 flex-wrap mt-5 mb-2">
               {CATEGORIES.map((cat) => (
                 <Link
                   key={cat.slug}
                   href={`/categories/${cat.slug}`}
-                  className="text-xs px-3 py-1.5 rounded-full border border-white/30 bg-white/15 text-white hover:bg-white/25 transition-colors whitespace-nowrap"
+                  className="text-xs px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/90 text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors whitespace-nowrap"
                 >
                   {cat.icon} {cat.shortLabel}
                 </Link>
@@ -331,22 +330,22 @@ export default function HomeClient({ initialStats, initialListings = [], initial
             </div>
 
             {/* Quick Links */}
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm">
-              <span className="text-orange-100">Popular:</span>
-              <Link href="/mumbai" className="text-white hover:text-yellow-200 underline font-medium transition">
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm text-zinc-400">
+              <span>Popular Hubs:</span>
+              <Link href="/mumbai" className="text-zinc-200 hover:text-emerald-400 underline font-medium transition">
                 Mumbai
               </Link>
-              <Link href="/delhi" className="text-white hover:text-yellow-200 underline font-medium transition">
+              <Link href="/delhi" className="text-zinc-200 hover:text-emerald-400 underline font-medium transition">
                 Delhi
               </Link>
-              <Link href="/bangalore" className="text-white hover:text-yellow-200 underline font-medium transition">
+              <Link href="/bangalore" className="text-zinc-200 hover:text-emerald-400 underline font-medium transition">
                 Bangalore
               </Link>
-              <Link href="/pune" className="text-white hover:text-yellow-200 underline font-medium transition">
+              <Link href="/pune" className="text-zinc-200 hover:text-emerald-400 underline font-medium transition">
                 Pune
               </Link>
-              <Link href="/subsidy-checker" className="text-white hover:text-yellow-200 underline font-medium transition">
-                Check Subsidy
+              <Link href="/tools/solar-subsidy-calculator" className="text-emerald-400 hover:text-emerald-300 font-semibold transition ml-2">
+                Calculate Subsidy (₹78k) →
               </Link>
             </div>
           </div>

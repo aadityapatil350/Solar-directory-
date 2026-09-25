@@ -136,6 +136,8 @@ export default function AdminDashboard() {
   const [claims, setClaims] = useState<ClaimRequest[]>([]);
   const [claimsLoading, setClaimsLoading] = useState(false);
   const [processingClaim, setProcessingClaim] = useState<string | null>(null);
+  const [claimsStatusFilter, setClaimsStatusFilter] = useState<'all' | 'claimed' | 'pending' | 'rejected'>('all');
+  const [claimsSearch, setClaimsSearch] = useState('');
 
   // ── Listings state ──
   const [listings, setListings] = useState<Listing[]>([]);
@@ -708,6 +710,19 @@ export default function AdminDashboard() {
   // ──────────────────────────────────────────────────────────────────────────────
 
   const hasActiveFilters = filterCategory || filterLocation || filterVerified || filterFeatured || searchQuery;
+
+  const claimedListingUsers = claims.filter((c) => c.status === 'approved' && c.user);
+  const filteredClaims = claims.filter((c) => {
+    if (claimsStatusFilter === 'claimed' && !(c.status === 'approved' && c.user)) return false;
+    if (claimsStatusFilter === 'pending' && c.status !== 'pending') return false;
+    if (claimsStatusFilter === 'rejected' && c.status !== 'rejected') return false;
+    if (claimsSearch) {
+      const q = claimsSearch.toLowerCase();
+      const haystack = `${c.name} ${c.email} ${c.phone} ${c.listing.name} ${c.user?.email ?? ''} ${c.user?.name ?? ''}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1566,6 +1581,39 @@ export default function AdminDashboard() {
                   </button>
                 </div>
 
+                <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
+                  <div className="flex gap-2 flex-wrap">
+                    {([
+                      { key: 'all', label: 'All' },
+                      { key: 'claimed', label: `Claimed (${claimedListingUsers.length})` },
+                      { key: 'pending', label: `Pending (${claims.filter((c) => c.status === 'pending').length})` },
+                      { key: 'rejected', label: `Rejected (${claims.filter((c) => c.status === 'rejected').length})` },
+                    ] as const).map((f) => (
+                      <button
+                        key={f.key}
+                        onClick={() => setClaimsStatusFilter(f.key)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                          claimsStatusFilter === f.key
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="relative">
+                    <Search className="h-3.5 w-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={claimsSearch}
+                      onChange={(e) => setClaimsSearch(e.target.value)}
+                      placeholder="Search name, email, listing…"
+                      className="pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg w-64 focus:outline-none focus:border-orange-300"
+                    />
+                  </div>
+                </div>
+
                 {claimsLoading ? (
                   <div className="text-center py-12 text-gray-400">Loading claims…</div>
                 ) : claims.length === 0 ? (
@@ -1574,9 +1622,14 @@ export default function AdminDashboard() {
                     <p className="text-gray-400">No claim requests yet.</p>
                     <p className="text-gray-300 text-sm mt-1">When businesses submit claim requests they will appear here.</p>
                   </div>
+                ) : filteredClaims.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Search className="h-12 w-12 text-gray-200 mx-auto mb-3" />
+                    <p className="text-gray-400">No claims match this filter.</p>
+                  </div>
                 ) : (
                   <div className="space-y-4">
-                    {claims.map((claim) => (
+                    {filteredClaims.map((claim) => (
                       <div
                         key={claim.id}
                         className={`border rounded-xl p-5 ${

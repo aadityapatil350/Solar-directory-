@@ -2,59 +2,82 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Sun, Menu, X, Calculator, BadgeIndianRupee } from 'lucide-react';
+import { Sun, Menu, X, Calculator, ShieldCheck, Building2 } from 'lucide-react';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="border-b bg-white sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-4 py-4">
+    <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3.5">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <Sun className="h-8 w-8 text-orange-500" />
-            <span className="text-xl font-bold text-gray-900">GoSolarIndex</span>
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200/70 flex items-center justify-center text-amber-600 group-hover:scale-105 transition-transform">
+              <Sun className="h-5 w-5 fill-amber-400 text-amber-500" />
+            </div>
+            <span className="text-lg font-bold tracking-tight text-zinc-950">GoSolarIndex</span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
+          <nav className="hidden lg:flex items-center gap-6">
+            <Link
+              href="/"
+              className="text-zinc-600 hover:text-zinc-950 transition text-xs sm:text-sm font-medium"
+            >
               Home
             </Link>
-            <Link href="/categories" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
+            <Link
+              href="/tools/solar-subsidy-calculator"
+              className="text-zinc-600 hover:text-zinc-950 transition text-xs sm:text-sm font-medium flex items-center gap-1.5"
+            >
+              <Calculator className="h-3.5 w-3.5 text-emerald-600" />
+              Subsidy Calculator
+            </Link>
+            <Link
+              href="/categories"
+              className="text-zinc-600 hover:text-zinc-950 transition text-xs sm:text-sm font-medium"
+            >
               Categories
             </Link>
-            <Link href="/locations" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
-              Locations
+            <Link
+              href="/locations"
+              className="text-zinc-600 hover:text-zinc-950 transition text-xs sm:text-sm font-medium"
+            >
+              Cities
             </Link>
-            <Link href="/about" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
-              About
+            <Link
+              href="/for-installers"
+              className="text-zinc-600 hover:text-zinc-950 transition text-xs sm:text-sm font-medium flex items-center gap-1"
+            >
+              <Building2 className="h-3.5 w-3.5 text-zinc-400" />
+              For Installers
             </Link>
-            <Link href="/solar-calculator" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium flex items-center gap-1">
-              <Calculator className="h-3.5 w-3.5" />
-              Calculator
+            <Link
+              href="/blog"
+              className="text-zinc-600 hover:text-zinc-950 transition text-xs sm:text-sm font-medium"
+            >
+              Guides &amp; Blog
             </Link>
-            <Link href="/subsidy-checker" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium flex items-center gap-1">
-              <BadgeIndianRupee className="h-3.5 w-3.5" />
-              Subsidy
-            </Link>
-            <Link href="/blog" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
-              Blog
-            </Link>
-            <Link href="/pricing" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
+            <Link
+              href="/pricing"
+              className="text-zinc-600 hover:text-zinc-950 transition text-xs sm:text-sm font-medium"
+            >
               Pricing
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-orange-500 transition text-sm font-medium">
-              Contact
             </Link>
           </nav>
 
-          {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* CTA Buttons */}
+          <div className="hidden sm:flex items-center gap-2.5">
+            <Link
+              href="/for-installers"
+              className="text-xs font-medium text-zinc-700 hover:text-zinc-900 border border-zinc-200 hover:border-zinc-300 bg-white hover:bg-zinc-50 px-3 py-2 rounded-lg transition"
+            >
+              Claim Listing
+            </Link>
             <Link
               href="/dashboard/login"
-              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition text-sm font-medium"
+              className="bg-zinc-900 text-white text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-zinc-800 transition shadow-sm"
             >
               Owner Login
             </Link>
@@ -62,25 +85,24 @@ export default function Header() {
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden p-2 text-gray-600 hover:text-orange-500 transition"
+            className="lg:hidden p-2 text-zinc-600 hover:text-zinc-950 transition"
             onClick={() => setMobileOpen((o) => !o)}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6 text-zinc-800" />}
           </button>
         </div>
 
         {/* Mobile nav */}
         {mobileOpen && (
-          <nav className="md:hidden border-t mt-4 pt-4 space-y-3 pb-2">
+          <nav className="lg:hidden border-t border-zinc-200 mt-3 pt-3 space-y-2 pb-2">
             {[
               { href: '/', label: 'Home' },
+              { href: '/tools/solar-subsidy-calculator', label: 'Subsidy & Payback Calculator' },
               { href: '/categories', label: 'Categories' },
               { href: '/locations', label: 'Locations' },
-              { href: '/about', label: 'About' },
-              { href: '/solar-calculator', label: 'Calculator' },
-              { href: '/subsidy-checker', label: 'Subsidy Checker' },
-              { href: '/blog', label: 'Blog' },
+              { href: '/for-installers', label: 'For Solar Installers' },
+              { href: '/blog', label: 'Guides & Blog' },
               { href: '/pricing', label: 'Pricing' },
               { href: '/contact', label: 'Contact' },
             ].map(({ href, label }) => (
@@ -88,18 +110,27 @@ export default function Header() {
                 key={href}
                 href={href}
                 onClick={() => setMobileOpen(false)}
-                className="block text-gray-700 hover:text-orange-500 transition font-medium"
+                className="block text-zinc-700 hover:text-zinc-950 transition text-sm font-medium py-1.5 px-1"
               >
                 {label}
               </Link>
             ))}
-            <Link
-              href="/dashboard/login"
-              onClick={() => setMobileOpen(false)}
-              className="block bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition text-center font-medium mt-2"
-            >
-              Owner Login
-            </Link>
+            <div className="pt-2 border-t border-zinc-100 flex gap-2">
+              <Link
+                href="/for-installers"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 text-center border border-zinc-200 bg-white text-zinc-800 text-xs font-medium py-2 rounded-lg"
+              >
+                Claim Listing
+              </Link>
+              <Link
+                href="/dashboard/login"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 text-center bg-zinc-900 text-white text-xs font-medium py-2 rounded-lg"
+              >
+                Owner Login
+              </Link>
+            </div>
           </nav>
         )}
       </div>

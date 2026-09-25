@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
+import { generateCleanListingSlug } from '@/lib/slugs';
 
 async function verifyAuth(request: Request): Promise<{ success: boolean; user?: any }> {
   const authHeader = request.headers.get('authorization');
@@ -85,7 +86,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name, phone, category, and location are required' }, { status: 400 });
     }
 
-    const slug = name.toLowerCase().replace(/[^a-z0-9\s]/g, '-').replace(/\s+/g, '-').replace(/-+/g, '-') + '-' + Date.now();
+    const location = await prisma.location.findUnique({
+      where: { id: locationId },
+      select: { city: true },
+    });
+
+    const baseCleanSlug = generateCleanListingSlug(name, location?.city || '');
+    let slug = baseCleanSlug;
+    let counter = 1;
+    while (await prisma.listing.findUnique({ where: { slug }, select: { id: true } })) {
+      counter++;
+      slug = `${baseCleanSlug}-${counter}`;
+    }
+
     // Store extra category IDs in serviceTags JSON: { tags: [], categoryIds: [] }
     const serviceTagsJson = extraCategoryIds?.length ? JSON.stringify({ tags: [], categoryIds: extraCategoryIds }) : null;
 

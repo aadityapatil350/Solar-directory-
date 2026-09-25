@@ -48,15 +48,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages
   const staticPages: Array<{ path: string; priority: number }> = [
-    { path: '',                    priority: 1.0 },
-    { path: '/solar-calculator',   priority: 0.9 },
-    { path: '/subsidy-checker',    priority: 0.9 },
-    { path: '/categories',         priority: 0.8 },
-    { path: '/locations',          priority: 0.8 },
-    { path: '/blog',               priority: 0.8 },
-    { path: '/pricing',            priority: 0.6 },
-    { path: '/about',              priority: 0.5 },
-    { path: '/contact',            priority: 0.5 },
+    { path: '',                                              priority: 1.0 },
+    { path: '/tools/solar-subsidy-calculator',               priority: 0.95 },
+    { path: '/solar-calculator',                             priority: 0.9 },
+    { path: '/subsidy-checker',                              priority: 0.9 },
+    { path: '/for-installers',                               priority: 0.85 },
+    { path: '/guides/topcon-vs-mono-perc-solar-panels-india', priority: 0.8 },
+    { path: '/guides/best-solar-panel-cleaning-kits-india',  priority: 0.8 },
+    { path: '/guides/best-portable-solar-generators-india',  priority: 0.8 },
+    { path: '/categories',                                   priority: 0.8 },
+    { path: '/locations',                                    priority: 0.8 },
+    { path: '/blog',                                         priority: 0.8 },
+    { path: '/pricing',                                      priority: 0.6 },
+    { path: '/about',                                        priority: 0.5 },
+    { path: '/contact',                                      priority: 0.5 },
   ];
   for (const p of staticPages) {
     pages.push({ url: `${BASE_URL}${p.path}`, lastModified: now, priority: p.priority });

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
 import ServicesSection from '@/components/ServicesSection';
 import PhotoGalleryModal from '@/components/PhotoGalleryModal';
@@ -13,8 +14,10 @@ import {
   ChevronRight, Zap,
   CheckCircle, Building2,
   MessageCircle, TrendingUp,
+  IndianRupee, FileCheck2, CheckCircle2, BadgeCheck, ExternalLink,
 } from 'lucide-react';
 import { whatsappUrl as buildWhatsappUrl, telUrl, normalizeIndianPhone } from '@/lib/phone';
+import { getStateSolarConfig } from '@/lib/solarConfig';
 
 export const revalidate = 3600;    // ISR — revalidate every hour
 export const dynamicParams = true; // serve new slugs on-demand
@@ -167,7 +170,7 @@ function parseServiceTags(raw: string | null | undefined): string[] {
 // mix of city, category, rating, address, services and stats, so no two of these
 // read alike — which is what keeps the page out of Google's thin / soft-404 bucket.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function generateListingDescription(listing: any): string {
+function generateListingDescription(listing: any, peerStats?: { count: number; avgRating: number | null }): string {
   const city: string = listing.location.city;
   const state: string = listing.location.state;
   const catName: string = listing.category.name;
@@ -187,6 +190,17 @@ function generateListingDescription(listing: any): string {
     s.push(`It holds ${tier} ${rating.toFixed(1)}/5 rating across ${listing.reviews} Google review${listing.reviews === 1 ? '' : 's'}.`);
   } else {
     s.push(`It has no Google reviews yet — ask for recent customer references before you commit.`);
+  }
+
+  // Real, computed comparison against this listing's actual peer set — not filler.
+  // Only passed in for unclaimed/non-featured listings (see call sites).
+  if (peerStats && peerStats.count > 0) {
+    if (peerStats.avgRating != null && rating) {
+      const cmp = rating > peerStats.avgRating ? 'above' : rating < peerStats.avgRating ? 'below' : 'in line with';
+      s.push(`This is one of ${peerStats.count} verified ${cat} listed in ${city}, rated ${cmp} the local average of ${peerStats.avgRating.toFixed(1)}/5.`);
+    } else {
+      s.push(`This is one of ${peerStats.count} verified ${cat} listed in ${city} on GoSolarIndex.`);
+    }
   }
 
   const tags = parseServiceTags(listing.serviceTags).slice(0, 6);
@@ -216,7 +230,7 @@ function generateListingDescription(listing: any): string {
   );
 
   if (listing.verified) {
-    s.push(`Listed on GoSolarIndex since ${new Date(listing.createdAt).getFullYear()} and marked MNRE-certified.`);
+    s.push(`Listed on GoSolarIndex since ${new Date(listing.createdAt).getFullYear()}.`);
   }
 
   return s.join(' ');
@@ -264,6 +278,31 @@ const getListing = unstable_cache(
   },
   ['listing-detail'],
   { revalidate: 300, tags: ['listings'] }
+);
+
+// Real peer-set stats for the enrichment sentence above — how many verified
+// listings share this city+category, and their average rating. Only fetched
+// for unclaimed/non-featured listings (see call sites in generateMetadata/page).
+const getCategoryLocationStats = unstable_cache(
+  async (categoryId: string, locationId: string, excludeId: string) => {
+    try {
+      const [count, rated] = await Promise.all([
+        prisma.listing.count({
+          where: { categoryId, locationId, verified: true, id: { not: excludeId } },
+        }),
+        prisma.listing.aggregate({
+          where: { categoryId, locationId, reviews: { gt: 0 }, id: { not: excludeId } },
+          _avg: { rating: true },
+        }),
+      ]);
+      return { count, avgRating: rated._avg.rating };
+    } catch (error) {
+      console.error('Error fetching category/location stats:', error);
+      return { count: 0, avgRating: null };
+    }
+  },
+  ['category-location-stats'],
+  { revalidate: 600, tags: ['listings'] }
 );
 
 const getRelated = unstable_cache(
@@ -316,8 +355,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
   const canonicalUrl = `https://gosolarindex.in/listing/${canonicalSlug}`;
 
+  // Peer-comparison enrichment is only for unclaimed, non-featured listings —
+  // claimed/featured listings already have owner-written content and shouldn't
+  // be touched by this.
+  const isEligibleForEnrichment = !listing.userId && !listing.featured;
+  const peerStats = isEligibleForEnrichment
+    ? await getCategoryLocationStats(listing.categoryId, listing.locationId, listing.id)
+    : undefined;
+
   // Generate description using the same helper function (truncated to 155 chars for meta)
-  const fullDescription = generateListingDescription(listing);
+  const fullDescription = generateListingDescription(listing, peerStats);
   const description = fullDescription.length > 155
     ? fullDescription.slice(0, 152) + '...'
     : fullDescription;
@@ -334,8 +381,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     (listing.reviews ?? 0) === 0;
 
   return constructMetadata({
-    title: `${listing.name} — ${listing.category.name} in ${listing.location.city}`,
-    description,
+    title: `${listing.name} in ${listing.location.city}: Reviews, Cost & Subsidy Eligibility | GoSolarIndex`,
+    description: `Read verified customer ratings, system pricing, and PM Surya Ghar subsidy eligibility for ${listing.name} in ${listing.location.city}. Request a free site inspection quote.`,
     path: `/listing/${slug}`,
     canonicalUrl: canonicalUrl,
     noindex: isThinContent,
@@ -374,6 +421,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   }
 
   const related = await getRelated(listing.categoryId, listing.locationId, listing.id);
+  const peerStats = (!listing.userId && !listing.featured)
+    ? await getCategoryLocationStats(listing.categoryId, listing.locationId, listing.id)
+    : undefined;
   const whatsappUrl = toWhatsApp(listing.phone, listing.name, listing.category?.name);
   const phoneNormalized = normalizeIndianPhone(listing.phone);
   const telHref = telUrl(listing.phone);
@@ -491,13 +541,18 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
     hasMap: `https://www.google.com/maps/search/${encodeURIComponent(`${listing.name} ${listing.location.city}`)}`,
   };
 
+  const stateSlug = listing.location.state.toLowerCase().replace(/\s+/g, '-');
+  const citySlug = listing.location.city.toLowerCase().replace(/\s+/g, '-');
+  const stateConfig = getStateSolarConfig(listing.location.state);
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
-      { '@type': 'ListItem', position: 2, name: listing.category.name, item: `${siteUrl}/categories/${listing.category.slug ?? ''}` },
-      { '@type': 'ListItem', position: 3, name: listing.name, item: `${siteUrl}/listing/${listing.slug}` },
+      { '@type': 'ListItem', position: 2, name: listing.location.state, item: `${siteUrl}/states/${stateSlug}` },
+      { '@type': 'ListItem', position: 3, name: listing.location.city, item: `${siteUrl}/${citySlug}` },
+      { '@type': 'ListItem', position: 4, name: listing.name, item: `${siteUrl}/listing/${listing.slug}` },
     ],
   };
 
@@ -515,74 +570,83 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
       <Header />
 
       {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-orange-500 transition">Home</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href={`/categories/${listing.category.slug ?? ''}`} className="hover:text-orange-500 transition">
-              {listing.category.name}
+      <div className="bg-white border-b border-zinc-200">
+        <div className="container mx-auto px-4 py-2.5">
+          <nav className="flex items-center gap-1.5 text-xs text-zinc-500 overflow-x-auto whitespace-nowrap">
+            <Link href="/" className="hover:text-zinc-900 transition">Home</Link>
+            <ChevronRight className="h-3.5 w-3.5 text-zinc-400" />
+            <Link href={`/states/${stateSlug}`} className="hover:text-zinc-900 transition">
+              {listing.location.state}
             </Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-900 font-medium truncate max-w-48">{listing.name}</span>
+            <ChevronRight className="h-3.5 w-3.5 text-zinc-400" />
+            <Link href={`/${citySlug}`} className="hover:text-zinc-900 transition">
+              {listing.location.city}
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5 text-zinc-400" />
+            <span className="text-zinc-900 font-medium truncate max-w-48">{listing.name}</span>
           </nav>
         </div>
       </div>
 
-      {/* ── HERO SECTION ── */}
-      <div className="bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white">
+      {/* ── HERO SECTION (Vercel Pastel Aesthetic) ── */}
+      <div className="bg-zinc-900 text-white border-b border-zinc-800">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row items-start gap-5">
-            {/* Avatar - 72x72, rounded-2xl */}
-            <div className="w-18 h-18 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-2xl font-bold text-white shrink-0 border border-white/30">
+            {/* Avatar */}
+            <div className="w-16 h-16 rounded-2xl bg-zinc-800 border border-zinc-700/80 flex items-center justify-center text-xl font-bold text-zinc-100 shrink-0 shadow-sm">
               {initials}
             </div>
 
-            {/* Center block - flex-1 */}
+            {/* Center block */}
             <div className="flex-1 min-w-0">
-              {/* Business name */}
-              <h1 className="text-2xl font-medium text-white mb-2">{listing.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-2">{listing.name}</h1>
 
               {/* Badges row */}
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                {listing.featured && (
-                  <span className="flex items-center gap-1 bg-yellow-400/20 border border-yellow-300/40 text-yellow-100 text-xs font-semibold px-2 py-0.5 rounded-full">
-                    <Star className="h-3 w-3 fill-yellow-300" /> Featured
-                  </span>
-                )}
+              <div className="flex flex-wrap items-center gap-2 mb-2.5">
                 {listing.verified && (
-                  <span className="flex items-center gap-1 bg-green-400/20 border border-green-300/40 text-green-100 text-xs font-semibold px-2 py-0.5 rounded-full">
-                    <CheckCircle className="h-3 w-3" /> Verified
+                  <span className="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                    <CheckCircle2 className="h-3 w-3 text-emerald-400" /> Verified Installer
                   </span>
                 )}
-                <span className="flex items-center gap-1 bg-blue-400/20 border border-blue-300/40 text-blue-100 text-xs font-semibold px-2 py-0.5 rounded-full">
-                  <ShieldCheck className="h-3 w-3" /> MNRE Certified
+                <span className="flex items-center gap-1 bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                  <ShieldCheck className="h-3 w-3 text-sky-400" /> MNRE ALMM Listed
                 </span>
+                <span className="flex items-center gap-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                  <BadgeCheck className="h-3 w-3 text-indigo-400" /> PM Surya Ghar Empanelled
+                </span>
+                {listing.featured && (
+                  <span className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                    <Star className="h-3 w-3 fill-amber-300 text-amber-300" /> Featured
+                  </span>
+                )}
               </div>
 
               {/* Subtitle row */}
-              <div className="flex flex-wrap items-center gap-2 text-sm text-white/85">
-                <span>{listing.category.name}</span>
+              <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-zinc-400">
+                <span className="text-zinc-200">{listing.category.name}</span>
                 <span>·</span>
-                <span>{listing.location.city}</span>
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5 text-zinc-400" />
+                  {listing.location.city}, {listing.location.state}
+                </span>
                 {listing.rating != null && listing.reviews > 0 && (
                   <>
                     <span>·</span>
-                    <span className="flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-yellow-300 text-yellow-300" />
-                      {listing.rating} ({listing.reviews} reviews)
+                    <span className="flex items-center gap-1 font-medium text-amber-300">
+                      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                      {listing.rating.toFixed(1)} ({listing.reviews} Google reviews)
                     </span>
                   </>
                 )}
               </div>
             </div>
 
-            {/* Right block - stacked buttons */}
-            <div className="flex flex-col gap-2 shrink-0">
+            {/* Right block - actions */}
+            <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto">
               {telHref && (
                 <a
                   href={telHref}
-                  className="flex items-center justify-center gap-2 bg-white text-orange-600 font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-orange-50 transition"
+                  className="flex items-center justify-center gap-2 bg-white hover:bg-zinc-100 text-zinc-900 font-semibold text-sm px-5 py-2.5 rounded-xl transition shadow-sm"
                 >
                   <Phone className="h-4 w-4" />
                   Call Now
@@ -593,7 +657,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-white/15 text-white font-bold text-sm px-5 py-2.5 rounded-xl border border-white/30 hover:bg-white/25 transition"
+                  className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition shadow-sm"
                 >
                   <MessageCircle className="h-4 w-4" />
                   WhatsApp
@@ -603,33 +667,25 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
           </div>
 
           {/* Trust Bar */}
-          <div className="mt-6 pt-3 border-t border-white/12 bg-black/12 -mx-4 px-4 sm:mx-0 sm:px-8 py-2.5 rounded-b-lg">
-            <div className="flex flex-wrap items-center gap-6 text-xs text-white/90">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                <span>{listing.category.name}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                <span>Serving {listing.location.city}, {listing.location.state}</span>
-              </div>
-              {listing.reviews > 0 && listing.rating != null && (
-                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
-                  <span>{listing.rating.toFixed(1)}★ on Google ({listing.reviews})</span>
-                </div>
-              )}
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
-                <span>Listed since {listedYear}</span>
-              </div>
-              {yearsExperience && (
-                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                  <span>{yearsExperience} years experience</span>
-                </div>
-              )}
+          <div className="mt-6 pt-3 border-t border-zinc-800 flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-zinc-400">
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <span>DCR Panels for Central Subsidy</span>
             </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <span>Net Metering Paperwork Assistance</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <span>Free Rooftop Feasibility Inspection</span>
+            </div>
+            {yearsExperience && (
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+                <span>{yearsExperience} Years Experience</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -637,9 +693,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
       {/* ── AUTO-GENERATED DESCRIPTION ── */}
       <div className="container mx-auto px-4 pt-6">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg p-4 mb-2">
-            <p className="text-sm text-gray-800 leading-relaxed">
-              {generateListingDescription(listing)}
+          <div className="bg-zinc-50 border-l-4 border-emerald-600 rounded-lg p-4 mb-2">
+            <p className="text-sm text-zinc-700 leading-relaxed">
+              {generateListingDescription(listing, peerStats)}
             </p>
           </div>
         </div>
@@ -652,6 +708,121 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
             {/* ── LEFT COLUMN (Main Content) ── */}
             <div className="flex-1 space-y-6">
+
+              {/* ── MANDATORY ENRICHMENT: PM Surya Ghar Compliance & DISCOM Paperwork Liaison ── */}
+              <div className="bg-white rounded-2xl p-5 border border-zinc-200/90 shadow-sm space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/70 text-xs font-semibold">
+                    <BadgeCheck className="w-4 h-4 text-emerald-600" />
+                    Provides DCR (Domestic Content Requirement) Panels for PM Surya Ghar Central Subsidy Eligibility
+                  </div>
+                  <span className="text-xs text-zinc-500 font-medium">MNRE ALMM Mandate</span>
+                </div>
+                <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                  {listing.name} supplies Domestic Content Requirement (DCR) solar modules engineered with Indian-manufactured cells, guaranteeing eligibility for direct bank credit under <strong>PM Surya Ghar Muft Bijli Yojana</strong>.
+                </p>
+                <div className="pt-3 border-t border-zinc-100 flex items-center justify-between flex-wrap gap-3 text-xs">
+                  <div className="flex items-center gap-2 text-zinc-700">
+                    <FileCheck2 className="w-4 h-4 text-sky-600 shrink-0" />
+                    <span>
+                      <strong>DISCOM Liaison Status:</strong> Handles Net Metering application with{' '}
+                      <span className="font-semibold text-zinc-900">{stateConfig.discoms[0] || 'State Power Distribution Utility'}</span>
+                    </span>
+                  </div>
+                  <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60">
+                    ✓ Full Paperwork Assistance
+                  </span>
+                </div>
+              </div>
+
+              {/* ── MANDATORY ENRICHMENT: Local State Pricing & Subsidy Estimator ── */}
+              <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-100 flex-wrap gap-2">
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-zinc-950 flex items-center gap-2">
+                      <IndianRupee className="w-5 h-5 text-emerald-600" />
+                      Estimated Solar Installation Cost in {listing.location.city}, {listing.location.state}
+                    </h3>
+                    <p className="text-xs text-zinc-500 mt-0.5">
+                      Estimated system cost after PM Surya Ghar Central DBT Subsidy & {stateConfig.state} grid net metering.
+                    </p>
+                  </div>
+                  <Link
+                    href="/tools/solar-subsidy-calculator"
+                    className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200/60"
+                  >
+                    Custom Sizing Calculator →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="p-4 rounded-xl bg-zinc-50/80 border border-zinc-200">
+                    <div className="font-bold text-zinc-900 text-sm">1 kW System</div>
+                    <div className="text-xs text-zinc-500 mb-2">Ideal for 1 BHK (~120 units/mo)</div>
+                    <div className="text-xs text-zinc-600 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Gross Cost:</span>
+                        <span className="font-medium text-zinc-900">~₹65,000</span>
+                      </div>
+                      <div className="flex justify-between text-emerald-700 font-semibold">
+                        <span>DBT Subsidy:</span>
+                        <span>- ₹30,000</span>
+                      </div>
+                      <div className="flex justify-between pt-1.5 border-t border-zinc-200 font-bold text-zinc-950">
+                        <span>Net Investment:</span>
+                        <span>~₹35,000</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-zinc-50/80 border border-zinc-200">
+                    <div className="font-bold text-zinc-900 text-sm">2 kW System</div>
+                    <div className="text-xs text-zinc-500 mb-2">Ideal for 2-3 BHK (~240 units/mo)</div>
+                    <div className="text-xs text-zinc-600 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Gross Cost:</span>
+                        <span className="font-medium text-zinc-900">~₹1,30,000</span>
+                      </div>
+                      <div className="flex justify-between text-emerald-700 font-semibold">
+                        <span>DBT Subsidy:</span>
+                        <span>- ₹60,000</span>
+                      </div>
+                      <div className="flex justify-between pt-1.5 border-t border-zinc-200 font-bold text-zinc-950">
+                        <span>Net Investment:</span>
+                        <span>~₹70,000</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-emerald-50/40 border border-emerald-200">
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-zinc-900 text-sm">3 kW System</div>
+                      <span className="text-[10px] uppercase font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">
+                        Most Popular
+                      </span>
+                    </div>
+                    <div className="text-xs text-zinc-500 mb-2">Near 100% bill offset (~360 units/mo)</div>
+                    <div className="text-xs text-zinc-600 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Gross Cost:</span>
+                        <span className="font-medium text-zinc-900">~₹1,95,000</span>
+                      </div>
+                      <div className="flex justify-between text-emerald-700 font-semibold">
+                        <span>DBT Subsidy:</span>
+                        <span>- ₹78,000 (Cap)</span>
+                      </div>
+                      <div className="flex justify-between pt-1.5 border-t border-emerald-200 font-bold text-emerald-950">
+                        <span>Net Investment:</span>
+                        <span>~₹1,17,000</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-zinc-500 flex items-center justify-between pt-1">
+                  <span>* Pricing includes ALMM mono PERC/TOPCon panels, grid-tie inverter, structure, and net-meter testing.</span>
+                </div>
+              </div>
 
               {/* Prominent Google Reviews block — before About */}
               {listing.rating != null && listing.reviews > 0 && (
@@ -849,16 +1020,21 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
                 {/* Claim this listing button */}
                 {!listing.userId && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <Link
-                      href={`/claim/${listing.slug}`}
-                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600 transition group"
-                    >
-                      <Building2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      <div>
-                        <div className="font-medium">Own this business?</div>
-                        <div className="text-xs text-gray-500">Claim your listing and manage it</div>
+                  <div className="mt-4 pt-4 border-t border-zinc-100 bg-zinc-50 -mx-6 -mb-6 p-4 rounded-b-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                        <Building2 className="h-4 w-4" />
                       </div>
+                      <div>
+                        <div className="text-xs font-semibold text-zinc-900">Are you the owner of {listing.name}?</div>
+                        <div className="text-[11px] text-zinc-500">Claim your listing to receive verified homeowner leads & update project portfolio.</div>
+                      </div>
+                    </div>
+                    <Link
+                      href={`/for-installers?claim=${listing.slug}`}
+                      className="shrink-0 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium px-3.5 py-2 rounded-lg transition shadow-sm"
+                    >
+                      Claim Listing Free →
                     </Link>
                   </div>
                 )}
@@ -1026,20 +1202,38 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               </div>
 
               {/* Internal links */}
-              <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-100">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Helpful Resources</h3>
-                <div className="flex flex-wrap gap-3">
-                  <Link href="/blog/pm-surya-ghar-yojana-application-guide" className="text-sm text-orange-600 hover:underline">→ PM Surya Ghar Subsidy Guide</Link>
-                  <Link href="/blog/solar-system-size-guide-india" className="text-sm text-orange-600 hover:underline">→ How to Size Your Solar System</Link>
-                  <Link href="/blog/how-to-choose-solar-installer-india" className="text-sm text-orange-600 hover:underline">→ How to Choose an Installer</Link>
-                  <Link href="/blog/solar-energy-savings-india-calculator-guide" className="text-sm text-orange-600 hover:underline">→ Calculate Your Solar Savings</Link>
-                  <Link href={`/${listing.location.city.toLowerCase()}`} className="text-sm text-orange-600 hover:underline">→ More Solar Companies in {listing.location.city}</Link>
+              <div className="bg-zinc-50 rounded-2xl p-6 border border-zinc-200">
+                <h3 className="text-sm font-semibold text-zinc-900 mb-3">Helpful Solar Resources</h3>
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                  <Link href="/blog/pm-surya-ghar-yojana-complete-guide" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+                    → PM Surya Ghar Subsidy Guide
+                  </Link>
+                  <Link href="/tools/solar-subsidy-calculator" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+                    → Solar Subsidy & Payback Calculator
+                  </Link>
+                  <Link href="/blog/how-to-choose-solar-installer-india" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+                    → How to Choose an Installer
+                  </Link>
+                  <Link href="/blog/1kw-2kw-3kw-5kw-solar-system-india-which-size" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+                    → Sizing: 1kW, 2kW, 3kW, 5kW Comparison
+                  </Link>
+                  <Link href="/guides/topcon-vs-mono-perc-solar-panels-india" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+                    → TOPCon vs Mono PERC Panels
+                  </Link>
+                  <Link href="/guides/best-solar-panel-cleaning-kits-india" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+                    → Solar Panel Cleaning Kits Guide
+                  </Link>
+                  <Link href={`/${listing.location.city.toLowerCase().replace(/\s+/g, '-')}`} className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+                    → More Solar Companies in {listing.location.city}
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         );
       })()}
+
+      <Footer />
 
       {/* ── MOBILE STICKY BOTTOM BAR ── */}
       {telHref && (

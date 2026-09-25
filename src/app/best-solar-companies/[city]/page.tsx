@@ -249,22 +249,24 @@ export default async function BestSolarCompaniesInCity({ params }: Props) {
       </section>
 
       {/* Featured upgrade CTA — targets business owners searching their own listing */}
-      <section className="py-10 bg-white border-b">
+      <section className="py-10 bg-white border-b border-zinc-200">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-2xl p-6 text-center">
-            <div className="text-sm font-semibold text-orange-600 mb-1">Are you a solar business in {city.city}?</div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-              Get featured on this page
+          <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 sm:p-8 text-center">
+            <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">
+              Are you a solar installer or EPC contractor in {city.city}?
+            </div>
+            <h2 className="text-xl md:text-2xl font-bold text-zinc-900 mb-2">
+              Claim Your Business Profile on GoSolarIndex
             </h2>
-            <p className="text-sm text-gray-700 mb-4 max-w-lg mx-auto">
-              Move to the top slot, add photos and videos, and receive verified customer enquiries from {city.city}. Featured listings get 5–10× more calls.
+            <p className="text-sm text-zinc-600 mb-5 max-w-lg mx-auto leading-relaxed">
+              Join 1,700+ verified installers across India. Upload project photos, display PM Surya Ghar empanelment, and receive high-intent inquiries in {city.city}.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/pricing" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-lg transition">
-                See Featured plans →
-              </Link>
-              <Link href="/installers/signup" className="bg-white hover:bg-orange-50 text-orange-600 font-semibold px-5 py-2.5 rounded-lg border-2 border-orange-300 transition">
+              <Link href="/for-installers" className="bg-zinc-900 hover:bg-zinc-800 text-white font-medium text-sm px-6 py-2.5 rounded-xl transition shadow-sm">
                 Claim your listing (free)
+              </Link>
+              <Link href="/pricing" className="bg-white hover:bg-zinc-50 text-zinc-800 font-medium text-sm px-6 py-2.5 rounded-xl border border-zinc-200 transition">
+                View Featured plans →
               </Link>
             </div>
           </div>
