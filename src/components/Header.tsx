@@ -49,7 +49,7 @@ export default function Header() {
         {/* Primary CTA: The one Sun button on the header */}
         <div className="hidden sm:flex items-center gap-4">
           <Link
-            href="/tools/solar-subsidy-calculator"
+            href="/get-quotes"
             className="inline-flex items-center justify-center h-10 px-5 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2"
           >
             Get quotes
@@ -106,7 +106,7 @@ export default function Header() {
           </Link>
           <div className="pt-2">
             <Link
-              href="/tools/solar-subsidy-calculator"
+              href="/get-quotes"
               onClick={() => setMobileOpen(false)}
               className="w-full inline-flex items-center justify-center h-12 bg-sun text-ink font-semibold text-base rounded-sm hover:brightness-95 transition-colors"
             >

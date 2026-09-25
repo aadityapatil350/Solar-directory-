@@ -49,7 +49,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static & Core Authority Hubs
   const staticPages: Array<{ path: string; priority: number }> = [
     { path: '',                                              priority: 1.0 },
-    // Tools
+    // Tools & Leads
+    { path: '/get-quotes',                                   priority: 0.95 },
     { path: '/tools/solar-subsidy-calculator',               priority: 0.95 },
     { path: '/tools/solar-savings-calculator',               priority: 0.95 },
     { path: '/tools/solar-system-size-calculator',           priority: 0.95 },
