@@ -1,6 +1,5 @@
 import { prisma } from '@/lib/prisma';
 import HomeClient from './HomeClient';
-import ListingCard from '@/components/ListingCard';
 import { unstable_cache } from 'next/cache';
 
 // Skip static generation during build, use runtime ISR instead
@@ -91,13 +90,6 @@ export default async function HomePage() {
       initialListings={listings}
       initialCategories={categories}
       initialLocations={locations}
-    >
-      {/* Server-rendered initial listings for SEO */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {listings.map((listing: typeof listings[0]) => (
-          <ListingCard key={listing.id} listing={listing} />
-        ))}
-      </div>
-    </HomeClient>
+    />
   );
 }

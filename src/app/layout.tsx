@@ -2,7 +2,22 @@ import type { Metadata } from "next";
 import { constructMetadata } from "@/lib/metadata";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
+import { Anek_Latin, Mukta } from "next/font/google";
 import "./globals.css";
+
+const anekLatin = Anek_Latin({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-anek",
+  display: "swap",
+});
+
+const mukta = Mukta({
+  subsets: ["latin", "devanagari"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mukta",
+  display: "swap",
+});
 
 const GA_ID = 'G-HRQJB0S57Q';
 // Google AdSense Publisher ID
@@ -60,7 +75,7 @@ export default function RootLayout({
       <head>
         <meta name="google-adsense-account" content="ca-pub-3540617055322931" />
       </head>
-      <body className="antialiased">
+      <body className={`${anekLatin.variable} ${mukta.variable} font-body text-ink bg-paper antialiased`}>
         {/* Google Analytics 4 */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}

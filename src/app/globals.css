@@ -3,30 +3,40 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-  }
+  color-scheme: light;
+  --ink: #1F2A37;
+  --paper: #FFFFFF;
+  --sun: #F2A30F;
+  --ink-2: rgba(31, 42, 55, 0.68);
+  --line: rgba(31, 42, 55, 0.14);
+  --wash: rgba(31, 42, 55, 0.04);
+  --sun-wash: rgba(242, 163, 15, 0.14);
+  --radius-sm: 4px;
+  --radius-md: 8px;
 }
 
 body {
-  color: rgb(var(--foreground));
-  background: rgb(var(--background));
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--font-mukta), "Segoe UI", Roboto, system-ui, sans-serif;
+  color-scheme: light;
 }
 
-/* Override browser native pink/magenta accent on selects, checkboxes, radios */
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-anek), var(--font-mukta), "Mukta", sans-serif;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Form accent */
 *,
 input,
 select,
 textarea,
 button {
-  accent-color: #18181b; /* zinc-900 Vercel standard */
+  accent-color: #F2A30F;
 }
 
 /* Custom select styling — removes OS default arrow color tint */

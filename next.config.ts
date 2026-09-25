@@ -170,9 +170,22 @@ const blogRedirects = [
   { source: '/blog/gujarat-solar-subsidy-surya-yojana-2026', destination: '/blog/surya-gujarat-yojana-2026-guide', permanent: true },
   { source: '/blog/best-solar-panel-installation-companies-india-2026', destination: '/blog/best-solar-company-india-2026', permanent: true },
   { source: '/blog/solar-system-size-guide-india', destination: '/blog/1kw-2kw-3kw-5kw-solar-system-india-which-size', permanent: true },
+  { source: '/blog/residential-solar-installation-government-subsidy-india-2026', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
+  { source: '/blog/solar-subsidy-states-india-2025', destination: '/blog/solar-subsidy-india-2026-state-wise-complete-guide', permanent: true },
+  { source: '/blog/top-10-solar-companies-india-2026', destination: '/blog/best-solar-company-india-2026', permanent: true },
+  { source: '/blog/solar-tax-benefits-business-india-2026', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
+  { source: '/blog/solar-epc-company-vs-dealer-india', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
+  { source: '/blog/solar-installation-checklist-homeowners', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
+  { source: '/blog/best-solar-inverters-india-2025', destination: '/blog/solar-inverter-buying-guide-india', permanent: true },
+  { source: '/blog/solar-power-system-with-battery-storage-india-2026', destination: '/blog/solar-battery-buying-guide-india-2026', permanent: true },
+  { source: '/blog/solar-panel-installation-process-india', destination: '/blog/how-to-install-solar-panels-at-home-india-guide-2026', permanent: true },
+  { source: '/blog/complete-solar-power-system-for-home-india-2026', destination: '/blog/how-to-install-solar-panels-at-home-india-guide-2026', permanent: true },
 ];
 
 const toolAndMiscRedirects = [
+  { source: '/best-solar-companies/:city*', destination: '/:city*', permanent: true },
+  { source: '/subsidy-checker', destination: '/tools/solar-subsidy-calculator', permanent: true },
+  { source: '/solar-calculator', destination: '/tools/solar-subsidy-calculator', permanent: true },
   { source: '/tools/subsidy-calculator', destination: '/tools/solar-subsidy-calculator', permanent: true },
   { source: '/installers/signup', destination: '/for-installers', permanent: true },
   { source: '/for-installer', destination: '/for-installers', permanent: true },

@@ -9,32 +9,39 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Toned-down, elegant pastel warm amber palette replacing blinding neon orange
-        orange: {
-          50: '#fffbeb',  // soft pastel cream
-          100: '#fef3c7', // warm pastel amber
-          200: '#fde68a', // delicate warm yellow
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#d97706', // sophisticated warm amber (replaces neon #f97316)
-          600: '#b45309', // refined deep amber (replaces neon #ea580c)
-          700: '#92400e',
-          800: '#78350f',
-          900: '#451a03',
+        // GoSolarIndex Design System: 3 colours only (Ink, Paper, Sun)
+        ink: {
+          DEFAULT: '#1F2A37',
+          2: 'rgba(31, 42, 55, 0.68)',
         },
-        primary: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#18181b', // sleek zinc-900 Vercel aesthetic
-          600: '#09090b',
-          700: '#000000',
+        paper: {
+          DEFAULT: '#FFFFFF',
         },
+        sun: {
+          DEFAULT: '#F2A30F',
+          wash: 'rgba(242, 163, 15, 0.14)',
+        },
+        line: 'rgba(31, 42, 55, 0.14)',
+        wash: 'rgba(31, 42, 55, 0.04)',
+      },
+      fontFamily: {
+        heading: ['var(--font-anek)', '"Mukta"', '"Segoe UI"', 'Roboto', 'system-ui', 'sans-serif'],
+        body: ['var(--font-mukta)', '"Segoe UI"', 'Roboto', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: {
+        sm: '4px',
+        md: '8px',
+      },
+      boxShadow: {
+        float: '0 6px 24px rgba(20, 38, 74, 0.14)',
+      },
+      maxWidth: {
+        prose: '680px',
+        content: '1200px',
       },
     },
   },
   plugins: [],
 };
+
 export default config;

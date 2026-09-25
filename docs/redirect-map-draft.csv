@@ -1,0 +1,100 @@
+cluster,old_url,action,target,note
+net-metering-national,/blog/net-metering-india-2026-state-rules-guide,keep-winner,,Winner has most clicks; keep URL
+net-metering-national,/blog/solar-net-metering-state-rules-india-2026,301,/blog/net-metering-india-2026-state-rules-guide/,Winner has most clicks; keep URL
+net-metering-national,/blog/how-net-metering-works-india,301,/blog/net-metering-india-2026-state-rules-guide/,Winner has most clicks; keep URL
+net-metering-national,/blog/net-metering-india-complete-guide,301,/blog/net-metering-india-2026-state-rules-guide/,Winner has most clicks; keep URL
+state-net-metering,/blog/maharashtra-net-metering-msedcl-guide-2026,keep-then-decide,/states/maharashtra/,"These rank at positions 6-9. Keep until the state hub + DISCOM page are live and stronger, then decide per GSC data. Link to the hub either way."
+state-net-metering,/blog/gujarat-net-metering-solar-guide-2026,keep-then-decide,/states/gujarat/,"These rank at positions 6-9. Keep until the state hub + DISCOM page are live and stronger, then decide per GSC data. Link to the hub either way."
+state-net-metering,/blog/karnataka-solar-bescom-net-metering-2026,keep-then-decide,/states/karnataka/,"These rank at positions 6-9. Keep until the state hub + DISCOM page are live and stronger, then decide per GSC data. Link to the hub either way."
+state-net-metering,/blog/rajasthan-net-metering-solar-guide-2026,keep-then-decide,/states/rajasthan/,"These rank at positions 6-9. Keep until the state hub + DISCOM page are live and stronger, then decide per GSC data. Link to the hub either way."
+state-net-metering,/blog/uttar-pradesh-net-metering-uppcl-guide-2026,keep-then-decide,/states/uttar-pradesh/,"These rank at positions 6-9. Keep until the state hub + DISCOM page are live and stronger, then decide per GSC data. Link to the hub either way."
+state-net-metering,/blog/tamil-nadu-net-metering-tangedco-guide-2026,keep-then-decide,/states/tamil-nadu/,"These rank at positions 6-9. Keep until the state hub + DISCOM page are live and stronger, then decide per GSC data. Link to the hub either way."
+pm-surya-ghar,/blog/pm-surya-ghar-yojana-subsidy-guide,301,/subsidy/pm-surya-ghar/,New hub; move best content in
+pm-surya-ghar,/blog/pm-surya-ghar-muft-bijli-yojana-2026-complete-guide,301,/subsidy/pm-surya-ghar/,New hub; move best content in
+pm-surya-ghar,/blog/pm-surya-ghar-yojana-complete-guide,301,/subsidy/pm-surya-ghar/,New hub; move best content in
+pm-surya-ghar,/blog/pm-surya-ghar-yojana-application-guide,301,/subsidy/pm-surya-ghar/,New hub; move best content in
+pm-surya-ghar,/blog/residential-solar-installation-government-subsidy-india-2026,301,/subsidy/pm-surya-ghar/,New hub; move best content in
+state-subsidy,/blog/solar-subsidy-states-india-2025,301,/subsidy/,State-wise table lives on /subsidy/
+state-subsidy,/blog/solar-subsidy-india-2026-state-wise-complete-guide,301,/subsidy/,State-wise table lives on /subsidy/
+state-subsidy,/blog/gujarat-solar-subsidy-surya-yojana-2026,301,/states/gujarat/,Merge into state hub subsidy section
+state-subsidy,/blog/surya-gujarat-yojana-2026-guide,301,/states/gujarat/,Merge into state hub subsidy section
+state-subsidy,/blog/maharashtra-solar-subsidy-msedcl-2026,301,/states/maharashtra/,Merge into state hub subsidy section
+state-subsidy,/blog/rajasthan-solar-policy-subsidy-2026,301,/states/rajasthan/,Merge into state hub subsidy section
+pm-kusum,/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide,301,/subsidy/pm-kusum/,
+pm-kusum,/blog/solar-pump-agriculture-india-pm-kusum,301,/subsidy/pm-kusum/,
+pm-kusum,/blog/pm-kusum-2-0-india-farm-solar-next-phase,301,/subsidy/pm-kusum/,
+pm-kusum,/blog/solar-energy-agriculture-pm-kusum-2026,301,/subsidy/pm-kusum/,
+pm-kusum,/blog/pm-kusum-solar-subsidy-farmers-india,301,/subsidy/pm-kusum/,
+cost,/blog/solar-panel-installation-cost-india-2025,301,/price/,"Target query: install solar panels cost (1,317 impr, 0 clicks)"
+cost,/blog/solar-panel-installation-cost-home-india-2026,301,/price/,"Target query: install solar panels cost (1,317 impr, 0 clicks)"
+cost,/blog/solar-panel-cost-india-2025,301,/price/,"Target query: install solar panels cost (1,317 impr, 0 clicks)"
+cost-size,/blog/1kw-solar-system-price-india-2026,301,/price/1kw/,
+cost-size,/blog/2kw-solar-system-price-india-2026,301,/price/2kw/,
+cost-size,/blog/3kw-solar-system-price-india-2026,301,/price/3kw/,
+cost-size,/blog/5kw-solar-system-price-india-2026,301,/price/5kw/,
+cost-size,/blog/10kw-solar-system-price-india-2026,301,/price/10kw/,
+cost-size,/blog/3kw-vs-5kw-solar-system-cost-india-2026,301,/price/,Comparison section on hub
+system-size,/blog/1kw-2kw-3kw-5kw-solar-system-india-which-size,301,/tools/solar-system-size-calculator/,Tool page with explainer
+system-size,/blog/solar-system-size-guide-india,301,/tools/solar-system-size-calculator/,Tool page with explainer
+best-panels,/blog/best-solar-panels-india-2025,301,/brands/best-solar-panels/,
+best-panels,/blog/best-solar-panel-brands-india-2025,301,/brands/best-solar-panels/,
+best-panels,/blog/top-rated-solar-panels-residential-homes-india-2026,301,/brands/best-solar-panels/,
+best-panels,/blog/solar-panel-brand-comparison-india-2026,keep-winner,,"Top blog page (4,632 impr). Keep URL, refresh, link to /brands/"
+brands-compare,/blog/waaree-vs-vikram-solar-panels-india-2026,301,/compare/waaree-vs-vikram/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/waaree-vs-tata-solar-panels-india-2026,301,/compare/waaree-vs-tata/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/tata-vs-adani-solar-panels-india-2026,301,/compare/tata-vs-adani/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/waaree-vs-adani-solar-panels-india-2026,301,/compare/waaree-vs-adani/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/waaree-solar-panels-review-india-2026,301,/brands/waaree/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/tata-power-solar-review-india-2026,301,/brands/tata-power-solar/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/adani-solar-panels-review-india-2026,301,/brands/adani-solar/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/vikram-solar-panels-review-india-2026,301,/brands/vikram-solar/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/loom-solar-review-india-2026,301,/brands/loom-solar/,"Move content; brand review pages rank 6-8, keep content depth"
+brands-compare,/blog/monocrystalline-vs-polycrystalline-solar-panels-india,301,/compare/monocrystalline-vs-polycrystalline/,"Move content; brand review pages rank 6-8, keep content depth"
+best-companies,/blog/best-solar-company-india-2026,keep-winner,,Confirm winner with GSC
+best-companies,/blog/top-10-solar-companies-india-2026,301,/blog/best-solar-company-india-2026/,Confirm winner with GSC
+best-companies,/blog/best-solar-panel-installation-companies-india-2026,301,/blog/best-solar-company-india-2026/,Confirm winner with GSC
+commercial,/blog/solar-for-commercial-business-india,301,/guides/commercial-solar-india/,One strong commercial guide incl. tax/depreciation section
+commercial,/blog/commercial-solar-for-businesses-india-2026,301,/guides/commercial-solar-india/,One strong commercial guide incl. tax/depreciation section
+commercial,/blog/commercial-solar-india-roi-tax-benefits,301,/guides/commercial-solar-india/,One strong commercial guide incl. tax/depreciation section
+commercial,/blog/solar-tax-benefits-business-india-2026,301,/guides/commercial-solar-india/,One strong commercial guide incl. tax/depreciation section
+commercial,/blog/solar-for-factories-warehouses-india-2026,301,/guides/commercial-solar-india/,One strong commercial guide incl. tax/depreciation section
+housing-society,/blog/solar-rooftop-housing-society-india-2026,keep-winner,,
+housing-society,/blog/solar-rooftop-housing-society-india,301,/blog/solar-rooftop-housing-society-india-2026/,
+on-off-hybrid,/blog/on-grid-off-grid-hybrid-solar-system-india-comparison,301,/compare/on-grid-vs-off-grid-vs-hybrid/,
+on-off-hybrid,/blog/on-grid-off-grid-hybrid-solar-comparison,301,/compare/on-grid-vs-off-grid-vs-hybrid/,
+maintenance,/blog/solar-amc-maintenance-guide-india-2026,keep-winner,,
+maintenance,/blog/solar-maintenance-tips-india,301,/blog/solar-amc-maintenance-guide-india-2026/,
+maintenance,/blog/solar-panel-maintenance-guide-india,301,/blog/solar-amc-maintenance-guide-india-2026/,
+choose-installer,/blog/how-to-choose-solar-installer-india,keep-winner,,Confirm winner with GSC
+choose-installer,/blog/how-to-check-solar-installer-genuine-india,301,/blog/how-to-choose-solar-installer-india/,Confirm winner with GSC
+choose-installer,/blog/how-to-verify-solar-installer-india-2026,301,/blog/how-to-choose-solar-installer-india/,Confirm winner with GSC
+choose-installer,/blog/solar-installation-checklist-homeowners,301,/blog/how-to-choose-solar-installer-india/,Confirm winner with GSC
+choose-installer,/blog/solar-epc-company-vs-dealer-india,301,/blog/how-to-choose-solar-installer-india/,Confirm winner with GSC
+inverter,/blog/solar-inverter-buying-guide-india,301,/guides/best-solar-inverters-india/,Hinglish post solar-inverter-kaunsa-le-2026-hinglish stays separate
+inverter,/blog/best-solar-inverters-india-2025,301,/guides/best-solar-inverters-india/,Hinglish post solar-inverter-kaunsa-le-2026-hinglish stays separate
+battery,/blog/solar-battery-storage-india-2025,301,/guides/best-solar-batteries-india/,
+battery,/blog/solar-battery-buying-guide-india-2026,301,/guides/best-solar-batteries-india/,
+battery,/blog/solar-power-system-with-battery-storage-india-2026,301,/guides/best-solar-batteries-india/,
+install-process,/blog/how-to-install-solar-panels-at-home-india-guide-2026,keep-winner,,"Winner has 2,094 impr at pos 27 - needs a big upgrade"
+install-process,/blog/solar-panel-installation-process-india,301,/blog/how-to-install-solar-panels-at-home-india-guide-2026/,"Winner has 2,094 impr at pos 27 - needs a big upgrade"
+install-process,/blog/solar-rooftop-installation-indian-households-2026,301,/blog/how-to-install-solar-panels-at-home-india-guide-2026/,"Winner has 2,094 impr at pos 27 - needs a big upgrade"
+install-process,/blog/complete-solar-power-system-for-home-india-2026,301,/blog/how-to-install-solar-panels-at-home-india-guide-2026/,"Winner has 2,094 impr at pos 27 - needs a big upgrade"
+bill-savings,/blog/how-solar-power-reduces-electricity-bills-india-2026,301,/tools/solar-savings-calculator/,Hinglish bijli-bill post stays separate
+bill-savings,/blog/solar-panel-vs-electricity-bill-india-2026,301,/tools/solar-savings-calculator/,Hinglish bijli-bill post stays separate
+bill-savings,/blog/solar-energy-savings-india-calculator-guide,301,/tools/solar-savings-calculator/,Hinglish bijli-bill post stays separate
+city-intent,/blog/solar-panel-installation-pune-2026,301,/pune/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-hyderabad-2026,301,/hyderabad/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-chennai-2026,301,/chennai/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-ahmedabad-2026,301,/ahmedabad/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-jaipur-2026,301,/jaipur/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-surat-2026,301,/surat/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-kolkata-2026,301,/kolkata/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-lucknow-2026,301,/lucknow/,City intent lives on the city hub
+city-intent,/blog/solar-panel-installation-bangalore,301,/bangalore/,City intent lives on the city hub
+city-intent,/blog/rooftop-solar-mumbai-guide,301,/mumbai/,City intent lives on the city hub
+city-intent,/blog/solar-panels-delhi-guide,301,/delhi/,City intent lives on the city hub
+city-intent,/best-solar-companies/[city],301,/[city]/,Pattern rule: all 49 URLs
+tools,/solar-calculator,301,/tools/solar-savings-calculator/,Confirm what each tool does first
+tools,/subsidy-checker,301,/tools/solar-subsidy-calculator/,
+cities,/mysuru,301,/mysore/,Keep the one with more GSC clicks
+cities,/bikaner,410-or-hide,,0 companies. Bring back only when 3+ listings

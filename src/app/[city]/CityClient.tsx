@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ListingCard from '@/components/ListingCard';
-import { Search, ChevronDown, X, Building2, MapPin, Star } from 'lucide-react';
+import ListingRow from '@/components/ui/ListingRow';
+import { Search, X, CheckCircle } from 'lucide-react';
 
 interface Listing {
   id: string;
@@ -69,7 +69,7 @@ export default function CityClient({ initialListings, categories, cityName }: Pr
 
     // Category filter
     if (selectedCategory) {
-      result = result.filter((l) => l.category.id === selectedCategory);
+      result = result.filter((l) => l.category.id === selectedCategory || l.category.slug === selectedCategory);
     }
 
     // Verified filter
@@ -104,189 +104,162 @@ export default function CityClient({ initialListings, categories, cityName }: Pr
 
   const hasActiveFilters = searchQuery || selectedCategory || verifiedOnly || featuredOnly;
 
-  // Search suggestions
-  const searchSuggestions = useMemo(() => {
-    if (searchQuery.length < 2) return [];
-
-    return initialListings
-      .filter(l =>
-        l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        l.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        l.category.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      .slice(0, 8);
-  }, [searchQuery, initialListings]);
-
-  const selectListing = (listing: Listing) => {
-    router.push(`/listing/${listing.slug}`);
-  };
-
   return (
-    <div>
-      {/* Search and Filter Section */}
-      <div className="mb-8 space-y-4">
-        {/* Search Bar with Autocomplete */}
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <div className="relative" ref={searchDropdownRef}>
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 z-10 pointer-events-none" />
-            <input
-              type="text"
-              placeholder={`Search companies in ${cityName}...`}
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setShowSuggestions(true);
+    <div className="space-y-6">
+      {/* Search and Filters */}
+      <div className="space-y-4">
+        {/* Search Input with Autocomplete */}
+        <div className="relative" ref={searchDropdownRef}>
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-2 pointer-events-none stroke-[2]" />
+          <input
+            type="text"
+            placeholder={`Search ${cityName} solar companies by name or service...`}
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => searchQuery.length >= 2 && setShowSuggestions(true)}
+            className="w-full h-12 pl-10 pr-10 border border-line rounded-sm bg-paper text-ink text-sm placeholder:text-ink-2/60 focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
+            autoComplete="off"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setShowSuggestions(false);
               }}
-              onFocus={() => searchQuery.length >= 2 && setShowSuggestions(true)}
-              className="w-full pl-12 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-800"
-              autoComplete="off"
-            />
-            {searchQuery && (
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-2 hover:text-ink"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+
+          {/* Autocomplete dropdown */}
+          {showSuggestions && searchQuery.length >= 2 && (
+            <ul className="absolute z-30 left-0 right-0 top-full mt-1 bg-paper border border-line rounded-sm shadow-sm max-h-60 overflow-y-auto divide-y divide-line">
+              {filteredListings.slice(0, 6).map((listing) => (
+                <li key={listing.id}>
+                  <button
+                    type="button"
+                    onMouseDown={() => {
+                      router.push(`/listing/${listing.slug}`);
+                    }}
+                    className="w-full text-left px-4 py-2.5 hover:bg-wash flex items-center justify-between text-xs text-ink transition-colors"
+                  >
+                    <span className="font-medium truncate">{listing.name}</span>
+                    <span className="text-ink-2 shrink-0 ml-2">{listing.category.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Filter Controls Row */}
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-body">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedCategory('')}
+              className={`h-8 px-3 rounded-sm border transition-colors ${
+                !selectedCategory
+                  ? 'border-ink bg-ink text-paper font-medium'
+                  : 'border-line text-ink hover:bg-wash'
+              }`}
+            >
+              All ({initialListings.length})
+            </button>
+
+            {categories.slice(0, 5).map((cat) => {
+              const active = selectedCategory === cat.id || selectedCategory === cat.slug;
+              const count = initialListings.filter((l) => l.category.id === cat.id || l.category.slug === cat.slug).length;
+              if (count === 0) return null;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(active ? '' : cat.id)}
+                  className={`h-8 px-3 rounded-sm border transition-colors ${
+                    active
+                      ? 'border-ink bg-ink text-paper font-medium'
+                      : 'border-line text-ink hover:bg-wash'
+                  }`}
+                >
+                  {cat.name} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-1.5 cursor-pointer text-ink select-none">
+              <input
+                type="checkbox"
+                checked={verifiedOnly}
+                onChange={(e) => setVerifiedOnly(e.target.checked)}
+                className="w-3.5 h-3.5 accent-ink rounded-sm"
+              />
+              <span>Verified only</span>
+            </label>
+
+            {hasActiveFilters && (
               <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setShowSuggestions(false);
-                }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 z-10"
+                onClick={clearAllFilters}
+                className="text-ink underline hover:text-ink/70"
               >
-                <X className="h-5 w-5" />
+                Clear filters
               </button>
             )}
-
-            {/* Search Suggestions Dropdown */}
-            {showSuggestions && searchSuggestions.length > 0 && (
-              <ul className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto">
-                {searchSuggestions.map((listing) => (
-                  <li key={listing.id}>
-                    <button
-                      type="button"
-                      onMouseDown={() => selectListing(listing)}
-                      className="w-full text-left px-4 py-3 hover:bg-orange-50 flex items-start gap-3 transition border-b border-gray-100 last:border-0"
-                    >
-                      <Building2 className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-900 text-sm truncate">
-                            {listing.name}
-                          </span>
-                          {listing.verified && (
-                            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-gray-500">{listing.category.name}</span>
-                          {listing.rating && (
-                            <>
-                              <span className="text-gray-300">•</span>
-                              <div className="flex items-center gap-0.5">
-                                <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-                                <span className="text-xs text-gray-600">{listing.rating}</span>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <div className="grid md:grid-cols-3 gap-4">
-            {/* Category Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800"
-              >
-                <option value="">All Categories</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Quick Filters */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Quick Filters
-              </label>
-              <div className="flex items-center gap-6 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={verifiedOnly}
-                    onChange={(e) => setVerifiedOnly(e.target.checked)}
-                    className="w-4 h-4 accent-orange-500 rounded"
-                  />
-                  <span className="text-sm text-gray-700">Verified Only</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={featuredOnly}
-                    onChange={(e) => setFeaturedOnly(e.target.checked)}
-                    className="w-4 h-4 accent-orange-500 rounded"
-                  />
-                  <span className="text-sm text-gray-700">Featured Only</span>
-                </label>
-                {hasActiveFilters && (
-                  <button
-                    onClick={clearAllFilters}
-                    className="ml-auto text-sm text-orange-600 hover:text-orange-700 font-semibold underline"
-                  >
-                    Clear All
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="flex items-center justify-between">
-          <p className="text-gray-600">
-            <span className="font-semibold text-gray-900">{filteredListings.length}</span>{' '}
-            {filteredListings.length === 1 ? 'company' : 'companies'} found
-            {selectedCategory && (
-              <> in {categories.find((c) => c.id === selectedCategory)?.name}</>
-            )}
-          </p>
         </div>
       </div>
 
-      {/* Listings Grid */}
-      {filteredListings.length > 0 ? (
-        <div className="grid md:grid-cols-2 gap-6">
-          {filteredListings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
+      {/* Results Count & Directory Rows List */}
+      <div>
+        <div className="flex items-center justify-between pb-3 border-b border-line text-xs text-ink-2 font-body">
+          <span>
+            Showing <strong className="text-ink font-semibold">{filteredListings.length}</strong> {filteredListings.length === 1 ? 'solar company' : 'solar companies'} in {cityName}
+          </span>
+          <span className="text-[11px]">Public register view</span>
         </div>
-      ) : (
-        <div className="bg-white rounded-xl p-12 text-center">
-          <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-900 mb-2">No companies found</h3>
-          <p className="text-gray-600 mb-6">
-            Try adjusting your filters or search terms
-          </p>
-          <button
-            onClick={clearAllFilters}
-            className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition font-medium"
-          >
-            Clear All Filters
-          </button>
-        </div>
-      )}
+
+        {filteredListings.length > 0 ? (
+          <div className="border-t border-line">
+            {filteredListings.map((listing) => (
+              <ListingRow
+                key={listing.id}
+                listing={{
+                  name: listing.name,
+                  slug: listing.slug,
+                  city: listing.location.city,
+                  state: listing.location.state,
+                  category: listing.category.name,
+                  rating: listing.rating,
+                  reviews: listing.reviews,
+                  phone: listing.phone,
+                  website: listing.website,
+                  verified: listing.verified,
+                  featured: listing.featured,
+                  description: listing.description,
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="border border-dashed border-line rounded-sm p-10 text-center bg-wash my-6">
+            <p className="text-base font-semibold text-ink">No solar companies matched your filter</p>
+            <p className="text-xs text-ink-2 mt-1">Try clearing search terms or category filters</p>
+            <button
+              onClick={clearAllFilters}
+              className="mt-4 inline-flex items-center justify-center h-9 px-4 border border-ink text-ink text-xs font-medium rounded-sm hover:bg-paper transition-colors"
+            >
+              Reset filters
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
