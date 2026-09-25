@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Category {
@@ -52,6 +53,7 @@ model Listing {
   user        User?          @relation(fields: [userId], references: [id])
   installer   Installer?     @relation(fields: [installerId], references: [id])
   claimRequests ClaimRequest[]
+  reviewsList   Review[]
   youtubeUrl      String?
   views           Int            @default(0)
   images          ListingImage[]
@@ -242,3 +244,23 @@ model SolarLead {
   @@index([city])
   @@index([createdAt])
 }
+
+model Review {
+  id               String    @id @default(cuid())
+  listingId        String
+  name             String
+  phone            String
+  rating           Int       // 1 to 5
+  reviewText       String    @db.Text
+  installationDate String?   // e.g. "January 2025"
+  systemSizeKw     Float?    // e.g. 3.0
+  status           String    @default("pending") // pending | approved | rejected
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  listing          Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([status])
+  @@index([createdAt])
+}
+

@@ -3,11 +3,15 @@ import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
-import ListingCard from '@/components/ListingCard';
+import Breadcrumb from '@/components/ui/Breadcrumb';
+import FactPanel from '@/components/ui/FactPanel';
+import DataTable from '@/components/ui/DataTable';
+import ListingRow from '@/components/ui/ListingRow';
+import FAQ from '@/components/ui/FAQ';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { Droplets, Sun, ShieldCheck, CheckCircle, Phone, ChevronRight } from 'lucide-react';
+import { getStateSolarConfig } from '@/lib/solarConfig';
 
 interface Props {
   params: Promise<{ city: string }>;
@@ -49,15 +53,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = await findCity(citySlug);
   if (!city) return {};
   const listings = await findCleaningListings(city.id);
-  const year = new Date().getFullYear();
   const count = listings.length;
 
   const base = constructMetadata({
-    title: `Solar Panel Cleaning Services in ${city.city} (${year}) — ${count} Verified Companies`,
-    description: `Compare ${count} verified solar panel cleaning services in ${city.city}, ${city.state}. Professional cleaning, AMC contracts, per-panel and per-kW pricing. Free quotes.`,
+    title: `Solar Panel Cleaning & AMC in ${city.city} (2026) — Verified Services`,
+    description: `Compare ${count > 0 ? count + ' ' : ''}solar panel cleaning and maintenance providers in ${city.city}, ${city.state}. Professional AMC contracts, per-panel rates, and restored power generation.`,
     path: `/${citySlug}/solar-panel-cleaning`,
-    standalone: true,
+    canonicalUrl: `https://gosolarindex.in/${citySlug}/solar-panel-cleaning`,
   });
+
   if (count < MIN_LISTINGS_FOR_INDEX) {
     return { ...base, robots: { index: false, follow: true } };
   }
@@ -70,54 +74,26 @@ export default async function CityCleaningPage({ params }: Props) {
   if (!city) notFound();
 
   const listings = await findCleaningListings(city.id);
-  const year = new Date().getFullYear();
+  const stateConfig = getStateSolarConfig(city.state);
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: `How much does solar panel cleaning cost in ${city.city}?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `Solar panel cleaning in ${city.city} typically costs ₹15–₹30 per panel for a one-time clean, or ₹1,500–₹4,000 per kW per year for an annual AMC. Rates depend on system size, roof accessibility, and cleaning frequency (monthly vs quarterly).`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'How often should solar panels be cleaned?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Most Indian rooftops need cleaning every 30–60 days. Dusty regions (Rajasthan, north-west India) and areas near construction need monthly cleaning. Coastal cities need cleaning every 2–3 months due to salt deposition. During monsoon, rain cleans panels naturally but you should inspect for streaks and bird droppings.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Does dirt on solar panels really affect output?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes — dusty panels can lose 15–30% of their power output in Indian conditions. A 5 kW system generating ₹18,000/month of electricity can lose ₹3,000–₹5,000/month worth of generation if not cleaned regularly. Cleaning pays for itself in 1–2 months.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Can I clean solar panels myself?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `You can, but professional cleaning is safer and more effective. Rooftop work has fall risk, and using tap water or the wrong cleaning agent can leave mineral deposits that reduce panel output. Professionals use deionised water, soft brushes, and proper safety harnesses.`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: `Is there an AMC option for solar panel cleaning in ${city.city}?`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `Yes. Most solar AMC providers in ${city.city} offer annual contracts covering monthly or quarterly cleaning, panel inspection, wiring checks, and inverter servicing. Typical AMC cost is ₹1,500–₹4,000 per kW per year.`,
-        },
-      },
-    ],
-  };
+  const faqItems = [
+    {
+      q: `How much does solar panel cleaning cost in ${city.city}?`,
+      a: `One-time solar panel cleaning in ${city.city} typically costs ₹15 to ₹30 per panel. Annual maintenance contracts (AMC) cost ₹1,500 to ₹3,500 per kW per year, covering 4 to 12 scheduled visits with water filtration and electrical inspection.`,
+    },
+    {
+      q: `How frequently should panels be cleaned in ${city.city}?`,
+      a: `In urban and semi-arid regions of ${city.state}, dust accumulation (soiling) reduces generation by 15% to 30%. Panels should be cleaned every 20 to 30 days during dry months. During monsoon months, natural rain handles most surface dust, but panels should still be inspected for bird droppings and streak accumulation.`,
+    },
+    {
+      q: 'Does dust buildup void solar panel warranties?',
+      a: 'While dirt does not void module manufacturer warranties directly, prolonged hotspots caused by baked-on bird droppings or heavy leaves can damage solar cells permanently. Most Tier-1 manufacturers require documented bi-annual maintenance for claim processing.',
+    },
+    {
+      q: 'Can tap water be used to wash solar panels?',
+      a: 'Tap water with high TDS (total dissolved solids) leaves hard mineral scale on the solar glass when it evaporates in sunlight, permanently blocking irradiance. Professional cleaning services use demineralised or soft water with non-abrasive horsehair or nylon brushes.',
+    },
+  ];
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -129,151 +105,186 @@ export default async function CityCleaningPage({ params }: Props) {
     ],
   };
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+    <div className="min-h-screen bg-paper text-ink pb-20 md:pb-0">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
       <Header />
 
-      {/* Breadcrumbs */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <nav className="text-sm text-gray-600 flex items-center gap-2">
-            <Link href="/" className="hover:text-orange-600">Home</Link>
-            <ChevronRight className="h-3 w-3" />
-            <Link href={`/${citySlug}`} className="hover:text-orange-600">{city.city}</Link>
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-gray-900 font-medium">Solar Panel Cleaning</span>
-          </nav>
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: city.city, href: `/${citySlug}` },
+              { label: 'Solar Panel Cleaning & AMC', href: `/${citySlug}/solar-panel-cleaning` },
+            ]}
+          />
         </div>
       </div>
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-14">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-2 mb-3 text-orange-100 text-sm">
-              <Droplets className="h-4 w-4" />
-              <span>Solar Panel Cleaning</span>
+      {/* Header Banner */}
+      <header className="border-b border-line bg-wash py-10 sm:py-12">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            <div className="max-w-3xl">
+              <span className="text-xs font-semibold text-ink-2 uppercase tracking-wider font-body">
+                Maintenance &amp; AMC Services · {city.city}, {city.state}
+              </span>
+              <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">
+                Solar Panel Cleaning &amp; AMC in {city.city}
+              </h1>
+              <p className="text-base text-ink-2 mt-3 font-body leading-relaxed">
+                Restore up to 30% lost generation caused by urban dust, particulate pollution, and bird droppings. Compare certified solar maintenance contractors and annual AMC plans in {city.city}.
+              </p>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-3">
-              Solar Panel Cleaning Services in {city.city} ({year})
-            </h1>
-            <p className="text-orange-100 text-lg">
-              {listings.length > 0
-                ? `Compare ${listings.length} verified cleaning & AMC providers in ${city.city}. Free quotes.`
-                : `Get free quotes for solar panel cleaning in ${city.city}, ${city.state}.`}
+
+            <div className="shrink-0">
+              <a
+                href="#quotes"
+                className="inline-flex items-center justify-center h-11 px-6 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors"
+              >
+                Get cleaning quote
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-content mx-auto px-4 sm:px-6 py-10 space-y-12">
+        {/* Fact Panel */}
+        <section>
+          <FactPanel
+            title={`Solar Cleaning Benchmarks: ${city.city}, ${city.state}`}
+            rows={[
+              { label: 'Estimated generation loss from uncleaned panels', value: '15% – 30% monthly' },
+              { label: 'Typical one-time cleaning rate', value: '₹15 – ₹30 per module' },
+              { label: 'Standard residential AMC rate (quarterly)', value: '₹1,500 – ₹2,500 / kW / year' },
+              { label: 'Premium comprehensive AMC (monthly + inverter)', value: '₹3,000 – ₹4,500 / kW / year' },
+              { label: 'Recommended cleaning interval in dry seasons', value: 'Every 20 – 30 days' },
+              { label: 'Typical cleaning cost recovery from restored power', value: '1 to 2 months', total: true },
+            ]}
+            sources={`Field studies on soiling loss in Indian conditions, ${stateConfig.state} regional weather patterns, and local contractor price submissions.`}
+          />
+        </section>
+
+        {/* Cleaning Cost Table */}
+        <section className="space-y-4">
+          <div>
+            <h2 className="font-heading font-semibold text-2xl text-ink">
+              Solar panel cleaning cost structure in {city.city}
+            </h2>
+            <p className="text-sm text-ink-2 font-body mt-1">
+              Pricing depends on rooftop accessibility, water availability, and contract frequency.
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* Why clean */}
-      <section className="py-10 bg-white border-b">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Why solar panels in {city.city} need regular cleaning</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="flex gap-3">
-              <Sun className="h-6 w-6 text-orange-500 shrink-0 mt-0.5" />
-              <div>
-                <div className="font-semibold text-gray-900 mb-1">Up to 30% output loss</div>
-                <div className="text-sm text-gray-600">Dust, bird droppings and pollution can cut generation by 15–30% in Indian conditions.</div>
-              </div>
+          <DataTable
+            columns={[
+              { label: 'Service tier', key: 'service' },
+              { label: `Benchmark price in ${city.city}`, key: 'price' },
+              { label: 'Scope of work included', key: 'scope' },
+            ]}
+            rows={[
+              {
+                service: 'One-time on-demand wash',
+                price: '₹15 – ₹30 per module',
+                scope: 'RO/soft water spray, soft nylon brush cleaning, surface drying, post-clean visual check',
+              },
+              {
+                service: 'Quarterly residential AMC (4 visits/yr)',
+                price: '₹1,500 – ₹2,500 / kW / yr',
+                scope: 'Scheduled deep cleaning, cable tightness check, structure inspection, junction box check',
+              },
+              {
+                service: 'Monthly high-dust AMC (12 visits/yr)',
+                price: '₹2,500 – ₹4,000 / kW / yr',
+                scope: 'Bi-weekly/monthly washing, thermal scan for micro-cracks, inverter error log diagnostics',
+              },
+              {
+                service: 'Comprehensive commercial AMC',
+                price: 'Custom SLA (from ₹1.20/W/yr)',
+                scope: 'Automated/manual sprinkler maintenance, IV curve tracing, generation tracking SLA',
+              },
+            ]}
+          />
+        </section>
+
+        {/* Listings Section */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-heading font-semibold text-2xl text-ink">
+                Solar maintenance &amp; cleaning companies in {city.city}
+              </h2>
+              <p className="text-sm text-ink-2 font-body mt-1">
+                {listings.length > 0
+                  ? `Showing ${listings.length} verified contractor${listings.length === 1 ? '' : 's'} serving ${city.city}.`
+                  : `Currently updating verified service records in ${city.city}. Request a callback below.`}
+              </p>
             </div>
-            <div className="flex gap-3">
-              <Droplets className="h-6 w-6 text-orange-500 shrink-0 mt-0.5" />
-              <div>
-                <div className="font-semibold text-gray-900 mb-1">Payback in 1–2 months</div>
-                <div className="text-sm text-gray-600">₹15–₹30 per panel cleaning recovers itself quickly through restored generation.</div>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <ShieldCheck className="h-6 w-6 text-orange-500 shrink-0 mt-0.5" />
-              <div>
-                <div className="font-semibold text-gray-900 mb-1">Warranty protection</div>
-                <div className="text-sm text-gray-600">Panel warranties often require documented maintenance. AMC records protect you.</div>
-              </div>
-            </div>
+            <Link
+              href={`/${citySlug}`}
+              className="text-xs text-ink underline hover:text-ink/80 font-body shrink-0"
+            >
+              All {city.city} solar companies
+            </Link>
           </div>
-        </div>
-      </section>
 
-      {/* Pricing */}
-      <section className="py-10 bg-gray-50 border-b">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Solar panel cleaning cost in {city.city}</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-lg border border-gray-200">
-              <thead className="bg-orange-50 text-sm">
-                <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">Service</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">Typical price in {city.city}</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">Best for</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm text-gray-700">
-                <tr className="border-t"><td className="px-4 py-3">One-time cleaning (per panel)</td><td className="px-4 py-3">₹15–₹30</td><td className="px-4 py-3">Small residential systems</td></tr>
-                <tr className="border-t"><td className="px-4 py-3">Monthly cleaning AMC</td><td className="px-4 py-3">₹2,500–₹4,000 / kW / year</td><td className="px-4 py-3">Dusty regions, commercial rooftops</td></tr>
-                <tr className="border-t"><td className="px-4 py-3">Quarterly cleaning AMC</td><td className="px-4 py-3">₹1,500–₹2,500 / kW / year</td><td className="px-4 py-3">Most residential (5 kW+)</td></tr>
-                <tr className="border-t"><td className="px-4 py-3">Full AMC (clean + inspection + inverter)</td><td className="px-4 py-3">₹3,000–₹6,000 / kW / year</td><td className="px-4 py-3">Systems past warranty</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p className="text-xs text-gray-500 mt-3">Prices vary by rooftop accessibility, cleaning frequency, and whether panels are on a shed vs slope roof.</p>
-        </div>
-      </section>
-
-      {/* Listings */}
-      {listings.length > 0 && (
-        <section className="py-10 bg-white border-b">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Verified cleaning &amp; AMC providers in {city.city}
-            </h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              {listings.map((l) => (
-                <ListingCard key={l.id} listing={l} />
+          {listings.length > 0 ? (
+            <div className="border-t border-line">
+              {listings.map((item) => (
+                <ListingRow key={item.id} listing={item} />
               ))}
             </div>
-          </div>
+          ) : (
+            <div className="border border-line rounded-sm p-8 text-center bg-wash">
+              <p className="text-sm font-medium text-ink">No dedicated cleaning specialists listed yet</p>
+              <p className="text-xs text-ink-2 mt-1">
+                Submit an enquiry below to receive cleaning quotes from general rooftop solar EPC contractors serving {city.city}.
+              </p>
+            </div>
+          )}
         </section>
-      )}
 
-      {/* Lead form */}
-      <section className="py-12 bg-orange-50 border-t border-orange-100">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-              Get free quotes for solar panel cleaning in {city.city}
-            </h2>
-            <p className="text-gray-600">Compare 2–3 verified cleaning providers. No spam.</p>
-          </div>
-          <div className="max-w-xl mx-auto">
+        {/* Lead Form CTA */}
+        <section id="quotes" className="border border-line rounded-sm p-6 sm:p-8 bg-wash">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-6">
+              <h2 className="font-heading font-semibold text-2xl text-ink">
+                Request solar cleaning &amp; AMC quotes in {city.city}
+              </h2>
+              <p className="text-sm text-ink-2 font-body mt-1">
+                Compare estimates from verified rooftop maintenance contractors in {city.city}. Free and confidential.
+              </p>
+            </div>
             <LeadForm
               prefill={{ city: city.city, requirement: 'AMC & Maintenance' }}
               source={`cleaning:${citySlug}`}
             />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FAQ */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Solar panel cleaning FAQs — {city.city}</h2>
-          <div className="space-y-4">
-            {faqSchema.mainEntity.map((f, i) => (
-              <div key={i} className="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2 flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
-                  {f.name}
-                </h3>
-                <p className="text-gray-700 text-sm leading-relaxed pl-7">{f.acceptedAnswer.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        {/* FAQs */}
+        <section className="space-y-4">
+          <h2 className="font-heading font-semibold text-2xl text-ink">
+            Frequently asked questions: Solar cleaning in {city.city}
+          </h2>
+          <FAQ items={faqItems} />
+        </section>
+      </main>
 
       <Footer />
     </div>

@@ -73,6 +73,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/compare/waaree-vs-adani',                      priority: 0.85 },
     { path: '/compare/monocrystalline-vs-polycrystalline',   priority: 0.85 },
     { path: '/compare/on-grid-vs-off-grid-vs-hybrid',        priority: 0.85 },
+    // DISCOM Hubs
+    { path: '/discom',                                       priority: 0.9 },
+    { path: '/discom/msedcl',                                priority: 0.85 },
+    { path: '/discom/bescom',                                priority: 0.85 },
+    { path: '/discom/tangedco',                              priority: 0.85 },
+    { path: '/discom/pvvnl',                                 priority: 0.85 },
+    { path: '/discom/dgvcl',                                 priority: 0.85 },
+    { path: '/discom/bses-rajdhani',                         priority: 0.85 },
+    { path: '/discom/tsspdcl',                               priority: 0.85 },
+    { path: '/discom/kseb',                                  priority: 0.85 },
     // Guides & Directory
     { path: '/for-installers',                               priority: 0.85 },
     { path: '/guides/topcon-vs-mono-perc-solar-panels-india', priority: 0.8 },

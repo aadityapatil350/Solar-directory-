@@ -3,10 +3,11 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { constructCategoryMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import Breadcrumb from '@/components/ui/Breadcrumb';
+import FactPanel from '@/components/ui/FactPanel';
 import CategoryClient from './CategoryClient';
 import LeadForm from '@/components/LeadForm';
-import Link from 'next/link';
-import { ChevronRight, Zap } from 'lucide-react';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -16,9 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = await prisma.category.findUnique({ where: { slug } });
   if (!category) return {};
-  
+
   const count = await prisma.listing.count({ where: { categoryId: category.id } });
-  
   return constructCategoryMetadata(category.name, undefined, count, category.slug);
 }
 
@@ -31,19 +31,20 @@ export default async function CategoryPage({ params }: Props) {
   const category = await prisma.category.findUnique({ where: { slug } });
   if (!category) notFound();
 
-  // Get total count
   const totalListings = await prisma.listing.count({
     where: { categoryId: category.id },
   });
 
-  // Fetch ALL listings for this category (client-side filtering)
+  const verifiedCount = await prisma.listing.count({
+    where: { categoryId: category.id, verified: true },
+  });
+
   const listings = await prisma.listing.findMany({
     where: { categoryId: category.id },
     include: { category: true, location: true },
     orderBy: [{ featured: 'desc' }, { verified: 'desc' }, { rating: 'desc' }],
   });
 
-  // Fetch all unique locations that have listings in this category
   const locations = await prisma.location.findMany({
     where: {
       listings: { some: { categoryId: category.id } },
@@ -52,66 +53,78 @@ export default async function CategoryPage({ params }: Props) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-paper text-ink pb-20 md:pb-0">
       <Header />
 
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-orange-500 transition">Home</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/categories" className="hover:text-orange-500 transition">Categories</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-900 font-medium">{category.name}</span>
-          </nav>
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Categories', href: '/categories' },
+              { label: category.name, href: `/categories/${category.slug}` },
+            ]}
+          />
         </div>
       </div>
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-3">
-            <Zap className="h-8 w-8" />
-            <h1 className="text-3xl md:text-4xl font-bold">{category.name} in India</h1>
-          </div>
-          <p className="text-orange-100 max-w-2xl">
-            Browse {totalListings} verified {category.name.toLowerCase()} across India.
-            {' '}Compare prices, read reviews, and get free quotes today.
-          </p>
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 py-10">
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <LeadForm />
-          </div>
-
-          {/* Listings with Filters */}
-          <div className="lg:col-span-3">
-            {listings.length > 0 ? (
-              <CategoryClient
-                initialListings={listings}
-                locations={locations}
-                categoryName={category.name}
-                categorySlug={slug}
-              />
-            ) : (
-              <div className="bg-white rounded-xl p-12 text-center">
-                <p className="text-gray-500 mb-4">No listings in this category yet.</p>
-                <Link
-                  href="/dashboard/login"
-                  className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
-                >
-                  List Your Business
-                </Link>
-              </div>
-            )}
+      {/* Header Banner */}
+      <header className="border-b border-line bg-wash py-10 sm:py-12">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold text-ink-2 uppercase tracking-wider font-body">
+              Verified Business Register
+            </span>
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">
+              {category.name} in India
+            </h1>
+            <p className="text-base text-ink-2 mt-3 font-body leading-relaxed">
+              Explore {totalListings} registered {category.name.toLowerCase()} operating across {locations.length} Indian cities. Compare verified ratings, operational coverage, and request direct quotations.
+            </p>
           </div>
         </div>
-      </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-content mx-auto px-4 sm:px-6 py-10 space-y-10">
+        <FactPanel
+          title={`${category.name}: National Directory Overview`}
+          rows={[
+            { label: 'Total active companies listed', value: `${totalListings} companies` },
+            { label: 'Owner-verified businesses', value: `${verifiedCount} verified` },
+            { label: 'Geographic coverage', value: `${locations.length} cities across India` },
+            { label: 'Standard subsidy qualification', value: 'MNRE / PM Surya Ghar Empanelled', total: true },
+          ]}
+          sources="GoSolarIndex business registry, verified installer submissions, and public utility registers."
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Main Listings */}
+          <div className="lg:col-span-8">
+            <CategoryClient
+              initialListings={listings}
+              locations={locations}
+              categoryName={category.name}
+              categorySlug={slug}
+            />
+          </div>
+
+          {/* Sidebar Lead Form */}
+          <div className="lg:col-span-4 sticky top-6">
+            <div className="border border-line rounded-sm p-6 bg-wash">
+              <h2 className="font-heading font-semibold text-lg text-ink mb-1">
+                Get competitive quotes
+              </h2>
+              <p className="text-xs text-ink-2 font-body mb-5">
+                Connect with up to 3 verified {category.name.toLowerCase()} in your city. Free and no obligation.
+              </p>
+              <LeadForm source={`category:${category.slug}`} />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

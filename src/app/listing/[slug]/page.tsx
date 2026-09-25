@@ -8,6 +8,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import StickyQuoteBar from '@/components/ui/StickyQuoteBar';
 import ListingRow from '@/components/ui/ListingRow';
 import FAQ from '@/components/ui/FAQ';
+import ReviewForm from '@/components/ReviewForm';
 import { prisma } from '@/lib/prisma';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
@@ -117,6 +118,10 @@ const getListing = unstable_cache(
         include: {
           category: true,
           location: true,
+          reviewsList: {
+            where: { status: 'approved' },
+            orderBy: { createdAt: 'desc' },
+          },
         },
       });
       return listing;
@@ -270,7 +275,13 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
     },
   ];
 
-  // Schema.org structured data
+  const approvedReviews = (listing as any).reviewsList || [];
+  const hasFirstPartyReviews = approvedReviews.length > 0;
+  const firstPartyAvg = hasFirstPartyReviews
+    ? approvedReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / approvedReviews.length
+    : 0;
+
+  // Schema.org structured data (LocalBusiness WITHOUT third-party scraped ratings)
   const siteUrl = 'https://gosolarindex.in';
   const localBusinessSchema = {
     '@context': 'https://schema.org',
@@ -288,13 +299,25 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
       addressCountry: 'IN',
     },
     geo: { '@type': 'GeoCoordinates' },
-    aggregateRating: listing.reviews > 0 ? {
+    aggregateRating: hasFirstPartyReviews ? {
       '@type': 'AggregateRating',
-      ratingValue: listing.rating,
-      reviewCount: listing.reviews,
+      ratingValue: Number(firstPartyAvg.toFixed(1)),
+      reviewCount: approvedReviews.length,
       bestRating: 5,
       worstRating: 1,
     } : undefined,
+    review: hasFirstPartyReviews ? approvedReviews.map((r: any) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.name },
+      datePublished: r.createdAt.toISOString().split('T')[0],
+      reviewBody: r.reviewText,
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: r.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    })) : undefined,
     priceRange: '₹₹',
     currenciesAccepted: 'INR',
     areaServed: stateName,
@@ -471,13 +494,64 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             )}
 
             {/* Reviews Section */}
-            <section className="border-t border-line pt-8">
-              <h2 className="font-heading font-semibold text-xl text-ink mb-3">
-                Customer reviews
-              </h2>
+            <section className="border-t border-line pt-8 space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-heading font-semibold text-xl text-ink">
+                    Customer reviews
+                  </h2>
+                  <p className="text-xs text-ink-2 font-body mt-0.5">
+                    Verified first-party customer feedback and public directory records.
+                  </p>
+                </div>
+                {hasFirstPartyReviews && (
+                  <span className="text-xs text-ink font-semibold font-body bg-wash px-2.5 py-1 border border-line rounded-sm">
+                    {approvedReviews.length} verified review{approvedReviews.length === 1 ? '' : 's'}
+                  </span>
+                )}
+              </div>
 
-              {listing.rating != null && listing.reviews > 0 ? (
-                <div className="border border-line rounded-sm p-5 bg-paper flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* First-party approved reviews */}
+              {hasFirstPartyReviews && (
+                <div className="space-y-4">
+                  {approvedReviews.map((rev: any) => (
+                    <div key={rev.id} className="border border-line rounded-sm p-5 bg-paper space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="font-heading font-semibold text-sm text-ink">{rev.name}</span>
+                          <span className="text-[11px] text-ink-2 font-body">· Verified customer</span>
+                        </div>
+                        <span className="text-[11px] text-ink-2 font-body">
+                          {new Date(rev.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-sun">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star
+                            key={s}
+                            className={`h-3.5 w-3.5 ${s <= rev.rating ? 'fill-current' : 'text-line'}`}
+                          />
+                        ))}
+                        {(rev.systemSizeKw || rev.installationDate) && (
+                          <span className="text-xs text-ink-2 ml-2 font-body">
+                            {[
+                              rev.systemSizeKw ? `${rev.systemSizeKw} kW system` : null,
+                              rev.installationDate ? `Installed ${rev.installationDate}` : null,
+                            ].filter(Boolean).join(' · ')}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-ink-2 font-body leading-relaxed pt-1">
+                        {rev.reviewText}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Public Google Maps record */}
+              {listing.rating != null && listing.reviews > 0 && (
+                <div className="border border-line rounded-sm p-5 bg-wash flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-heading font-bold text-2xl text-ink">
@@ -492,30 +566,28 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                         ))}
                       </div>
                       <span className="text-xs text-ink-2 font-body">
-                        ({listing.reviews} verified Google review{listing.reviews === 1 ? '' : 's'})
+                        ({listing.reviews} Google review{listing.reviews === 1 ? '' : 's'})
                       </span>
                     </div>
                     <p className="text-xs text-ink-2 mt-1 font-body">
-                      Ratings sourced from public Google Maps profile for {listing.name} in {cityName}.
+                      Public Google Maps rating for {listing.name} in {cityName}.
                     </p>
                   </div>
                   <a
                     href={`https://www.google.com/maps/search/${encodeURIComponent(`${listing.name} ${cityName}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center h-10 px-4 border border-line text-ink text-xs font-medium rounded-sm hover:bg-wash transition-colors shrink-0"
+                    className="inline-flex items-center justify-center h-10 px-4 border border-line text-ink text-xs font-medium rounded-sm hover:bg-paper transition-colors shrink-0"
                   >
                     Read on Google Maps
                   </a>
                 </div>
-              ) : (
-                <div className="border border-dashed border-line rounded-sm p-6 text-center bg-wash">
-                  <p className="text-sm font-medium text-ink">Be the first to review {listing.name}</p>
-                  <p className="text-xs text-ink-2 mt-1 max-w-md mx-auto">
-                    Have you installed solar with this company? Request a review link or verify your installation invoice.
-                  </p>
-                </div>
               )}
+
+              {/* First-Party Review Submission Form */}
+              <div className="pt-2">
+                <ReviewForm listingId={listing.id} listingName={listing.name} />
+              </div>
             </section>
 
             {/* Location & Map */}
