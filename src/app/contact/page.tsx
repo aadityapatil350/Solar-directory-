@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumb from '@/components/ui/Breadcrumb';
-import { Mail, Phone, MessageSquare, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Mail, MessageSquare, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -119,20 +119,6 @@ export default function ContactPage() {
                   +91 93732 38164
                 </a>
                 <p className="text-xs text-ink-2 font-body">Monday to Saturday, 9:30 AM – 6:30 PM IST</p>
-              </div>
-
-              <div className="border border-line rounded-sm p-5 bg-paper space-y-1">
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-ink" />
-                  <span className="text-xs font-semibold uppercase text-ink-2 font-body">Telephone Desk</span>
-                </div>
-                <a
-                  href="tel:+919373238164"
-                  className="font-body font-medium text-base text-ink hover:underline block pt-1"
-                >
-                  +91 93732 38164
-                </a>
-                <p className="text-xs text-ink-2 font-body">Voice desk for verified partner installers</p>
               </div>
             </div>
           </div>
