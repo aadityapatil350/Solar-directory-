@@ -97,6 +97,65 @@ function ToastList({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: num
   );
 }
 
+
+// ─── Paginator Component ──────────────────────────────────────────────────────
+
+function Paginator({
+  page, totalPages, loading, onChange,
+}: {
+  page: number; totalPages: number; loading?: boolean; onChange: (p: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const pages: (number | '...')[] = [];
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (page > 3) pages.push('...');
+    for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) pages.push(i);
+    if (page < totalPages - 2) pages.push('...');
+    pages.push(totalPages);
+  }
+
+  return (
+    <div className="flex items-center justify-center gap-1 mt-5 pt-4 border-t border-line">
+      <button
+        onClick={() => onChange(Math.max(1, page - 1))}
+        disabled={page === 1 || loading}
+        className="px-3 py-1.5 text-xs font-semibold border border-line rounded-sm hover:bg-wash disabled:opacity-40 disabled:cursor-not-allowed text-ink transition"
+      >
+        ← Prev
+      </button>
+      {pages.map((p, i) =>
+        p === '...' ? (
+          <span key={`el-${i}`} className="px-2 text-xs text-ink/40">…</span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onChange(p as number)}
+            disabled={loading}
+            className={`min-w-[32px] h-8 text-xs font-semibold rounded-sm border transition ${
+              p === page
+                ? 'bg-sun text-ink border-sun'
+                : 'bg-paper text-ink border-line hover:bg-wash'
+            } disabled:opacity-50`}
+          >
+            {p}
+          </button>
+        )
+      )}
+      <button
+        onClick={() => onChange(Math.min(totalPages, page + 1))}
+        disabled={page === totalPages || loading}
+        className="px-3 py-1.5 text-xs font-semibold border border-line rounded-sm hover:bg-wash disabled:opacity-40 disabled:cursor-not-allowed text-ink transition"
+      >
+        Next →
+      </button>
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function AdminDashboard() {
@@ -168,6 +227,12 @@ export default function AdminDashboard() {
   const [upgradeModal, setUpgradeModal] = useState<{ listing: Listing } | null>(null);
   const [upgradeMonths, setUpgradeMonths] = useState(1);
   const [upgrading, setUpgrading] = useState(false);
+
+  // ── Client-side pagination for leads & claims ──
+  const LEADS_PER_PAGE = 10;
+  const CLAIMS_PER_PAGE = 10;
+  const [leadsPage, setLeadsPage] = useState(1);
+  const [claimsPage, setClaimsPage] = useState(1);
 
   // ── Helpers ──
   const toast = useCallback((type: 'success' | 'error', text: string) => {
@@ -358,7 +423,7 @@ export default function AdminDashboard() {
 
   // Reload leads when filter changes
   useEffect(() => {
-    if (isAuthenticated && auth) fetchLeads(auth, leadsFilter);
+    if (isAuthenticated && auth) { setLeadsPage(1); fetchLeads(auth, leadsFilter); }
   }, [leadsFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reload listings when filters change (reset to page 1)
@@ -724,6 +789,13 @@ export default function AdminDashboard() {
     return true;
   });
 
+  // ── Client-side paged slices ──
+  const leadsTotalPages = Math.max(1, Math.ceil(leads.length / LEADS_PER_PAGE));
+  const pagedLeads = leads.slice((leadsPage - 1) * LEADS_PER_PAGE, leadsPage * LEADS_PER_PAGE);
+
+  const claimsTotalPages = Math.max(1, Math.ceil(filteredClaims.length / CLAIMS_PER_PAGE));
+  const pagedClaims = filteredClaims.slice((claimsPage - 1) * CLAIMS_PER_PAGE, claimsPage * CLAIMS_PER_PAGE);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <ToastList toasts={toasts} onDismiss={dismissToast} />
@@ -952,19 +1024,25 @@ export default function AdminDashboard() {
                     <p className="text-ink-2 text-sm">No leads found</p>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto -mx-5">
-                    <table className="w-full text-sm">
-                      <thead className="bg-wash border-y border-line">
-                        <tr>
-                          {['Lead', 'Contact', 'Details', 'Status', 'Date', 'Actions'].map((h) => (
-                            <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-ink uppercase tracking-wide">
-                              {h}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {leads.map((lead) => (
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs text-ink/60">
+                        Showing <span className="font-semibold text-ink">{(leadsPage - 1) * LEADS_PER_PAGE + 1}–{Math.min(leadsPage * LEADS_PER_PAGE, leads.length)}</span> of <span className="font-semibold text-ink">{leads.length}</span> leads
+                      </p>
+                    </div>
+                    <div className="overflow-x-auto -mx-5">
+                      <table className="w-full text-sm">
+                        <thead className="bg-wash border-y border-line">
+                          <tr>
+                            {['Lead', 'Contact', 'Details', 'Status', 'Date', 'Actions'].map((h) => (
+                              <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-ink uppercase tracking-wide">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {pagedLeads.map((lead) => (
                           <Fragment key={lead.id}>
                             <tr className={`border-b border-line hover:bg-wash/50 transition ${expandedLeadId === lead.id ? 'bg-wash' : ''}`}>
                               <td className="px-5 py-3.5">
@@ -1124,6 +1202,13 @@ export default function AdminDashboard() {
                         ))}
                       </tbody>
                     </table>
+                    </div>
+                    <Paginator
+                      page={leadsPage}
+                      totalPages={leadsTotalPages}
+                      loading={leadsLoading}
+                      onChange={(p) => { setLeadsPage(p); setExpandedLeadId(null); }}
+                    />
                   </div>
                 )}
               </div>
@@ -1381,33 +1466,13 @@ export default function AdminDashboard() {
                   </div>
                 )}
 
-                {/* Listings count + pagination */}
+                {/* Listings count + top paginator */}
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-xs text-gray-500">
-                    Showing <span className="font-semibold text-gray-800">{listings.length}</span> of <span className="font-semibold text-gray-800">{listingsTotal}</span> listings
+                  <p className="text-xs text-ink/60">
+                    Showing <span className="font-semibold text-ink">{listings.length}</span> of <span className="font-semibold text-ink">{listingsTotal}</span> listings
                     {hasActiveFilters && ' (filtered)'}
-                  </div>
-                  {listingsTotalPages > 1 && (
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => setListingsPage((p) => Math.max(1, p - 1))}
-                        disabled={listingsPage === 1 || listingsLoading}
-                        className="px-2.5 py-1 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        ← Prev
-                      </button>
-                      <span className="text-xs text-gray-500">
-                        {listingsPage} / {listingsTotalPages}
-                      </span>
-                      <button
-                        onClick={() => setListingsPage((p) => Math.min(listingsTotalPages, p + 1))}
-                        disabled={listingsPage === listingsTotalPages || listingsLoading}
-                        className="px-2.5 py-1 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        Next →
-                      </button>
-                    </div>
-                  )}
+                  </p>
+                  <p className="text-xs text-ink/40">Page {listingsPage} of {listingsTotalPages}</p>
                 </div>
 
                 {/* Table */}
@@ -1561,6 +1626,12 @@ export default function AdminDashboard() {
                     </table>
                   </div>
                 )}
+                <Paginator
+                  page={listingsPage}
+                  totalPages={listingsTotalPages}
+                  loading={listingsLoading}
+                  onChange={(p) => setListingsPage(p)}
+                />
               </div>
             )}
 
@@ -1628,8 +1699,14 @@ export default function AdminDashboard() {
                     <p className="text-gray-400">No claims match this filter.</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {filteredClaims.map((claim) => (
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs text-ink/60">
+                        Showing <span className="font-semibold text-ink">{Math.min((claimsPage - 1) * CLAIMS_PER_PAGE + 1, filteredClaims.length)}–{Math.min(claimsPage * CLAIMS_PER_PAGE, filteredClaims.length)}</span> of <span className="font-semibold text-ink">{filteredClaims.length}</span> claims
+                      </p>
+                    </div>
+                    <div className="space-y-4">
+                    {pagedClaims.map((claim) => (
                       <div
                         key={claim.id}
                         className={`border rounded-xl p-5 ${
@@ -1802,6 +1879,13 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     ))}
+                    </div>
+                    <Paginator
+                      page={claimsPage}
+                      totalPages={claimsTotalPages}
+                      loading={claimsLoading}
+                      onChange={(p) => { setClaimsPage(p); }}
+                    />
                   </div>
                 )}
               </div>
