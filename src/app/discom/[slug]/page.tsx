@@ -210,7 +210,7 @@ export default async function DiscomDetailPage({ params }: Props) {
               </Link>
             </div>
 
-            <div className="border-t border-line">
+            <div className="pt-4 space-y-3">
               {listings.map((item) => (
                 <ListingRow key={item.id} listing={item} />
               ))}

@@ -641,7 +641,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                   </Link>
                 </div>
 
-                <div className="border-t border-line">
+                <div className="pt-4 space-y-3">
                   {related.map((r) => (
                     <ListingRow
                       key={r.id}

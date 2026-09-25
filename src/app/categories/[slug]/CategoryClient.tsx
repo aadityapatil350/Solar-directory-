@@ -142,7 +142,7 @@ export default function CategoryClient({
       {/* Directory List View */}
       {filteredListings.length > 0 ? (
         <div className="space-y-6">
-          <div className="border-t border-line">
+          <div className="space-y-3">
             {paginatedListings.map((listing) => (
               <ListingRow key={listing.id} listing={listing} />
             ))}

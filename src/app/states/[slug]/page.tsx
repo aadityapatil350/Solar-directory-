@@ -255,7 +255,7 @@ export default async function StatePage({ params }: Props) {
                   Showing top verified installers serving {stateLocations.length} cities across {state}.
                 </p>
 
-                <div className="border-t border-line">
+                <div className="pt-4 space-y-3">
                   {listings.slice(0, 15).map((listing) => (
                     <ListingRow
                       key={listing.id}

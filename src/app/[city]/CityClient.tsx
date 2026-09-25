@@ -226,7 +226,7 @@ export default function CityClient({ initialListings, categories, cityName }: Pr
         </div>
 
         {filteredListings.length > 0 ? (
-          <div className="border-t border-line">
+          <div className="pt-4 space-y-3">
             {filteredListings.map((listing) => (
               <ListingRow
                 key={listing.id}
