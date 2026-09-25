@@ -1,27 +1,43 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import Link from 'next/link';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 export const metadata: Metadata = constructMetadata({
   title: 'Privacy Policy — GoSolarIndex',
   description: 'Learn how GoSolarIndex collects, uses, and protects your personal information. We respect your privacy and comply with Indian data protection laws.',
   path: '/privacy',
+  canonicalUrl: 'https://gosolarindex.in/privacy',
 });
 
 export default function PrivacyPage() {
   return (
-    <>
+    <div className="min-h-screen bg-paper text-ink pb-20 md:pb-0">
       <Header />
-      <main className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 py-12 max-w-4xl">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-          <p className="text-gray-600 mb-8">
-            <strong>Last Updated:</strong> March 7, 2026
-          </p>
 
-          <div className="prose prose-lg max-w-none">
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Privacy Policy', href: '/privacy' },
+            ]}
+          />
+        </div>
+      </div>
+
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-6">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-ink-2 font-body">Legal &amp; Compliance</span>
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">Privacy Policy</h1>
+          <p className="text-xs text-ink-2 font-body mt-2">
+            Last Updated: March 2026
+          </p>
+        </div>
+
+        <div className="prose prose-neutral max-w-none text-ink-2 font-body leading-relaxed space-y-6 [&>h2]:font-heading [&>h2]:font-semibold [&>h2]:text-2xl [&>h2]:text-ink [&>h2]:mt-8 [&>h3]:font-heading [&>h3]:font-semibold [&>h3]:text-xl [&>h3]:text-ink [&>ul]:list-disc [&>ul]:pl-5">
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
               <p className="text-gray-700 mb-4">
@@ -115,12 +131,12 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
                 <li><strong>Ad Serving:</strong> Google AdSense serves personalized ads based on your interests and browsing behavior.</li>
                 <li><strong>Cookie Usage:</strong> Google's use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.</li>
-                <li><strong>Opt-Out:</strong> Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-orange-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.</li>
+                <li><strong>Opt-Out:</strong> Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-ink font-semibold hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.</li>
                 <li><strong>Third-Party Vendors:</strong> Google uses third-party vendors to serve ads, including the use of cookies and web beacons.</li>
               </ul>
               <p className="text-gray-700">
                 For more information about Google's privacy practices and your options, please visit
-                <a href="https://policies.google.com/technologies/ads" className="text-orange-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Privacy Policy</a>.
+                <a href="https://policies.google.com/technologies/ads" className="text-ink font-semibold hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Privacy Policy</a>.
               </p>
             </section>
 
@@ -167,7 +183,7 @@ export default function PrivacyPage() {
               </ul>
               <p className="text-gray-700 mb-4">
                 To exercise these rights, contact us at{' '}
-                <a href="mailto:hello@gosolarindex.in" className="text-orange-600 hover:underline">
+                <a href="mailto:hello@gosolarindex.in" className="text-ink font-semibold hover:underline">
                   hello@gosolarindex.in
                 </a>
               </p>
@@ -223,7 +239,7 @@ export default function PrivacyPage() {
                 <p className="text-gray-900 font-semibold mb-2">GoSolarIndex</p>
                 <p className="text-gray-700">
                   <strong>Email:</strong>{' '}
-                  <a href="mailto:hello@gosolarindex.in" className="text-orange-600 hover:underline">
+                  <a href="mailto:hello@gosolarindex.in" className="text-ink font-semibold hover:underline">
                     hello@gosolarindex.in
                   </a>
                 </p>
@@ -232,7 +248,7 @@ export default function PrivacyPage() {
                 </p>
                 <p className="text-gray-700">
                   <strong>Website:</strong>{' '}
-                  <Link href="/" className="text-orange-600 hover:underline">
+                  <Link href="/" className="text-ink font-semibold hover:underline">
                     gosolarindex.in
                   </Link>
                 </p>
@@ -247,7 +263,7 @@ export default function PrivacyPage() {
               <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                 <p className="text-gray-700">
                   <strong>Email:</strong>{' '}
-                  <a href="mailto:hello@gosolarindex.in" className="text-orange-600 hover:underline">
+                  <a href="mailto:hello@gosolarindex.in" className="text-ink font-semibold hover:underline">
                     hello@gosolarindex.in
                   </a>
                 </p>
@@ -257,9 +273,9 @@ export default function PrivacyPage() {
               </div>
             </section>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </>
-  );
-}
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }

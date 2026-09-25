@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Sun, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -38,87 +38,84 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-paper text-ink flex flex-col justify-between">
       <Header />
 
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
+      <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow border p-8">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                <Sun className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">Forgot Password</h1>
-                <p className="text-xs text-gray-500">GoSolarIndex — Owner Dashboard</p>
-              </div>
+          <div className="border border-line rounded-sm p-6 sm:p-8 bg-paper space-y-6">
+            <div className="text-center space-y-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-ink-2 font-body">
+                Account Recovery
+              </span>
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-ink">
+                Reset Password
+              </h1>
+              <p className="text-xs text-ink-2 font-body">
+                Enter your registered business account email to receive a password reset link.
+              </p>
             </div>
 
+            {error && (
+              <div className="p-3 bg-wash border border-line rounded-sm flex items-center gap-2 text-ink text-xs font-semibold font-body">
+                <AlertCircle className="h-4 w-4 shrink-0 text-ink" />
+                <span>{error}</span>
+              </div>
+            )}
+
             {sent ? (
-              <div className="text-center py-4">
-                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-green-500" />
-                </div>
-                <h2 className="text-lg font-bold text-gray-900 mb-2">Check your email</h2>
-                <p className="text-sm text-gray-500 mb-6">
-                  If an account exists for <strong>{email}</strong>, we&apos;ve sent a password reset link. It expires in 30 minutes.
+              <div className="border border-line rounded-sm p-6 bg-wash text-center space-y-3">
+                <CheckCircle2 className="h-8 w-8 text-ink mx-auto" />
+                <h3 className="font-heading font-semibold text-lg text-ink">Reset email dispatched</h3>
+                <p className="text-xs text-ink-2 font-body leading-relaxed">
+                  If an account exists for <strong>{email}</strong>, a secure password reset link has been delivered to your inbox.
                 </p>
-                <Link
-                  href="/dashboard/login"
-                  className="text-orange-600 hover:underline text-sm font-medium"
-                >
-                  Back to login
-                </Link>
+                <div className="pt-2">
+                  <Link
+                    href="/dashboard/login"
+                    className="inline-flex items-center justify-center h-10 px-5 border border-ink text-ink text-xs font-semibold rounded-sm hover:bg-paper"
+                  >
+                    Return to Login
+                  </Link>
+                </div>
               </div>
             ) : (
-              <>
-                <p className="text-sm text-gray-500 mb-5">
-                  Enter your email address and we&apos;ll send you a link to reset your password.
-                </p>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="fp-email" className="block text-xs font-medium text-ink mb-1 font-body">
+                    Registered account email *
+                  </label>
+                  <input
+                    id="fp-email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="installer@example.com"
+                    className="w-full h-11 px-3.5 bg-paper border border-line rounded-sm text-sm text-ink placeholder:text-ink-2/50 focus:outline-none focus:border-ink font-body"
+                  />
+                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      autoComplete="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@solarcompany.in"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-
-                  {error && (
-                    <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
-                      <AlertCircle className="h-4 w-4 shrink-0" />
-                      {error}
-                    </div>
-                  )}
-
+                <div className="pt-2">
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full bg-orange-500 text-white font-semibold py-3 rounded-xl hover:bg-orange-600 transition disabled:opacity-60"
+                    className="w-full h-11 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors disabled:opacity-50"
                   >
-                    {submitting ? 'Sending...' : 'Send Reset Link'}
+                    {submitting ? 'Sending instructions...' : 'Send reset link'}
                   </button>
-                </form>
-
-                <div className="mt-5 pt-5 border-t border-gray-100 text-center">
-                  <Link
-                    href="/dashboard/login"
-                    className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    <ArrowLeft className="h-3.5 w-3.5" /> Back to login
-                  </Link>
                 </div>
-              </>
+              </form>
             )}
+
+            <div className="pt-4 border-t border-line text-center text-xs text-ink-2 font-body">
+              <Link href="/dashboard/login" className="text-ink underline">
+                Return to Login
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

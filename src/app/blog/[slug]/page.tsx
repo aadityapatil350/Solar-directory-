@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation';
 import { constructMetadata } from '@/lib/metadata';
 import { prisma } from '@/lib/prisma';
 import Header from '@/components/Header';
-import BlogCTABox from '@/components/BlogCTABox';
+import Footer from '@/components/Footer';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import Link from 'next/link';
-import { Clock, Tag, ChevronRight, ArrowLeft, MapPin, Zap } from 'lucide-react';
 
 export const revalidate = 3600;   // ISR — revalidate every hour
 export const dynamic = 'force-dynamic';
@@ -22,13 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   if (!post) return {};
   return constructMetadata({
-    title: post.metaTitle || post.title,
+    title: post.metaTitle || `${post.title} | GoSolarIndex`,
     description: post.metaDescription || post.description,
     path: `/blog/${slug}`,
+    canonicalUrl: `https://gosolarindex.in/blog/${slug}`,
     standalone: true,
   });
 }
-
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
@@ -47,7 +47,7 @@ export default async function BlogPostPage({ params }: Props) {
     description: post.description,
     datePublished: post.date.toISOString(),
     dateModified: post.updatedAt.toISOString(),
-    author: { '@type': 'Organization', name: 'GoSolarIndex', url: siteUrl },
+    author: { '@type': 'Organization', name: 'GoSolarIndex Editorial Team', url: siteUrl },
     publisher: {
       '@type': 'Organization',
       name: 'GoSolarIndex',
@@ -62,7 +62,7 @@ export default async function BlogPostPage({ params }: Props) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteUrl}/blog` },
+      { '@type': 'ListItem', position: 2, name: 'Guides & Blog', item: `${siteUrl}/blog` },
       { '@type': 'ListItem', position: 3, name: post.title, item: `${siteUrl}/blog/${slug}` },
     ],
   };
@@ -72,190 +72,97 @@ export default async function BlogPostPage({ params }: Props) {
     where: { published: true, category: post.category, NOT: { slug } },
     orderBy: { date: 'desc' },
     take: 3,
-    select: { slug: true, title: true, category: true },
+    select: { slug: true, title: true, category: true, date: true },
   });
 
-  // Detect cities mentioned in the post for internal linking
-  const cityData = [
-    { name: 'Pune', slug: 'pune' },
-    { name: 'Mumbai', slug: 'mumbai' },
-    { name: 'Delhi', slug: 'delhi' },
-    { name: 'Bangalore', slug: 'bangalore' },
-    { name: 'Chennai', slug: 'chennai' },
-    { name: 'Hyderabad', slug: 'hyderabad' },
-    { name: 'Kolkata', slug: 'kolkata' },
-    { name: 'Ahmedabad', slug: 'ahmedabad' },
-    { name: 'Jaipur', slug: 'jaipur' },
-    { name: 'Lucknow', slug: 'lucknow' },
-    { name: 'Nashik', slug: 'nashik' },
-    { name: 'Nagpur', slug: 'nagpur' },
-    { name: 'Surat', slug: 'surat' },
-  ];
-
-  // Find cities mentioned in title or slug
-  const mentionedCities = cityData.filter(city =>
-    post.title.toLowerCase().includes(city.slug) ||
-    post.slug.includes(city.slug)
-  );
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-paper text-ink pb-20 md:pb-0">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
 
       {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-orange-500 transition">Home</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/blog" className="hover:text-orange-500 transition">Blog</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-900 font-medium truncate max-w-64">{post.title}</span>
-          </nav>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Article header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="flex items-center gap-1 text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                <Tag className="h-3.5 w-3.5" />
-                {post.category}
-              </span>
-              <span className="flex items-center gap-1 text-sm text-gray-400">
-                <Clock className="h-3.5 w-3.5" />
-                {post.readTime}
-              </span>
-              <time className="text-sm text-gray-400">
-                {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </time>
-            </div>
-
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
-              {post.title}
-            </h1>
-            <p className="text-xl text-gray-600 leading-relaxed">{post.description}</p>
-          </div>
-
-          {/* Article body */}
-          <article
-            className="bg-white rounded-2xl shadow-sm p-8 md:p-12 article-body"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Blog', href: '/blog' },
+              { label: post.title, href: `/blog/${slug}` },
+            ]}
           />
-
-          {/* CTA Box - injected after 2nd paragraph via client component */}
-          <BlogCTABox />
-
-          {/* City-Specific Internal Links - only show if cities are mentioned */}
-          {mentionedCities.length > 0 && (
-            <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-lg p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-blue-600" />
-                Find Solar Installers in {mentionedCities.map(c => c.name).join(' & ')}
-              </h3>
-              <p className="text-sm text-gray-700 mb-4">
-                Looking for verified solar installers? Browse our directory of trusted companies in your city:
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {mentionedCities.map(city => (
-                  <Link
-                    key={city.slug}
-                    href={`/${city.slug}`}
-                    className="flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-100 hover:text-blue-800 px-4 py-2.5 rounded-lg font-semibold transition shadow-sm border border-blue-200"
-                  >
-                    <MapPin className="h-4 w-4" />
-                    Solar Installers in {city.name} →
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* CTA Box */}
-          <div className="mt-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-8 text-white text-center">
-            <h3 className="text-2xl font-bold mb-2">Ready to Go Solar?</h3>
-            <p className="text-orange-100 mb-6">
-              Find verified solar installers in your city. Get free quotes and compare prices.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/" className="bg-white text-orange-600 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition">
-                Find Solar Installers
-              </Link>
-              <Link href="/dashboard/login" className="border border-white/40 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition">
-                List Your Business
-              </Link>
-            </div>
-          </div>
-
-          {/* Internal backlinks: cities + categories */}
-          <div className="mt-8 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-orange-500" />
-              Find Solar Installers by City
-            </h3>
-            <div className="flex flex-wrap gap-2 mb-5">
-              {[
-                { city: 'Mumbai', href: '/mumbai' }, { city: 'Pune', href: '/pune' },
-                { city: 'Nagpur', href: '/nagpur' }, { city: 'Nashik', href: '/nashik' },
-                { city: 'Thane', href: '/thane' }, { city: 'Aurangabad', href: '/aurangabad' },
-                { city: 'Delhi', href: '/delhi' }, { city: 'Bangalore', href: '/bangalore' },
-                { city: 'Hyderabad', href: '/hyderabad' }, { city: 'Chennai', href: '/chennai' },
-                { city: 'Ahmedabad', href: '/ahmedabad' }, { city: 'Jaipur', href: '/jaipur' },
-                { city: 'Kolkata', href: '/kolkata' }, { city: 'Lucknow', href: '/lucknow' },
-                { city: 'Solapur', href: '/solapur' }, { city: 'Kolhapur', href: '/kolhapur' },
-              ].map(({ city, href }) => (
-                <Link key={city} href={href} className="text-sm bg-orange-50 text-orange-700 hover:bg-orange-100 px-3 py-1.5 rounded-lg font-medium transition">
-                  {city}
-                </Link>
-              ))}
-            </div>
-            <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <Zap className="h-4 w-4 text-orange-500" />
-              Browse by Service Type
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { name: 'Residential Installers', href: '/categories/residential-installers' },
-                { name: 'Commercial Installers', href: '/categories/commercial-installers' },
-                { name: 'Solar Panel Dealers', href: '/categories/solar-dealers' },
-                { name: 'Inverter Specialists', href: '/categories/inverter-specialists' },
-                { name: 'AMC & Maintenance', href: '/categories/maintenance-services' },
-              ].map(({ name, href }) => (
-                <Link key={name} href={href} className="text-sm bg-gray-100 text-gray-700 hover:bg-orange-50 hover:text-orange-700 px-3 py-1.5 rounded-lg font-medium transition">
-                  {name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Back link */}
-          <Link href="/blog" className="inline-flex items-center gap-2 text-orange-600 hover:underline mt-8">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Blog
-          </Link>
-
-          {/* Related posts */}
-          {related.length > 0 && (
-            <div className="mt-10">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Related Articles</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                {related.map((p: typeof related[0]) => (
-                  <Link key={p.slug} href={`/blog/${p.slug}`} className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition group">
-                    <span className="text-xs text-orange-600 font-medium">{p.category}</span>
-                    <h3 className="font-semibold text-gray-900 mt-1 text-sm leading-snug group-hover:text-orange-600 transition line-clamp-3">
-                      {p.title}
-                    </h3>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-10">
+        {/* Article Header */}
+        <header className="space-y-3 pb-8 border-b border-line">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-2 font-body">
+            <span className="font-semibold text-ink uppercase tracking-wider">{post.category}</span>
+            <span>·</span>
+            <span>{post.readTime}</span>
+            <span>·</span>
+            <time dateTime={new Date(post.date).toISOString()}>
+              {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </time>
+          </div>
+
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink leading-tight">
+            {post.title}
+          </h1>
+
+          <p className="text-lg text-ink-2 font-body leading-relaxed pt-1">
+            {post.description}
+          </p>
+        </header>
+
+        {/* Article Body */}
+        <article
+          className="prose prose-neutral max-w-none text-ink font-body leading-relaxed space-y-6 [&>h2]:font-heading [&>h2]:font-semibold [&>h2]:text-2xl [&>h2]:text-ink [&>h2]:mt-8 [&>h2]:mb-3 [&>h3]:font-heading [&>h3]:font-semibold [&>h3]:text-xl [&>h3]:text-ink [&>h3]:mt-6 [&>p]:text-[16px] [&>p]:text-ink-2 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1 [&>ul]:text-ink-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1 [&>ol]:text-ink-2 [&>table]:w-full [&>table]:border [&>table]:border-line [&>table_th]:bg-wash [&>table_th]:p-3 [&>table_td]:p-3 [&>table_td]:border-t [&>table_td]:border-line"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+
+        {/* Lead CTA Strip */}
+        <div className="border border-line rounded-sm p-6 sm:p-8 bg-wash space-y-4 my-10">
+          <h3 className="font-heading font-semibold text-2xl text-ink">
+            Planning a rooftop solar installation?
+          </h3>
+          <p className="text-sm text-ink-2 font-body leading-relaxed">
+            Get up to 3 verified engineering quotations from empanelled contractors in your city. Compare PM Surya Ghar subsidy deductions and equipment warranties with zero broker commission.
+          </p>
+          <div className="pt-1">
+            <Link
+              href="/get-quotes"
+              className="inline-flex items-center justify-center h-11 px-6 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors"
+            >
+              Get free installer quotes
+            </Link>
+          </div>
+        </div>
+
+        {/* Related Posts */}
+        {related.length > 0 && (
+          <section className="pt-8 border-t border-line space-y-4">
+            <h3 className="font-heading font-semibold text-xl text-ink">
+              Related articles in {post.category}
+            </h3>
+            <div className="divide-y divide-line">
+              {related.map((r) => (
+                <div key={r.slug} className="py-3 flex items-center justify-between">
+                  <Link href={`/blog/${r.slug}`} className="font-body text-sm font-medium text-ink hover:underline">
+                    {r.title}
+                  </Link>
+                  <span className="text-xs text-ink-2 font-body shrink-0 ml-4">
+                    {new Date(r.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 }

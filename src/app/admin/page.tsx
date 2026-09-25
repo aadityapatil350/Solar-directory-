@@ -650,43 +650,43 @@ export default function AdminDashboard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+      <div className="min-h-screen bg-wash flex items-center justify-center p-4">
+        <div className="bg-paper rounded-sm border border-line p-8 w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 rounded-2xl mb-4">
-              <Zap className="h-8 w-8 text-orange-500" />
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-wash border border-line rounded-sm mb-4">
+              <Zap className="h-7 w-7 text-sun" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">GoSolarIndex Admin</h1>
-            <p className="text-gray-500 text-sm mt-1">Manage your solar directory</p>
+            <h1 className="text-2xl font-bold font-heading text-ink">GoSolarIndex Admin</h1>
+            <p className="text-ink-2 text-sm mt-1 font-body">Manage your solar directory</p>
           </div>
 
           {loginError && (
-            <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-center gap-2">
+            <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-sm text-sm text-red-700 flex items-center gap-2 font-body">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               {loginError}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4 font-body">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5">Email</label>
               <input
                 type="email"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                className="w-full px-4 py-2.5 border border-line rounded-sm focus:outline-none focus:border-ink text-sm bg-paper text-ink"
                 placeholder="admin@example.com"
                 required
                 autoComplete="username"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5">Password</label>
               <input
                 type="password"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                className="w-full px-4 py-2.5 border border-line rounded-sm focus:outline-none focus:border-ink text-sm bg-paper text-ink"
                 placeholder="••••••••"
                 required
                 autoComplete="current-password"
@@ -695,7 +695,7 @@ export default function AdminDashboard() {
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full bg-orange-500 text-white py-2.5 rounded-xl font-semibold hover:bg-orange-600 transition disabled:opacity-60 text-sm"
+              className="w-full bg-sun hover:bg-sun-hover text-ink py-2.5 rounded-sm font-heading font-semibold transition disabled:opacity-60 text-sm"
             >
               {loginLoading ? 'Verifying…' : 'Login to Dashboard'}
             </button>
@@ -807,23 +807,23 @@ export default function AdminDashboard() {
       <header className="bg-white border-b shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="bg-orange-500 p-1.5 rounded-lg">
-              <Zap className="h-5 w-5 text-white" />
+            <div className="bg-sun text-ink p-1.5 rounded-sm">
+              <Zap className="h-5 w-5" />
             </div>
             <div>
-              <span className="font-bold text-gray-900 text-sm">GoSolarIndex</span>
-              <span className="text-gray-400 text-xs ml-1.5">Admin</span>
+              <span className="font-bold font-heading text-ink text-sm">GoSolarIndex</span>
+              <span className="text-ink-2 text-xs ml-1.5 font-body">Admin</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
             {adminUser && (
-              <span className="text-xs text-gray-500 hidden sm:block">
+              <span className="text-xs text-ink-2 hidden sm:block font-body">
                 {adminUser.email}
               </span>
             )}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition"
+              className="flex items-center gap-1.5 text-xs text-ink hover:text-ink/80 px-3 py-1.5 rounded-sm border border-line hover:bg-wash transition font-body"
             >
               <LogOut className="h-3.5 w-3.5" />
               Logout
@@ -832,37 +832,37 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 font-body">
         {/* ── Stats Bar ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
           {[
-            { label: 'Total Listings', value: stats.totalListings, icon: Building2, color: 'text-gray-900', bg: 'bg-white' },
-            { label: 'Featured', value: stats.featuredListings, icon: Star, color: 'text-amber-600', bg: 'bg-amber-50' },
-            { label: 'Verified', value: stats.verifiedListings, icon: ShieldCheck, color: 'text-blue-600', bg: 'bg-blue-50' },
-            { label: 'Total Leads', value: stats.totalLeads, icon: TrendingUp, color: 'text-green-700', bg: 'bg-green-50' },
-            { label: 'New Leads', value: stats.newLeads, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50' },
+            { label: 'Total Listings', value: stats.totalListings, icon: Building2, color: 'text-ink', bg: 'bg-paper' },
+            { label: 'Featured', value: stats.featuredListings, icon: Star, color: 'text-ink', bg: 'bg-sun-wash/30' },
+            { label: 'Verified', value: stats.verifiedListings, icon: ShieldCheck, color: 'text-ink', bg: 'bg-paper' },
+            { label: 'Total Leads', value: stats.totalLeads, icon: TrendingUp, color: 'text-ink', bg: 'bg-paper' },
+            { label: 'New Leads', value: stats.newLeads, icon: FileText, color: 'text-ink', bg: 'bg-wash' },
           ].map(({ label, value, icon: Icon, color, bg }) => (
-            <div key={label} className={`${bg} rounded-xl p-4 shadow-sm border border-gray-100`}>
+            <div key={label} className={`${bg} rounded-sm p-4 border border-line`}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500">{label}</span>
+                <span className="text-xs text-ink-2 font-medium">{label}</span>
                 <Icon className={`h-4 w-4 ${color}`} />
               </div>
-              <div className={`text-2xl font-bold ${color}`}>{value}</div>
+              <div className={`text-2xl font-bold font-heading ${color}`}>{value}</div>
             </div>
           ))}
         </div>
 
         {/* ── Tabs ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="border-b flex">
+        <div className="bg-paper rounded-sm border border-line overflow-hidden">
+          <div className="border-b border-line flex">
             {(['leads', 'listings'] as Tab[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 px-6 py-3.5 text-sm font-semibold transition border-b-2 ${
+                className={`flex-1 px-6 py-3.5 text-sm font-semibold transition border-b-2 font-heading ${
                   activeTab === tab
-                    ? 'text-orange-600 border-orange-500 bg-orange-50/40'
-                    : 'text-gray-500 border-transparent hover:text-gray-800 hover:bg-gray-50'
+                    ? 'text-ink border-ink bg-wash'
+                    : 'text-ink-2 border-transparent hover:text-ink hover:bg-wash'
                 }`}
               >
                 {tab === 'leads' ? (
@@ -870,7 +870,7 @@ export default function AdminDashboard() {
                     <FileText className="h-4 w-4" />
                     Leads
                     {stats.newLeads > 0 && (
-                      <span className="bg-orange-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+                      <span className="bg-sun text-ink text-xs rounded-sm px-1.5 py-0.5 leading-none font-bold">
                         {stats.newLeads}
                       </span>
                     )}
@@ -886,10 +886,10 @@ export default function AdminDashboard() {
             {/* Claims tab */}
             <button
               onClick={() => setActiveTab('claims')}
-              className={`px-6 py-3.5 text-sm font-semibold transition border-b-2 ${
+              className={`px-6 py-3.5 text-sm font-semibold transition border-b-2 font-heading ${
                 activeTab === 'claims'
-                  ? 'text-orange-600 border-orange-500 bg-orange-50/40'
-                  : 'text-gray-500 border-transparent hover:text-gray-800 hover:bg-gray-50'
+                  ? 'text-ink border-ink bg-wash'
+                  : 'text-ink-2 border-transparent hover:text-ink hover:bg-wash'
               }`}
             >
               <span className="flex items-center justify-center gap-2">
@@ -922,10 +922,10 @@ export default function AdminDashboard() {
                       <button
                         key={f}
                         onClick={() => setLeadsFilter(f)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition ${
+                        className={`px-3 py-1.5 rounded-sm text-xs font-semibold capitalize transition ${
                           leadsFilter === f
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-sun text-ink font-bold'
+                            : 'bg-wash text-ink-2 hover:text-ink hover:bg-line/20'
                         }`}
                       >
                         {f}
@@ -934,7 +934,7 @@ export default function AdminDashboard() {
                   </div>
                   <button
                     onClick={() => fetchLeads()}
-                    className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
+                    className="flex items-center gap-1.5 text-xs text-ink-2 hover:text-ink px-3 py-1.5 rounded-sm border border-line hover:bg-wash transition"
                   >
                     <RefreshCw className="h-3.5 w-3.5" />
                     Refresh
@@ -943,21 +943,21 @@ export default function AdminDashboard() {
 
                 {leadsLoading ? (
                   <div className="py-16 text-center">
-                    <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                    <p className="text-sm text-gray-500">Loading leads…</p>
+                    <div className="w-8 h-8 border-2 border-sun border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                    <p className="text-sm text-ink-2">Loading leads…</p>
                   </div>
                 ) : leads.length === 0 ? (
                   <div className="py-16 text-center">
-                    <FileText className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500 text-sm">No leads found</p>
+                    <FileText className="h-10 w-10 text-ink-2 opacity-30 mx-auto mb-3" />
+                    <p className="text-ink-2 text-sm">No leads found</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto -mx-5">
                     <table className="w-full text-sm">
-                      <thead className="bg-gray-50 border-y border-gray-100">
+                      <thead className="bg-wash border-y border-line">
                         <tr>
                           {['Lead', 'Contact', 'Details', 'Status', 'Date', 'Actions'].map((h) => (
-                            <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-ink uppercase tracking-wide">
                               {h}
                             </th>
                           ))}
@@ -966,11 +966,11 @@ export default function AdminDashboard() {
                       <tbody>
                         {leads.map((lead) => (
                           <Fragment key={lead.id}>
-                            <tr className={`border-b border-gray-50 hover:bg-gray-50/50 transition ${expandedLeadId === lead.id ? 'bg-orange-50/30' : ''}`}>
+                            <tr className={`border-b border-line hover:bg-wash/50 transition ${expandedLeadId === lead.id ? 'bg-wash' : ''}`}>
                               <td className="px-5 py-3.5">
-                                <div className="font-semibold text-gray-900">{lead.name}</div>
+                                <div className="font-semibold text-ink">{lead.name}</div>
                                 {lead.urgency === 'urgent' && (
-                                  <span className="inline-block bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs font-bold mt-0.5">
+                                  <span className="inline-block bg-red-100 text-red-700 px-1.5 py-0.5 rounded-sm text-xs font-bold mt-0.5">
                                     URGENT
                                   </span>
                                 )}
@@ -978,28 +978,28 @@ export default function AdminDashboard() {
                               <td className="px-5 py-3.5">
                                 <div className="space-y-0.5">
                                   <div className="flex items-center gap-1.5 text-xs">
-                                    <Phone className="h-3 w-3 text-gray-400" />
-                                    <a href={`tel:${lead.phone}`} className="text-blue-600 hover:underline font-medium">{lead.phone}</a>
+                                    <Phone className="h-3 w-3 text-ink-2" />
+                                    <a href={`tel:${lead.phone}`} className="text-ink font-semibold underline underline-offset-2">{lead.phone}</a>
                                   </div>
                                   {lead.email && (
-                                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                                      <Mail className="h-3 w-3 text-gray-400" />
+                                    <div className="flex items-center gap-1.5 text-xs text-ink-2">
+                                      <Mail className="h-3 w-3 text-ink-2" />
                                       {lead.email}
                                     </div>
                                   )}
                                   {lead.location && (
-                                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                                      <MapPin className="h-3 w-3 text-gray-400" />
+                                    <div className="flex items-center gap-1.5 text-xs text-ink-2">
+                                      <MapPin className="h-3 w-3 text-ink-2" />
                                       {lead.location.city}
                                     </div>
                                   )}
                                 </div>
                               </td>
-                              <td className="px-5 py-3.5 text-xs text-gray-600 max-w-[180px]">
+                              <td className="px-5 py-3.5 text-xs text-ink-2 max-w-[180px]">
                                 {lead.requirement && <div className="truncate">{lead.requirement}</div>}
-                                {lead.budget && <div className="text-gray-400">Budget: {lead.budget}</div>}
+                                {lead.budget && <div className="text-ink-2">Budget: {lead.budget}</div>}
                                 {lead.leadDeliveries?.length > 0 && (
-                                  <div className="text-emerald-600 font-medium mt-0.5">
+                                  <div className="text-ink font-medium mt-0.5">
                                     ✓ Sent to {lead.leadDeliveries.length} installer{lead.leadDeliveries.length > 1 ? 's' : ''}
                                   </div>
                                 )}
@@ -1008,11 +1008,11 @@ export default function AdminDashboard() {
                                 <select
                                   value={lead.status}
                                   onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
-                                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border-0 outline-none cursor-pointer ${
-                                    lead.status === 'new' ? 'bg-blue-100 text-blue-800'
-                                    : lead.status === 'assigned' ? 'bg-amber-100 text-amber-800'
-                                    : lead.status === 'contacted' ? 'bg-orange-100 text-orange-800'
-                                    : 'bg-green-100 text-green-800'
+                                  className={`px-2.5 py-1.5 rounded-sm text-xs font-semibold border border-line outline-none cursor-pointer ${
+                                    lead.status === 'new' ? 'bg-wash text-ink font-semibold'
+                                    : lead.status === 'assigned' ? 'bg-wash text-ink'
+                                    : lead.status === 'contacted' ? 'bg-sun-wash text-ink'
+                                    : 'bg-wash text-ink'
                                   }`}
                                 >
                                   <option value="new">New</option>
@@ -1021,17 +1021,17 @@ export default function AdminDashboard() {
                                   <option value="closed">Closed</option>
                                 </select>
                               </td>
-                              <td className="px-5 py-3.5 text-xs text-gray-400 whitespace-nowrap">
+                              <td className="px-5 py-3.5 text-xs text-ink-2 whitespace-nowrap">
                                 {new Date(lead.createdAt).toLocaleDateString('en-IN')}
                               </td>
                               <td className="px-5 py-3.5">
                                 <div className="flex items-center gap-1.5">
                                   <button
                                     onClick={() => toggleSuggestPanel(lead)}
-                                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-sm text-xs font-semibold transition border border-line ${
                                       expandedLeadId === lead.id
-                                        ? 'bg-orange-500 text-white'
-                                        : 'bg-orange-50 text-orange-700 hover:bg-orange-100'
+                                        ? 'bg-sun text-ink font-bold'
+                                        : 'bg-wash text-ink hover:bg-line/20'
                                     }`}
                                   >
                                     <Send className="h-3 w-3" />
@@ -1040,7 +1040,7 @@ export default function AdminDashboard() {
                                   </button>
                                   <button
                                     onClick={() => deleteLead(lead.id)}
-                                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                    className="p-1.5 text-ink-2 hover:text-red-600 hover:bg-red-50 rounded-sm transition"
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </button>
@@ -1051,63 +1051,63 @@ export default function AdminDashboard() {
                             {/* Suggest panel */}
                             {expandedLeadId === lead.id && (
                               <tr key={`sp-${lead.id}`}>
-                                <td colSpan={6} className="px-5 py-4 bg-orange-50/30 border-b border-orange-100">
-                                  <div className="bg-white rounded-xl border border-orange-200 p-4 shadow-sm">
+                                <td colSpan={6} className="px-5 py-4 bg-wash border-b border-line">
+                                  <div className="bg-paper rounded-sm border border-line p-4">
                                     <div className="flex items-center justify-between mb-3">
-                                      <h4 className="font-semibold text-sm text-gray-900 flex items-center gap-2">
-                                        <Send className="h-4 w-4 text-orange-500" />
+                                      <h4 className="font-semibold font-heading text-sm text-ink flex items-center gap-2">
+                                        <Send className="h-4 w-4 text-sun" />
                                         Suggested Installers
                                         {suggestCity && (
-                                          <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                                          <span className="text-xs bg-sun-wash text-ink border border-line px-2 py-0.5 rounded-sm font-semibold">
                                             {suggestCity}
                                           </span>
                                         )}
                                       </h4>
-                                      <button onClick={() => setExpandedLeadId(null)} className="text-gray-400 hover:text-gray-600">
+                                      <button onClick={() => setExpandedLeadId(null)} className="text-ink-2 hover:text-ink">
                                         <X className="h-4 w-4" />
                                       </button>
                                     </div>
                                     {suggestLoading ? (
-                                      <div className="flex items-center gap-2 text-sm text-gray-500 py-3">
-                                        <span className="w-4 h-4 border-2 border-orange-300 border-t-orange-500 rounded-full animate-spin" />
+                                      <div className="flex items-center gap-2 text-sm text-ink-2 py-3">
+                                        <span className="w-4 h-4 border-2 border-line border-t-sun rounded-full animate-spin" />
                                         Finding installers…
                                       </div>
                                     ) : suggestInstallers.length === 0 ? (
-                                      <p className="text-sm text-gray-500 py-3 text-center">
+                                      <p className="text-sm text-ink-2 py-3 text-center">
                                         No registered installers in {lead.location?.city || 'this city'}.
                                       </p>
                                     ) : (
                                       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                         {suggestInstallers.map((inst) => (
-                                          <div key={inst.id} className={`border rounded-xl p-3.5 flex flex-col gap-2.5 ${
-                                            inst.alreadySent ? 'border-emerald-200 bg-emerald-50' : 'border-gray-200 hover:border-orange-200'
+                                          <div key={inst.id} className={`border rounded-sm p-3.5 flex flex-col gap-2.5 ${
+                                            inst.alreadySent ? 'border-line bg-wash' : 'border-line hover:border-ink bg-paper'
                                           }`}>
                                             <div className="flex items-start justify-between gap-2">
                                               <div>
-                                                <p className="font-semibold text-sm text-gray-900">{inst.companyName}</p>
-                                                <p className="text-xs text-gray-500">{inst.contactPerson}</p>
+                                                <p className="font-semibold font-heading text-sm text-ink">{inst.companyName}</p>
+                                                <p className="text-xs text-ink-2">{inst.contactPerson}</p>
                                               </div>
                                               {inst.verified && (
-                                                <span className="flex items-center gap-0.5 text-xs text-emerald-600 font-medium shrink-0">
+                                                <span className="flex items-center gap-0.5 text-xs text-ink font-semibold shrink-0">
                                                   <ShieldCheck className="h-3 w-3" /> Verified
                                                 </span>
                                               )}
                                             </div>
-                                            <div className="text-xs text-gray-500 flex items-center gap-1.5">
+                                            <div className="text-xs text-ink-2 flex items-center gap-1.5">
                                               <Phone className="h-3 w-3" /> {inst.phone}
                                             </div>
                                             {inst.alreadySent ? (
-                                              <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold">
+                                              <div className="flex items-center gap-1.5 text-xs text-ink font-semibold">
                                                 <CheckCircle2 className="h-3.5 w-3.5" /> Already sent
                                               </div>
                                             ) : (
                                               <button
                                                 onClick={() => sendLeadToInstaller(lead.id, inst.id)}
                                                 disabled={sendingTo === inst.id}
-                                                className="w-full flex items-center justify-center gap-1.5 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white text-xs font-bold py-1.5 rounded-lg transition"
+                                                className="w-full flex items-center justify-center gap-1.5 bg-sun hover:bg-sun-hover disabled:opacity-50 text-ink text-xs font-bold py-1.5 rounded-sm transition"
                                               >
                                                 {sendingTo === inst.id ? (
-                                                  <span className="w-3 h-3 border border-white/40 border-t-white rounded-full animate-spin" />
+                                                  <span className="w-3 h-3 border border-ink/40 border-t-ink rounded-full animate-spin" />
                                                 ) : <Send className="h-3 w-3" />}
                                                 {sendingTo === inst.id ? 'Sending…' : 'Send Lead'}
                                               </button>
@@ -1144,7 +1144,7 @@ export default function AdminDashboard() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => { if (e.key === 'Enter') { setListingsPage(1); fetchListings(auth, 1); } }}
-                        className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-sm w-44 focus:ring-1 focus:ring-orange-400 focus:border-orange-400"
+                        className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-sm w-44 focus:outline-none focus:border-ink"
                       />
                     </div>
                     {/* Filters */}
@@ -1218,7 +1218,7 @@ export default function AdminDashboard() {
                     </button>
                     <button
                       onClick={() => { cancelForm(); setShowForm(true); }}
-                      className="flex items-center gap-1.5 text-xs font-semibold bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg transition"
+                      className="flex items-center gap-1.5 text-xs font-semibold bg-sun hover:bg-sun-hover text-ink px-3 py-2 rounded-sm transition font-semibold"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Add Listing
@@ -1297,7 +1297,7 @@ export default function AdminDashboard() {
                                       sel ? formExtraCategoryIds.filter((id) => id !== cat.id) : [...formExtraCategoryIds, cat.id]
                                     )}
                                     className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
-                                      sel ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-600 border-gray-300 hover:border-orange-400'
+                                      sel ? 'bg-sun text-ink border-ink font-semibold' : 'bg-paper text-ink border-line hover:border-ink'
                                     }`}
                                   >
                                     {sel ? '✓ ' : ''}{cat.name}
@@ -1358,7 +1358,7 @@ export default function AdminDashboard() {
                           <input
                             type="checkbox" checked={listingForm.featured}
                             onChange={(e) => setListingForm({ ...listingForm, featured: e.target.checked })}
-                            className="w-4 h-4 accent-orange-500 rounded"
+                            className="w-4 h-4 accent-ink rounded-sm"
                           />
                           Featured (Premium Partner)
                         </label>
@@ -1366,7 +1366,7 @@ export default function AdminDashboard() {
                       <div className="flex gap-3 pt-1">
                         <button
                           type="submit" disabled={formSaving}
-                          className="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2.5 rounded-xl transition disabled:opacity-60"
+                          className="flex-1 bg-sun hover:bg-sun-hover text-ink text-sm font-semibold py-2.5 rounded-sm transition disabled:opacity-60 font-heading"
                         >
                           {formSaving ? 'Saving…' : editingListing ? 'Update Listing' : 'Create Listing'}
                         </button>
@@ -1413,7 +1413,7 @@ export default function AdminDashboard() {
                 {/* Table */}
                 {listingsLoading ? (
                   <div className="py-16 text-center">
-                    <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                    <div className="w-8 h-8 border-2 border-sun border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                     <p className="text-sm text-gray-500">Loading listings…</p>
                   </div>
                 ) : listings.length === 0 ? (
@@ -1574,7 +1574,7 @@ export default function AdminDashboard() {
                   </h2>
                   <button
                     onClick={() => fetchClaims()}
-                    className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-orange-600 transition"
+                    className="flex items-center gap-1.5 text-xs text-ink-2 hover:text-ink transition"
                   >
                     <RefreshCw className="h-3.5 w-3.5" />
                     Refresh
@@ -1594,8 +1594,8 @@ export default function AdminDashboard() {
                         onClick={() => setClaimsStatusFilter(f.key)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                           claimsStatusFilter === f.key
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-sun text-ink font-bold'
+                            : 'bg-wash text-ink-2 hover:text-ink hover:bg-line/20'
                         }`}
                       >
                         {f.label}
@@ -1609,7 +1609,7 @@ export default function AdminDashboard() {
                       value={claimsSearch}
                       onChange={(e) => setClaimsSearch(e.target.value)}
                       placeholder="Search name, email, listing…"
-                      className="pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg w-64 focus:outline-none focus:border-orange-300"
+                      className="pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg w-64 focus:outline-none focus:border-ink"
                     />
                   </div>
                 </div>
@@ -1653,7 +1653,7 @@ export default function AdminDashboard() {
                                 {claim.status.toUpperCase()}
                               </span>
                               {claim.listing.featured && (
-                                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 flex items-center gap-1">
+                                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-sun-wash text-ink border border-line flex items-center gap-1">
                                   <Crown className="h-3 w-3" /> Featured
                                 </span>
                               )}
@@ -1670,7 +1670,7 @@ export default function AdminDashboard() {
                               <Link
                                 href={`/listing/${claim.listing.slug}`}
                                 target="_blank"
-                                className="text-xs text-orange-600 hover:underline"
+                                className="text-xs text-ink font-semibold underline underline-offset-2"
                               >
                                 View listing →
                               </Link>
@@ -1684,7 +1684,7 @@ export default function AdminDashboard() {
                               </div>
                               <div>
                                 <p className="text-xs text-gray-400 font-semibold uppercase">Email</p>
-                                <a href={`mailto:${claim.email}`} className="text-orange-600 hover:underline">{claim.email}</a>
+                                <a href={`mailto:${claim.email}`} className="text-ink font-semibold underline underline-offset-2">{claim.email}</a>
                               </div>
                               <div>
                                 <p className="text-xs text-gray-400 font-semibold uppercase">Phone</p>
@@ -1712,7 +1712,7 @@ export default function AdminDashboard() {
                                   <a
                                     href={`/dashboard/login`}
                                     target="_blank"
-                                    className="flex items-center gap-1 text-xs bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg font-semibold transition shrink-0"
+                                    className="flex items-center gap-1 text-xs bg-sun hover:bg-sun-hover text-ink px-3 py-1.5 rounded-sm font-semibold transition shrink-0"
                                   >
                                     <ExternalLink className="h-3 w-3" />
                                     Dashboard Login

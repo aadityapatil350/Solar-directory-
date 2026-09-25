@@ -1,142 +1,151 @@
 import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import Breadcrumb from '@/components/ui/Breadcrumb';
+import FactPanel from '@/components/ui/FactPanel';
 import Link from 'next/link';
-import { Zap, ShieldCheck, TrendingUp, MapPin, Star } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
+import { ShieldCheck, MapPin, Wrench, FileText } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = constructMetadata({
-  title: 'About GoSolarIndex — India\'s Solar Directory',
-  description: 'GoSolarIndex connects Indian homeowners and businesses with verified solar installers, dealers and AMC providers. Learn how we vet listings.',
+  title: 'About GoSolarIndex — India\'s Public Solar Register & Directory',
+  description: 'GoSolarIndex is an independent register and lead-generation portal for Indian rooftop solar. Learn how we verify installers, calculate net metering payback, and maintain public data accuracy.',
   path: '/about',
+  canonicalUrl: 'https://gosolarindex.in/about',
 });
 
 export default async function AboutPage() {
-  const [totalListings, totalCities, totalVerified, avgRating] = await Promise.all([
+  const [totalListings, totalCities, totalVerified] = await Promise.all([
     prisma.listing.count(),
     prisma.location.count(),
     prisma.listing.count({ where: { verified: true } }),
-    prisma.listing.aggregate({ _avg: { rating: true } }),
   ]);
 
-  const avg = avgRating._avg.rating ? avgRating._avg.rating.toFixed(1) : null;
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-paper text-ink pb-20 md:pb-0">
       <Header />
 
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-14">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About GoSolarIndex</h1>
-          <p className="text-orange-100 text-lg max-w-2xl mx-auto">
-            India's largest solar business directory — connecting homeowners and businesses with verified solar professionals.
-          </p>
-        </div>
-      </section>
-
-      {/* Live stats */}
-      <section className="bg-white border-b py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto text-center">
-            <div>
-              <div className="text-3xl font-bold text-orange-500">{totalListings.toLocaleString()}+</div>
-              <div className="text-sm text-gray-600 mt-1">Verified Listings</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-500">{totalCities}+</div>
-              <div className="text-sm text-gray-600 mt-1">Cities Covered</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-500">{totalVerified.toLocaleString()}+</div>
-              <div className="text-sm text-gray-600 mt-1">Verified Companies</div>
-            </div>
-            {avg && (
-              <div>
-                <div className="text-3xl font-bold text-orange-500">{avg}</div>
-                <div className="text-sm text-gray-600 mt-1">Avg Google Rating</div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto space-y-8">
-
-          <section className="bg-white rounded-xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
-            <p className="text-gray-600 leading-relaxed">
-              GoSolarIndex is India's most comprehensive directory for finding reliable solar installers,
-              dealers, and service providers. With <strong>{totalListings.toLocaleString()}+ verified listings</strong> across <strong>{totalCities} cities</strong> — including full coverage of Maharashtra, Gujarat, Karnataka, Tamil Nadu, and more — we make it easy for Indian homeowners and businesses to find trusted solar professionals near them.
-            </p>
-          </section>
-
-          <section className="bg-white rounded-xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Why GoSolarIndex?</h2>
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <ShieldCheck className="h-8 w-8 text-orange-500 shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Real Verified Listings</h3>
-                  <p className="text-gray-600">All {totalListings.toLocaleString()}+ listings are sourced from Google Maps with real addresses, phone numbers, ratings and reviews. No fake entries.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <MapPin className="h-8 w-8 text-orange-500 shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Deep Local Coverage</h3>
-                  <p className="text-gray-600">We cover {totalCities} cities across India — including all major Maharashtra cities like Mumbai, Pune, Nagpur, Nashik, Aurangabad, Thane, Solapur, Kolhapur and 22 more.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <Zap className="h-8 w-8 text-orange-500 shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">All Solar Services</h3>
-                  <p className="text-gray-600">Residential installers, commercial EPC companies, solar panel dealers, inverter specialists, and AMC & maintenance providers — all in one place.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <Star className="h-8 w-8 text-orange-500 shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Real Google Ratings</h3>
-                  <p className="text-gray-600">Every listing shows real Google ratings and review counts. Average rating across our directory: {avg}/5 — so you always know who the best companies are.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <TrendingUp className="h-8 w-8 text-orange-500 shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Free for Homeowners</h3>
-                  <p className="text-gray-600">Searching and finding solar companies is completely free. Submit a lead and get contacted by multiple verified installers in your city.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-white rounded-xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Maharashtra Coverage</h2>
-            <p className="text-gray-600 mb-4">GoSolarIndex has the deepest solar directory coverage in Maharashtra — 30 cities with verified listings:</p>
-            <div className="flex flex-wrap gap-2">
-              {['Mumbai','Pune','Nagpur','Nashik','Aurangabad','Thane','Navi Mumbai','Solapur','Kolhapur','Amravati','Sangli','Satara','Latur','Nanded','Jalgaon','Akola','Dhule','Ahmednagar','Chandrapur','Parbhani','Ichalkaranji','Bhiwandi','Kalyan','Vasai','Ratnagiri','Wardha','Beed','Osmanabad','Hingoli','Buldhana'].map(city => (
-                <Link key={city} href={`/${city.toLowerCase().replace(/\s+/g,'-')}`}
-                  className="text-sm bg-orange-50 text-orange-700 hover:bg-orange-100 px-3 py-1.5 rounded-lg font-medium transition">
-                  {city}
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section className="bg-white rounded-xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
-            <div className="space-y-2 text-gray-600">
-              <p>Email: <a href="mailto:hello@gosolarindex.in" className="text-orange-600 hover:underline">hello@gosolarindex.in</a></p>
-              <p>WhatsApp: <a href="https://wa.me/919373238164" className="text-orange-600 hover:underline">+91 93732 38164</a></p>
-            </div>
-          </section>
-
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'About GoSolarIndex', href: '/about' },
+            ]}
+          />
         </div>
       </div>
+
+      {/* Header Banner */}
+      <header className="border-b border-line bg-wash py-10 sm:py-12">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold text-ink-2 uppercase tracking-wider font-body">
+              Independent Solar Information Register
+            </span>
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">
+              About GoSolarIndex
+            </h1>
+            <p className="text-base text-ink-2 mt-3 font-body leading-relaxed">
+              GoSolarIndex is India's most comprehensive independent directory and planning portal for rooftop solar. We bridge the information gap between Indian property owners, verified EPC installers, and state electricity distribution utilities.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-content mx-auto px-4 sm:px-6 py-10 space-y-12">
+        {/* National Stats FactPanel */}
+        <section>
+          <FactPanel
+            title="GoSolarIndex Operational Register (2026)"
+            rows={[
+              { label: 'Total active solar service listings', value: `${totalListings.toLocaleString('en-IN')}+ companies` },
+              { label: 'Registered Indian cities & districts', value: `${totalCities} cities` },
+              { label: 'Owner-verified businesses', value: `${totalVerified.toLocaleString('en-IN')}+ verified` },
+              { label: 'Supported central & state schemes', value: 'PM Surya Ghar, PM-KUSUM, UPNEDA, Soura' },
+              { label: 'Regulatory reference foundation', value: 'SERC net-metering orders 2026', total: true },
+            ]}
+            sources="GoSolarIndex business database, PM Surya Ghar national portal, and state electricity regulatory commissions."
+          />
+        </section>
+
+        {/* Mission & Principles */}
+        <section className="space-y-6">
+          <h2 className="font-heading font-semibold text-2xl text-ink">
+            Our mission: Calm, transparent numbers
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-base text-ink-2 font-body leading-relaxed">
+            <p>
+              Buying rooftop solar in India has historically been complicated by aggressive sales pitches, confusing subsidy promises, and dealer-biased payback calculators. Homeowners are often left wondering whether their roof qualifies for PM Surya Ghar, what their DISCOM will allow under net-metering, and whether an installer is legitimately empanelled.
+            </p>
+            <p>
+              GoSolarIndex was built to look and act like a trusted public register. We do not sell hardware or recommend one installer over another based on kickbacks. Instead, we publish real DISCOM rules, verified manufacturer warranties, unpadded price benchmarks, and factual customer reviews.
+            </p>
+          </div>
+        </section>
+
+        {/* How We Vet Listings */}
+        <section className="border-t border-line pt-10 space-y-6">
+          <h2 className="font-heading font-semibold text-2xl text-ink">
+            How listings are managed &amp; verified
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="border border-line rounded-sm p-6 bg-paper space-y-3">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-ink shrink-0" />
+                <h3 className="font-heading font-semibold text-lg text-ink">Public Registry</h3>
+              </div>
+              <p className="text-sm text-ink-2 font-body leading-relaxed">
+                Initial directory records are curated from public commercial registrations, GST databases, and Google Maps business profiles to provide comprehensive local coverage.
+              </p>
+            </div>
+
+            <div className="border border-line rounded-sm p-6 bg-paper space-y-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-ink shrink-0" />
+                <h3 className="font-heading font-semibold text-lg text-ink">Owner Verification</h3>
+              </div>
+              <p className="text-sm text-ink-2 font-body leading-relaxed">
+                Businesses marked with the <strong>Owner verified</strong> badge have claimed their profile, verified ownership via OTP and documentation, and directly maintain their service specs.
+              </p>
+            </div>
+
+            <div className="border border-line rounded-sm p-6 bg-paper space-y-3">
+              <div className="flex items-center gap-2">
+                <Wrench className="h-5 w-5 text-ink shrink-0" />
+                <h3 className="font-heading font-semibold text-lg text-ink">First-Party Reviews</h3>
+              </div>
+              <p className="text-sm text-ink-2 font-body leading-relaxed">
+                We collect first-party customer reviews requiring phone verification and installation date records, subjecting every submission to manual moderation before publication.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Strip */}
+        <section className="border border-line rounded-sm p-8 bg-wash flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <h3 className="font-heading font-semibold text-2xl text-ink">
+              Are you a solar installer or EPC contractor?
+            </h3>
+            <p className="text-sm text-ink-2 font-body mt-1">
+              Claim your business listing for free to update your coverage, upload past project details, and connect with local enquiries.
+            </p>
+          </div>
+          <Link
+            href="/for-installers"
+            className="inline-flex items-center justify-center h-12 px-6 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors shrink-0"
+          >
+            Claim or list business
+          </Link>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }

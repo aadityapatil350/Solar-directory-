@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Sun, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 export default function DashboardLoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -21,7 +21,7 @@ export default function DashboardLoginPage() {
       return;
     }
 
-    setSubmitting(true);
+    setLoading(true);
     try {
       const res = await fetch('/api/dashboard/auth/login', {
         method: 'POST',
@@ -31,106 +31,124 @@ export default function DashboardLoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // Full page navigation so the browser sends the fresh cookie to middleware
         window.location.href = '/dashboard';
         return;
       } else {
-        setError(data.error || 'Login failed. Please try again.');
+        setError(data.error || 'Login failed. Please verify your credentials.');
       }
     } catch {
-      setError('Network error. Please try again.');
+      setError('Network connection error. Please try again.');
     } finally {
       setSubmitting(false);
     }
   }
 
+  function setLoading(v: boolean) {
+    setSubmitting(v);
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-paper text-ink flex flex-col justify-between">
       <Header />
 
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
+      <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
         <div className="w-full max-w-md">
-          {/* Card */}
-          <div className="bg-white rounded-2xl shadow border p-8">
-            {/* Logo */}
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                <Sun className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">Business Owner Login</h1>
-                <p className="text-xs text-gray-500">GoSolarIndex — Owner Dashboard</p>
-              </div>
+          <div className="border border-line rounded-sm p-6 sm:p-8 bg-paper space-y-6">
+            <div className="text-center space-y-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-ink-2 font-body">
+                Partner Portal
+              </span>
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-ink">
+                Installer Login
+              </h1>
+              <p className="text-xs text-ink-2 font-body">
+                Access your verified business profile, project gallery, and customer enquiries.
+              </p>
             </div>
+
+            {error && (
+              <div className="p-3 bg-wash border border-line rounded-sm flex items-center gap-2 text-ink text-xs font-semibold font-body">
+                <AlertCircle className="h-4 w-4 shrink-0 text-ink" />
+                <span>{error}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <label htmlFor="login-email" className="block text-xs font-medium text-ink mb-1 font-body">
+                  Account email address *
+                </label>
                 <input
+                  id="login-email"
                   type="email"
                   required
-                  autoComplete="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="you@solarcompany.in"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="installer@example.com"
+                  className="w-full h-11 px-3.5 bg-paper border border-line rounded-sm text-sm text-ink placeholder:text-ink-2/50 focus:outline-none focus:border-ink font-body"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-sm font-medium text-gray-700">Password</label>
-                  <Link href="/dashboard/forgot-password" className="text-xs text-orange-600 hover:underline">
+                  <label htmlFor="login-pwd" className="text-xs font-medium text-ink font-body">
+                    Password *
+                  </label>
+                  <Link
+                    href="/dashboard/forgot-password"
+                    className="text-xs text-ink underline hover:text-ink/80 font-body"
+                  >
                     Forgot password?
                   </Link>
                 </div>
                 <div className="relative">
                   <input
+                    id="login-pwd"
                     type={showPassword ? 'text' : 'password'}
                     required
-                    autoComplete="current-password"
                     value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    placeholder="Your password"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 pr-10"
+                    placeholder="Enter your password"
+                    className="w-full h-11 pl-3.5 pr-10 bg-paper border border-line rounded-sm text-sm text-ink placeholder:text-ink-2/50 focus:outline-none focus:border-ink font-body"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-2 hover:text-ink p-1"
+                    aria-label="Toggle password visibility"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              {error && (
-                <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
-                  <AlertCircle className="h-4 w-4 shrink-0" />
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full bg-orange-500 text-white font-semibold py-3 rounded-xl hover:bg-orange-600 transition disabled:opacity-60"
-              >
-                {submitting ? 'Logging in...' : 'Login to Dashboard'}
-              </button>
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full h-11 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors disabled:opacity-50"
+                >
+                  {submitting ? 'Authenticating...' : 'Sign in to Dashboard'}
+                </button>
+              </div>
             </form>
 
-            <div className="mt-5 pt-5 border-t border-gray-100 text-center">
-              <p className="text-sm text-gray-500">
-                Haven&apos;t claimed your listing yet?{' '}
-                <Link href="/" className="text-orange-600 hover:underline font-medium">
-                  Find &amp; claim your business
+            <div className="pt-4 border-t border-line text-center text-xs text-ink-2 font-body space-y-1.5">
+              <p>
+                Haven't claimed your business yet?{' '}
+                <Link href="/for-installers" className="text-ink underline font-medium">
+                  Claim business
+                </Link>
+              </p>
+              <p>
+                <Link href="/" className="text-ink underline">
+                  Back to GoSolarIndex
                 </Link>
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

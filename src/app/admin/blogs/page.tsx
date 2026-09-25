@@ -117,7 +117,7 @@ export default function AdminBlogsPage() {
             </button>
             <Link
               href="/admin/blogs/new"
-              className="flex items-center gap-1.5 px-4 py-2 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600 transition"
+              className="flex items-center gap-1.5 px-4 py-2 bg-sun text-ink text-sm font-semibold rounded-sm hover:bg-sun-hover transition"
             >
               <Plus className="h-4 w-4" /> New Post
             </Link>
@@ -174,14 +174,14 @@ export default function AdminBlogsPage() {
           </select>
           <button
             onClick={() => fetchPosts()}
-            className="px-4 py-2 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600 transition"
+            className="px-4 py-2 border border-ink text-ink text-sm font-semibold rounded-sm hover:bg-wash transition"
           >
             Filter
           </button>
           {(search || filterCat || filterPub) && (
             <button
               onClick={() => { setSearch(''); setFilterCat(''); setFilterPub(''); }}
-              className="text-sm text-gray-400 hover:text-gray-600 transition"
+              className="text-sm text-ink-2 hover:text-ink transition"
             >
               Clear
             </button>
@@ -189,55 +189,55 @@ export default function AdminBlogsPage() {
         </div>
 
         {/* Posts table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-paper rounded-sm border border-line overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-16 text-gray-400">
+            <div className="flex items-center justify-center py-16 text-ink-2">
               <RefreshCw className="h-5 w-5 animate-spin mr-2" /> Loading…
             </div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
+            <div className="text-center py-16 text-ink-2">
               <FileText className="h-10 w-10 mx-auto mb-3 opacity-30" />
-              <p className="font-medium">No posts found</p>
+              <p className="font-medium text-ink">No posts found</p>
               <p className="text-sm mt-1">Create your first post or adjust filters</p>
-              <Link href="/admin/blogs/new" className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600 transition">
+              <Link href="/admin/blogs/new" className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-sun text-ink text-sm font-semibold rounded-sm hover:bg-sun-hover transition">
                 <Plus className="h-4 w-4" /> New Post
               </Link>
             </div>
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Title</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 hidden md:table-cell">Category</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 hidden lg:table-cell">Date</th>
-                  <th className="text-center px-4 py-3 font-semibold text-gray-600">Status</th>
-                  <th className="text-right px-4 py-3 font-semibold text-gray-600">Actions</th>
+                <tr className="bg-wash border-b border-line">
+                  <th className="text-left px-4 py-3 font-semibold text-ink">Title</th>
+                  <th className="text-left px-4 py-3 font-semibold text-ink hidden md:table-cell">Category</th>
+                  <th className="text-left px-4 py-3 font-semibold text-ink hidden lg:table-cell">Date</th>
+                  <th className="text-center px-4 py-3 font-semibold text-ink">Status</th>
+                  <th className="text-right px-4 py-3 font-semibold text-ink">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {posts.map((post, i) => (
-                  <tr key={post.id} className={`border-b border-gray-100 hover:bg-gray-50 transition ${i % 2 === 0 ? '' : 'bg-gray-50/40'}`}>
+                  <tr key={post.id} className={`border-b border-line hover:bg-wash/50 transition ${i % 2 === 0 ? '' : 'bg-wash/20'}`}>
                     <td className="px-4 py-3.5">
-                      <div className="font-semibold text-gray-900 leading-snug line-clamp-1 max-w-xs">{post.title}</div>
-                      <div className="text-xs text-gray-400 mt-0.5">/blog/{post.slug}</div>
+                      <div className="font-semibold text-ink leading-snug line-clamp-1 max-w-xs">{post.title}</div>
+                      <div className="text-xs text-ink-2 mt-0.5">/blog/{post.slug}</div>
                     </td>
                     <td className="px-4 py-3.5 hidden md:table-cell">
-                      <span className="flex items-center gap-1 text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full w-fit">
-                        <Tag className="h-3 w-3" />{post.category}
+                      <span className="flex items-center gap-1 text-xs bg-wash text-ink border border-line px-2 py-0.5 rounded-sm w-fit font-medium">
+                        <Tag className="h-3 w-3 text-ink-2" />{post.category}
                       </span>
                     </td>
                     <td className="px-4 py-3.5 hidden lg:table-cell">
-                      <span className="text-gray-500 text-xs">
+                      <span className="text-ink-2 text-xs">
                         {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </span>
                     </td>
                     <td className="px-4 py-3.5 text-center">
                       {post.published ? (
-                        <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                        <span className="inline-flex items-center gap-1 text-xs bg-sun-wash text-ink border border-line px-2 py-0.5 rounded-sm font-medium">
                           <Globe className="h-3 w-3" /> Live
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                        <span className="inline-flex items-center gap-1 text-xs bg-wash text-ink-2 border border-line px-2 py-0.5 rounded-sm font-medium">
                           <EyeOff className="h-3 w-3" /> Draft
                         </span>
                       )}
@@ -248,14 +248,14 @@ export default function AdminBlogsPage() {
                           href={`/blog/${post.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 text-gray-400 hover:text-green-600 transition"
+                          className="p-1.5 text-ink-2 hover:text-ink transition"
                           title="View live"
                         >
                           <Eye className="h-4 w-4" />
                         </a>
                         <Link
                           href={`/admin/blogs/${post.id}`}
-                          className="p-1.5 text-gray-400 hover:text-orange-500 transition"
+                          className="p-1.5 text-ink-2 hover:text-ink transition"
                           title="Edit"
                         >
                           <Edit2 className="h-4 w-4" />

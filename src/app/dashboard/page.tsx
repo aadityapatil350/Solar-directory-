@@ -322,33 +322,36 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-paper flex flex-col justify-between">
         <Header />
         <div className="flex items-center justify-center py-32">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500" />
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sun" />
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!listing) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-paper flex flex-col justify-between">
         <Header />
         <div className="max-w-lg mx-auto px-4 py-24 text-center">
-          <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">No listing linked to your account</h1>
-          <p className="text-gray-500 mb-2">Your account is not linked to any listing yet.</p>
-          <p className="text-gray-500 mb-6">
+          <div className="w-12 h-12 rounded-sm bg-wash border border-line flex items-center justify-center mx-auto mb-4 text-ink">
+            <AlertCircle className="h-6 w-6" />
+          </div>
+          <h1 className="font-heading text-xl font-bold text-ink mb-2">No listing linked to your account</h1>
+          <p className="text-ink-2 font-body mb-2">Your account is not linked to any listing yet.</p>
+          <p className="text-ink-2 font-body mb-6">
             If you recently had your claim approved, please{' '}
             <button
               onClick={() => { window.location.href = '/dashboard/login'; }}
-              className="text-orange-600 hover:underline"
+              className="text-ink font-semibold underline underline-offset-2"
             >
               log out and log back in
             </button>
             {' '}to refresh your session. If the issue persists, contact us at{' '}
-            <a href="mailto:support@gosolarindex.in" className="text-orange-600 hover:underline">
+            <a href="mailto:support@gosolarindex.in" className="text-ink font-semibold underline underline-offset-2">
               support@gosolarindex.in
             </a>
             .
@@ -358,11 +361,12 @@ export default function DashboardPage() {
               await fetch('/api/dashboard/auth/logout', { method: 'POST' });
               window.location.href = '/dashboard/login';
             }}
-            className="inline-block bg-orange-500 text-white font-semibold px-6 py-2.5 rounded-xl hover:bg-orange-600 transition text-sm"
+            className="inline-block bg-sun hover:bg-sun-hover text-ink font-heading font-semibold px-6 py-2.5 rounded-sm transition text-sm"
           >
             Log out &amp; try again
           </button>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -378,32 +382,32 @@ export default function DashboardPage() {
   const atImageLimit = !listing.featured || (listing.featured && images.length >= FEATURED_LIMIT);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-paper text-ink flex flex-col justify-between">
       <Header />
 
       {/* Top bar */}
-      <div className="bg-white border-b sticky top-[65px] z-40">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div className="bg-paper border-b border-line sticky top-[65px] z-40">
+        <div className="max-w-content mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 bg-orange-500 rounded-xl flex items-center justify-center shrink-0">
-              <Sun className="h-5 w-5 text-white" />
+            <div className="w-8 h-8 border border-line bg-wash rounded-sm flex items-center justify-center shrink-0">
+              <Sun className="h-4 w-4 text-sun" />
             </div>
             <div className="min-w-0">
-              <p className="font-semibold text-gray-900 text-sm truncate">{listing.name}</p>
-              <p className="text-xs text-gray-500">{listing.location.city} · {listing.category.name}</p>
+              <p className="font-heading font-semibold text-ink text-sm truncate">{listing.name}</p>
+              <p className="text-xs text-ink-2 font-body">{listing.location.city} · {listing.category.name}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Link
               href={`/listing/${listing.slug}`}
               target="_blank"
-              className="hidden sm:flex items-center gap-1.5 text-xs text-gray-600 border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition"
+              className="hidden sm:flex items-center gap-1.5 text-xs text-ink border border-line px-3 py-1.5 rounded-sm hover:bg-wash transition font-body"
             >
               <Eye className="h-3.5 w-3.5" /> View Listing
             </Link>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center gap-1.5 text-xs text-ink border border-line px-3 py-1.5 rounded-sm hover:bg-wash transition font-body"
             >
               <LogOut className="h-3.5 w-3.5" /> Logout
             </button>
@@ -411,49 +415,49 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 flex-1">
+      <div className="max-w-content mx-auto px-4 sm:px-6 py-6 flex-1 w-full">
         <div className="max-w-5xl mx-auto">
 
           {/* Analytics quick stats */}
           {analytics && (
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div className="bg-paper rounded-sm p-4 border border-line">
                 <div className="flex items-center gap-2 mb-1">
-                  <BarChart3 className="h-4 w-4 text-orange-500" />
-                  <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">Profile Views</span>
+                  <BarChart3 className="h-4 w-4 text-ink" />
+                  <span className="text-xs text-ink-2 font-body font-semibold uppercase tracking-wider">Profile Views</span>
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{analytics.views.toLocaleString()}</p>
-                <p className="text-xs text-gray-400 mt-0.5">All time</p>
+                <p className="text-2xl font-bold font-heading text-ink">{analytics.views.toLocaleString()}</p>
+                <p className="text-xs text-ink-2 font-body mt-0.5">All time register views</p>
               </div>
-              <div className={`rounded-xl p-4 shadow-sm border ${analytics.featuredOnly ? 'bg-amber-50 border-amber-100' : 'bg-white border-gray-100'}`}>
+              <div className="bg-paper rounded-sm p-4 border border-line">
                 <div className="flex items-center gap-2 mb-1">
-                  <MessageSquare className={`h-4 w-4 ${analytics.featuredOnly ? 'text-amber-400' : 'text-green-500'}`} />
-                  <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">WhatsApp Clicks</span>
+                  <MessageSquare className="h-4 w-4 text-ink" />
+                  <span className="text-xs text-ink-2 font-body font-semibold uppercase tracking-wider">WhatsApp Clicks</span>
                 </div>
                 {analytics.featuredOnly ? (
-                  <button onClick={() => setActiveTab('subscription')} className="flex items-center gap-1 text-xs text-amber-600 font-semibold hover:underline mt-1">
-                    <Star className="h-3 w-3" /> Upgrade to unlock
+                  <button onClick={() => setActiveTab('subscription')} className="flex items-center gap-1 text-xs text-ink font-semibold hover:underline mt-1 font-body">
+                    <Star className="h-3 w-3 text-sun" /> Upgrade to unlock
                   </button>
                 ) : (
                   <>
-                    <p className="text-2xl font-bold text-gray-900">{analytics.whatsappClicks!.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">Last 30 days</p>
+                    <p className="text-2xl font-bold font-heading text-ink">{analytics.whatsappClicks!.toLocaleString()}</p>
+                    <p className="text-xs text-ink-2 font-body mt-0.5">Last 30 days direct enquiries</p>
                   </>
                 )}
               </div>
-              <div className={`rounded-xl p-4 shadow-sm border ${analytics.featuredOnly ? 'bg-amber-50 border-amber-100' : 'bg-white border-gray-100'}`}>
+              <div className="bg-paper rounded-sm p-4 border border-line">
                 <div className="flex items-center gap-2 mb-1">
-                  <Zap className={`h-4 w-4 ${analytics.featuredOnly ? 'text-amber-400' : 'text-blue-500'}`} />
-                  <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">City Enquiries</span>
+                  <Zap className="h-4 w-4 text-sun" />
+                  <span className="text-xs text-ink-2 font-body font-semibold uppercase tracking-wider">City Enquiries</span>
                 </div>
                 {analytics.featuredOnly ? (
-                  <button onClick={() => setActiveTab('subscription')} className="flex items-center gap-1 text-xs text-amber-600 font-semibold hover:underline mt-1">
-                    <Star className="h-3 w-3" /> Upgrade to unlock
+                  <button onClick={() => setActiveTab('subscription')} className="flex items-center gap-1 text-xs text-ink font-semibold hover:underline mt-1 font-body">
+                    <Star className="h-3 w-3 text-sun" /> Upgrade to unlock
                   </button>
                 ) : (
                   <>
-                    <p className="text-2xl font-bold text-gray-900">{analytics.enquiries!.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">Last 30 days</p>
+                    <p className="text-2xl font-bold font-heading text-ink">{analytics.enquiries!.toLocaleString()}</p>
+                    <p className="text-xs text-ink-2 font-body mt-0.5">Last 30 days consumer leads</p>
                   </>
                 )}
               </div>
@@ -461,15 +465,15 @@ export default function DashboardPage() {
           )}
 
           {/* Tab navigation */}
-          <div className="flex gap-1 bg-white rounded-xl p-1.5 shadow-sm border border-gray-100 mb-6 overflow-x-auto">
+          <div className="flex gap-2 border-b border-line mb-6 overflow-x-auto pb-1">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap flex-1 justify-center ${
+                className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold font-body border-b-2 transition whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'bg-orange-500 text-white shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    ? 'border-ink text-ink bg-wash'
+                    : 'border-transparent text-ink-2 hover:text-ink hover:bg-wash'
                 }`}
               >
                 {tab.icon} {tab.label}
@@ -479,61 +483,61 @@ export default function DashboardPage() {
 
           {/* ── Tab: My Listing ── */}
           {activeTab === 'listing' && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-paper rounded-sm border border-line p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-lg font-bold text-gray-900">Edit Your Listing</h2>
+                <h2 className="text-lg font-heading font-bold text-ink">Edit Your Listing</h2>
                 <div className="flex gap-2">
                   {listing.verified && (
-                    <span className="flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-green-200">
-                      <ShieldCheck className="h-3 w-3" /> Verified
+                    <span className="flex items-center gap-1 bg-wash text-ink text-xs font-semibold px-2.5 py-1 rounded-sm border border-line">
+                      <ShieldCheck className="h-3 w-3 text-ink" /> Verified
                     </span>
                   )}
                   {listing.featured && (
-                    <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-amber-200">
-                      <Star className="h-3 w-3 fill-amber-500" /> Featured
+                    <span className="flex items-center gap-1 bg-sun-wash text-ink text-xs font-semibold px-2.5 py-1 rounded-sm border border-line">
+                      <Star className="h-3 w-3 fill-sun text-sun" /> Featured
                     </span>
                   )}
                 </div>
               </div>
 
-              <form onSubmit={handleSave} className="space-y-4">
+              <form onSubmit={handleSave} className="space-y-4 font-body">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5">Business Name</label>
                     <input
                       type="text"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full border border-line rounded-sm px-4 py-2.5 text-sm bg-paper text-ink focus:outline-none focus:border-ink"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5 flex items-center gap-1">
                       <Phone className="h-3.5 w-3.5" /> Phone
                     </label>
                     <input
                       type="tel"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full border border-line rounded-sm px-4 py-2.5 text-sm bg-paper text-ink focus:outline-none focus:border-ink"
                     />
                   </div>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5 flex items-center gap-1">
                       <Mail className="h-3.5 w-3.5" /> Email
                     </label>
                     <input
                       type="email"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full border border-line rounded-sm px-4 py-2.5 text-sm bg-paper text-ink focus:outline-none focus:border-ink"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5 flex items-center gap-1">
                       <Globe className="h-3.5 w-3.5" /> Website
                     </label>
                     <input
@@ -541,13 +545,13 @@ export default function DashboardPage() {
                       value={form.website}
                       onChange={(e) => setForm({ ...form, website: e.target.value })}
                       placeholder="https://yourwebsite.com"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full border border-line rounded-sm px-4 py-2.5 text-sm bg-paper text-ink focus:outline-none focus:border-ink"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5 flex items-center gap-1">
                     <MapPin className="h-3.5 w-3.5" /> Address
                   </label>
                   <input
@@ -555,24 +559,24 @@ export default function DashboardPage() {
                     value={form.address}
                     onChange={(e) => setForm({ ...form, address: e.target.value })}
                     placeholder="Full business address"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full border border-line rounded-sm px-4 py-2.5 text-sm bg-paper text-ink focus:outline-none focus:border-ink"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Description</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5">Business Description</label>
                   <textarea
                     rows={4}
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                     placeholder="Describe your services, experience, certifications..."
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+                    className="w-full border border-line rounded-sm px-4 py-2.5 text-sm bg-paper text-ink focus:outline-none focus:border-ink resize-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-                    <Youtube className="h-3.5 w-3.5 text-red-500" />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5 flex items-center gap-1">
+                    <Youtube className="h-3.5 w-3.5 text-ink" />
                     Show Your Work — YouTube Video URL
                   </label>
                   <input
@@ -580,20 +584,20 @@ export default function DashboardPage() {
                     value={form.youtubeUrl}
                     onChange={(e) => setForm({ ...form, youtubeUrl: e.target.value })}
                     placeholder="https://www.youtube.com/watch?v=..."
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full border border-line rounded-sm px-4 py-2.5 text-sm bg-paper text-ink focus:outline-none focus:border-ink"
                   />
-                  <p className="text-xs text-gray-400 mt-1">Paste a YouTube link — it will be shown on your listing page to showcase your solar installations.</p>
+                  <p className="text-xs text-ink-2 mt-1">Paste a YouTube link — it will be shown on your listing page to showcase your solar installations.</p>
                 </div>
 
                 {/* Extra Categories */}
                 {allCategories.length > 0 && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-                      <Building2 className="h-3.5 w-3.5 text-orange-500" />
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5 flex items-center gap-1">
+                      <Building2 className="h-3.5 w-3.5 text-ink" />
                       Additional Categories
                     </label>
-                    <p className="text-xs text-gray-400 mb-3">
-                      Your primary category is <span className="font-semibold text-gray-600">{listing.category.name}</span>. Select any additional categories your business also covers.
+                    <p className="text-xs text-ink-2 mb-3">
+                      Your primary category is <span className="font-semibold text-ink">{listing.category.name}</span>. Select any additional categories your business also covers.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {allCategories
@@ -611,10 +615,10 @@ export default function DashboardPage() {
                                     : [...selectedExtraCategoryIds, cat.id]
                                 )
                               }
-                              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                              className={`px-3 py-1.5 rounded-sm text-xs font-medium border transition ${
                                 selected
-                                  ? 'bg-orange-500 text-white border-orange-500'
-                                  : 'bg-white text-gray-600 border-gray-300 hover:border-orange-400 hover:text-orange-600'
+                                  ? 'bg-sun text-ink border-ink font-semibold'
+                                  : 'bg-paper text-ink border-line hover:border-ink'
                               }`}
                             >
                               {selected && <span className="mr-1">✓</span>}
@@ -624,18 +628,18 @@ export default function DashboardPage() {
                         })}
                     </div>
                     {selectedExtraCategoryIds.length > 0 && (
-                      <p className="text-xs text-gray-400 mt-2">{selectedExtraCategoryIds.length} extra {selectedExtraCategoryIds.length !== 1 ? 'categories' : 'category'} selected</p>
+                      <p className="text-xs text-ink-2 mt-2">{selectedExtraCategoryIds.length} extra {selectedExtraCategoryIds.length !== 1 ? 'categories' : 'category'} selected</p>
                     )}
                   </div>
                 )}
 
                 {/* Service Tags */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-                    <Tag className="h-3.5 w-3.5 text-orange-500" />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-ink mb-1.5 flex items-center gap-1">
+                    <Tag className="h-3.5 w-3.5 text-ink" />
                     Services Offered
                   </label>
-                  <p className="text-xs text-gray-400 mb-3">Select all services your business provides. These appear as tags on your listing.</p>
+                  <p className="text-xs text-ink-2 mb-3">Select all services your business provides. These appear as tags on your listing.</p>
                   <div className="flex flex-wrap gap-2">
                     {ALL_SERVICE_TAGS.map((tag) => {
                       const selected = selectedTags.includes(tag);
@@ -650,10 +654,10 @@ export default function DashboardPage() {
                                 : [...selectedTags, tag]
                             )
                           }
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                          className={`px-3 py-1.5 rounded-sm text-xs font-medium border transition ${
                             selected
-                              ? 'bg-orange-500 text-white border-orange-500'
-                              : 'bg-white text-gray-600 border-gray-300 hover:border-orange-400 hover:text-orange-600'
+                              ? 'bg-sun text-ink border-ink font-semibold'
+                              : 'bg-paper text-ink border-line hover:border-ink'
                           }`}
                         >
                           {selected && <span className="mr-1">✓</span>}
@@ -663,14 +667,14 @@ export default function DashboardPage() {
                     })}
                   </div>
                   {selectedTags.length > 0 && (
-                    <p className="text-xs text-gray-400 mt-2">{selectedTags.length} service{selectedTags.length !== 1 ? 's' : ''} selected</p>
+                    <p className="text-xs text-ink-2 mt-2">{selectedTags.length} service{selectedTags.length !== 1 ? 's' : ''} selected</p>
                   )}
                 </div>
 
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center gap-2 bg-orange-500 text-white font-semibold px-6 py-2.5 rounded-xl hover:bg-orange-600 transition disabled:opacity-60"
+                  className="flex items-center gap-2 bg-sun hover:bg-sun-hover text-ink font-heading font-semibold px-6 py-2.5 rounded-sm transition disabled:opacity-60"
                 >
                   <Save className="h-4 w-4" />
                   {saving ? 'Saving...' : 'Save Changes'}
@@ -681,30 +685,30 @@ export default function DashboardPage() {
 
           {/* ── Tab: Photos ── */}
           {activeTab === 'photos' && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-paper rounded-sm border border-line p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-lg font-bold text-gray-900">Business Photos</h2>
-                <span className="text-sm text-gray-500">
+                <h2 className="text-lg font-heading font-bold text-ink">Business Photos</h2>
+                <span className="text-sm font-body text-ink-2">
                   {listing.featured ? `${images.length}/5 photos` : 'Featured plan only'}
                 </span>
               </div>
 
               {!listing.featured && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 flex items-start gap-3">
-                  <Star className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                <div className="bg-sun-wash border border-line rounded-sm p-4 mb-5 flex items-start gap-3">
+                  <Star className="h-5 w-5 text-sun shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-amber-800">Photos are a Featured plan feature</p>
-                    <p className="text-sm text-amber-700">Upgrade to Featured (₹999/month) to upload up to 5 photos on your listing.</p>
+                    <p className="text-sm font-semibold text-ink font-heading">Photos are a Featured partner feature</p>
+                    <p className="text-sm text-ink-2 font-body">Upgrade to Featured (₹999/month) to upload up to 5 photos on your listing.</p>
                   </div>
                 </div>
               )}
 
               {listing.featured && images.length >= FEATURED_LIMIT && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 flex items-start gap-3">
-                  <Star className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                <div className="bg-wash border border-line rounded-sm p-4 mb-5 flex items-start gap-3">
+                  <Star className="h-5 w-5 text-sun shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-amber-800">5/5 photos used</p>
-                    <p className="text-sm text-amber-700">Maximum 5 photos reached. Delete a photo to upload a new one.</p>
+                    <p className="text-sm font-semibold text-ink font-heading">5/5 photos used</p>
+                    <p className="text-sm text-ink-2 font-body">Maximum 5 photos reached. Delete a photo to upload a new one.</p>
                   </div>
                 </div>
               )}
@@ -722,9 +726,9 @@ export default function DashboardPage() {
                   />
                   <label
                     htmlFor="photo-upload"
-                    className={`flex items-center justify-center gap-2 border-2 border-dashed border-orange-300 rounded-xl p-6 cursor-pointer hover:bg-orange-50 transition text-orange-600 font-medium text-sm ${uploading ? 'opacity-60 pointer-events-none' : ''}`}
+                    className={`flex items-center justify-center gap-2 border-2 border-dashed border-line rounded-sm p-6 cursor-pointer hover:bg-wash transition text-ink font-medium text-sm font-body ${uploading ? 'opacity-60 pointer-events-none' : ''}`}
                   >
-                    <Upload className="h-5 w-5" />
+                    <Upload className="h-5 w-5 text-ink" />
                     {uploading ? 'Uploading...' : 'Click to upload photo (JPEG, PNG, WebP · max 5MB)'}
                   </label>
                 </div>
@@ -732,21 +736,22 @@ export default function DashboardPage() {
 
               {/* Photo grid */}
               {images.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
-                  <ImageIcon className="h-12 w-12 mx-auto mb-3 opacity-40" />
-                  <p className="font-medium">No photos yet</p>
+                <div className="text-center py-12 text-ink-2 font-body">
+                  <ImageIcon className="h-12 w-12 mx-auto mb-3 opacity-40 text-ink" />
+                  <p className="font-medium text-ink">No photos yet</p>
                   <p className="text-sm">Upload photos to showcase your work and attract more customers.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {images.map((img) => (
-                    <div key={img.id} className="relative group aspect-square rounded-xl overflow-hidden bg-gray-100">
+                    <div key={img.id} className="relative group aspect-square rounded-sm overflow-hidden bg-wash border border-line">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={img.url} alt="Listing photo" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                      <div className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <button
                           onClick={() => handleImageDelete(img.id)}
-                          className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition"
+                          className="bg-paper text-ink p-2 rounded-sm hover:bg-sun transition"
+                          title="Delete photo"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -760,57 +765,57 @@ export default function DashboardPage() {
 
           {/* ── Tab: Leads ── */}
           {activeTab === 'leads' && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-paper rounded-sm border border-line p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-lg font-bold text-gray-900">Recent Leads</h2>
-                <span className="text-sm text-gray-500">{listing.location.city} · Last 30 days</span>
+                <h2 className="text-lg font-heading font-bold text-ink">Recent Leads</h2>
+                <span className="text-sm font-body text-ink-2">{listing.location.city} · Last 30 days</span>
               </div>
 
               {!isFeatured && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 flex items-start gap-3">
-                  <Star className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                <div className="bg-sun-wash border border-line rounded-sm p-4 mb-5 flex items-start gap-3">
+                  <Star className="h-5 w-5 text-sun shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-blue-800">Upgrade to see full contact details</p>
-                    <p className="text-sm text-blue-700">Free plan shows masked phone numbers. Upgrade to Featured (₹999/month) to see full details.</p>
+                    <p className="text-sm font-semibold text-ink font-heading">Upgrade to see full contact details</p>
+                    <p className="text-sm text-ink-2 font-body">Free plan shows masked phone numbers. Upgrade to Featured (₹999/month) to see full consumer contact details.</p>
                   </div>
                 </div>
               )}
 
               {leads.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
-                  <Users className="h-12 w-12 mx-auto mb-3 opacity-40" />
-                  <p className="font-medium">No leads yet in your city</p>
-                  <p className="text-sm">Leads submitted for {listing.location.city} will appear here.</p>
+                <div className="text-center py-12 text-ink-2 font-body">
+                  <Users className="h-12 w-12 mx-auto mb-3 opacity-40 text-ink" />
+                  <p className="font-medium text-ink">No leads yet in your city</p>
+                  <p className="text-sm">Direct leads submitted for {listing.location.city} will appear here.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm font-body">
                     <thead>
-                      <tr className="border-b border-gray-100">
-                        <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Name</th>
-                        <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Phone</th>
-                        <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Requirement</th>
-                        <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">City</th>
-                        <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Date</th>
+                      <tr className="border-b border-line bg-wash">
+                        <th className="text-left py-3 px-3 text-xs font-semibold text-ink uppercase">Name</th>
+                        <th className="text-left py-3 px-3 text-xs font-semibold text-ink uppercase">Phone</th>
+                        <th className="text-left py-3 px-3 text-xs font-semibold text-ink uppercase">Requirement</th>
+                        <th className="text-left py-3 px-3 text-xs font-semibold text-ink uppercase">City</th>
+                        <th className="text-left py-3 px-3 text-xs font-semibold text-ink uppercase">Date</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-line">
                       {leads.map((lead) => (
-                        <tr key={lead.id} className="hover:bg-gray-50">
-                          <td className="py-3 px-2 font-medium text-gray-900">{lead.name}</td>
-                          <td className="py-3 px-2">
+                        <tr key={lead.id} className="hover:bg-wash transition">
+                          <td className="py-3 px-3 font-medium text-ink">{lead.name}</td>
+                          <td className="py-3 px-3">
                             {lead.phoneMasked ? (
-                              <span className="flex items-center gap-1 text-gray-400">
-                                <span className="font-mono">{lead.phone}</span>
-                                <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Upgrade</span>
+                              <span className="flex items-center gap-1.5 text-ink-2">
+                                <span className="font-mono text-xs">{lead.phone}</span>
+                                <span className="text-xs bg-sun-wash text-ink border border-line px-1.5 py-0.5 rounded-sm font-semibold">Upgrade</span>
                               </span>
                             ) : (
-                              <a href={`tel:${lead.phone}`} className="text-orange-600 hover:underline font-medium">{lead.phone}</a>
+                              <a href={`tel:${lead.phone}`} className="text-ink font-semibold underline underline-offset-2">{lead.phone}</a>
                             )}
                           </td>
-                          <td className="py-3 px-2 text-gray-600">{lead.requirement || '—'}</td>
-                          <td className="py-3 px-2 text-gray-600">{lead.city || '—'}</td>
-                          <td className="py-3 px-2 text-gray-400 text-xs whitespace-nowrap">
+                          <td className="py-3 px-3 text-ink-2">{lead.requirement || '—'}</td>
+                          <td className="py-3 px-3 text-ink-2">{lead.city || '—'}</td>
+                          <td className="py-3 px-3 text-ink-2 text-xs whitespace-nowrap">
                             {new Date(lead.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                           </td>
                         </tr>
@@ -825,72 +830,72 @@ export default function DashboardPage() {
           {/* ── Tab: Subscription ── */}
           {activeTab === 'subscription' && (
             <div className="space-y-5">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-1">Current Plan</h2>
-                <p className="text-sm text-gray-500 mb-5">
+              <div className="bg-paper rounded-sm border border-line p-6">
+                <h2 className="text-lg font-heading font-bold text-ink mb-1">Current Plan</h2>
+                <p className="text-sm font-body text-ink-2 mb-5">
                   You are currently on the{' '}
-                  <span className={`font-semibold ${listing.featured ? 'text-amber-600' : 'text-gray-700'}`}>
+                  <span className="font-semibold text-ink font-heading">
                     {listing.featured ? 'Featured' : 'Free'} Plan
                   </span>
                 </p>
 
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-4 font-body">
                   {/* Free Plan */}
-                  <div className={`rounded-xl border-2 p-5 ${!listing.featured ? 'border-orange-500 bg-orange-50' : 'border-gray-200'}`}>
+                  <div className={`rounded-sm border p-5 ${!listing.featured ? 'border-ink bg-wash' : 'border-line bg-paper'}`}>
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-bold text-gray-900">Free</h3>
+                      <h3 className="font-bold font-heading text-ink text-base">Free</h3>
                       {!listing.featured && (
-                        <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full font-medium">Current</span>
+                        <span className="text-xs bg-ink text-paper px-2 py-0.5 rounded-sm font-semibold font-body">Current</span>
                       )}
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 mb-4">₹0 <span className="text-sm font-normal text-gray-500">/month</span></p>
-                    <ul className="space-y-2 text-sm text-gray-600">
+                    <p className="text-2xl font-bold font-heading text-ink mb-4">₹0 <span className="text-sm font-normal text-ink-2">/month</span></p>
+                    <ul className="space-y-2 text-sm text-ink-2">
                       {[
-                        'Basic listing',
-                        'Edit business details',
-                        'Verified badge',
+                        'Basic directory listing',
+                        'Edit business profile details',
+                        'Verified business badge',
                         'Masked lead phone numbers',
-                        'No photo uploads',
+                        'No photo gallery uploads',
                       ].map((f) => (
                         <li key={f} className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-500 shrink-0" /> {f}
+                          <CheckCircle className="h-4 w-4 text-ink shrink-0" /> {f}
                         </li>
                       ))}
                     </ul>
                   </div>
 
                   {/* Featured Plan */}
-                  <div className={`rounded-xl border-2 p-5 ${listing.featured ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 transition'}`}>
+                  <div className={`rounded-sm border-2 p-5 ${listing.featured ? 'border-ink bg-sun-wash/40' : 'border-line hover:border-ink transition bg-paper'}`}>
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-bold text-gray-900">Featured</h3>
+                      <h3 className="font-bold font-heading text-ink text-base">Featured</h3>
                       {listing.featured ? (
-                        <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-medium">Current</span>
+                        <span className="text-xs bg-sun text-ink px-2 py-0.5 rounded-sm font-bold font-body">Current</span>
                       ) : (
-                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">Recommended</span>
+                        <span className="text-xs bg-sun-wash text-ink border border-line px-2 py-0.5 rounded-sm font-semibold font-body">Recommended</span>
                       )}
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 mb-4">
-                      ₹999 <span className="text-sm font-normal text-gray-500">/month</span>
+                    <p className="text-2xl font-bold font-heading text-ink mb-4">
+                      ₹999 <span className="text-sm font-normal text-ink-2">/month</span>
                     </p>
-                    <ul className="space-y-2 text-sm text-gray-600 mb-5">
+                    <ul className="space-y-2 text-sm text-ink mb-5">
                       {[
-                        'Priority placement in search',
+                        'Priority placement in city search',
                         'Up to 5 photos on your listing',
-                        'Full lead contact details',
+                        'Full unmasked lead phone numbers',
                         'Featured badge on listing',
-                        'Appear in homepage strip',
-                        'YouTube video on listing',
-                        'Detailed analytics',
+                        'Featured showcase in top directory strip',
+                        'YouTube video showcase on listing',
+                        'Detailed monthly analytics',
                       ].map((f) => (
                         <li key={f} className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4 text-amber-500 shrink-0" /> {f}
+                          <CheckCircle className="h-4 w-4 text-ink shrink-0" /> {f}
                         </li>
                       ))}
                     </ul>
                     {!listing.featured && (
                       <button
-                        onClick={() => showToast('Payment coming soon! Contact us at +91-93732-38164 to upgrade.', 'info')}
-                        className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-xl transition text-sm"
+                        onClick={() => showToast('Contact our partner team at +91-93732-38164 to activate Featured.', 'info')}
+                        className="w-full bg-sun hover:bg-sun-hover text-ink font-heading font-semibold py-2.5 rounded-sm transition text-sm"
                       >
                         Upgrade to Featured
                       </button>
@@ -900,16 +905,16 @@ export default function DashboardPage() {
               </div>
 
               {/* Need help */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+              <div className="bg-paper rounded-sm border border-line p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between font-body">
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">Need help or want to upgrade?</p>
-                  <p className="text-sm text-gray-500">Call us at +91-93732-38164 or email support@gosolarindex.in</p>
+                  <p className="font-semibold font-heading text-ink text-sm">Need help or want to upgrade?</p>
+                  <p className="text-sm text-ink-2">Call us at +91-93732-38164 or email support@gosolarindex.in</p>
                 </div>
                 <a
                   href="tel:+919373238164"
-                  className="shrink-0 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition"
+                  className="shrink-0 border border-ink text-ink hover:bg-wash font-heading font-semibold px-4 py-2 rounded-sm text-sm transition"
                 >
-                  Call Now
+                  Call Support
                 </a>
               </div>
             </div>

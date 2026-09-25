@@ -161,7 +161,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
               type="button"
               onClick={() => save(true)}
               disabled={saving}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition disabled:opacity-50"
+              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-sm bg-sun text-ink font-semibold hover:bg-sun-hover transition disabled:opacity-50"
             >
               <Globe className="h-3.5 w-3.5" />
               {saving ? 'Publishing…' : 'Publish'}
@@ -195,13 +195,13 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
                 type="text"
                 value={form.slug}
                 onChange={(e) => { setSlugLocked(true); set('slug', slugify(e.target.value)); }}
-                className="flex-1 text-xs text-orange-600 font-mono bg-transparent outline-none"
+                className="flex-1 text-xs text-ink font-mono bg-transparent outline-none"
               />
               {mode === 'new' && (
                 <button
                   type="button"
                   onClick={() => { setSlugLocked(false); setForm((f) => ({ ...f, slug: slugify(f.title) })); }}
-                  className="text-xs text-gray-400 hover:text-orange-500 transition ml-2"
+                  className="text-xs text-ink-2 hover:text-ink transition ml-2"
                   title="Auto-generate from title"
                 >
                   Auto
@@ -267,7 +267,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
                     value={form.metaTitle}
                     onChange={(e) => set('metaTitle', e.target.value)}
                     placeholder={form.title || 'Leave blank to use post title'}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-orange-400 transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-ink transition"
                   />
                   <p className={`text-xs mt-1 ${form.metaTitle.length > 60 ? 'text-red-500' : 'text-gray-400'}`}>
                     {(form.metaTitle || form.title).length} / 60 characters
@@ -282,7 +282,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
                     onChange={(e) => set('metaDescription', e.target.value)}
                     placeholder={form.description || 'Leave blank to use excerpt'}
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-orange-400 transition resize-none"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-ink transition resize-none"
                   />
                   <p className={`text-xs mt-1 ${(form.metaDescription || form.description).length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
                     {(form.metaDescription || form.description).length} / 160 characters
@@ -298,7 +298,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
                     value={form.ogImage}
                     onChange={(e) => set('ogImage', e.target.value)}
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-orange-400 transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-ink transition"
                   />
                 </div>
 
@@ -323,11 +323,11 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Status</p>
             <div className="flex gap-3">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="status" value="published" checked={form.published} onChange={() => set('published', true)} className="accent-orange-500" />
+                <input type="radio" name="status" value="published" checked={form.published} onChange={() => set('published', true)} className="accent-ink" />
                 <span className="text-sm text-gray-700 flex items-center gap-1"><Globe className="h-3.5 w-3.5 text-green-600" /> Published</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="status" value="draft" checked={!form.published} onChange={() => set('published', false)} className="accent-orange-500" />
+                <input type="radio" name="status" value="draft" checked={!form.published} onChange={() => set('published', false)} className="accent-ink" />
                 <span className="text-sm text-gray-700 flex items-center gap-1"><EyeOff className="h-3.5 w-3.5 text-yellow-500" /> Draft</span>
               </label>
             </div>
@@ -344,7 +344,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
               <select
                 value={form.category}
                 onChange={(e) => set('category', e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-orange-400 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-ink transition"
               >
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -355,7 +355,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
                 type="date"
                 value={form.date}
                 onChange={(e) => set('date', e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-orange-400 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-ink transition"
               />
             </div>
             <div>
@@ -365,7 +365,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
                 value={form.readTime}
                 onChange={(e) => set('readTime', e.target.value)}
                 placeholder="5 min read"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-orange-400 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-ink transition"
               />
               <p className="text-xs text-gray-400 mt-1">Auto-calculated: {calcReadTime(form.content)}</p>
             </div>
@@ -377,7 +377,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
               type="button"
               onClick={() => save(true)}
               disabled={saving}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600 transition disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-sun text-ink text-sm font-semibold rounded-sm hover:bg-sun-hover transition disabled:opacity-50"
             >
               <Globe className="h-4 w-4" />
               {saving ? 'Saving…' : 'Publish Post'}
@@ -396,7 +396,7 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
                 href={`/blog/${form.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-orange-600 hover:text-orange-700 transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-ink underline font-medium hover:text-ink/80 transition"
               >
                 <Eye className="h-3.5 w-3.5" />
                 View Live Post

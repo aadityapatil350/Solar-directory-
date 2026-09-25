@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import { Clock, Tag, ArrowRight } from 'lucide-react';
 
 export const revalidate = 3600; // ISR — re-render every hour
 
 export const metadata: Metadata = constructMetadata({
-  title: 'Solar Energy Blog — Guides, Tips & News for India',
-  description: 'Expert solar energy guides for Indian homeowners and businesses. Installation costs, government subsidies, best panels, maintenance tips and more.',
+  title: 'Solar Energy Articles & Subsidy Guides (India 2026) | GoSolarIndex',
+  description: 'In-depth solar guides, PM Surya Ghar subsidy updates, equipment comparisons, and net-metering regulations for Indian property owners.',
   path: '/blog',
+  canonicalUrl: 'https://gosolarindex.in/blog',
 });
 
 export default async function BlogPage() {
@@ -20,72 +22,77 @@ export default async function BlogPage() {
     select: { slug: true, title: true, description: true, category: true, readTime: true, date: true },
   });
 
-  const categories: string[] = [...new Set<string>(posts.map((p: typeof posts[0]) => p.category))];
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-paper text-ink pb-20 md:pb-0">
       <Header />
 
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-12">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-3">Solar Energy Blog</h1>
-          <p className="text-orange-100 text-lg max-w-xl mx-auto">
-            Expert guides, subsidy updates, and solar tips for Indian homeowners and businesses.
-          </p>
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 py-12">
-        {/* Category chips */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <span className="bg-orange-500 text-white text-sm px-4 py-1.5 rounded-full font-medium">All</span>
-          {categories.map((cat: string) => (
-            <span key={cat} className="bg-white border border-gray-200 text-gray-600 text-sm px-4 py-1.5 rounded-full hover:border-orange-400 hover:text-orange-600 cursor-pointer transition">
-              {cat}
-            </span>
-          ))}
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post: typeof posts[0]) => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="bg-white rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden group"
-            >
-              <div className="h-2 bg-gradient-to-r from-orange-400 to-orange-600" />
-              <div className="p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-                    <Tag className="h-3 w-3" />
-                    {post.category}
-                  </span>
-                  <span className="flex items-center gap-1 text-xs text-gray-400">
-                    <Clock className="h-3 w-3" />
-                    {post.readTime}
-                  </span>
-                </div>
-
-                <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition leading-snug">
-                  {post.title}
-                </h2>
-                <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3">
-                  {post.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <time className="text-xs text-gray-400">
-                    {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </time>
-                  <span className="flex items-center gap-1 text-orange-600 text-sm font-medium group-hover:gap-2 transition-all">
-                    Read more <ArrowRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Solar Guides & Articles', href: '/blog' },
+            ]}
+          />
         </div>
       </div>
+
+      {/* Header Banner */}
+      <header className="border-b border-line bg-wash py-10 sm:py-12">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold text-ink-2 uppercase tracking-wider font-body">
+              Editorial Guides &amp; Policy Analysis
+            </span>
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">
+              Solar Guides, Subsidy Updates &amp; Industry Reports
+            </h1>
+            <p className="text-base text-ink-2 mt-3 font-body leading-relaxed">
+              Research-backed editorial analysis covering PM Surya Ghar subsidy slabs, state net-metering orders, inverter sizing, and module degradation metrics for India.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-content mx-auto px-4 sm:px-6 py-10 space-y-10">
+        <div className="border-t border-line divide-y divide-line">
+          {posts.map((post) => (
+            <article key={post.slug} className="py-6 sm:py-8 space-y-2 group">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-2 font-body">
+                <span className="font-semibold text-ink uppercase tracking-wider">{post.category}</span>
+                <span>·</span>
+                <span>{post.readTime}</span>
+                <span>·</span>
+                <time dateTime={new Date(post.date).toISOString()}>
+                  {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </time>
+              </div>
+
+              <h2 className="font-heading font-bold text-2xl text-ink leading-snug">
+                <Link href={`/blog/${post.slug}`} className="hover:underline">
+                  {post.title}
+                </Link>
+              </h2>
+
+              <p className="text-sm text-ink-2 font-body leading-relaxed max-w-3xl pt-1">
+                {post.description}
+              </p>
+
+              <div className="pt-2">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="text-xs font-semibold text-ink underline hover:text-ink/80 font-body"
+                >
+                  Read full article
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

@@ -1,27 +1,43 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { constructMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import Link from 'next/link';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 export const metadata: Metadata = constructMetadata({
   title: 'Terms of Service — GoSolarIndex',
   description: 'Terms and conditions for using GoSolarIndex directory platform. Learn about your rights, responsibilities, and our policies for installers and users.',
   path: '/terms',
+  canonicalUrl: 'https://gosolarindex.in/terms',
 });
 
 export default function TermsPage() {
   return (
-    <>
+    <div className="min-h-screen bg-paper text-ink pb-20 md:pb-0">
       <Header />
-      <main className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 py-12 max-w-4xl">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Terms of Service</h1>
-          <p className="text-gray-600 mb-8">
-            <strong>Last Updated:</strong> March 7, 2026
-          </p>
 
-          <div className="prose prose-lg max-w-none">
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Terms of Service', href: '/terms' },
+            ]}
+          />
+        </div>
+      </div>
+
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-6">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-ink-2 font-body">Legal &amp; Compliance</span>
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">Terms of Service</h1>
+          <p className="text-xs text-ink-2 font-body mt-2">
+            Last Updated: March 2026
+          </p>
+        </div>
+
+        <div className="prose prose-neutral max-w-none text-ink-2 font-body leading-relaxed space-y-6 [&>h2]:font-heading [&>h2]:font-semibold [&>h2]:text-2xl [&>h2]:text-ink [&>h2]:mt-8 [&>h3]:font-heading [&>h3]:font-semibold [&>h3]:text-xl [&>h3]:text-ink [&>ul]:list-disc [&>ul]:pl-5">
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Acceptance of Terms</h2>
               <p className="text-gray-700 mb-4">
@@ -163,7 +179,7 @@ export default function TermsPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-3">6.4 Refund Policy</h3>
               <p className="text-gray-700 mb-4">
                 We offer a <strong>7-day money-back guarantee</strong> for first-time subscribers to Featured and Premium plans. Contact us at{' '}
-                <a href="mailto:hello@gosolarindex.in" className="text-orange-600 hover:underline">
+                <a href="mailto:hello@gosolarindex.in" className="text-ink font-semibold hover:underline">
                   hello@gosolarindex.in
                 </a>{' '}
                 within 7 days of your first payment to request a refund.
@@ -286,7 +302,7 @@ export default function TermsPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-3">12.3 Informal Resolution</h3>
               <p className="text-gray-700 mb-4">
                 Before initiating formal proceedings, parties agree to attempt informal resolution by contacting us at{' '}
-                <a href="mailto:hello@gosolarindex.in" className="text-orange-600 hover:underline">
+                <a href="mailto:hello@gosolarindex.in" className="text-ink font-semibold hover:underline">
                   hello@gosolarindex.in
                 </a>
               </p>
@@ -296,7 +312,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">13. Privacy</h2>
               <p className="text-gray-700 mb-4">
                 Your use of the Platform is subject to our{' '}
-                <Link href="/privacy" className="text-orange-600 hover:underline">
+                <Link href="/privacy" className="text-ink font-semibold hover:underline">
                   Privacy Policy
                 </Link>
                 , which is incorporated into these Terms by reference.
@@ -329,7 +345,7 @@ export default function TermsPage() {
                 <p className="text-gray-900 font-semibold mb-2">GoSolarIndex</p>
                 <p className="text-gray-700">
                   <strong>Email:</strong>{' '}
-                  <a href="mailto:hello@gosolarindex.in" className="text-orange-600 hover:underline">
+                  <a href="mailto:hello@gosolarindex.in" className="text-ink font-semibold hover:underline">
                     hello@gosolarindex.in
                   </a>
                 </p>
@@ -338,22 +354,22 @@ export default function TermsPage() {
                 </p>
                 <p className="text-gray-700">
                   <strong>Website:</strong>{' '}
-                  <Link href="/" className="text-orange-600 hover:underline">
+                  <Link href="/" className="text-ink font-semibold hover:underline">
                     gosolarindex.in
                   </Link>
                 </p>
               </div>
             </section>
 
-            <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
-              <p className="text-sm text-gray-700">
+            <div className="bg-wash border-l-2 border-ink p-5 rounded-sm">
+              <p className="text-xs text-ink font-body leading-relaxed">
                 <strong>By using GoSolarIndex, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</strong>
               </p>
             </div>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </>
-  );
-}
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
