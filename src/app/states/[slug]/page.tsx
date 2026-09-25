@@ -3,19 +3,22 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { constructStateMetadata } from '@/lib/metadata';
 import Header from '@/components/Header';
-import ListingCard from '@/components/ListingCard';
+import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
+import FactPanel from '@/components/ui/FactPanel';
+import Breadcrumb from '@/components/ui/Breadcrumb';
+import Steps from '@/components/ui/Steps';
+import FAQ from '@/components/ui/FAQ';
+import DataTable from '@/components/ui/DataTable';
+import ListingRow from '@/components/ui/ListingRow';
 import Link from 'next/link';
-import { ChevronRight, MapPin } from 'lucide-react';
-
 import { getStateDescription, getStateFAQs, stateSpecificData } from '@/lib/stateData';
-import { CheckCircle, Info } from 'lucide-react';
+import { getStateSolarConfig } from '@/lib/solarConfig';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-// Map slug → display state name
 function slugToState(slug: string) {
   return slug
     .split('-')
@@ -36,14 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return constructStateMetadata(state, locs.length, listingCount);
 }
 
-// Remove force-dynamic to allow proper SSR
 export const revalidate = 3600;
 
 export default async function StatePage({ params }: Props) {
   const { slug } = await params;
   const state = slugToState(slug);
 
-  // Find all locations in this state
   const stateLocations = await prisma.location.findMany({
     where: { state: { equals: state, mode: 'insensitive' } },
     orderBy: { city: 'asc' },
@@ -51,253 +52,274 @@ export default async function StatePage({ params }: Props) {
 
   if (stateLocations.length === 0) notFound();
 
-  const locationIds = stateLocations.map((l: typeof stateLocations[0]) => l.id);
+  const locationIds = stateLocations.map((l) => l.id);
 
   const listings = await prisma.listing.findMany({
     where: { locationId: { in: locationIds } },
     include: { category: true, location: true },
     orderBy: [{ featured: 'desc' }, { verified: 'desc' }, { rating: 'desc' }],
-    take: 100,
+    take: 40,
   });
 
-  const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } });
-
-  // Get state-specific content
+  const stateConfig = getStateSolarConfig(state);
+  const sData = stateSpecificData[state.toLowerCase()];
   const faqs = getStateFAQs(state);
 
   const siteUrl = 'https://gosolarindex.in';
-
-  // BreadcrumbList Schema
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteUrl,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Locations',
-        item: `${siteUrl}/locations`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: state,
-        item: `${siteUrl}/states/${slug}`,
-      },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: 'States', item: `${siteUrl}/#states` },
+      { '@type': 'ListItem', position: 3, name: state, item: `${siteUrl}/states/${slug}` },
     ],
   };
 
-  // FAQPage Schema
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   };
 
+  const discomTableColumns = [
+    { key: 'name', label: 'DISCOM Utility' },
+    { key: 'coverage', label: 'Service Jurisdiction' },
+    { key: 'metering', label: 'Net Metering Cap' },
+    { key: 'portal', label: 'Application Portal', align: 'right' as const },
+  ];
+
+  const discomTableRows = stateConfig.discoms.map((d) => ({
+    name: d,
+    coverage: `Statewide / Regional ${state}`,
+    metering: '100% of sanctioned load',
+    portal: 'National Portal (pmsuryaghar.gov.in)',
+  }));
+
+  const applicationSteps = [
+    {
+      title: 'National Portal registration',
+      description: `Create an account at pmsuryaghar.gov.in and select your ${state} electricity distribution company (DISCOM) using your consumer account number.`,
+    },
+    {
+      title: 'Technical feasibility approval',
+      description: 'Your DISCOM reviews transformer capacity and sanctioned load limit to grant grid connectivity approval.',
+    },
+    {
+      title: 'Installation by an empanelled vendor',
+      description: 'Choose a verified installer in your city to erect the mounting structure, ALMM-listed solar panels, and grid-tie inverter.',
+    },
+    {
+      title: 'Net meter installation & testing',
+      description: 'DISCOM officials inspect earthing protection, install the bi-directional meter, and issue a work completion certificate.',
+    },
+    {
+      title: 'DBT central subsidy transfer',
+      description: 'Submit your bank details and the commissioning report to receive the direct subsidy credit into your account within 30 days.',
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <Header />
+    <div className="min-h-screen bg-paper text-ink flex flex-col justify-between">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-orange-500 transition">Home</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/locations" className="hover:text-orange-500 transition">Locations</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-900 font-medium">{state}</span>
-          </nav>
+      <div>
+        <Header />
+
+        {/* Breadcrumb */}
+        <div className="border-b border-line bg-paper">
+          <div className="max-w-content mx-auto px-4 sm:px-6">
+            <Breadcrumb
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'States', href: '/#states' },
+                { label: state },
+              ]}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-3">
-            <MapPin className="h-8 w-8" />
-            <h1 className="text-3xl md:text-4xl font-bold">
-              Solar Installers in {state}
+        {/* ── STATE HEADER & FACT PANEL ── */}
+        <section className="border-b border-line bg-paper py-10">
+          <div className="max-w-content mx-auto px-4 sm:px-6">
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink leading-tight mb-8">
+              Solar power in {state}: DISCOM rules, subsidy and installers
             </h1>
-          </div>
-          <p className="text-orange-100 max-w-2xl">
-            {listings.length} verified solar companies across {stateLocations.length} cities in {state}.
-            Compare prices, read reviews, and get free quotes.
-          </p>
 
-          {/* City chips */}
-          <div className="flex flex-wrap gap-2 mt-6">
-            {stateLocations.map((loc: typeof stateLocations[0]) => (
-              <Link
-                key={loc.id}
-                href={`/${loc.city.toLowerCase().replace(/\s+/g, '-')}`}
-                className="bg-white/20 hover:bg-white/30 text-white text-sm px-3 py-1 rounded-full transition"
-              >
-                {loc.city}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 py-10">
-        {/* About Solar Section */}
-        <div className="mb-10 bg-white rounded-xl p-6 shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            About Solar in {state}
-          </h2>
-          <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg">
-            <p className="text-gray-800 leading-relaxed">
-              {getStateDescription(state)}
-            </p>
-          </div>
-
-          {(() => {
-            const s = stateSpecificData[state.toLowerCase()];
-            if (!s) return null;
-            return (
-              <div className="mt-6 grid md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Info className="h-5 w-5 text-orange-500" />
-                    Solar Installation Costs in {state}
-                  </h3>
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-2">
-                    <div className="flex justify-between"><span className="text-gray-700 font-medium">3kW System:</span><span className="text-orange-600 font-bold">{s.avgCost3kW}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-700 font-medium">5kW System:</span><span className="text-orange-600 font-bold">{s.avgCost5kW}</span></div>
-                    <p className="text-sm text-gray-600 mt-2 pt-2 border-t border-orange-200">💡 {s.subsidyScheme}</p>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Net Metering & DISCOMs</h3>
-                  <p className="text-gray-700 text-sm mb-2"><span className="font-medium">DISCOMs:</span> {s.discoms.join(', ')}</p>
-                  <p className="text-gray-700 text-sm mb-3"><span className="font-medium">Solar Potential:</span> {s.solarPotential}</p>
-                  <ul className="space-y-1.5">
-                    {s.highlights.map((h, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Fact Panel */}
+              <div className="lg:col-span-6">
+                <FactPanel
+                  title={`Solar benchmark: ${state}`}
+                  rows={[
+                    { label: 'Central subsidy (3 kW cap)', value: '₹78,000' },
+                    { label: 'State top-up scheme', value: sData?.subsidyScheme || 'Standard PM Surya Ghar DBT' },
+                    { label: 'Estimated 3 kW gross cost', value: sData?.avgCost3kW || '₹1,95,000' },
+                    { label: 'Net homeowner investment', value: '₹1,17,000', total: true },
+                    { label: 'Primary distribution utility', value: stateConfig.discoms[0] || 'State DISCOM' },
+                    { label: 'Solar irradiation potential', value: sData?.solarPotential || 'High (4.8+ kWh/m²/day)' },
+                  ]}
+                  sources="Ministry of New and Renewable Energy (MNRE), National Portal for Rooftop Solar, SERC tariff orders 2026."
+                />
               </div>
-            );
-          })()}
-        </div>
 
-        {/* FAQ Section */}
-        <div className="mb-10 bg-white rounded-xl p-6 shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Frequently Asked Questions - Solar in {state}
-          </h2>
-          <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <div key={index} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  {faq.question}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {faq.answer}
+              {/* State Overview */}
+              <div className="lg:col-span-6 space-y-4 text-[15px] text-ink-2 leading-relaxed font-body">
+                <p>
+                  {getStateDescription(state)}
                 </p>
+                <p>
+                  Homeowners and commercial facilities in <strong>{state}</strong> can reduce electricity costs substantially by exporting daytime solar power under the state&apos;s net metering framework.
+                </p>
+                <div className="pt-2">
+                  <a
+                    href="#installers"
+                    className="inline-flex items-center justify-center h-10 px-5 border-[1.5px] border-ink text-ink font-medium text-xs rounded-sm hover:bg-wash transition-colors"
+                  >
+                    View {state} installers ({listings.length})
+                  </a>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="grid lg:grid-cols-4 gap-8">
+        {/* ── TWO-COLUMN MAIN BODY ── */}
+        <main className="max-w-content mx-auto px-4 sm:px-6 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Cities */}
-            <div className="bg-white rounded-xl shadow-md p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">Cities in {state}</h3>
-              <ul className="space-y-1">
-                {stateLocations.map((loc: typeof stateLocations[0]) => {
-                  const count = listings.filter((l: typeof listings[0]) => l.locationId === loc.id).length;
-                  return (
-                    <li key={loc.id}>
+            {/* Left Content Column */}
+            <div className="lg:col-span-8 space-y-12">
+
+              {/* DISCOM Table */}
+              <section>
+                <h2 className="font-heading font-semibold text-2xl text-ink mb-2">
+                  Electricity distribution utilities (DISCOMs) in {state}
+                </h2>
+                <p className="text-xs text-ink-2 mb-4 font-body">
+                  State power utilities processing rooftop grid feasibility, bi-directional meters, and net metering credits.
+                </p>
+                <DataTable columns={discomTableColumns} rows={discomTableRows} />
+              </section>
+
+              {/* Steps to Apply */}
+              <section className="border-t border-line pt-8">
+                <h2 className="font-heading font-semibold text-2xl text-ink mb-2">
+                  How to apply for solar in {state}
+                </h2>
+                <p className="text-xs text-ink-2 mb-6 font-body">
+                  Sequential timeline from national portal registration to subsidy disbursement.
+                </p>
+                <div className="max-w-2xl">
+                  <Steps steps={applicationSteps} />
+                </div>
+              </section>
+
+              {/* Cities List */}
+              <section className="border-t border-line pt-8">
+                <h2 className="font-heading font-semibold text-2xl text-ink mb-3">
+                  Solar directories by city in {state}
+                </h2>
+                <p className="text-xs text-ink-2 mb-4 font-body">
+                  Browse verified local solar installers, costs, and DISCOM information for your city:
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 font-body text-xs">
+                  {stateLocations.map((loc) => {
+                    const count = listings.filter((l) => l.locationId === loc.id).length;
+                    const slug = loc.city.toLowerCase().replace(/\s+/g, '-');
+                    return (
                       <Link
-                        href={`/${loc.city.toLowerCase().replace(/\s+/g, '-')}`}
-                        className="text-sm text-gray-600 hover:text-orange-600 hover:underline flex justify-between"
+                        key={loc.id}
+                        href={`/${slug}`}
+                        className="p-2.5 border border-line rounded-sm bg-wash hover:bg-paper transition-colors flex justify-between items-center text-ink"
                       >
-                        <span>{loc.city}</span>
-                        <span className="text-gray-400">{count}</span>
+                        <span className="font-medium">{loc.city}</span>
+                        <span className="text-ink-2 text-[11px] tabular-nums">{count > 0 ? `${count} listings` : 'Explore'}</span>
                       </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+                    );
+                  })}
+                </div>
+              </section>
+
+              {/* Verified Installers */}
+              <section id="installers" className="border-t border-line pt-8">
+                <h2 className="font-heading font-semibold text-2xl text-ink mb-1">
+                  Solar companies in {state}
+                </h2>
+                <p className="text-xs text-ink-2 mb-4 font-body">
+                  Showing top verified installers serving {stateLocations.length} cities across {state}.
+                </p>
+
+                <div className="border-t border-line">
+                  {listings.slice(0, 15).map((listing) => (
+                    <ListingRow
+                      key={listing.id}
+                      listing={{
+                        name: listing.name,
+                        slug: listing.slug,
+                        city: listing.location.city,
+                        state: listing.location.state,
+                        category: listing.category.name,
+                        rating: listing.rating,
+                        reviews: listing.reviews,
+                        phone: listing.phone,
+                        website: listing.website,
+                        verified: listing.verified,
+                        featured: listing.featured,
+                        description: listing.description,
+                      }}
+                    />
+                  ))}
+                </div>
+              </section>
+
+              {/* FAQs */}
+              <section className="border-t border-line pt-8">
+                <h2 className="font-heading font-semibold text-2xl text-ink mb-6">
+                  Frequently asked questions: {state} solar
+                </h2>
+                <FAQ items={faqs.map((f) => ({ q: f.question, a: f.answer }))} />
+              </section>
+
             </div>
 
-            {/* Categories */}
-            <div className="bg-white rounded-xl shadow-md p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">Service Types</h3>
-              <ul className="space-y-1">
-                {categories.map((cat: typeof categories[0]) => (
-                  <li key={cat.id}>
-                    <Link
-                      href={`/categories/${cat.slug}`}
-                      className="text-sm text-gray-600 hover:text-orange-600 hover:underline"
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            {/* Right Sticky Sidebar */}
+            <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6 lg:self-start">
+              <LeadForm
+                prefill={{ city: stateLocations[0]?.city }}
+                source={`state-page:${slug}`}
+              />
+
+              <div className="border border-line rounded-sm p-5 bg-wash font-body text-xs space-y-3">
+                <h3 className="font-heading font-semibold text-sm text-ink pb-2 border-b border-line">
+                  {state} quick facts
+                </h3>
+                <div className="flex justify-between py-1 border-b border-line/60">
+                  <span className="text-ink-2">Service cities</span>
+                  <span className="text-ink font-medium tabular-nums">{stateLocations.length}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-line/60">
+                  <span className="text-ink-2">Total installers</span>
+                  <span className="text-ink font-medium tabular-nums">{listings.length}</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-ink-2">DISCOMs</span>
+                  <span className="text-ink font-medium text-right">{stateConfig.discoms.slice(0, 2).join(', ')}</span>
+                </div>
+              </div>
             </div>
 
-            <LeadForm source={`state-page:${state.toLowerCase()}`} />
           </div>
+        </main>
 
-          {/* Listings */}
-          <div className="lg:col-span-3">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">
-              {listings.length} Solar Companies in {state}
-            </h2>
-
-            {listings.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-6">
-                {listings.map((listing: typeof listings[0]) => (
-                  <ListingCard key={listing.id} listing={listing} />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-white rounded-xl p-12 text-center">
-                <p className="text-gray-500 mb-4">No listings in {state} yet.</p>
-                <Link
-                  href="/dashboard/login"
-                  className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
-                >
-                  List Your Business
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

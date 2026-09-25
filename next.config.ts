@@ -117,39 +117,67 @@ const locationPageRedirects = [
   { source: '/locations/wardha-maharashtra', destination: '/wardha', permanent: true },
 ];
 
-// Consolidated blog duplicates — loser 301s to the SEO winner in each cluster.
+// Consolidated blog duplicates — loser 301s to the canonical winner hub in each cluster.
 const blogRedirects = [
-  // PM Surya Ghar cluster
-  { source: '/blog/pm-surya-ghar-yojana-subsidy-guide', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
-  { source: '/blog/pm-surya-ghar-muft-bijli-yojana-2026-complete-guide', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
-  { source: '/blog/pm-surya-ghar-yojana-application-guide', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
+  // PM Surya Ghar cluster -> /subsidy/pm-surya-ghar
+  { source: '/blog/pm-surya-ghar-yojana-subsidy-guide', destination: '/subsidy/pm-surya-ghar', permanent: true },
+  { source: '/blog/pm-surya-ghar-muft-bijli-yojana-2026-complete-guide', destination: '/subsidy/pm-surya-ghar', permanent: true },
+  { source: '/blog/pm-surya-ghar-yojana-application-guide', destination: '/subsidy/pm-surya-ghar', permanent: true },
+  { source: '/blog/residential-solar-installation-government-subsidy-india-2026', destination: '/subsidy/pm-surya-ghar', permanent: true },
+  // Subsidy state-wise -> /subsidy
+  { source: '/blog/solar-subsidy-states-india-2025', destination: '/subsidy', permanent: true },
+  { source: '/blog/solar-subsidy-india-2026-state-wise-complete-guide', destination: '/subsidy', permanent: true },
+  // PM-KUSUM cluster -> /subsidy/pm-kusum
+  { source: '/blog/pm-kusum-solar-subsidy-farmers-india', destination: '/subsidy/pm-kusum', permanent: true },
+  { source: '/blog/solar-pump-agriculture-india-pm-kusum', destination: '/subsidy/pm-kusum', permanent: true },
+  { source: '/blog/pm-kusum-2-0-india-farm-solar-next-phase', destination: '/subsidy/pm-kusum', permanent: true },
+  { source: '/blog/solar-energy-agriculture-pm-kusum-2026', destination: '/subsidy/pm-kusum', permanent: true },
+  { source: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', destination: '/subsidy/pm-kusum', permanent: true },
   // Net metering cluster
   { source: '/blog/net-metering-india-complete-guide', destination: '/blog/net-metering-india-2026-state-rules-guide', permanent: true },
   { source: '/blog/how-net-metering-works-india', destination: '/blog/net-metering-india-2026-state-rules-guide', permanent: true },
   { source: '/blog/solar-net-metering-state-rules-india-2026', destination: '/blog/net-metering-india-2026-state-rules-guide', permanent: true },
-  // PM-KUSUM cluster
-  { source: '/blog/pm-kusum-solar-subsidy-farmers-india', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
-  { source: '/blog/solar-pump-agriculture-india-pm-kusum', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
-  { source: '/blog/pm-kusum-2-0-india-farm-solar-next-phase', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
-  { source: '/blog/solar-energy-agriculture-pm-kusum-2026', destination: '/blog/pm-kusum-scheme-2026-solar-pump-farmers-guide', permanent: true },
-  // Panel brands cluster (winner = comparison, the #1 traffic post)
-  { source: '/blog/best-solar-panels-india-2025', destination: '/blog/solar-panel-brand-comparison-india-2026', permanent: true },
-  { source: '/blog/best-solar-panel-brands-india-2025', destination: '/blog/solar-panel-brand-comparison-india-2026', permanent: true },
-  { source: '/blog/top-rated-solar-panels-residential-homes-india-2026', destination: '/blog/solar-panel-brand-comparison-india-2026', permanent: true },
-  // Installation cost cluster
-  { source: '/blog/solar-panel-installation-cost-india-2025', destination: '/blog/solar-panel-installation-cost-home-india-2026', permanent: true },
-  { source: '/blog/solar-panel-cost-india-2025', destination: '/blog/solar-panel-installation-cost-home-india-2026', permanent: true },
+  // Installation cost cluster -> /price
+  { source: '/blog/solar-panel-installation-cost-india-2025', destination: '/price', permanent: true },
+  { source: '/blog/solar-panel-installation-cost-home-india-2026', destination: '/price', permanent: true },
+  { source: '/blog/solar-panel-cost-india-2025', destination: '/price', permanent: true },
+  { source: '/blog/3kw-vs-5kw-solar-system-cost-india-2026', destination: '/price', permanent: true },
+  // Cost by size -> /price/[size]
+  { source: '/blog/1kw-solar-system-price-india-2026', destination: '/price/1kw', permanent: true },
+  { source: '/blog/2kw-solar-system-price-india-2026', destination: '/price/2kw', permanent: true },
+  { source: '/blog/3kw-solar-system-price-india-2026', destination: '/price/3kw', permanent: true },
+  { source: '/blog/5kw-solar-system-price-india-2026', destination: '/price/5kw', permanent: true },
+  { source: '/blog/10kw-solar-system-price-india-2026', destination: '/price/10kw', permanent: true },
+  // System sizing -> /tools/solar-system-size-calculator
+  { source: '/blog/1kw-2kw-3kw-5kw-solar-system-india-which-size', destination: '/tools/solar-system-size-calculator', permanent: true },
+  { source: '/blog/solar-system-size-guide-india', destination: '/tools/solar-system-size-calculator', permanent: true },
+  // Bill savings -> /tools/solar-savings-calculator
+  { source: '/blog/how-solar-power-reduces-electricity-bills-india-2026', destination: '/tools/solar-savings-calculator', permanent: true },
+  { source: '/blog/solar-panel-vs-electricity-bill-india-2026', destination: '/tools/solar-savings-calculator', permanent: true },
+  { source: '/blog/solar-energy-savings-india-calculator-guide', destination: '/tools/solar-savings-calculator', permanent: true },
+  // Panel brands cluster
+  { source: '/blog/best-solar-panels-india-2025', destination: '/brands', permanent: true },
+  { source: '/blog/best-solar-panel-brands-india-2025', destination: '/brands', permanent: true },
+  { source: '/blog/top-rated-solar-panels-residential-homes-india-2026', destination: '/brands', permanent: true },
+  // Brand comparisons -> /compare/[slug]
+  { source: '/blog/waaree-vs-vikram-solar-panels-india-2026', destination: '/compare/waaree-vs-vikram', permanent: true },
+  { source: '/blog/waaree-vs-tata-solar-panels-india-2026', destination: '/compare/waaree-vs-tata', permanent: true },
+  { source: '/blog/tata-vs-adani-solar-panels-india-2026', destination: '/compare/tata-vs-adani', permanent: true },
+  { source: '/blog/waaree-vs-adani-solar-panels-india-2026', destination: '/compare/waaree-vs-adani', permanent: true },
+  { source: '/blog/monocrystalline-vs-polycrystalline-solar-panels-india', destination: '/compare/monocrystalline-vs-polycrystalline', permanent: true },
+  { source: '/blog/on-grid-off-grid-hybrid-solar-comparison', destination: '/compare/on-grid-vs-off-grid-vs-hybrid', permanent: true },
+  { source: '/blog/on-grid-off-grid-hybrid-solar-system-india-comparison', destination: '/compare/on-grid-vs-off-grid-vs-hybrid', permanent: true },
   // Choosing an installer cluster
   { source: '/blog/how-to-check-solar-installer-genuine-india', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
   { source: '/blog/how-to-verify-solar-installer-india-2026', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
+  { source: '/blog/solar-epc-company-vs-dealer-india', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
+  { source: '/blog/solar-installation-checklist-homeowners', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
   // Maintenance cluster
   { source: '/blog/solar-maintenance-tips-india', destination: '/blog/solar-amc-maintenance-guide-india-2026', permanent: true },
   { source: '/blog/solar-panel-maintenance-guide-india', destination: '/blog/solar-amc-maintenance-guide-india-2026', permanent: true },
-  // On/off-grid cluster
-  { source: '/blog/on-grid-off-grid-hybrid-solar-comparison', destination: '/blog/on-grid-off-grid-hybrid-solar-system-india-comparison', permanent: true },
   // Housing society cluster
   { source: '/blog/solar-rooftop-housing-society-india', destination: '/blog/solar-rooftop-housing-society-india-2026', permanent: true },
-  // Phase A1: city guides redirect to real city pages (avoids duplicate)
+  // City guides redirect to real city pages
   { source: '/blog/solar-panel-installation-ahmedabad-2026', destination: '/ahmedabad', permanent: true },
   { source: '/blog/rooftop-solar-mumbai-guide', destination: '/mumbai', permanent: true },
   { source: '/blog/solar-panels-delhi-guide', destination: '/delhi', permanent: true },
@@ -161,23 +189,20 @@ const blogRedirects = [
   { source: '/blog/solar-panel-installation-lucknow-2026', destination: '/lucknow', permanent: true },
   { source: '/blog/solar-panel-installation-pune-2026', destination: '/pune', permanent: true },
   { source: '/blog/solar-panel-installation-surat-2026', destination: '/surat', permanent: true },
-  // Duplicate topic consolidation
+  // Commercial cluster
   { source: '/blog/solar-for-commercial-business-india', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
   { source: '/blog/solar-for-factories-warehouses-india-2026', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
   { source: '/blog/commercial-solar-india-roi-tax-benefits', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
-  { source: '/blog/solar-rooftop-installation-indian-households-2026', destination: '/blog/solar-panel-installation-cost-home-india-2026', permanent: true },
-  { source: '/blog/solar-battery-storage-india-2025', destination: '/blog/solar-battery-buying-guide-india-2026', permanent: true },
-  { source: '/blog/gujarat-solar-subsidy-surya-yojana-2026', destination: '/blog/surya-gujarat-yojana-2026-guide', permanent: true },
-  { source: '/blog/best-solar-panel-installation-companies-india-2026', destination: '/blog/best-solar-company-india-2026', permanent: true },
-  { source: '/blog/solar-system-size-guide-india', destination: '/blog/1kw-2kw-3kw-5kw-solar-system-india-which-size', permanent: true },
-  { source: '/blog/residential-solar-installation-government-subsidy-india-2026', destination: '/blog/pm-surya-ghar-yojana-complete-guide', permanent: true },
-  { source: '/blog/solar-subsidy-states-india-2025', destination: '/blog/solar-subsidy-india-2026-state-wise-complete-guide', permanent: true },
-  { source: '/blog/top-10-solar-companies-india-2026', destination: '/blog/best-solar-company-india-2026', permanent: true },
   { source: '/blog/solar-tax-benefits-business-india-2026', destination: '/blog/commercial-solar-for-businesses-india-2026', permanent: true },
-  { source: '/blog/solar-epc-company-vs-dealer-india', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
-  { source: '/blog/solar-installation-checklist-homeowners', destination: '/blog/how-to-choose-solar-installer-india', permanent: true },
+  { source: '/blog/solar-rooftop-installation-indian-households-2026', destination: '/price', permanent: true },
+  // Batteries & Inverters
+  { source: '/blog/solar-battery-storage-india-2025', destination: '/guides/best-solar-panel-cleaning-kits-india', permanent: true },
+  { source: '/blog/solar-power-system-with-battery-storage-india-2026', destination: '/compare/on-grid-vs-off-grid-vs-hybrid', permanent: true },
+  { source: '/blog/gujarat-solar-subsidy-surya-yojana-2026', destination: '/states/gujarat', permanent: true },
+  { source: '/blog/surya-gujarat-yojana-2026-guide', destination: '/states/gujarat', permanent: true },
+  { source: '/blog/best-solar-panel-installation-companies-india-2026', destination: '/blog/best-solar-company-india-2026', permanent: true },
+  { source: '/blog/top-10-solar-companies-india-2026', destination: '/blog/best-solar-company-india-2026', permanent: true },
   { source: '/blog/best-solar-inverters-india-2025', destination: '/blog/solar-inverter-buying-guide-india', permanent: true },
-  { source: '/blog/solar-power-system-with-battery-storage-india-2026', destination: '/blog/solar-battery-buying-guide-india-2026', permanent: true },
   { source: '/blog/solar-panel-installation-process-india', destination: '/blog/how-to-install-solar-panels-at-home-india-guide-2026', permanent: true },
   { source: '/blog/complete-solar-power-system-for-home-india-2026', destination: '/blog/how-to-install-solar-panels-at-home-india-guide-2026', permanent: true },
 ];

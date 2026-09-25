@@ -1,21 +1,31 @@
 import React from 'react';
 
-export interface Column<T> {
-  header: string;
-  accessor: (row: T) => React.ReactNode;
+export interface Column<T = any> {
+  header?: string;
+  label?: string;
+  key?: string;
+  accessor?: (row: T) => React.ReactNode;
   align?: 'left' | 'right' | 'center';
 }
 
-export interface DataTableProps<T> {
+export interface DataTableProps<T = any> {
   columns: Column<T>[];
-  data: T[];
+  data?: T[];
+  rows?: T[];
   className?: string;
 }
 
-export default function DataTable<T>({ columns, data, className = '' }: DataTableProps<T>) {
+export default function DataTable<T = any>({
+  columns,
+  data,
+  rows,
+  className = '',
+}: DataTableProps<T>) {
+  const tableRows = data || rows || [];
+
   return (
-    <div className={`bg-paper rounded-md border border-line overflow-x-auto ${className}`}>
-      <table className="w-full text-left border-collapse text-sm text-ink">
+    <div className={`bg-paper rounded-sm border border-line overflow-x-auto ${className}`}>
+      <table className="w-full text-left border-collapse text-sm text-ink font-body">
         <thead>
           <tr className="bg-wash border-b border-line text-xs font-semibold text-ink">
             {columns.map((col, idx) => (
@@ -25,28 +35,36 @@ export default function DataTable<T>({ columns, data, className = '' }: DataTabl
                   col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'
                 }`}
               >
-                {col.header}
+                {col.header || col.label || col.key || ''}
               </th>
             ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-line">
-          {data.map((row, rowIdx) => (
+          {tableRows.map((row, rowIdx) => (
             <tr key={rowIdx} className="hover:bg-wash/50 transition-colors">
-              {columns.map((col, colIdx) => (
-                <td
-                  key={colIdx}
-                  className={`py-3 px-4 ${
-                    col.align === 'right'
-                      ? 'text-right tabular-nums'
-                      : col.align === 'center'
-                      ? 'text-center'
-                      : 'text-left'
-                  }`}
-                >
-                  {col.accessor(row)}
-                </td>
-              ))}
+              {columns.map((col, colIdx) => {
+                const cellValue = col.accessor
+                  ? col.accessor(row)
+                  : col.key
+                  ? (row as any)[col.key]
+                  : null;
+
+                return (
+                  <td
+                    key={colIdx}
+                    className={`py-3 px-4 ${
+                      col.align === 'right'
+                        ? 'text-right tabular-nums font-medium'
+                        : col.align === 'center'
+                        ? 'text-center'
+                        : 'text-left'
+                    }`}
+                  >
+                    {cellValue}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

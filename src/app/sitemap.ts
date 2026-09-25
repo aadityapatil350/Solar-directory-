@@ -46,12 +46,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString();
   const pages: MetadataRoute.Sitemap = [];
 
-  // Static pages
+  // Static & Core Authority Hubs
   const staticPages: Array<{ path: string; priority: number }> = [
     { path: '',                                              priority: 1.0 },
+    // Tools
     { path: '/tools/solar-subsidy-calculator',               priority: 0.95 },
-    { path: '/solar-calculator',                             priority: 0.9 },
-    { path: '/subsidy-checker',                              priority: 0.9 },
+    { path: '/tools/solar-savings-calculator',               priority: 0.95 },
+    { path: '/tools/solar-system-size-calculator',           priority: 0.95 },
+    // Subsidy Hubs
+    { path: '/subsidy',                                      priority: 0.9 },
+    { path: '/subsidy/pm-surya-ghar',                        priority: 0.95 },
+    { path: '/subsidy/pm-kusum',                             priority: 0.9 },
+    // Price Hubs
+    { path: '/price',                                        priority: 0.95 },
+    { path: '/price/1kw',                                    priority: 0.85 },
+    { path: '/price/2kw',                                    priority: 0.85 },
+    { path: '/price/3kw',                                    priority: 0.9 },
+    { path: '/price/5kw',                                    priority: 0.85 },
+    { path: '/price/10kw',                                   priority: 0.85 },
+    // Brands & Comparisons
+    { path: '/brands',                                       priority: 0.9 },
+    { path: '/compare/waaree-vs-vikram',                     priority: 0.85 },
+    { path: '/compare/waaree-vs-tata',                       priority: 0.85 },
+    { path: '/compare/tata-vs-adani',                        priority: 0.85 },
+    { path: '/compare/waaree-vs-adani',                      priority: 0.85 },
+    { path: '/compare/monocrystalline-vs-polycrystalline',   priority: 0.85 },
+    { path: '/compare/on-grid-vs-off-grid-vs-hybrid',        priority: 0.85 },
+    // Guides & Directory
     { path: '/for-installers',                               priority: 0.85 },
     { path: '/guides/topcon-vs-mono-perc-solar-panels-india', priority: 0.8 },
     { path: '/guides/best-solar-panel-cleaning-kits-india',  priority: 0.8 },
@@ -63,6 +84,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/about',                                        priority: 0.5 },
     { path: '/contact',                                      priority: 0.5 },
   ];
+
   for (const p of staticPages) {
     pages.push({ url: `${BASE_URL}${p.path}`, lastModified: now, priority: p.priority });
   }
@@ -101,22 +123,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const citySlug = loc.city.toLowerCase().replace(/\s+/g, '-');
     if (includedCitySlugs.has(citySlug)) continue;
     includedCitySlugs.add(citySlug);
+
     pages.push({
       url: `${BASE_URL}/${citySlug}`,
       lastModified: loc.updatedAt.toISOString(),
       priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.7,
     });
-    // City × service pages — cleaning is the highest-ROI cluster per GSC.
+
+    // City × service pages
     pages.push({
       url: `${BASE_URL}/${citySlug}/solar-panel-cleaning`,
       lastModified: now,
-      priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.7,
-    });
-    // Commercial "best solar companies in X" landing page (buyer-intent).
-    pages.push({
-      url: `${BASE_URL}/best-solar-companies/${citySlug}`,
-      lastModified: now,
-      priority: TOP_CITIES.has(citySlug) ? 0.95 : 0.8,
+      priority: TOP_CITIES.has(citySlug) ? 0.85 : 0.65,
     });
   }
 
@@ -127,14 +145,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pages.push({
       url: `${BASE_URL}/states/${stateSlug}`,
       lastModified: now,
-      priority: 0.7,
+      priority: 0.8,
     });
   }
 
-  // Listing detail pages — critical for indexing since they drive most search impressions.
-  // Only emit URLs that are actually indexable: the thinness test here MUST match the
-  // `isThinContent` rule in src/app/listing/[slug]/page.tsx, and "-N" duplicate slugs
-  // are dropped when their base slug is a real listing (Google indexes the base).
+  // Listing detail pages
   const allListingSlugs = new Set(listings.map((l) => l.slug));
   for (const listing of listings) {
     const isThin =
@@ -151,7 +166,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pages.push({
       url: `${BASE_URL}/listing/${listing.slug}`,
       lastModified: listing.updatedAt.toISOString(),
-      priority: listing.featured ? 0.9 : listing.verified ? 0.7 : 0.5,
+      priority: listing.featured ? 0.85 : listing.verified ? 0.75 : 0.6,
     });
   }
 
