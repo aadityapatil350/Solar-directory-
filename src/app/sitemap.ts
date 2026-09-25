@@ -50,6 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: Array<{ path: string; priority: number }> = [
     { path: '',                                              priority: 1.0 },
     // Tools & Leads
+    { path: '/tools',                                        priority: 0.95 },
     { path: '/get-quotes',                                   priority: 0.95 },
     { path: '/tools/solar-subsidy-calculator',               priority: 0.95 },
     { path: '/tools/solar-savings-calculator',               priority: 0.95 },
@@ -67,6 +68,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/price/10kw',                                   priority: 0.85 },
     // Brands & Comparisons
     { path: '/brands',                                       priority: 0.9 },
+    { path: '/brands/waaree',                                priority: 0.85 },
+    { path: '/brands/tata-power-solar',                      priority: 0.85 },
+    { path: '/brands/adani-solar',                           priority: 0.85 },
+    { path: '/brands/vikram-solar',                          priority: 0.85 },
+    { path: '/brands/goldi-solar',                           priority: 0.85 },
+    { path: '/brands/premier-energies',                      priority: 0.85 },
     { path: '/compare/waaree-vs-vikram',                     priority: 0.85 },
     { path: '/compare/waaree-vs-tata',                       priority: 0.85 },
     { path: '/compare/tata-vs-adani',                        priority: 0.85 },
