@@ -353,45 +353,45 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       </section>
 
       {/* Trust Indicators - Social Proof */}
-      <section className="bg-white border-y py-12 shadow-sm">
+      <section className="bg-white border-y border-zinc-200 py-10">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
             <div className="text-center">
-              <div className="flex justify-center mb-3">
-                <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
-                  <Building2 className="h-7 w-7 text-orange-600" />
+              <div className="flex justify-center mb-2.5">
+                <div className="w-12 h-12 bg-zinc-100 rounded-xl flex items-center justify-center border border-zinc-200">
+                  <Building2 className="h-6 w-6 text-zinc-800" />
                 </div>
               </div>
-              <div className="text-4xl font-bold text-gray-900">{stats.totalListings.toLocaleString()}+</div>
-              <div className="text-sm text-gray-600 font-medium mt-1">Solar Companies</div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-zinc-950 tracking-tight">{stats.totalListings.toLocaleString()}+</div>
+              <div className="text-xs sm:text-sm text-zinc-600 font-medium mt-1">Solar Companies</div>
             </div>
             <div className="text-center">
-              <div className="flex justify-center mb-3">
-                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
-                  <BadgeCheck className="h-7 w-7 text-green-600" />
+              <div className="flex justify-center mb-2.5">
+                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center border border-emerald-200/70">
+                  <BadgeCheck className="h-6 w-6 text-emerald-600" />
                 </div>
               </div>
-              <div className="text-4xl font-bold text-gray-900">{stats.verified.toLocaleString()}+</div>
-              <div className="text-sm text-gray-600 font-medium mt-1">Verified Installers</div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-zinc-950 tracking-tight">{stats.verified.toLocaleString()}+</div>
+              <div className="text-xs sm:text-sm text-zinc-600 font-medium mt-1">Verified Installers</div>
             </div>
             <div className="text-center">
-              <div className="flex justify-center mb-3">
-                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                  <MapPin className="h-7 w-7 text-blue-600" />
+              <div className="flex justify-center mb-2.5">
+                <div className="w-12 h-12 bg-sky-50 rounded-xl flex items-center justify-center border border-sky-200/70">
+                  <MapPin className="h-6 w-6 text-sky-600" />
                 </div>
               </div>
-              <div className="text-4xl font-bold text-gray-900">{stats.cities}+</div>
-              <div className="text-sm text-gray-600 font-medium mt-1">Cities Covered</div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-zinc-950 tracking-tight">{stats.cities}+</div>
+              <div className="text-xs sm:text-sm text-zinc-600 font-medium mt-1">Cities Covered</div>
             </div>
             {stats.avgRating && (
               <div className="text-center">
-                <div className="flex justify-center mb-3">
-                  <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Star className="h-7 w-7 text-yellow-600 fill-yellow-600" />
+                <div className="flex justify-center mb-2.5">
+                  <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-200/70">
+                    <Star className="h-6 w-6 text-amber-500 fill-amber-400" />
                   </div>
                 </div>
-                <div className="text-4xl font-bold text-gray-900">{stats.avgRating}</div>
-                <div className="text-sm text-gray-600 font-medium mt-1">Avg Google Rating</div>
+                <div className="text-3xl sm:text-4xl font-extrabold text-zinc-950 tracking-tight">{stats.avgRating}</div>
+                <div className="text-xs sm:text-sm text-zinc-600 font-medium mt-1">Avg Google Rating</div>
               </div>
             )}
           </div>
@@ -399,41 +399,44 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       </section>
 
       {/* How it works Section */}
-      <section className="py-10 px-6 bg-gray-50 border-b">
+      <section className="py-12 px-6 bg-zinc-50/60 border-b border-zinc-200">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-lg font-medium text-center mb-1">How it works</h2>
-          <p className="text-sm text-gray-600 text-center mb-8">
-            Get solar quotes in 3 simple steps
-          </p>
+          <div className="text-center max-w-xl mx-auto mb-10">
+            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">Simplified Solar</span>
+            <h2 className="text-2xl font-bold text-zinc-900 mt-2 mb-1">How GoSolarIndex Works</h2>
+            <p className="text-sm text-zinc-600">
+              Get transparent solar quotes & PM Surya Ghar subsidy assistance in 4 simple steps
+            </p>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               {
-                step: "1",
-                title: "Search your city",
-                desc: "Enter your city and select the type of solar installation you need",
+                step: "01",
+                title: "Select your city",
+                desc: "Choose from 78+ cities or calculate your rooftop subsidy potential directly.",
               },
               {
-                step: "2",
+                step: "02",
                 title: "Compare installers",
-                desc: "Browse verified installers with real ratings, photos and services",
+                desc: "Filter ALMM & DCR certified companies with verified Google reviews.",
               },
               {
-                step: "3",
+                step: "03",
                 title: "Request free quotes",
-                desc: "Fill one form — get called back by up to 3 verified installers",
+                desc: "Connect directly with up to 3 vetted installers for site feasibility.",
               },
               {
-                step: "4",
-                title: "Go solar!",
-                desc: "Compare quotes, claim PM Surya Ghar subsidy and install",
+                step: "04",
+                title: "Claim DBT subsidy",
+                desc: "Install panels and get up to ₹78,000 deposited straight into your bank account.",
               },
             ].map((item, i) => (
-              <div key={i} className="text-center">
-                <div className="w-10 h-10 rounded-full border-2 border-orange-500 bg-orange-100 flex items-center justify-center text-orange-600 font-medium text-sm mx-auto mb-3">
+              <div key={i} className="bg-white rounded-xl p-5 border border-zinc-200/80 shadow-xs text-left">
+                <div className="text-xs font-bold font-mono text-zinc-400 mb-2">
                   {item.step}
                 </div>
-                <div className="text-sm font-medium mb-1">{item.title}</div>
-                <div className="text-xs text-gray-600 leading-relaxed">{item.desc}</div>
+                <div className="text-sm font-semibold text-zinc-900 mb-1.5">{item.title}</div>
+                <div className="text-xs text-zinc-600 leading-relaxed">{item.desc}</div>
               </div>
             ))}
           </div>
@@ -441,73 +444,73 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       </section>
 
       {/* Featured Companies Section */}
-      <section className="py-12 bg-gradient-to-b from-orange-50/50 to-white">
+      <section className="py-12 bg-white border-b border-zinc-200">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 max-w-7xl mx-auto">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Award className="h-7 w-7 text-orange-600" />
-                <h2 className="text-3xl font-bold text-gray-900">Featured Solar Partners</h2>
+              <div className="flex items-center gap-2 mb-1">
+                <Award className="h-5 w-5 text-amber-500" />
+                <h2 className="text-2xl font-bold text-zinc-900">Featured Solar Partners</h2>
               </div>
-              <p className="text-gray-600">Top-rated verified companies trusted by homeowners</p>
+              <p className="text-sm text-zinc-600">Top-rated verified installers serving residential & commercial rooftops</p>
             </div>
             <Link
               href="/categories"
-              className="hidden md:flex items-center gap-2 text-orange-600 hover:text-orange-700 font-semibold transition"
+              className="hidden md:flex items-center gap-1.5 text-zinc-700 hover:text-zinc-900 text-sm font-medium transition"
             >
-              View All
+              <span>View All Categories</span>
               <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
 
-          {/* Featured Grid — real featured listings + empty slots */}
+          {/* Featured Grid */}
           {(() => {
             const featured = listings.filter((l) => l.featured).slice(0, 5);
             const emptySlots = Math.max(0, 5 - featured.length);
             return (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-2 max-w-7xl mx-auto">
                 {featured.map((l) => (
-                  <a
+                  <Link
                     key={l.id}
                     href={`/listing/${l.slug}`}
-                    className="group relative border-2 border-orange-300 bg-white rounded-xl p-4 hover:border-orange-500 hover:shadow-lg transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
+                    className="group relative border border-zinc-200/90 bg-white rounded-xl p-4 hover:border-zinc-400 hover:shadow-sm transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
                   >
                     <div className="absolute top-2 right-2">
-                      <span className="bg-amber-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                        <Star className="h-2.5 w-2.5 fill-white" /> TOP
+                      <span className="bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5 border border-amber-200">
+                        <Star className="h-2.5 w-2.5 fill-amber-500 text-amber-500" /> TOP
                       </span>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">
+                    <div className="w-11 h-11 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-sm font-bold text-zinc-800">
                       {l.name.slice(0, 2).toUpperCase()}
                     </div>
-                    <div className="font-semibold text-gray-800 group-hover:text-orange-600 text-sm leading-snug transition-colors line-clamp-2">
+                    <div className="font-semibold text-zinc-900 group-hover:text-emerald-700 text-xs leading-snug transition-colors line-clamp-2">
                       {l.name}
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
+                    <div className="text-[11px] text-zinc-500 flex items-center gap-1">
+                      <MapPin className="h-3 w-3 text-zinc-400" />
                       {l.location.city}
                     </div>
                     {l.rating && l.rating > 0 ? (
-                      <div className="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                      <div className="flex items-center gap-1 text-[11px] text-amber-700 font-medium">
                         <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                         {l.rating}
                       </div>
                     ) : null}
-                  </a>
+                  </Link>
                 ))}
                 {Array.from({ length: emptySlots }).map((_, i) => (
                   <Link
                     key={`empty-${i}`}
-                    href="/pricing"
-                    className="group border-2 border-dashed border-orange-200 bg-orange-50/40 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
+                    href="/for-installers"
+                    className="group border border-dashed border-zinc-300 bg-zinc-50/50 rounded-xl p-4 hover:border-zinc-400 hover:bg-zinc-50 transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px]"
                   >
-                    <div className="w-12 h-12 rounded-full bg-orange-100 group-hover:bg-orange-200 flex items-center justify-center transition-colors">
-                      <Star className="h-6 w-6 text-orange-400" />
+                    <div className="w-10 h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 transition-colors">
+                      <Star className="h-5 w-5 text-amber-500" />
                     </div>
-                    <div className="font-medium text-gray-500 group-hover:text-orange-600 text-xs leading-snug transition-colors">
+                    <div className="font-medium text-zinc-700 text-xs leading-snug">
                       Your Company Here
                     </div>
-                    <span className="text-xs text-orange-500 font-semibold group-hover:underline">
+                    <span className="text-[11px] text-emerald-700 font-semibold group-hover:underline">
                       Get Featured →
                     </span>
                   </Link>
@@ -519,11 +522,16 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       </section>
 
       {/* Browse by Category Section */}
-      <section className="py-10 px-6 border-b">
+      <section className="py-12 px-6 border-b border-zinc-200 bg-white">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-lg font-medium mb-1">Browse by Category</h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Find the right type of solar company for your needs
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="text-xl font-bold text-zinc-900">Browse by Category</h2>
+            <Link href="/categories" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+              All categories →
+            </Link>
+          </div>
+          <p className="text-xs sm:text-sm text-zinc-500 mb-6">
+            Find the right specialized solar partner for your residential or commercial project
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {CATEGORIES.map((cat) => {
@@ -532,17 +540,17 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                 <Link
                   key={cat.slug}
                   href={`/categories/${cat.slug}`}
-                  className="flex items-center gap-3 border border-gray-200 rounded-xl p-3 hover:border-orange-500 transition-colors group"
+                  className="flex items-center gap-3 border border-zinc-200/90 rounded-xl p-3.5 hover:border-zinc-400 hover:shadow-xs transition-all group bg-white"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-lg flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center text-lg flex-shrink-0 border border-zinc-200">
                     {cat.icon}
                   </div>
                   <div>
-                    <div className="text-sm font-medium group-hover:text-orange-600 transition-colors">
+                    <div className="text-sm font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors">
                       {cat.label}
                     </div>
                     {typeof count === 'number' && (
-                      <div className="text-xs text-gray-600 mt-0.5">
+                      <div className="text-xs text-zinc-500 mt-0.5">
                         {count.toLocaleString()} companies
                       </div>
                     )}
@@ -555,16 +563,16 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       </section>
 
       {/* Popular Cities Section */}
-      <section className="py-10 px-6 border-b">
+      <section className="py-12 px-6 border-b border-zinc-200 bg-zinc-50/50">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-lg font-medium">Popular Cities</h2>
-            <Link href="/locations" className="text-sm text-orange-600 font-medium">
-              View all 79+ cities →
+            <h2 className="text-xl font-bold text-zinc-900">Popular Solar Hubs</h2>
+            <Link href="/locations" className="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 font-medium">
+              View all 78+ cities →
             </Link>
           </div>
-          <p className="text-sm text-gray-600 mb-6">
-            Find solar installers in your city
+          <p className="text-xs sm:text-sm text-zinc-500 mb-6">
+            Explore verified local installers & DISCOM net-metering rules by city
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
@@ -580,15 +588,15 @@ export default function HomeClient({ initialStats, initialListings = [], initial
               <Link
                 key={item.city}
                 href={item.href}
-                className="flex items-center justify-between border border-gray-200 rounded-xl px-4 py-3 hover:border-orange-500 transition-colors group"
+                className="flex items-center justify-between border border-zinc-200/90 rounded-xl px-4 py-3 bg-white hover:border-zinc-400 hover:shadow-xs transition-all group"
               >
                 <div>
-                  <div className="text-sm font-medium group-hover:text-orange-600 transition-colors">
+                  <div className="text-sm font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors">
                     {item.city}
                   </div>
-                  <div className="text-xs text-gray-600 mt-0.5">{item.state}</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">{item.state}</div>
                 </div>
-                <span className="text-orange-600 text-sm">→</span>
+                <span className="text-zinc-400 group-hover:text-zinc-800 transition-colors text-sm">→</span>
               </Link>
             ))}
           </div>
@@ -599,15 +607,15 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
-            {/* Section Header - Yellow Pages Style */}
-            <div className="mb-8 bg-white rounded-xl border-2 border-orange-200 p-6">
+            {/* Section Header */}
+            <div className="mb-8 bg-white rounded-2xl border border-zinc-200/90 p-6 shadow-xs">
               <div className="flex items-start justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-zinc-950 mb-1.5 tracking-tight">
                     {filterLocationId ? (
                       <>
                         Solar Companies in{' '}
-                        <span className="text-orange-600">
+                        <span className="text-emerald-700">
                           {locations.find((l) => l.id === filterLocationId)?.city}
                         </span>
                       </>
@@ -615,7 +623,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                       'All Solar Companies in India'
                     )}
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-zinc-600 text-sm">
                     {(() => {
                       const hasFilter = !!(filterLocationId || filterCategoryId || filterVerified || filterFeatured || searchQuery || searchLocation);
                       const count = hasFilter ? filteredListings.length : stats.totalListings;
@@ -638,7 +646,7 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                       setFilterFeatured(false);
                       setCurrentPage(1);
                     }}
-                    className="text-sm text-orange-600 hover:text-orange-700 font-semibold underline"
+                    className="text-xs sm:text-sm text-zinc-600 hover:text-zinc-900 font-semibold underline"
                   >
                     Clear all filters
                   </button>
@@ -720,10 +728,10 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                             <button
                               key={pageNum}
                               onClick={() => handlePageChange(pageNum)}
-                              className={`px-4 py-2 rounded-lg font-medium transition ${
+                              className={`px-3.5 py-2 rounded-lg font-medium text-xs sm:text-sm transition ${
                                 currentPage === pageNum
-                                  ? 'bg-orange-500 text-white'
-                                  : 'border border-gray-300 hover:bg-gray-50'
+                                  ? 'bg-zinc-900 text-white'
+                                  : 'border border-zinc-200 text-zinc-700 hover:bg-zinc-50'
                               }`}
                             >
                               {pageNum}
@@ -734,9 +742,9 @@ export default function HomeClient({ initialStats, initialListings = [], initial
                         <button
                           onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                           disabled={currentPage === totalPages}
-                          className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                          className="p-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
                         >
-                          <ChevronRight className="h-5 w-5" />
+                          <ChevronRight className="h-4 w-4" />
                         </button>
                       </div>
                     )}
@@ -748,61 +756,67 @@ export default function HomeClient({ initialStats, initialListings = [], initial
         </div>
       </section>
 
-      {/* CTA Section - Get Solar Quote */}
-      <section className="py-16 bg-gradient-to-br from-orange-600 to-orange-700 text-white">
+      {/* CTA Section - Vercel Dark Card */}
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-4">
-              Ready to Go Solar? Get Free Quotes Today
-            </h2>
-            <p className="text-xl text-orange-100 mb-8">
-              Compare quotes from multiple verified installers. Save up to 30% on your solar installation.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="/solar-calculator"
-                className="bg-white text-orange-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:scale-105"
-              >
-                Calculate Your Savings
-              </Link>
-              <Link
-                href="/subsidy-checker"
-                className="bg-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-orange-400 transition border-2 border-white/30"
-              >
-                Check Subsidy Eligibility
-              </Link>
+          <div className="max-w-5xl mx-auto rounded-3xl bg-zinc-950 text-white border border-zinc-800 p-8 sm:p-14 text-center relative overflow-hidden shadow-xl">
+            <div className="absolute top-0 right-1/4 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-xs font-semibold mb-4">
+                ⚡ Direct Bank Transfer (DBT) Scheme
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 tracking-tight text-white">
+                Claim Up to ₹78,000 Central Solar Subsidy
+              </h2>
+              <p className="text-sm sm:text-base text-zinc-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Calculate your custom system size, monthly electricity savings, and connect with top-rated DISCOM-empannelled installers in your city.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href="/tools/solar-subsidy-calculator"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-7 py-3.5 rounded-xl font-semibold text-sm transition shadow-sm"
+                >
+                  Open Subsidy & Payback Calculator →
+                </Link>
+                <Link
+                  href="/for-installers"
+                  className="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 px-7 py-3.5 rounded-xl font-medium text-sm transition"
+                >
+                  Join as Verified Installer
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-zinc-50/60 border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center text-zinc-950 mb-2 tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="text-center text-gray-600 mb-10">
-              Everything you need to know about solar in India
+            <p className="text-center text-sm text-zinc-600 mb-10">
+              Key guidelines on rooftop solar installation, net metering, and DBT subsidy in India
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {FAQS.map((faq, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div key={i} className="bg-white rounded-xl border border-zinc-200/90 overflow-hidden shadow-xs">
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition"
+                    className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-zinc-50 transition"
                   >
-                    <span className="font-semibold text-gray-900 pr-8">{faq.q}</span>
+                    <span className="font-semibold text-sm text-zinc-900 pr-6">{faq.q}</span>
                     <ChevronDown
-                      className={`h-5 w-5 text-gray-500 shrink-0 transition-transform ${
-                        openFaq === i ? 'rotate-180' : ''
+                      className={`h-4 w-4 text-zinc-400 shrink-0 transition-transform ${
+                        openFaq === i ? 'rotate-180 text-zinc-900' : ''
                       }`}
                     />
                   </button>
                   {openFaq === i && (
-                    <div className="px-6 pb-5 text-gray-700 leading-relaxed border-t border-gray-100 pt-4">
+                    <div className="px-5 pb-5 text-sm text-zinc-600 leading-relaxed border-t border-zinc-100 pt-3">
                       {faq.a}
                     </div>
                   )}
@@ -814,21 +828,26 @@ export default function HomeClient({ initialStats, initialListings = [], initial
       </section>
 
       {/* Footer CTA */}
-      <section className="py-12 bg-white border-t">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            Are you a solar installer?
+      <section className="py-12 bg-white border-t border-zinc-200">
+        <div className="container mx-auto px-4 text-center max-w-2xl">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+            B2B Solar Network
+          </div>
+          <h3 className="text-2xl font-bold text-zinc-950 mb-2">
+            Are you a Solar EPC or Installation Company?
           </h3>
-          <p className="text-gray-600 mb-6">
-            Join India's fastest-growing solar directory and get quality leads
+          <p className="text-zinc-600 text-sm mb-6 leading-relaxed">
+            Join India&apos;s verified solar network. Claim your company profile, showcase your portfolio, and receive verified homeowner leads in your service cities.
           </p>
-          <Link
-            href="/dashboard/login"
-            className="inline-flex items-center gap-2 bg-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-lg"
-          >
-            List Your Business
-            <ChevronRight className="h-5 w-5" />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/for-installers"
+              className="inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-3 rounded-xl font-semibold text-sm transition shadow-sm"
+            >
+              Claim Listing or Register Free
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
