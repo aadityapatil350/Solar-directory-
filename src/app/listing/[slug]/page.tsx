@@ -49,6 +49,10 @@ function parseServiceTags(raw: string | null | undefined): string[] {
 // Substantive, per-listing description
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateListingDescription(listing: any, peerStats?: { count: number; avgRating: number | null }): string {
+  if (listing.description && listing.description.trim().length > 40) {
+    return listing.description.trim();
+  }
+
   const city: string = listing.location.city;
   const state: string = listing.location.state;
   const catName: string = listing.category.name;
@@ -377,7 +381,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               </h1>
 
               <p className="text-base text-ink-2 mt-2 leading-relaxed font-body">
-                {listing.description || `${listing.category.name} serving ${cityName}, ${stateName}.`}
+                {listing.description || generateListingDescription(listing, peerStats)}
               </p>
 
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs text-ink font-body">
