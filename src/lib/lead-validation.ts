@@ -48,10 +48,25 @@ export function validateLeadName(raw: string | null | undefined): string | null 
   return null;
 }
 
-/** Validate that a city string is present and non-trivial. */
+/** Validate that a city/location string is present, non-trivial, and not junk. */
 export function validateLeadCity(raw: string | null | undefined): string | null {
   const city = (raw ?? '').trim();
-  if (!city) return 'Please select your city.';
-  if (city.length < 2) return 'Please select a valid city.';
+  if (!city) return 'Please enter your location (city or town).';
+  if (city.length < 2) return 'Please enter a valid city or location (at least 2 letters).';
+
+  const junk = new Set([
+    'test', 'testing', 'asdf', 'asdfgh', 'qwerty', 'na', 'none', 'null',
+    'nil', 'xxx', 'abc', 'abcd', 'sample', 'demo', 'city', 'location', 'india',
+  ]);
+  const lower = city.toLowerCase().replace(/[\s.-]/g, '');
+  if (junk.has(lower)) {
+    return 'Please enter your real city or town name.';
+  }
+
+  // Must contain letters
+  if (!/[A-Za-z]/.test(city)) {
+    return 'City or location name must contain letters.';
+  }
+
   return null;
 }

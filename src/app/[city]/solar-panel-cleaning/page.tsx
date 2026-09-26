@@ -56,8 +56,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const count = listings.length;
 
   const base = constructMetadata({
-    title: `Solar Panel Cleaning & AMC in ${city.city} (2026) — Verified Services`,
-    description: `Compare ${count > 0 ? count + ' ' : ''}solar panel cleaning and maintenance providers in ${city.city}, ${city.state}. Professional AMC contracts, per-panel rates, and restored power generation.`,
+    title: `Best Solar Panel Cleaning Services in ${city.city} (2026) — Rates & AMC`,
+    description: `Compare ${count > 0 ? count + ' ' : ''}solar panel cleaning services, washing charges, and maintenance AMC providers in ${city.city}, ${city.state}. Restore generation efficiency with certified technicians.`,
     path: `/${citySlug}/solar-panel-cleaning`,
     canonicalUrl: `https://gosolarindex.in/${citySlug}/solar-panel-cleaning`,
   });
@@ -143,7 +143,7 @@ export default async function CityCleaningPage({ params }: Props) {
                 Maintenance &amp; AMC Services · {city.city}, {city.state}
               </span>
               <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">
-                Solar Panel Cleaning &amp; AMC in {city.city}
+                Solar Panel Cleaning Services &amp; AMC in {city.city}
               </h1>
               <p className="text-base text-ink-2 mt-3 font-body leading-relaxed">
                 Restore up to 30% lost generation caused by urban dust, particulate pollution, and bird droppings. Compare certified solar maintenance contractors and annual AMC plans in {city.city}.

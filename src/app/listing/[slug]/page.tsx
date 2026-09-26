@@ -13,7 +13,7 @@ import { prisma } from '@/lib/prisma';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { unstable_cache } from 'next/cache';
-import { CheckCircle, MapPin, Phone, Mail, Globe, Star } from 'lucide-react';
+import { CheckCircle, MapPin, Phone, Mail, Globe, Star, MessageCircle } from 'lucide-react';
 import { whatsappUrl as buildWhatsappUrl, telUrl, normalizeIndianPhone } from '@/lib/phone';
 import { getStateSolarConfig } from '@/lib/solarConfig';
 
@@ -210,8 +210,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     (listing.reviews ?? 0) === 0;
 
   return constructMetadata({
-    title: `${listing.name}, ${listing.location.city} — Reviews, Phone, Services | GoSolarIndex`,
-    description: `Verified details, phone number, services, and PM Surya Ghar subsidy eligibility for ${listing.name} in ${listing.location.city}.`,
+    title: `${listing.name} Reviews, Ratings & Phone — ${listing.location.city} | GoSolarIndex`,
+    description: `Read verified customer reviews, ratings, contact phone number, and PM Surya Ghar solar rooftop services for ${listing.name} in ${listing.location.city}.`,
     path: `/listing/${slug}`,
     canonicalUrl: canonicalUrl,
     noindex: isThinContent,
@@ -404,23 +404,26 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               </div>
             </div>
 
-            {/* Action row (Call, WhatsApp, Website, plus ONE Sun "Get quote") */}
+            {/* Action row (Call with copyable phone number, WhatsApp for featured only, Website, plus ONE Sun "Get quote") */}
             <div className="flex flex-wrap items-center gap-2.5 shrink-0">
               {telHref && (
                 <a
                   href={telHref}
-                  className="inline-flex items-center justify-center h-11 px-5 border-[1.5px] border-ink text-ink font-medium text-sm rounded-sm hover:bg-wash transition-colors"
+                  className="inline-flex items-center justify-center gap-1.5 h-11 px-4 border-[1.5px] border-ink text-ink font-medium text-sm rounded-sm hover:bg-wash transition-colors tabular-nums"
+                  title="Call or copy phone number"
                 >
-                  Call
+                  <Phone className="h-4 w-4 text-ink-2" />
+                  <span>{phoneNormalized.e164 || listing.phone || 'Call'}</span>
                 </a>
               )}
-              {whatsappUrl && (
+              {listing.featured && whatsappUrl && (
                 <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center h-11 px-5 border-[1.5px] border-ink text-ink font-medium text-sm rounded-sm hover:bg-wash transition-colors"
+                  className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-sm bg-[#25D366] hover:bg-[#20ba5a] text-white text-sm font-semibold shadow-xs transition-colors"
                 >
+                  <MessageCircle className="h-4 w-4 fill-white" />
                   WhatsApp
                 </a>
               )}

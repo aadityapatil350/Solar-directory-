@@ -480,7 +480,9 @@ export default function SolarCalculator() {
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                  <label className="block text-sm font-semibold text-gray-800 mb-1">
+                    Your Name <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     required
@@ -491,21 +493,37 @@ export default function SolarCalculator() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Your Phone</label>
+                  <label className="block text-sm font-semibold text-gray-800 mb-1">
+                    Mobile Number (WhatsApp) <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="tel"
                     required
                     value={leadPhone}
-                    onChange={(e) => setLeadPhone(e.target.value)}
+                    onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, ''))}
                     placeholder="e.g. 9876543210"
-                    pattern="[0-9]{10}"
+                    pattern="[6-9][0-9]{9}"
+                    maxLength={10}
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400 tabular-nums"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">10-digit Indian mobile number for quotation delivery</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-1">
+                    Installation City / Location <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="e.g. Pune, Jaipur, Delhi NCR"
                     className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400"
                   />
-                  <p className="text-xs text-gray-400 mt-1">10-digit mobile number</p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
-                  <p><strong>Your Requirements:</strong></p>
-                  <p className="mt-1">• City: <span className="font-medium">{city}</span></p>
+                  <p><strong>Your System Estimate:</strong></p>
+                  <p className="mt-1">• Location: <span className="font-medium">{city}</span></p>
                   <p>• Monthly Bill: <span className="font-medium">₹{(monthlyUnits * ELECTRICITY_RATE).toLocaleString('en-IN')}</span></p>
                   <p>• Recommended System: <span className="font-medium">{rec.actualKW.toFixed(1)} kW</span></p>
                 </div>

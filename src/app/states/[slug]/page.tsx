@@ -148,7 +148,7 @@ export default async function StatePage({ params }: Props) {
         <section className="border-b border-line bg-paper py-10">
           <div className="max-w-content mx-auto px-4 sm:px-6">
             <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink leading-tight mb-8">
-              Solar power in {state}: DISCOM rules, subsidy and installers
+              Best Solar Companies &amp; Verified Installers in {state}
             </h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

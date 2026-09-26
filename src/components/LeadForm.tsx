@@ -128,22 +128,22 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
 
       <form onSubmit={handleSubmit} className="space-y-3.5">
         <div>
-          <label className="block text-xs font-medium text-ink mb-1">
-            Your name
+          <label className="block text-xs font-semibold text-ink mb-1">
+            Full Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Rahul Sharma"
+            placeholder="e.g. Rahul Sharma"
             className="w-full h-11 px-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-ink mb-1">
-            Mobile number
+          <label className="block text-xs font-semibold text-ink mb-1">
+            Mobile Number (WhatsApp) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-2 font-medium text-sm select-none">
@@ -160,20 +160,22 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
               className="w-full h-11 pl-11 pr-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink tabular-nums"
             />
           </div>
+          <p className="text-[11px] text-ink-2 mt-1">Verified installers will call / WhatsApp you with quotations</p>
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-ink mb-1">
-            City
+          <label className="block text-xs font-semibold text-ink mb-1">
+            Installation Location (City / Town) <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             required
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            placeholder="e.g. Pune, Mumbai, Delhi"
+            placeholder="e.g. Pune, Jaipur, Nagpur, Bengaluru"
             className="w-full h-11 px-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
           />
+          <p className="text-[11px] text-ink-2 mt-1">Enter your city, district or area where solar will be installed</p>
         </div>
 
         <div>

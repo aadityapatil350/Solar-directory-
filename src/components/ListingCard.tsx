@@ -195,8 +195,8 @@ export default function ListingCard({ listing }: ListingCardProps) {
               <ArrowRight className="h-3 w-3" />
             </Link>
 
-            {/* WhatsApp */}
-            {listing.phone && whatsappUrl ? (
+            {/* WhatsApp (Featured only) / Phone */}
+            {listing.featured && listing.phone && whatsappUrl ? (
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -211,15 +211,16 @@ export default function ListingCard({ listing }: ListingCardProps) {
                 <MessageCircle className="h-3.5 w-3.5" />
                 <span>WhatsApp</span>
               </a>
-            ) : (
-              <button
-                disabled
-                className="inline-flex items-center justify-center gap-1.5 bg-zinc-100 text-zinc-400 font-medium py-2 px-3 rounded-lg cursor-not-allowed text-xs border border-zinc-200"
+            ) : listing.phone ? (
+              <a
+                href={`tel:${listing.phone}`}
+                className="inline-flex items-center justify-center gap-1.5 bg-zinc-50 hover:bg-zinc-100 text-zinc-800 font-medium py-2 px-3 rounded-lg transition text-xs border border-zinc-200"
+                title="Call or copy number"
               >
-                <MessageCircle className="h-3.5 w-3.5" />
-                <span>WhatsApp</span>
-              </button>
-            )}
+                <Phone className="h-3.5 w-3.5 text-zinc-600" />
+                <span>{listing.phone}</span>
+              </a>
+            ) : null}
 
             {/* Website */}
             {listing.website ? (

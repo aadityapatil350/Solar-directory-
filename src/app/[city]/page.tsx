@@ -203,7 +203,7 @@ export default async function CityPage({ params }: PageProps) {
         <section className="border-b border-line bg-paper py-10">
           <div className="max-w-content mx-auto px-4 sm:px-6">
             <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink leading-tight mb-8">
-              Solar in {cityData.city}: installers, cost and subsidy
+              Best Solar Companies &amp; Verified Installers in {cityData.city}
             </h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

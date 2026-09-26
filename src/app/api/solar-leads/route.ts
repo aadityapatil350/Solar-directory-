@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { sendLeadNotificationEmail } from '@/lib/email';
+import { validateLeadName, validateLeadCity } from '@/lib/lead-validation';
 
 const MAX_INSTALLERS_PER_LEAD = 3;
 
@@ -71,19 +72,22 @@ export async function POST(request: Request) {
     const { name, phone, city, state, monthlyBill, systemSize, pincode, roofType, source } =
       await request.json();
 
-    if (!name || !phone || !city) {
+    const nameError = validateLeadName(name);
+    if (nameError) {
+      return NextResponse.json({ error: nameError }, { status: 400 });
+    }
+
+    const cleanPhone = String(phone || '').replace(/\D/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, phone, city' },
+        { error: 'Please enter a valid 10-digit mobile number starting with 6–9' },
         { status: 400 }
       );
     }
 
-    const cleanPhone = String(phone).replace(/\D/g, '');
-    if (cleanPhone.length < 10) {
-      return NextResponse.json(
-        { error: 'Invalid 10-digit phone number' },
-        { status: 400 }
-      );
+    const cityError = validateLeadCity(city);
+    if (cityError) {
+      return NextResponse.json({ error: cityError }, { status: 400 });
     }
 
     // 1. Create SolarLead record

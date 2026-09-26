@@ -6,11 +6,11 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import FactPanel from '@/components/ui/FactPanel';
 import FAQ from '@/components/ui/FAQ';
 import Link from 'next/link';
-import { Check, X } from 'lucide-react';
+import { Check, X, MessageCircle } from 'lucide-react';
 
 export const metadata: Metadata = constructMetadata({
   title: 'Installer Plans & Pricing — Free & Featured | GoSolarIndex',
-  description: 'Claim your solar business listing for free on GoSolarIndex. Upgrade to Featured for priority city placement, customer photo uploads, and direct lead notifications.',
+  description: 'Claim your solar business listing for free on GoSolarIndex. Upgrade to Featured for priority city placement, 1-click WhatsApp button, and customer quote notifications.',
   path: '/pricing',
   canonicalUrl: 'https://gosolarindex.in/pricing',
 });
@@ -20,11 +20,12 @@ const FREE_FEATURES = [
   { text: 'Update contact info, address & website', included: true },
   { text: 'Owner verified check badge on profile', included: true },
   { text: 'Public review submission collection', included: true },
+  { text: 'Phone number display (manual copy & dial)', included: true },
+  { text: 'Direct 1-click WhatsApp button for customers', included: false },
+  { text: 'Priority top-of-page city placement', included: false },
   { text: 'Dedicated photo gallery uploads', included: false },
-  { text: 'Priority placement on city directory page', included: false },
   { text: 'Featured indicator with gold sun border', included: false },
   { text: 'Direct homeowner lead routing alerts', included: false },
-  { text: 'Homepage featured directory strip', included: false },
 ];
 
 const FEATURED_FEATURES = [
@@ -32,8 +33,9 @@ const FEATURED_FEATURES = [
   { text: 'Update contact info, address & website', included: true },
   { text: 'Owner verified check badge on profile', included: true },
   { text: 'Public review submission collection', included: true },
-  { text: 'Dedicated photo gallery uploads (up to 5)', included: true },
+  { text: 'Direct 1-click WhatsApp button on search & profile', included: true },
   { text: 'Priority top-of-page placement in your city', included: true },
+  { text: 'Dedicated photo gallery uploads (up to 5)', included: true },
   { text: 'Featured left border and highlighted badge', included: true },
   { text: 'Direct homeowner lead routing alerts', included: true },
   { text: 'Homepage featured directory strip eligibility', included: true },
@@ -42,7 +44,7 @@ const FEATURED_FEATURES = [
 const FAQS = [
   {
     q: 'Is claiming my business listing really free?',
-    a: 'Yes, 100% free. Find your business, submit your claim with mobile/email OTP verification, and our team will approve it within 24 to 48 hours. Once approved, your profile receives the "Owner verified" badge with direct call and WhatsApp buttons at zero charge.',
+    a: 'Yes, 100% free. Find your business, submit your claim with mobile/email OTP verification, and our team will approve it within 24 to 48 hours. Once approved, your profile receives the "Owner verified" badge and displays your phone number for users to view and dial. Direct 1-click WhatsApp chat buttons are reserved exclusively for Featured partners.',
   },
   {
     q: 'Why does claim verification require admin approval?',
@@ -50,7 +52,7 @@ const FAQS = [
   },
   {
     q: 'What is the Featured Partner plan pricing?',
-    a: 'Featured placement costs ₹999 per month with no lock-in contract. You can upgrade or cancel at any time directly through your installer dashboard.',
+    a: 'Featured placement costs ₹999 per month (or ₹2,499 for 3 months) with no lock-in contract. Contact us directly on WhatsApp to pay via Google Pay and get activated within 1 hour.',
   },
   {
     q: 'How does lead routing work for Featured installers?',
@@ -193,13 +195,19 @@ export default function PricingPage() {
                 </ul>
               </div>
 
-              <div className="pt-4 border-t border-line">
-                <Link
-                  href="/dashboard/login"
-                  className="inline-flex items-center justify-center w-full h-11 bg-sun text-ink font-semibold text-xs rounded-sm hover:brightness-95 transition-colors"
+              <div className="pt-4 border-t border-line space-y-2">
+                <a
+                  href="https://wa.me/919373238164?text=Hi%20GoSolarIndex!%20I%20want%20to%20upgrade%20my%20listing%20to%20Featured%20Plan%20(%E2%82%B9999/mo).%20Please%20share%20Google%20Pay%20details."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 w-full h-11 bg-sun text-ink font-semibold text-xs rounded-sm hover:brightness-95 transition-colors"
                 >
-                  Log In to Upgrade Profile →
-                </Link>
+                  <MessageCircle className="h-4 w-4" />
+                  Upgrade via WhatsApp (Google Pay) →
+                </a>
+                <p className="text-[11px] text-center text-ink-2 font-body">
+                  Instant activation via Google Pay · No credit card needed
+                </p>
               </div>
             </div>
           </div>

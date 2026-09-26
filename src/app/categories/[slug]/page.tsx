@@ -76,7 +76,7 @@ export default async function CategoryPage({ params }: Props) {
               Verified Business Register
             </span>
             <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink mt-1.5 leading-tight">
-              {category.name} in India
+              Best {category.name} in India
             </h1>
             <p className="text-base text-ink-2 mt-3 font-body leading-relaxed">
               Explore {totalListings} registered {category.name.toLowerCase()} operating across {locations.length} Indian cities. Compare verified ratings, operational coverage, and request direct quotations.

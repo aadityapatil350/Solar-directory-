@@ -854,7 +854,8 @@ export default function DashboardPage() {
                         'Basic directory listing',
                         'Edit business profile details',
                         'Verified business badge',
-                        'Masked lead phone numbers',
+                        'Phone number displayed (Manual copy & dial)',
+                        'No direct WhatsApp button',
                         'No photo gallery uploads',
                       ].map((f) => (
                         <li key={f} className="flex items-center gap-2">
@@ -879,6 +880,7 @@ export default function DashboardPage() {
                     </p>
                     <ul className="space-y-2 text-sm text-ink mb-5">
                       {[
+                        'Direct 1-Click WhatsApp Button on Profile & Search',
                         'Priority placement in city search',
                         'Up to 5 photos on your listing',
                         'Full unmasked lead phone numbers',
@@ -893,12 +895,20 @@ export default function DashboardPage() {
                       ))}
                     </ul>
                     {!listing.featured && (
-                      <button
-                        onClick={() => showToast('Contact our partner team at +91-93732-38164 to activate Featured.', 'info')}
-                        className="w-full bg-sun hover:bg-sun-hover text-ink font-heading font-semibold py-2.5 rounded-sm transition text-sm"
-                      >
-                        Upgrade to Featured
-                      </button>
+                      <div className="space-y-2">
+                        <a
+                          href={`https://wa.me/919373238164?text=${encodeURIComponent(`Hi Aditya! I want to upgrade my business listing "${listing.name}" (${listing.location.city}) to Featured (₹999/mo). Please share Google Pay details.`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 w-full bg-sun hover:bg-sun-hover text-ink font-heading font-semibold py-2.5 rounded-sm transition text-sm"
+                        >
+                          <MessageSquare className="h-4 w-4" />
+                          Upgrade via WhatsApp (Google Pay)
+                        </a>
+                        <p className="text-[11px] text-ink-2 font-body text-center">
+                          Pay ₹999 via Google Pay to +91 93732 38164 · Activated within 1 hour
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>

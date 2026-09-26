@@ -88,8 +88,8 @@ const currentYear = () => new Date().getFullYear();
 export function constructCityMetadata(city: string, state: string, count?: number): Metadata {
   const year = currentYear();
   const countLabel = count ? `${count} Verified` : 'Verified';
-  const title = `Solar Installers in ${city} (${year}) — ${countLabel} Companies`;
-  const description = `Compare ${count ? `${count} verified` : 'top'} solar companies, panel dealers & installers in ${city}, ${state}. 3kW from ₹42k after ₹78,000 PM Surya Ghar subsidy. Free quotes, no spam calls.`;
+  const title = `Best Solar Companies & Installers in ${city} (${year}) — ${countLabel}`;
+  const description = `Compare ${count ? `${count} verified` : 'top'} solar companies, rooftop EPC installers & panel dealers in ${city}, ${state}. Get 3 free quotes, PM Surya Ghar subsidy guidance, and real customer reviews.`;
   return constructMetadata({
     title,
     description,
@@ -102,15 +102,12 @@ export function constructCityMetadata(city: string, state: string, count?: numbe
 export function constructCategoryMetadata(category: string, city?: string, count?: number, categorySlug?: string): Metadata {
   const year = currentYear();
   const locationText = city ? `in ${city}` : 'in India';
-  const title = `${category} ${locationText} — Verified Companies (${year})`;
-  const description = `Find top-rated ${category.toLowerCase()} ${locationText}. Compare prices, read verified reviews, get 3 free quotes. PM Surya Ghar subsidy up to ₹78,000 available.`;
+  const countLabel = count ? ` — ${count} Verified` : '';
+  const title = `Best ${category} ${locationText} (${year})${countLabel}`;
+  const description = `Find top-rated ${category.toLowerCase()} ${locationText}. Compare prices, read verified customer reviews, and get 3 free quotes. PM Surya Ghar subsidy up to ₹78,000 available.`;
   return constructMetadata({
     title,
     description,
-    // Use the category's real slug for the canonical path — deriving it from the
-    // display name here previously produced a slug that didn't match the actual
-    // route (e.g. "residential-solar-installers" instead of "residential-installers"),
-    // self-canonicalizing to a URL that 301-redirects away from the page itself.
     path: `/categories/${categorySlug || category.toLowerCase().replace(/\s+/g, '-')}`,
     standalone: true,
     noindex: count === 0, // Noindex if empty to prevent Soft 404s
@@ -120,8 +117,8 @@ export function constructCategoryMetadata(category: string, city?: string, count
 export function constructStateMetadata(state: string, cityCount?: number, listingCount?: number): Metadata {
   const year = currentYear();
   const cLabel = listingCount ? `${listingCount} Verified` : 'Verified';
-  const title = `Solar Installers in ${state} (${year}) — ${cLabel} Companies`;
-  const desc = `Compare ${listingCount ? `${listingCount} verified` : 'top'} solar installers & panel dealers across ${cityCount ? `${cityCount}+ cities in ` : ''}${state}. PM Surya Ghar subsidy up to ₹78,000, free quotes, DISCOM approved.`;
+  const title = `Best Solar Companies & Installers in ${state} (${year}) — ${cLabel}`;
+  const desc = `Compare ${listingCount ? `${listingCount} verified` : 'top'} solar companies, rooftop EPC installers & panel dealers across ${cityCount ? `${cityCount}+ cities in ` : ''}${state}. PM Surya Ghar subsidy up to ₹78,000, free quotes, DISCOM approved.`;
   return constructMetadata({
     title,
     description: desc,

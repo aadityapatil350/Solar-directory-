@@ -40,9 +40,9 @@ export default function ForInstallersPage() {
       icon: ShieldCheck,
     },
     {
-      title: 'Direct WhatsApp & Phone Leads',
+      title: 'Direct 1-Click WhatsApp & Phone Calls',
       description:
-        'Receive direct calls and WhatsApp leads straight to your sales team with zero intermediate commission.',
+        'Featured listings unlock a prominent 1-click WhatsApp chat button, while verified listings display your contact number with zero intermediate commission.',
       icon: PhoneCall,
     },
     {

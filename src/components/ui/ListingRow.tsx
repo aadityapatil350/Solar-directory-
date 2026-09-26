@@ -169,7 +169,8 @@ export default function ListingRow({ listing }: { listing: ListingRowData }) {
         {/* Right Section: Action Buttons */}
         <div className="flex flex-row lg:flex-col items-stretch sm:items-center lg:items-end justify-end gap-2 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-line/50">
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            {whatsappHref && (
+            {/* WhatsApp button only for FEATURED listings */}
+            {listing.featured && whatsappHref && (
               <a
                 href={whatsappHref}
                 target="_blank"
@@ -185,11 +186,11 @@ export default function ListingRow({ listing }: { listing: ListingRowData }) {
             {telHref && (
               <a
                 href={telHref}
-                className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-sm border border-line hover:border-ink hover:bg-wash text-ink text-xs font-semibold transition-colors"
-                title="Call Installer"
+                className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-sm border border-line hover:border-ink hover:bg-wash text-ink text-xs font-medium transition-colors"
+                title="Call or copy number"
               >
                 <Phone className="h-3.5 w-3.5 text-ink-2" />
-                <span>Call</span>
+                <span>{listing.featured ? 'Call' : listing.phone}</span>
               </a>
             )}
 
