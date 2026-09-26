@@ -185,10 +185,25 @@ export default function ClaimListingPage() {
       <div className="min-h-screen bg-paper text-ink flex flex-col justify-between">
         <Header />
         <div className="max-w-lg mx-auto px-4 py-24 text-center space-y-4">
-          <AlertCircle className="h-10 w-10 text-ink mx-auto" />
-          <h1 className="font-heading font-bold text-2xl text-ink">Listing not found</h1>
-          <p className="text-sm text-ink-2 font-body">This business listing does not exist or may have been removed.</p>
-          <Link href="/" className="text-sm font-semibold text-ink underline">Back to home</Link>
+          <AlertCircle className="h-10 w-10 text-sun mx-auto" />
+          <h1 className="font-heading font-bold text-2xl text-ink">Listing Not Found</h1>
+          <p className="text-sm text-ink-2 font-body">
+            This business listing does not exist in our directory yet or may have been updated.
+          </p>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/for-installers/register"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition"
+            >
+              List Your Business Now →
+            </Link>
+            <Link
+              href="/locations"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-paper border border-line text-ink font-semibold text-sm rounded-sm hover:bg-wash transition"
+            >
+              Search by City
+            </Link>
+          </div>
         </div>
         <Footer />
       </div>
