@@ -1296,10 +1296,13 @@ export default function AdminDashboard() {
                       {unfeaturing ? 'Unfeaturing…' : `Unfeature All (${stats.featuredListings})`}
                     </button>
                     <button
-                      onClick={() => { setListingsPage(1); fetchListings(auth, 1); }}
-                      className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition"
+                      onClick={() => { fetchListings(auth, listingsPage); }}
+                      disabled={listingsLoading}
+                      className="flex items-center gap-1.5 text-xs text-ink-2 hover:text-ink px-3 py-2 rounded-sm border border-line hover:bg-wash transition disabled:opacity-50"
+                      title="Refresh listings from database"
                     >
-                      <RefreshCw className="h-3.5 w-3.5" />
+                      <RefreshCw className={`h-3.5 w-3.5 ${listingsLoading ? 'animate-spin' : ''}`} />
+                      Refresh
                     </button>
                     <button
                       onClick={() => { cancelForm(); setShowForm(true); }}
