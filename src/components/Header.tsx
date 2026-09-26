@@ -91,8 +91,14 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Primary CTA */}
-        <div className="hidden sm:flex items-center gap-4">
+        {/* Primary CTA & Installer Login */}
+        <div className="hidden sm:flex items-center gap-5">
+          <Link
+            href="/dashboard/login"
+            className="text-[13px] font-semibold text-ink-2 hover:text-ink transition-colors"
+          >
+            Installer Login
+          </Link>
           <Link
             href="/get-quotes"
             className="inline-flex items-center justify-center h-10 px-5 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2"
@@ -177,6 +183,13 @@ export default function Header() {
             className="block text-base font-medium text-ink py-1.5"
           >
             For installers (Claim or register)
+          </Link>
+          <Link
+            href="/dashboard/login"
+            onClick={() => setMobileOpen(false)}
+            className="block text-base font-semibold text-sun py-1.5"
+          >
+            Installer Dashboard Login →
           </Link>
           <div className="pt-2">
             <Link

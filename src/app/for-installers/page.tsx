@@ -128,6 +128,17 @@ export default function ForInstallersPage() {
                 </Link>
               </div>
             </div>
+
+            {/* Already Claimed Partner Login Link */}
+            <div className="mt-8 text-center text-xs text-ink-2">
+              Already claimed or verified your business profile?{' '}
+              <Link
+                href="/dashboard/login"
+                className="font-bold text-sun underline underline-offset-2 hover:brightness-95 ml-1 inline-flex items-center gap-1"
+              >
+                Log in to your Installer Dashboard →
+              </Link>
+            </div>
           </div>
         </section>
 

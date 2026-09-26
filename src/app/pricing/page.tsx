@@ -153,10 +153,10 @@ export default function PricingPage() {
 
               <div className="pt-4 border-t border-line">
                 <Link
-                  href="/dashboard/login"
+                  href="/for-installers"
                   className="inline-flex items-center justify-center w-full h-11 border border-ink text-ink font-semibold text-xs rounded-sm hover:bg-wash transition-colors"
                 >
-                  Claim free listing
+                  Claim or List Free Listing →
                 </Link>
               </div>
             </div>
@@ -198,10 +198,17 @@ export default function PricingPage() {
                   href="/dashboard/login"
                   className="inline-flex items-center justify-center w-full h-11 bg-sun text-ink font-semibold text-xs rounded-sm hover:brightness-95 transition-colors"
                 >
-                  Upgrade to Featured Partner
+                  Log In to Upgrade Profile →
                 </Link>
               </div>
             </div>
+          </div>
+
+          <div className="mt-6 text-center text-xs text-ink-2 font-body">
+            Already claimed or verified your business profile?{' '}
+            <Link href="/dashboard/login" className="font-bold text-sun underline underline-offset-2 hover:brightness-95">
+              Log in to your Installer Dashboard →
+            </Link>
           </div>
         </section>
 

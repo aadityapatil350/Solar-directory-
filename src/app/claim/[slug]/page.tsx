@@ -215,10 +215,25 @@ export default function ClaimListingPage() {
       <div className="min-h-screen bg-paper text-ink flex flex-col justify-between">
         <Header />
         <div className="max-w-lg mx-auto px-4 py-24 text-center space-y-4">
-          <CheckCircle2 className="h-10 w-10 text-ink mx-auto" />
+          <CheckCircle2 className="h-10 w-10 text-sun mx-auto" />
           <h1 className="font-heading font-bold text-2xl text-ink">Already Claimed</h1>
-          <p className="text-sm text-ink-2 font-body">This listing is already verified and managed by its registered owner.</p>
-          <Link href={`/listing/${slug}`} className="text-sm font-semibold text-ink underline">View Listing</Link>
+          <p className="text-sm text-ink-2 font-body">
+            This business listing has already been claimed and verified by its registered owner.
+          </p>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/dashboard/login"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition"
+            >
+              Log in to Installer Dashboard →
+            </Link>
+            <Link
+              href={`/listing/${slug}`}
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-paper border border-line text-ink font-semibold text-sm rounded-sm hover:bg-wash transition"
+            >
+              View Public Listing
+            </Link>
+          </div>
         </div>
         <Footer />
       </div>

@@ -745,8 +745,8 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               )}
             </div>
 
-            {/* Claim Listing Box */}
-            {!listing.userId && (
+            {/* Claim / Owner Login Box */}
+            {!listing.userId ? (
               <div className="border border-line rounded-sm p-5 bg-wash font-body">
                 <h3 className="font-heading font-semibold text-sm text-ink mb-1">
                   Are you the owner of {listing.name}?
@@ -755,10 +755,23 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                   Claim this public record to update your contact details, service area, and receive verified homeowner inquiries.
                 </p>
                 <Link
-                  href={`/for-installers?claim=${listing.slug}`}
+                  href={`/claim/${listing.slug}`}
                   className="inline-flex items-center justify-center w-full h-10 border border-ink text-ink font-medium text-xs rounded-sm hover:bg-paper transition-colors"
                 >
-                  Claim listing free
+                  Claim listing free →
+                </Link>
+              </div>
+            ) : (
+              <div className="border border-line rounded-sm p-4 bg-wash font-body flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-heading font-semibold text-xs text-ink">Verified Partner Profile</p>
+                  <p className="text-[11px] text-ink-2">Manage photos, leads &amp; listing</p>
+                </div>
+                <Link
+                  href="/dashboard/login"
+                  className="inline-flex items-center justify-center h-8 px-3 bg-sun text-ink font-semibold text-xs rounded-sm hover:brightness-95 transition"
+                >
+                  Partner Login →
                 </Link>
               </div>
             )}

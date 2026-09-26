@@ -30,7 +30,9 @@ export default function Footer() {
 
   const forBusinesses = [
     { name: 'For solar installers', href: '/for-installers' },
-    { name: 'Claim your company profile', href: '/for-installers' },
+    { name: 'List your solar business', href: '/for-installers/register' },
+    { name: 'Claim company profile', href: '/for-installers' },
+    { name: 'Installer Dashboard Login', href: '/dashboard/login' },
     { name: 'About GoSolarIndex', href: '/about' },
     { name: 'Contact team', href: '/contact' },
     { name: 'Privacy policy', href: '/privacy' },
