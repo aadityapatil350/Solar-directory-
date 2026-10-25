@@ -80,6 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/compare/waaree-vs-tata',                       priority: 0.85 },
     { path: '/compare/tata-vs-adani',                        priority: 0.85 },
     { path: '/compare/waaree-vs-adani',                      priority: 0.85 },
+    { path: '/compare/solarsquare-vs-tata-power',            priority: 0.90 },
     { path: '/compare/monocrystalline-vs-polycrystalline',   priority: 0.85 },
     { path: '/compare/on-grid-vs-off-grid-vs-hybrid',        priority: 0.85 },
     // DISCOM Hubs
@@ -114,7 +115,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pages.push({
       url: `${BASE_URL}/blog/${post.slug}`,
       lastModified: post.updatedAt.toISOString(),
-      priority: 0.7,
+      priority: 0.8,
     });
   }
 

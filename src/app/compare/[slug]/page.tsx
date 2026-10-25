@@ -232,6 +232,49 @@ const COMPARISONS: Record<string, CompareData> = {
       },
     ],
   },
+  'solarsquare-vs-tata-power': {
+    title: 'SolarSquare vs Tata Power Solar: 2026 Comparison',
+    subtitle: 'Side-by-side engineering evaluation of India\'s two leading residential rooftop solar installation companies.',
+    metaDesc: 'Compare SolarSquare vs Tata Power Solar in India. Compare mounting structures, inverter technology, 5-year AMC, terrace usability, pricing, and PM Surya Ghar subsidy processing.',
+    factTitle: 'SolarSquare vs Tata Power Benchmark',
+    factRows: [
+      { label: 'SolarSquare mounting structure', value: 'Elevated 150 km/h wind-rated (6-7 ft head clearance)' },
+      { label: 'Tata Power mounting structure', value: 'Standard Galvanized Iron (GI) low-tilt' },
+      { label: 'SolarSquare maintenance contract', value: '5-Year comprehensive bundled AMC with scheduled cleaning' },
+      { label: 'Tata Power warranty support', value: '1-Year standard warranty (dealer-managed)' },
+      { label: '3 kW net cost after ₹78,000 subsidy', value: '₹1,07,000 (SolarSquare) vs ₹1,17,000 (Tata Power)' },
+      { label: 'Verdict', value: 'SolarSquare for terrace usability & active AMC; Tata Power for conglomerate heritage', total: true },
+    ],
+    tableColumns: [
+      { key: 'parameter', label: 'Feature / Specification' },
+      { key: 'solarsquare', label: 'SolarSquare' },
+      { key: 'tatapower', label: 'Tata Power Solar', align: 'right' },
+    ],
+    tableRows: [
+      { parameter: 'Core Specialization', solarsquare: '100% Residential Rooftops', tatapower: 'Commercial, Utility & Residential' },
+      { parameter: 'Terrace Usability', solarsquare: 'High (6-7 ft elevated frames, no roof drilling)', tatapower: 'Low (Standard frames block roof floor)' },
+      { parameter: 'Panel Technology', solarsquare: 'Tier-1 TOPCon Bifacial (Waaree/Vikram)', tatapower: 'Tata Power Mono PERC / Poly modules' },
+      { parameter: 'Inverter Technology', solarsquare: 'String & Enphase Microinverters', tatapower: 'Tata Power / Solis string inverters' },
+      { parameter: 'Installation Teams', solarsquare: 'In-house certified solar engineers', tatapower: 'Franchised local dealer network' },
+      { parameter: 'Cleaning & AMC', solarsquare: '5-Year bundled proactive cleaning visits', tatapower: '1-Year warranty; AMC sold separately' },
+      { parameter: 'Net-Metering Support', solarsquare: 'Full digital liaison on National Portal', tatapower: 'Handled via regional channel partner' },
+    ],
+    verdict: 'SolarSquare is the top choice for residential homeowners who want to preserve their terrace space with safe, elevated wind-proof structures and avoid the headache of cleaning modules with a 5-year bundled AMC. Tata Power Solar is suited for brand-conservative buyers who prefer legacy corporate accountability.',
+    faqs: [
+      {
+        q: 'Which is better for home rooftops: SolarSquare or Tata Power Solar?',
+        a: 'SolarSquare is generally superior for residential rooftops because their prefabricated elevated structures keep your terrace 100% usable for walking and drying clothes without terrace waterproofing punctures, and they include 5 years of proactive module cleaning.',
+      },
+      {
+        q: 'How does pricing compare between SolarSquare and Tata Power Solar after subsidy?',
+        a: 'For a standard 3 kW system, both qualify for the ₹78,000 central DBT subsidy under PM Surya Ghar. SolarSquare turnkey net cost is typically ₹1,07,000 – ₹1,27,000 with elevated structures, whereas Tata Power Solar averages ₹1,17,000 – ₹1,47,000.',
+      },
+      {
+        q: 'Where can I read the full long-form analysis?',
+        a: 'Read our comprehensive editorial review: SolarSquare vs Tata Power Solar (2026) for in-depth inverter telemetry, wind-load ratings, and DISCOM net-metering timelines.',
+      },
+    ],
+  },
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

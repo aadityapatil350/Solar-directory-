@@ -118,25 +118,30 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Article Body */}
         <article
-          className="prose prose-neutral max-w-none text-ink font-body leading-relaxed space-y-6 [&>h2]:font-heading [&>h2]:font-semibold [&>h2]:text-2xl [&>h2]:text-ink [&>h2]:mt-8 [&>h2]:mb-3 [&>h3]:font-heading [&>h3]:font-semibold [&>h3]:text-xl [&>h3]:text-ink [&>h3]:mt-6 [&>p]:text-[16px] [&>p]:text-ink-2 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1 [&>ul]:text-ink-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1 [&>ol]:text-ink-2 [&>table]:w-full [&>table]:border [&>table]:border-line [&>table_th]:bg-wash [&>table_th]:p-3 [&>table_td]:p-3 [&>table_td]:border-t [&>table_td]:border-line"
+          className="article-body prose prose-neutral max-w-none text-ink font-body leading-relaxed space-y-6 [&>h2]:font-heading [&>h2]:font-semibold [&>h2]:text-2xl [&>h2]:text-ink [&>h2]:mt-8 [&>h2]:mb-3 [&>h3]:font-heading [&>h3]:font-semibold [&>h3]:text-xl [&>h3]:text-ink [&>h3]:mt-6 [&>p]:text-[16px] [&>p]:text-ink-2 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1 [&>ul]:text-ink-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1 [&>ol]:text-ink-2 [&>table]:w-full [&>table]:border [&>table]:border-line [&>table_th]:bg-wash [&>table_th]:p-3 [&>table_td]:p-3 [&>table_td]:border-t [&>table_td]:border-line"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
         {/* Lead CTA Strip */}
-        <div className="border border-line rounded-sm p-6 sm:p-8 bg-wash space-y-4 my-10">
+        <div className="border border-line rounded-sm p-6 sm:p-8 bg-wash space-y-4 my-10 border-l-4 border-l-sun">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Verified Partner Network &bull; PM Surya Ghar Empanelled
+          </div>
           <h3 className="font-heading font-semibold text-2xl text-ink">
             Planning a rooftop solar installation?
           </h3>
           <p className="text-sm text-ink-2 font-body leading-relaxed">
-            Get up to 3 verified engineering quotations from empanelled contractors in your city. Compare PM Surya Ghar subsidy deductions and equipment warranties with zero broker commission.
+            Get engineering quotations from top-tier empanelled solar EPCs (including verified channel partners like SolarSquare). Lock in your ₹78,000 central DBT subsidy, DISCOM net-metering approval, and a 25-year performance warranty.
           </p>
-          <div className="pt-1">
+          <div className="pt-1 flex flex-wrap items-center gap-3">
             <Link
               href="/get-quotes"
-              className="inline-flex items-center justify-center h-11 px-6 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors"
+              className="inline-flex items-center justify-center h-11 px-6 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-colors shadow-sm"
             >
-              Get free installer quotes
+              Calculate subsidy &amp; get quotes &rarr;
             </Link>
+            <span className="text-xs text-ink-2">Free site survey &bull; 0 obligation</span>
           </div>
         </div>
 

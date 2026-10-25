@@ -185,6 +185,7 @@ export default function BrandsIndexPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-body">
                 {[
+                  { title: 'SolarSquare vs Tata Power Solar', slug: 'solarsquare-vs-tata-power', desc: 'Rooftop structures, 5-yr AMC & residential turnkey pricing compared' },
                   { title: 'Waaree vs Vikram Solar', slug: 'waaree-vs-vikram', desc: 'Capacity comparison, efficiency & warranty review' },
                   { title: 'Waaree vs Tata Power Solar', slug: 'waaree-vs-tata', desc: 'Service network, price per watt & DCR compliance' },
                   { title: 'Tata Power vs Adani Solar', slug: 'tata-vs-adani', desc: 'TOPCon technology vs brand trust & reliability' },

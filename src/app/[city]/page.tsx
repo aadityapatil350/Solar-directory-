@@ -531,6 +531,124 @@ export default async function CityPage({ params }: PageProps) {
           </div>
         </section>
 
+        {/* ── RECOMMENDED EDITORIAL GUIDES & REVIEWS ── */}
+        <section className="py-12 border-b border-line bg-wash">
+          <div className="max-w-content mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+              <div>
+                <span className="text-xs font-semibold text-ink-2 uppercase tracking-wider font-body">
+                  Research &bull; Pricing &bull; Channel Partners
+                </span>
+                <h2 className="font-heading font-semibold text-2xl text-ink mt-0.5">
+                  Solar Buying Guides &amp; EPC Reviews for {cityData.city}
+                </h2>
+              </div>
+              <Link
+                href="/blog"
+                className="text-xs font-semibold text-ink underline hover:text-ink/80 font-body inline-flex items-center gap-1"
+              >
+                Browse all solar guides &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                {
+                  title: 'SolarSquare Rooftop Solar Review 2026: Cost, Structure & Subsidy',
+                  href: '/blog/solarsquare-solar-review-cost-subsidy-2026',
+                  tag: 'Partner Review',
+                  desc: 'In-depth review of SolarSquare 150 km/h wind-resistant elevated frames, 5-year AMC, and turnkey costs after ₹78,000 DBT.',
+                },
+                {
+                  title: 'Top 7 Residential Solar Installation Companies in India (2026)',
+                  href: '/blog/top-residential-solar-epc-companies-india-2026',
+                  tag: 'EPC Rankings',
+                  desc: 'Independent evaluation comparing SolarSquare, Tata Power Solar, Waaree, and regional empanelled DISCOM contractors.',
+                },
+                ...(cityData.city.toLowerCase() === 'pune'
+                  ? [
+                      {
+                        title: '3 kW Solar Panel Price in Pune (2026): MSEDCL Net Metering & ROI',
+                        href: '/blog/3kw-solar-panel-price-in-pune-msedcl-subsidy-2026',
+                        tag: 'Pune Pricing',
+                        desc: 'Real cost, Mahavitaran slab savings, and 2.3-year payback for Pune residential homeowners.',
+                      },
+                      {
+                        title: 'How to Bring Your MSEDCL Electricity Bill to Zero with Rooftop Solar',
+                        href: '/blog/how-to-reduce-msedcl-electricity-bill-to-zero-solar',
+                        tag: 'Mahavitaran Blueprint',
+                        desc: 'Understand energy charges, wheeling charges, FAC, and exact system sizing for Maharashtra.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'bangalore'
+                  ? [
+                      {
+                        title: '3 kW & 5 kW Rooftop Solar System Cost in Bangalore (BESCOM 2026)',
+                        href: '/blog/3kw-5kw-solar-system-cost-bangalore-bescom-2026',
+                        tag: 'Bangalore Pricing',
+                        desc: 'BESCOM LT-4 net metering rules, meter testing, and sizing for Bangalore independent villas.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'hyderabad'
+                  ? [
+                      {
+                        title: '5 kW Solar System Price in Hyderabad (2026): TSSPDCL Net Metering',
+                        href: '/blog/5kw-solar-system-price-in-hyderabad-tsspdcl-2026',
+                        tag: 'Hyderabad Pricing',
+                        desc: 'TSSPDCL net metering, ₹78,000 subsidy, and slashing summer AC electricity bills.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'delhi'
+                  ? [
+                      {
+                        title: 'Delhi Solar Policy 2026: Generation-Based Incentive (GBI) & Subsidy',
+                        href: '/blog/delhi-solar-policy-2026-subsidy-zero-bill-bses-tata',
+                        tag: 'Delhi Policy',
+                        desc: 'How to combine the ₹78,000 central subsidy with the ₹3/kWh Delhi GBI cash reward.',
+                      },
+                    ]
+                  : []),
+                {
+                  title: 'SolarSquare vs Tata Power Solar: Cost, Tech & Service Compared',
+                  href: '/blog/solarsquare-vs-tata-power-solar-comparison',
+                  tag: 'Brand Comparison',
+                  desc: 'Comparing terrace usability, mounting structures, and after-sales service between top residential brands.',
+                },
+                {
+                  title: 'Can Solar Panels Run a 1.5 Ton AC During a Power Cut?',
+                  href: '/blog/can-solar-run-ac-during-power-cut-india',
+                  tag: 'Technical Guide',
+                  desc: 'The technical reality of on-grid anti-islanding vs hybrid inverters with lithium battery storage.',
+                },
+              ].slice(0, 3).map((guide) => (
+                <Link
+                  key={guide.href}
+                  href={guide.href}
+                  className="border border-line rounded-sm p-5 bg-paper hover:border-sun transition-colors flex flex-col justify-between group"
+                >
+                  <div className="space-y-2">
+                    <span className="inline-block text-[11px] font-semibold uppercase tracking-wider text-ink-2 bg-wash px-2 py-0.5 rounded-sm">
+                      {guide.tag}
+                    </span>
+                    <h3 className="font-heading font-semibold text-base text-ink group-hover:text-ink leading-snug">
+                      {guide.title}
+                    </h3>
+                    <p className="text-xs text-ink-2 leading-relaxed font-body">
+                      {guide.desc}
+                    </p>
+                  </div>
+                  <div className="pt-4 text-xs font-semibold text-ink underline group-hover:text-ink/80">
+                    Read guide &rarr;
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── FREQUENTLY ASKED QUESTIONS ── */}
         <section className="py-12 border-b border-line bg-paper">
           <div className="max-w-content mx-auto px-4 sm:px-6">
