@@ -237,7 +237,22 @@ export default function SolarSavingsCalculatorPage() {
           </div>
 
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6 lg:self-start">
-            <LeadForm prefill={{ requirement: `${roundedKw}kW Residential` }} source="tools:savings-calculator" />
+            <LeadForm
+              prefill={{
+                requirement: `${roundedKw}kW Residential`,
+                monthlyBill:
+                  bill < 1500
+                    ? '< ₹1,500'
+                    : bill <= 3000
+                    ? '₹1,500 – ₹3,000'
+                    : bill <= 5000
+                    ? '₹3,000 – ₹5,000'
+                    : bill <= 8000
+                    ? '₹5,000 – ₹8,000'
+                    : '₹8,000+',
+              }}
+              source="tools:savings-calculator"
+            />
           </div>
 
         </div>

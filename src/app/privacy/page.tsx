@@ -123,31 +123,12 @@ export default function PrivacyPage() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Google AdSense</h2>
-              <p className="text-gray-700 mb-4">
-                We use Google AdSense to display advertisements on our Platform. Google may use cookies to serve ads
-                based on your prior visits to our website or other websites.
-              </p>
-              <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
-                <li><strong>Ad Serving:</strong> Google AdSense serves personalized ads based on your interests and browsing behavior.</li>
-                <li><strong>Cookie Usage:</strong> Google's use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.</li>
-                <li><strong>Opt-Out:</strong> Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-ink font-semibold hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.</li>
-                <li><strong>Third-Party Vendors:</strong> Google uses third-party vendors to serve ads, including the use of cookies and web beacons.</li>
-              </ul>
-              <p className="text-gray-700">
-                For more information about Google's privacy practices and your options, please visit
-                <a href="https://policies.google.com/technologies/ads" className="text-ink font-semibold hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Privacy Policy</a>.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Cookies & Tracking Technologies</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Cookies & Tracking Technologies</h2>
               <p className="text-gray-700 mb-4">We use the following types of cookies:</p>
               <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
                 <li><strong>Essential Cookies:</strong> Required for Platform functionality (login sessions, forms).</li>
                 <li><strong>Analytics Cookies:</strong> Help us understand how users interact with our Platform (Google Analytics).</li>
                 <li><strong>Preference Cookies:</strong> Remember your settings and choices.</li>
-                <li><strong>Advertising Cookies:</strong> Used for targeted ads (if applicable).</li>
               </ul>
               <p className="text-gray-700 mb-4">
                 You can control cookies via your browser settings. Note that disabling cookies may limit Platform functionality.

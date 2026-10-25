@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/verify-admin';
-import { sendClaimApprovedEmail } from '@/lib/email';
+import { sendClaimApprovedEmail, sendClaimPromoEmail } from '@/lib/email';
 import { revalidateTag } from 'next/cache';
 
 // GET all claim requests — includes linked user info
@@ -38,15 +38,16 @@ export async function GET(request: Request) {
   return NextResponse.json({ claims: claimsWithUser });
 }
 
-// PATCH — approve or reject a claim
+// PATCH — approve/reject a claim, or send a manual email to the claimant
 export async function PATCH(request: Request) {
   if (!await verifyAdmin(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { claimId, action } = await request.json(); // action: 'approve' | 'reject'
-  if (!claimId || !['approve', 'reject'].includes(action)) {
-    return NextResponse.json({ error: 'claimId and action (approve|reject) required' }, { status: 400 });
+  const body = await request.json();
+  const { claimId, action } = body; // action: 'approve' | 'reject' | 'send_email'
+  if (!claimId || !['approve', 'reject', 'send_email'].includes(action)) {
+    return NextResponse.json({ error: 'claimId and action (approve|reject|send_email) required' }, { status: 400 });
   }
 
   const claim = await prisma.claimRequest.findUnique({
@@ -56,6 +57,20 @@ export async function PATCH(request: Request) {
     },
   });
   if (!claim) return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
+
+  if (action === 'send_email') {
+    const { subject, message } = body as { subject?: string; message?: string };
+    if (!subject?.trim() || !message?.trim()) {
+      return NextResponse.json({ error: 'subject and message required' }, { status: 400 });
+    }
+    try {
+      await sendClaimPromoEmail(claim.email, claim.name, claim.listing.name, subject, message);
+    } catch (emailErr) {
+      console.error('Failed to send claim promo email:', emailErr);
+      return NextResponse.json({ error: 'Failed to send email' }, { status: 502 });
+    }
+    return NextResponse.json({ success: true, status: 'email_sent' });
+  }
 
   if (action === 'reject') {
     await prisma.claimRequest.update({ where: { id: claimId }, data: { status: 'rejected' } });

@@ -9,10 +9,12 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import Steps from '@/components/ui/Steps';
 import FAQ from '@/components/ui/FAQ';
 import ListingRow from '@/components/ui/ListingRow';
+import LeadForm from '@/components/LeadForm';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
-import { getCityFAQs } from '@/lib/cityData';
+import { getCityFAQs, citySpecificData } from '@/lib/cityData';
 import { getStateSolarConfig } from '@/lib/solarConfig';
+import { Zap, ShieldCheck, MapPin, CheckCircle2 } from 'lucide-react';
 
 // Use ISR for better SEO - revalidate every 1 hour
 export const revalidate = 3600;
@@ -92,6 +94,8 @@ export default async function CityPage({ params }: PageProps) {
       : [];
 
   const stateConfig = getStateSolarConfig(cityData.state);
+  const cityInfo = citySpecificData[cityData.city.toLowerCase()];
+  const topAreas = cityInfo?.topAreas || [];
 
   // Fetch categories
   const categories = await prisma.category.findMany({
@@ -130,13 +134,33 @@ export default async function CityPage({ params }: PageProps) {
           '@context': 'https://schema.org',
           '@type': 'ItemList',
           name: `Solar Installers in ${cityData.city}`,
-          description: `Verified solar companies in ${cityData.city}, ${cityData.state}`,
+          description: `Verified solar companies and rooftop EPC contractors in ${cityData.city}, ${cityData.state}`,
           numberOfItems: activeListings.length,
           itemListElement: activeListings.slice(0, 10).map((listing, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            name: listing.name,
-            url: `https://gosolarindex.in/listing/${listing.slug}`,
+            item: {
+              '@type': 'LocalBusiness',
+              name: listing.name,
+              url: `https://gosolarindex.in/listing/${listing.slug}`,
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: listing.location?.city || cityData.city,
+                addressRegion: listing.location?.state || cityData.state,
+                addressCountry: 'IN',
+              },
+              ...(listing.rating && listing.reviews > 0
+                ? {
+                    aggregateRating: {
+                      '@type': 'AggregateRating',
+                      ratingValue: listing.rating,
+                      reviewCount: listing.reviews,
+                      bestRating: 5,
+                      worstRating: 1,
+                    },
+                  }
+                : {}),
+            },
           })),
         }
       : null;
@@ -152,26 +176,70 @@ export default async function CityPage({ params }: PageProps) {
     })),
   };
 
+  const solarPriceBenchmarks = [
+    {
+      size: '2 kW',
+      idealFor: '1–2 BHK / Small Home',
+      areaSqFt: '160 – 200 sq.ft',
+      monthlyGen: '240 – 260 units',
+      monthlySavings: '₹1,800 – ₹2,400',
+      grossCost: '₹1,25,000 – ₹1,35,000',
+      subsidy: '₹60,000',
+      netCost: '₹65,000 – ₹75,000',
+    },
+    {
+      size: '3 kW',
+      idealFor: '3–4 BHK (PM Surya Ghar Sweet Spot)',
+      areaSqFt: '240 – 300 sq.ft',
+      monthlyGen: '360 – 400 units',
+      monthlySavings: '₹2,800 – ₹3,800',
+      grossCost: '₹1,85,000 – ₹1,95,000',
+      subsidy: '₹78,000',
+      netCost: '₹1,07,000 – ₹1,17,000',
+      popular: true,
+    },
+    {
+      size: '5 kW',
+      idealFor: 'Independent House / Duplex / ACs',
+      areaSqFt: '400 – 500 sq.ft',
+      monthlyGen: '600 – 660 units',
+      monthlySavings: '₹4,800 – ₹6,200',
+      grossCost: '₹2,90,000 – ₹3,10,000',
+      subsidy: '₹78,000',
+      netCost: '₹2,12,000 – ₹2,32,000',
+    },
+    {
+      size: '10 kW',
+      idealFor: 'Commercial / Large Villa / Heavy Load',
+      areaSqFt: '800 – 1,000 sq.ft',
+      monthlyGen: '1,200 – 1,300 units',
+      monthlySavings: '₹9,600 – ₹12,500',
+      grossCost: '₹5,40,000 – ₹5,80,000',
+      subsidy: '₹78,000',
+      netCost: '₹4,62,000 – ₹5,02,000',
+    },
+  ];
+
   const stepsToGetSolar = [
     {
-      title: 'Roof assessment and load calculation',
-      description: `A certified engineer inspects your rooftop shadow profile in ${cityData.city} and determines system capacity based on your recent electricity consumption.`,
+      title: 'Rooftop assessment & shadow calculation',
+      description: `A certified solar engineer visits your property in ${cityData.city} to map shadow-free terrace area and analyze your recent electricity bills.`,
     },
     {
-      title: 'Installer selection & quotation',
-      description: 'Compare 2–3 written proposals specifying MNRE ALMM-listed panels, inverter make, and comprehensive installation workmanship warranty.',
+      title: 'Quotation & channel partner selection',
+      description: 'Compare customized proposals from SolarSquare and verified local EPCs with MNRE ALMM Tier-1 panels, inverters, and workmanship warranties.',
     },
     {
-      title: `DISCOM application with ${stateConfig.discoms[0] || 'the distribution utility'}`,
-      description: 'Your installer files the technical feasibility and grid net-metering application on the state utility portal.',
+      title: `DISCOM net-metering application with ${stateConfig.discoms[0] || 'the local utility'}`,
+      description: 'Your empanelled installer prepares and submits the technical feasibility application on the state electricity utility portal.',
     },
     {
-      title: 'Installation and bi-directional meter testing',
-      description: 'Hardware installation takes 1–3 days. DISCOM inspectors inspect earthing, install the net meter, and commission the connection.',
+      title: 'Installation & bi-directional meter testing',
+      description: 'System installation takes 1–3 business days. DISCOM inspectors verify earthing safety, install the net meter, and commission the connection.',
     },
     {
       title: 'Direct Benefit Transfer (DBT) subsidy credit',
-      description: 'Upload the joint commissioning report to the PM Surya Ghar National Portal to receive the ₹78,000 central subsidy directly in your bank account.',
+      description: 'Following joint inspection, the central PM Surya Ghar subsidy (up to ₹78,000) is credited directly to your bank account within 30 days.',
     },
   ];
 
@@ -199,47 +267,156 @@ export default async function CityPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* ── CITY HEADER & INTRO WITH FACT PANEL ── */}
-        <section className="border-b border-line bg-paper py-10">
+        {/* ── CITY HERO SECTION (BENCHMARK + QUOTE FORM) ── */}
+        <section className="border-b border-line bg-paper py-8 sm:py-10">
           <div className="max-w-content mx-auto px-4 sm:px-6">
-            <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink leading-tight mb-8">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-sun-wash text-ink text-xs font-semibold">
+                <Zap className="h-3.5 w-3.5 fill-sun text-ink" />
+                PM Surya Ghar Scheme (₹78,000 Subsidy)
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-wash text-ink-2 text-xs font-medium border border-line">
+                <ShieldCheck className="h-3.5 w-3.5 text-ink" />
+                SolarSquare &amp; Verified Channel Partners
+              </span>
+            </div>
+
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl text-ink leading-tight mb-3">
               Best Solar Companies &amp; Verified Installers in {cityData.city}
             </h1>
+            <p className="text-sm sm:text-base text-ink-2 max-w-3xl mb-8 leading-relaxed font-body">
+              Compare {listings.length || 'top'} verified solar rooftop contractors and channel partners serving {cityData.city}, {cityData.state}. Calculate net installation costs after the ₹78,000 central subsidy and receive up to 3 competitive proposals.
+            </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Fact Panel on the left */}
-              <div className="lg:col-span-6">
+              {/* Left Column: Fact Panel + Coverage Info */}
+              <div className="lg:col-span-7 space-y-6">
                 <FactPanel
                   title={`Solar benchmark: ${cityData.city}, ${cityData.state}`}
                   rows={[
                     { label: 'Primary DISCOM', value: stateConfig.discoms[0] || 'State Distribution Utility' },
                     { label: 'PM Surya Ghar subsidy (3 kW)', value: '₹78,000' },
-                    { label: 'Estimated 3 kW gross cost', value: '₹1,95,000' },
-                    { label: 'Net homeowner cost', value: '₹1,17,000', total: true },
+                    { label: 'Estimated 3 kW gross cost', value: '₹1,85,000 – ₹1,95,000' },
+                    { label: 'Net homeowner cost', value: '₹1,07,000 – ₹1,17,000', total: true },
                     { label: 'Avg daily solar radiation', value: '4.8 – 5.5 kWh/m²' },
-                    { label: 'Estimated payback period', value: '3.2 – 3.8 years' },
+                    { label: 'Estimated payback period', value: '3.1 – 3.8 years' },
                   ]}
                   sources="MNRE National Solar Mission, PM Surya Ghar Portal, State Electricity Regulatory Commission tariff orders 2026."
                 />
+
+                <div className="border border-line rounded-sm p-4 bg-wash space-y-2 text-xs text-ink-2 font-body">
+                  <div className="flex items-center gap-2 font-semibold text-ink text-sm">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    DISCOM Net-Metering Liaison &amp; Approvals
+                  </div>
+                  <p className="leading-relaxed">
+                    Installers in {cityData.city} handle all liaison paperwork with <strong>{stateConfig.discoms.join(' and ')}</strong>, including technical feasibility certificates, bi-directional net meters, and PM Surya Ghar subsidy disbursement.
+                  </p>
+                </div>
+
+                {topAreas.length > 0 && (
+                  <div className="border border-line rounded-sm p-4 bg-paper space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-ink">
+                      <MapPin className="h-3.5 w-3.5 text-ink-2" />
+                      Active Residential Solar Service Areas in {cityData.city}:
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {topAreas.map((area) => (
+                        <span
+                          key={area}
+                          className="text-[11px] px-2 py-0.5 rounded-sm bg-wash border border-line text-ink-2"
+                        >
+                          {area}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Short intro on the right */}
-              <div className="lg:col-span-6 space-y-4 text-[15px] text-ink-2 leading-relaxed font-body">
-                <p>
-                  Homeowners and commercial businesses in <strong>{cityData.city}</strong> can achieve substantial reductions in monthly power tariffs through rooftop solar installations connected under {stateConfig.state}&apos;s grid net-metering framework.
-                </p>
-                <p>
-                  Under the central <strong>PM Surya Ghar Muft Bijli Yojana</strong>, residential consumers installing up to 3 kW capacity qualify for direct bank transfer subsidies up to ₹78,000 when using MNRE ALMM-compliant modules.
-                </p>
-                <div className="pt-2">
-                  <a
-                    href="#directory"
-                    className="inline-flex items-center justify-center h-10 px-5 border-[1.5px] border-ink text-ink font-medium text-xs rounded-sm hover:bg-wash transition-colors"
-                  >
-                    View {cityData.city} installer directory ({listings.length})
-                  </a>
-                </div>
+              {/* Right Column: Pre-Qualified Lead Form */}
+              <div className="lg:col-span-5 lg:sticky lg:top-6">
+                <LeadForm
+                  prefill={{ city: cityData.city }}
+                  source={`city-page:${citySlug}`}
+                />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── SOLAR SYSTEM PRICING & SUBSIDY BENCHMARK TABLE ── */}
+        <section className="py-12 border-b border-line bg-wash">
+          <div className="max-w-content mx-auto px-4 sm:px-6">
+            <div className="max-w-2xl mb-8">
+              <span className="text-xs font-semibold text-ink-2 uppercase tracking-wider font-body">
+                2026 Price Benchmark
+              </span>
+              <h2 className="font-heading font-semibold text-2xl text-ink mt-1">
+                Rooftop Solar Cost &amp; Subsidy in {cityData.city}
+              </h2>
+              <p className="text-xs sm:text-sm text-ink-2 mt-1.5 font-body leading-relaxed">
+                Turnkey installation cost estimates (including MNRE ALMM panels, inverter, mounting structure, DISCOM net meter &amp; commissioning) under the PM Surya Ghar Muft Bijli Yojana.
+              </p>
+            </div>
+
+            <div className="border border-line rounded-sm bg-paper overflow-x-auto shadow-sm">
+              <table className="w-full text-left text-xs border-collapse min-w-[620px]">
+                <thead>
+                  <tr className="border-b border-line bg-wash text-ink font-semibold">
+                    <th className="py-3 px-4">System Size</th>
+                    <th className="py-3 px-4">Ideal For</th>
+                    <th className="py-3 px-4">Roof Space</th>
+                    <th className="py-3 px-4">Est. Generation</th>
+                    <th className="py-3 px-4">Gross Cost</th>
+                    <th className="py-3 px-4 text-emerald-700">Govt. Subsidy</th>
+                    <th className="py-3 px-4 font-bold text-ink">Net Cost</th>
+                    <th className="py-3 px-4">Monthly Savings</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line font-body text-ink-2">
+                  {solarPriceBenchmarks.map((row) => (
+                    <tr
+                      key={row.size}
+                      className={row.popular ? 'bg-sun-wash/30 font-medium' : 'hover:bg-wash/50'}
+                    >
+                      <td className="py-3 px-4 font-semibold text-ink">
+                        {row.size}
+                        {row.popular && (
+                          <span className="ml-1.5 inline-block text-[10px] px-1.5 py-0.2 bg-sun text-ink font-bold rounded">
+                            Popular
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">{row.idealFor}</td>
+                      <td className="py-3 px-4 tabular-nums">{row.areaSqFt}</td>
+                      <td className="py-3 px-4 tabular-nums">{row.monthlyGen}</td>
+                      <td className="py-3 px-4 tabular-nums line-through opacity-70">{row.grossCost}</td>
+                      <td className="py-3 px-4 font-semibold text-emerald-700 tabular-nums">
+                        − {row.subsidy}
+                      </td>
+                      <td className="py-3 px-4 font-bold text-ink tabular-nums text-sm">
+                        {row.netCost}
+                      </td>
+                      <td className="py-3 px-4 text-ink font-medium tabular-nums">
+                        ~{row.monthlySavings}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-ink-2 font-body">
+              <p>
+                * Net cost reflects direct DBT subsidy credited by MNRE into your Aadhaar-linked bank account.
+              </p>
+              <a
+                href="#quote"
+                className="font-semibold text-ink underline underline-offset-2 hover:text-ink/80"
+              >
+                Get exact quotation for your light bill →
+              </a>
             </div>
           </div>
         </section>
@@ -249,10 +426,10 @@ export default async function CityPage({ params }: PageProps) {
           <div className="max-w-content mx-auto px-4 sm:px-6">
             <div className="mb-6">
               <h2 className="font-heading font-semibold text-2xl text-ink">
-                Solar installers in {cityData.city}
+                Verified Solar Installers in {cityData.city}
               </h2>
               <p className="text-xs text-ink-2 mt-1 font-body">
-                Public register of verified solar EPC companies, rooftop contractors, and authorized dealers.
+                Browse rated solar EPC contractors, empanelled channel partners, and authorized equipment dealers in {cityData.city}.
               </p>
             </div>
 

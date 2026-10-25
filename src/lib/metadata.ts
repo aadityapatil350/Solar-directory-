@@ -88,8 +88,8 @@ const currentYear = () => new Date().getFullYear();
 export function constructCityMetadata(city: string, state: string, count?: number): Metadata {
   const year = currentYear();
   const countLabel = count ? `${count} Verified` : 'Verified';
-  const title = `Best Solar Companies & Installers in ${city} (${year}) — ${countLabel}`;
-  const description = `Compare ${count ? `${count} verified` : 'top'} solar companies, rooftop EPC installers & panel dealers in ${city}, ${state}. Get 3 free quotes, PM Surya Ghar subsidy guidance, and real customer reviews.`;
+  const title = `Best Solar Companies in ${city} (${year}) — ${countLabel} Installers & Subsidy`;
+  const description = `Compare ${count ? `${count} verified` : 'top'} solar companies & rooftop EPC installers in ${city}, ${state}. Check 3kW–10kW prices, DISCOM net metering, ₹78,000 PM Surya Ghar subsidy & get free quotes.`;
   return constructMetadata({
     title,
     description,

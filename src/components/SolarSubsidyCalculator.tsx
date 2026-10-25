@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useId } from 'react';
+import { validateLeadName, validateLeadPhone, validateLeadCity } from '@/lib/lead-validation';
 import {
   STATE_SOLAR_CONFIG,
   calculateCentralSubsidy,
@@ -38,6 +39,7 @@ export default function SolarSubsidyCalculator({
   // Lead capture state
   const [fullName, setFullName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
+  const [city, setCity] = useState<string>(initialCity || '');
   const [pincode, setPincode] = useState<string>('');
   const [roofType, setRoofType] = useState<string>('RCC Flat Concrete');
   const [otpSent, setOtpSent] = useState<boolean>(false);
@@ -60,6 +62,7 @@ export default function SolarSubsidyCalculator({
   const billInputId = useId();
   const nameInputId = useId();
   const phoneInputId = useId();
+  const cityInputId = useId();
   const pincodeInputId = useId();
   const roofTypeId = useId();
   const otpInputId = useId();
@@ -119,14 +122,26 @@ export default function SolarSubsidyCalculator({
     e.preventDefault();
     setErrorMessage('');
 
-    const cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length < 10) {
-      setErrorMessage('Please enter a valid 10-digit mobile number');
+    const nameErr = validateLeadName(fullName);
+    if (nameErr) {
+      setErrorMessage(nameErr);
       return;
     }
 
-    if (!fullName.trim()) {
-      setErrorMessage('Please enter your full name');
+    const phoneErr = validateLeadPhone(phone);
+    if (phoneErr) {
+      setErrorMessage(phoneErr);
+      return;
+    }
+
+    const cityErr = validateLeadCity(city);
+    if (cityErr) {
+      setErrorMessage(cityErr);
+      return;
+    }
+
+    if (!pincode.trim() || pincode.trim().length !== 6) {
+      setErrorMessage('Please enter a valid 6-digit postal pincode');
       return;
     }
 
@@ -134,6 +149,9 @@ export default function SolarSubsidyCalculator({
       setErrorMessage('Please enter the 4 or 6-digit verification code');
       return;
     }
+
+    const cleaned = phone.replace(/\D/g, '').slice(-10);
+    const validCity = city.trim();
 
     setIsSubmitting(true);
     try {
@@ -143,7 +161,7 @@ export default function SolarSubsidyCalculator({
         body: JSON.stringify({
           name: fullName.trim(),
           phone: cleaned,
-          city: initialCity || stateConfig.state,
+          city: validCity,
           state: stateConfig.state,
           discom: selectedDiscom || discomList[0] || 'State DISCOM',
           monthlyBill,
@@ -163,7 +181,8 @@ export default function SolarSubsidyCalculator({
             name: fullName.trim(),
             phone: cleaned,
             requirement: `${recommendedKw} kW Rooftop Solar System (${roofType}) - Subsidy Calculator`,
-            city: initialCity || stateConfig.state,
+            city: validCity,
+            monthlyBill: `₹${monthlyBill}/mo`,
             budget: `Net ₹${netInvestment.toLocaleString('en-IN')}`,
           }),
         });
@@ -461,7 +480,7 @@ export default function SolarSubsidyCalculator({
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                   <div>
                     <label htmlFor={nameInputId} className="block text-xs font-medium text-zinc-700 mb-1">
                       Full Name *
@@ -488,6 +507,21 @@ export default function SolarSubsidyCalculator({
                       placeholder="98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor={cityInputId} className="block text-xs font-medium text-zinc-700 mb-1">
+                      City / Town *
+                    </label>
+                    <input
+                      id={cityInputId}
+                      type="text"
+                      required
+                      placeholder="e.g. Pune, Jaipur"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
                       className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 transition"
                     />
                   </div>

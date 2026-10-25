@@ -68,5 +68,50 @@ export function validateLeadCity(raw: string | null | undefined): string | null 
     return 'City or location name must contain letters.';
   }
 
+  // Reject 4+ identical characters in a row (e.g. "aaaaa", "zzzzz")
+  if (/([A-Za-z])\1{3,}/i.test(city)) {
+    return 'Please enter a valid city or location name.';
+  }
+
+  return null;
+}
+
+/** Validate Indian mobile number strictly to filter out spam and dummy leads. */
+export function validateLeadPhone(raw: string | null | undefined): string | null {
+  const phone = (raw ?? '').trim().replace(/\s+/g, '');
+  if (!phone) return 'Please enter your 10-digit mobile number.';
+
+  const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+  if (cleanPhone.length !== 10) {
+    return 'Enter a valid 10-digit mobile number.';
+  }
+
+  if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+    return 'Mobile number must start with 6, 7, 8, or 9.';
+  }
+
+  // Reject all identical digits (e.g. 9999999999, 8888888888)
+  if (/^(\d)\1{9}$/.test(cleanPhone)) {
+    return 'Please enter a genuine 10-digit mobile number.';
+  }
+
+  // Reject common fake test sequences
+  const fakeSequences = new Set([
+    '9876543210', '9876543211', '9876543212',
+    '9123456780', '9123456789', '9000000000',
+    '9898989898', '9988776655', '9876598765',
+    '8989898989', '7878787878', '6767676767'
+  ]);
+  if (fakeSequences.has(cleanPhone)) {
+    return 'Please enter your actual active mobile number.';
+  }
+
+  return null;
+}
+
+/** Validate that the user provided their monthly electricity bill (light bill) */
+export function validateMonthlyBill(raw: string | null | undefined): string | null {
+  const bill = (raw ?? '').trim();
+  if (!bill) return 'Please select your average monthly electricity bill (light bill).';
   return null;
 }

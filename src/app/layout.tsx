@@ -20,8 +20,6 @@ const mukta = Mukta({
 });
 
 const GA_ID = 'G-HRQJB0S57Q';
-// Google AdSense Publisher ID
-const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-3540617055322931';
 
 export const metadata: Metadata = constructMetadata({
   title: 'GoSolarIndex — Verified Solar Installers in India',
@@ -72,9 +70,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="google-adsense-account" content="ca-pub-3540617055322931" />
-      </head>
       <body className={`${anekLatin.variable} ${mukta.variable} font-body text-ink bg-paper antialiased`}>
         {/* Google Analytics 4 */}
         <Script
@@ -89,14 +84,6 @@ export default function RootLayout({
             gtag('config', '${GA_ID}', { page_path: window.location.pathname });
           `}
         </Script>
-
-        {/* Google AdSense — Auto Ads */}
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
 
         {/* Schema.org — plain <script> so it lands in the SSR HTML, not deferred to the client */}
         <script

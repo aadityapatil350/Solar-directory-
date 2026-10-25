@@ -1,8 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
-import { validateLeadName, validateLeadCity } from '@/lib/lead-validation';
+import { CheckCircle2, AlertCircle, Zap, MapPin } from 'lucide-react';
+import {
+  validateLeadName,
+  validateLeadCity,
+  validateLeadPhone,
+  validateMonthlyBill,
+} from '@/lib/lead-validation';
+
+const LIGHT_BILLS = [
+  { label: '₹1,500 – ₹3,000', value: '₹1,500 – ₹3,000', hint: '2–3 kW (₹78k subsidy)' },
+  { label: '₹3,000 – ₹5,000', value: '₹3,000 – ₹5,000', hint: '3–5 kW' },
+  { label: '₹5,000 – ₹8,000', value: '₹5,000 – ₹8,000', hint: '5–7 kW' },
+  { label: '₹8,000+', value: '₹8,000+', hint: '8kW+ / Heavy Load' },
+  { label: '< ₹1,500', value: '< ₹1,500', hint: 'Low Load' },
+];
+
+const PROPERTY_TYPES = [
+  { label: 'Independent House / Villa', value: 'Independent House' },
+  { label: 'Row House / Bungalow', value: 'Row House' },
+  { label: 'Apartment (Top Floor / Roof)', value: 'Apartment Top Floor' },
+  { label: 'Commercial / Factory', value: 'Commercial' },
+];
 
 const REQUIREMENTS = [
   { label: '3kW Home', value: '3kW Residential' },
@@ -10,13 +30,18 @@ const REQUIREMENTS = [
   { label: '10kW+', value: '10kW+ Residential' },
   { label: 'Commercial', value: 'Commercial Solar' },
   { label: 'Inverter Only', value: 'Solar Inverter' },
-  { label: 'AMC / Maintenance', value: 'AMC & Maintenance' },
+  { label: 'AMC / Service', value: 'AMC & Maintenance' },
 ];
 
-const BUDGETS = ['< ₹1L', '₹1L – ₹2L', '₹2L – ₹3L', '₹3L – ₹5L', '₹5L+'];
+const QUICK_CITIES = ['Pune', 'Mumbai', 'Thane', 'Nagpur', 'Nashik', 'Bengaluru', 'Jaipur', 'Ahmedabad', 'Lucknow'];
 
 interface LeadFormProps {
-  prefill?: { requirement?: string; city?: string };
+  prefill?: {
+    requirement?: string;
+    city?: string;
+    monthlyBill?: string;
+    propertyType?: string;
+  };
   onSuccess?: () => void;
   compact?: boolean;
   /** Where the form was submitted from — e.g. "city-page:mumbai", "listing:acme-solar" */
@@ -27,8 +52,9 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState(prefill?.city || '');
-  const [requirement, setRequirement] = useState(prefill?.requirement || '');
-  const [budget, setBudget] = useState('');
+  const [monthlyBill, setMonthlyBill] = useState(prefill?.monthlyBill || '');
+  const [propertyType, setPropertyType] = useState(prefill?.propertyType || 'Independent House');
+  const [requirement, setRequirement] = useState(prefill?.requirement || '3kW Residential');
   const [urgent, setUrgent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,15 +70,22 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
       return;
     }
 
-    const cleanPhone = phone.replace(/\s+/g, '');
-    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
-      setError('Enter a valid 10-digit mobile number starting with 6–9.');
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+    const phoneError = validateLeadPhone(cleanPhone);
+    if (phoneError) {
+      setError(phoneError);
       return;
     }
 
     const cityError = validateLeadCity(city);
     if (cityError) {
       setError(cityError);
+      return;
+    }
+
+    const billError = validateMonthlyBill(monthlyBill);
+    if (billError) {
+      setError(billError);
       return;
     }
 
@@ -64,9 +97,10 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
         body: JSON.stringify({
           name: name.trim(),
           phone: cleanPhone,
-          city,
+          city: city.trim(),
+          monthlyBill: monthlyBill.trim(),
+          propertyType: propertyType.trim(),
           requirement,
-          budget,
           urgency: urgent ? 'urgent' : 'normal',
           source,
         }),
@@ -80,8 +114,9 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           currency: 'INR',
           value: 100,
           source: source || 'unknown',
-          city,
+          city: city.trim(),
           requirement: requirement || 'unspecified',
+          monthly_bill: monthlyBill,
         });
       }
 
@@ -100,9 +135,12 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
         <div className="w-12 h-12 bg-wash rounded-full flex items-center justify-center mx-auto mb-3 text-ink">
           <CheckCircle2 className="h-6 w-6 stroke-[2]" />
         </div>
-        <h3 className="font-heading font-semibold text-lg text-ink mb-1">Enquiry submitted</h3>
-        <p className="text-ink-2 text-sm leading-relaxed">
-          Up to 3 verified installers in <strong>{city}</strong> will contact you with customized quotes and subsidy guidance. Free service.
+        <h3 className="font-heading font-semibold text-lg text-ink mb-1">Pre-Qualification Confirmed</h3>
+        <p className="text-ink-2 text-sm leading-relaxed mb-3">
+          Your solar enquiry for <strong>{city}</strong> (Monthly Bill: {monthlyBill}) has been received.
+        </p>
+        <p className="text-xs text-ink-2 bg-wash p-3 rounded-sm border border-line">
+          Channel partner engineers (including SolarSquare & verified local installers) will contact you on WhatsApp / Phone with customized proposal and PM Surya Ghar (₹78,000) subsidy assistance.
         </p>
       </div>
     );
@@ -111,22 +149,27 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
   return (
     <div id="quote" className={`bg-paper border border-line rounded-sm ${compact ? 'p-4' : 'p-5'}`}>
       <div className="mb-4">
+        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-sun-wash text-ink text-[11px] font-bold tracking-wide uppercase mb-2">
+          <Zap className="h-3 w-3 fill-sun text-ink" />
+          SolarSquare &amp; Verified Partners
+        </div>
         <h2 className="font-heading font-semibold text-lg text-ink">
-          Get quotes
+          Get Pre-Qualified Solar Quotes
         </h2>
         <p className="text-xs text-ink-2 mt-0.5">
-          Connect with verified installers serving {city || 'your area'}. Free service.
+          Connect with top channel partners &amp; verified installers in {city || 'your area'}. Free site survey &amp; subsidy calculation.
         </p>
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 bg-wash border border-line rounded-sm p-3 mb-4 text-xs text-ink">
-          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 stroke-[2]" />
-          <span>{error}</span>
+        <div className="flex items-start gap-2 bg-wash border border-red-200 text-red-700 rounded-sm p-3 mb-4 text-xs">
+          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 stroke-[2] text-red-600" />
+          <span className="font-medium">{error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-3.5">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Full Name */}
         <div>
           <label className="block text-xs font-semibold text-ink mb-1">
             Full Name <span className="text-red-500">*</span>
@@ -141,6 +184,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           />
         </div>
 
+        {/* Mobile Number */}
         <div>
           <label className="block text-xs font-semibold text-ink mb-1">
             Mobile Number (WhatsApp) <span className="text-red-500">*</span>
@@ -160,27 +204,109 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
               className="w-full h-11 pl-11 pr-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink tabular-nums"
             />
           </div>
-          <p className="text-[11px] text-ink-2 mt-1">Verified installers will call / WhatsApp you with quotations</p>
+          <p className="text-[11px] text-ink-2 mt-1">Quotation and subsidy estimate will be shared via WhatsApp</p>
         </div>
 
+        {/* Mandatory City / Installation Location */}
         <div>
           <label className="block text-xs font-semibold text-ink mb-1">
             Installation Location (City / Town) <span className="text-red-500">*</span>
           </label>
-          <input
-            type="text"
-            required
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="e.g. Pune, Jaipur, Nagpur, Bengaluru"
-            className="w-full h-11 px-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
-          />
-          <p className="text-[11px] text-ink-2 mt-1">Enter your city, district or area where solar will be installed</p>
+          <div className="relative">
+            <input
+              type="text"
+              required
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="e.g. Pune, PCMC, Thane, Lucknow, Bengaluru..."
+              className="w-full h-11 pl-8 pr-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
+            />
+            <MapPin className="h-4 w-4 text-ink-2 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+
+          {/* Quick city selectors */}
+          <div className="flex flex-wrap items-center gap-1.5 mt-2">
+            <span className="text-[11px] text-ink-2">Popular:</span>
+            {QUICK_CITIES.slice(0, 5).map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCity(c)}
+                className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
+                  city.toLowerCase() === c.toLowerCase()
+                    ? 'border-ink bg-ink text-paper font-medium'
+                    : 'border-line text-ink-2 hover:text-ink hover:bg-wash'
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
 
+        {/* Mandatory Monthly Electricity Bill / Light Bill */}
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-xs font-semibold text-ink">
+              Average Monthly Light Bill (Electricity Bill) <span className="text-red-500">*</span>
+            </label>
+            <span className="text-[10px] text-ink-2 uppercase tracking-wide">For Subsidy Fit</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {LIGHT_BILLS.map((b) => {
+              const active = monthlyBill === b.value;
+              return (
+                <button
+                  key={b.value}
+                  type="button"
+                  onClick={() => setMonthlyBill(b.value)}
+                  className={`text-left p-2.5 rounded-sm border transition-all text-xs ${
+                    active
+                      ? 'border-ink bg-ink text-paper font-semibold shadow-sm'
+                      : 'border-line text-ink hover:bg-wash'
+                  }`}
+                >
+                  <div className="font-semibold">{b.label}</div>
+                  <div className={`text-[10px] mt-0.5 ${active ? 'text-paper/80' : 'text-ink-2'}`}>
+                    {b.hint}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Rooftop / Property Type (SolarSquare Qualification) */}
+        <div>
+          <label className="block text-xs font-semibold text-ink mb-1.5">
+            Property / Rooftop Type <span className="text-red-500">*</span>
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {PROPERTY_TYPES.map((p) => {
+              const active = propertyType === p.value;
+              return (
+                <button
+                  key={p.value}
+                  type="button"
+                  onClick={() => setPropertyType(p.value)}
+                  className={`text-xs px-2.5 py-1.5 rounded-sm border transition-colors ${
+                    active
+                      ? 'border-ink bg-ink text-paper font-medium'
+                      : 'border-line text-ink hover:bg-wash'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* System Requirement */}
         <div>
           <label className="block text-xs font-medium text-ink mb-1.5">
-            What do you need?
+            System Size / Need
           </label>
           <div className="flex flex-wrap gap-1.5">
             {REQUIREMENTS.map((r) => {
@@ -203,31 +329,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           </div>
         </div>
 
-        <div>
-          <label className="block text-xs font-medium text-ink mb-1.5">
-            Budget
-          </label>
-          <div className="flex flex-wrap gap-1.5">
-            {BUDGETS.map((b) => {
-              const active = budget === b;
-              return (
-                <button
-                  key={b}
-                  type="button"
-                  onClick={() => setBudget(active ? '' : b)}
-                  className={`text-xs px-2.5 py-1.5 rounded-sm border transition-colors tabular-nums ${
-                    active
-                      ? 'border-ink bg-ink text-paper font-medium'
-                      : 'border-line text-ink hover:bg-wash'
-                  }`}
-                >
-                  {b}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
+        {/* Urgency */}
         <label className="flex items-center gap-2 cursor-pointer pt-1 text-xs text-ink select-none">
           <input
             type="checkbox"
@@ -235,19 +337,20 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
             onChange={(e) => setUrgent(e.target.checked)}
             className="w-4 h-4 accent-ink rounded-sm"
           />
-          <span>Urgent requirement (plan to install within 30 days)</span>
+          <span>Urgent (Plan to install within 30 days for priority site survey)</span>
         </label>
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
           className="w-full h-11 bg-sun text-ink font-semibold text-sm rounded-sm hover:brightness-95 transition-all flex items-center justify-center disabled:opacity-50 mt-2 focus:outline-none focus:ring-2 focus:ring-ink"
         >
-          {loading ? 'Submitting…' : 'Get free quotes'}
+          {loading ? 'Validating enquiry…' : 'Get Verified Quotes & Subsidy'}
         </button>
 
         <p className="text-[11px] text-ink-2 text-center pt-1 leading-normal">
-          No charges · Up to 3 verified installers · Privacy respected
+          No charges · SolarSquare &amp; verified channel partners · Free site survey
         </p>
       </form>
     </div>

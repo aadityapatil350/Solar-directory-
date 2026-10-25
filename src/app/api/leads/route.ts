@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { sendLeadNotificationEmail } from '@/lib/email';
-import { validateLeadName, validateLeadCity } from '@/lib/lead-validation';
+import { validateLeadName, validateLeadCity, validateLeadPhone, validateMonthlyBill } from '@/lib/lead-validation';
 
 // How many verified installers to notify per lead
 const MAX_INSTALLERS_PER_LEAD = 3;
@@ -99,7 +99,7 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
 }
 
 async function notifyFeaturedOwners(
-  lead: { name: string; phone: string; email: string | null; requirement: string | null; budget: string | null },
+  lead: { name: string; phone: string; email: string | null; requirement: string | null; budget: string | null; monthlyBill?: string | null; city: string },
   locationId: string | null,
 ) {
   try {
@@ -123,7 +123,11 @@ async function notifyFeaturedOwners(
       await sendLeadNotificationEmail(
         listing.user.email,
         listing.user.name || listing.name,
-        { ...lead, city: listing.location.city },
+        {
+          ...lead,
+          city: lead.city || listing.location.city,
+          monthlyBill: lead.monthlyBill,
+        },
       ).catch((err) => console.error('Lead notification email failed:', err));
     }
   } catch (err) {
@@ -134,7 +138,21 @@ async function notifyFeaturedOwners(
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone, email, requirement, locationId: rawLocationId, city, budget, urgency, source } = body;
+    const {
+      name,
+      phone,
+      email,
+      requirement,
+      locationId: rawLocationId,
+      city,
+      monthlyBill,
+      propertyType,
+      budget,
+      urgency,
+      source,
+    } = body;
+
+    const isContactForm = source === 'contact-page' || String(requirement || '').startsWith('[Contact Form]');
 
     const nameError = validateLeadName(name);
     if (nameError) {
@@ -145,14 +163,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Phone is required' }, { status: 400 });
     }
 
-    if (!/^[6-9]\d{9}$/.test(phone) && phone !== '0000000000') {
-      return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 });
+    if (!isContactForm) {
+      const phoneError = validateLeadPhone(phone);
+      if (phoneError) {
+        return NextResponse.json({ error: phoneError }, { status: 400 });
+      }
     }
 
-    if (!rawLocationId) {
-      const cityError = validateLeadCity(city);
+    // Location is mandatory for all quote enquiries
+    const rawCity = (city ?? '').trim();
+    if (!isContactForm) {
+      const cityError = validateLeadCity(rawCity);
       if (cityError) {
         return NextResponse.json({ error: cityError }, { status: 400 });
+      }
+    }
+
+    // Monthly light bill is mandatory for quote enquiries to ensure lead qualification for channel partners (e.g. SolarSquare)
+    const effectiveMonthlyBill = (monthlyBill ?? budget ?? '').trim();
+    if (!isContactForm) {
+      const billError = validateMonthlyBill(effectiveMonthlyBill);
+      if (billError) {
+        return NextResponse.json({ error: billError }, { status: 400 });
       }
     }
 
@@ -160,30 +192,73 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
-    // Resolve locationId: use provided ID, or look up by city name
+    // Resolve or auto-create location record so locationId is never lost
     let locationId = rawLocationId || null;
-    if (!locationId && city) {
-      const location = await prisma.location.findFirst({
-        where: { city: { equals: city.trim(), mode: 'insensitive' } },
+    const cleanCityName = rawCity || (isContactForm ? 'Support Enquiry' : '');
+
+    if (!locationId && cleanCityName && !isContactForm) {
+      // 1. Try finding exact/case-insensitive match
+      let location = await prisma.location.findFirst({
+        where: { city: { equals: cleanCityName, mode: 'insensitive' } },
       });
+
+      // 2. Try slug match
+      if (!location) {
+        const citySlug = cleanCityName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        location = await prisma.location.findFirst({
+          where: {
+            OR: [
+              { slug: { equals: citySlug } },
+              { slug: { startsWith: `${citySlug}-` } },
+            ],
+          },
+        });
+      }
+
+      // 3. If not found in default list, auto-create a Location entry so lead is linked and serviceable
+      if (!location && cleanCityName.length >= 2) {
+        try {
+          const baseSlug = cleanCityName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          let uniqueSlug = baseSlug;
+          const existing = await prisma.location.findUnique({ where: { slug: uniqueSlug } });
+          if (existing) {
+            uniqueSlug = `${baseSlug}-${Date.now().toString().slice(-4)}`;
+          }
+          location = await prisma.location.create({
+            data: {
+              city: cleanCityName,
+              state: 'India',
+              slug: uniqueSlug,
+            },
+          });
+        } catch (locErr) {
+          console.error('Location auto-creation failed:', locErr);
+        }
+      }
+
       locationId = location?.id || null;
     }
 
-    // Tag requirement with source so we can attribute leads by page type
-    // until a dedicated `source` column ships (avoids a schema migration).
-    const trimmedRequirement = requirement?.trim() || null;
-    const requirementWithSource = source
-      ? `[${String(source).slice(0, 40)}] ${trimmedRequirement ?? ''}`.trim()
-      : trimmedRequirement;
+    // Build structured qualification text with all details for solar channel partners & installers
+    const qualificationParts: string[] = [];
+    if (source) qualificationParts.push(`[${String(source).slice(0, 40)}]`);
+    if (requirement?.trim()) qualificationParts.push(requirement.trim());
+    if (effectiveMonthlyBill) qualificationParts.push(`Light Bill: ${effectiveMonthlyBill}`);
+    if (propertyType?.trim()) qualificationParts.push(`Property: ${propertyType.trim()}`);
+    if (cleanCityName) qualificationParts.push(`City: ${cleanCityName}`);
+
+    const requirementText = qualificationParts.join(' | ');
 
     const lead = await prisma.lead.create({
       data: {
         name: name.trim(),
         phone: phone.trim(),
         email: email?.trim() || null,
-        requirement: requirementWithSource,
+        city: cleanCityName || null,
+        monthlyBill: effectiveMonthlyBill || null,
+        requirement: requirementText,
         locationId: locationId || null,
-        budget: budget || null,
+        budget: effectiveMonthlyBill || null,
         urgency: urgency || 'normal',
       },
     });
@@ -192,13 +267,24 @@ export async function POST(request: Request) {
     distributeLeadToInstallers(lead.id, locationId);
 
     // Notify featured listing owners in the same city (async, non-blocking)
-    notifyFeaturedOwners(lead, locationId);
+    notifyFeaturedOwners(
+      {
+        name: lead.name,
+        phone: lead.phone,
+        email: lead.email,
+        requirement: lead.requirement,
+        budget: lead.budget,
+        monthlyBill: lead.monthlyBill,
+        city: cleanCityName,
+      },
+      locationId,
+    );
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Thank you! Our solar experts will contact you soon.',
-        lead: { id: lead.id, name: lead.name, phone: lead.phone },
+        message: 'Thank you! Qualified quotes from verified channel partners will be sent shortly.',
+        lead: { id: lead.id, name: lead.name, phone: lead.phone, city: lead.city, monthlyBill: lead.monthlyBill },
       },
       { status: 201 }
     );

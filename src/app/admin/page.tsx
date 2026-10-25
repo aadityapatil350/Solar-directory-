@@ -228,6 +228,18 @@ export default function AdminDashboard() {
   const [upgradeMonths, setUpgradeMonths] = useState(1);
   const [upgrading, setUpgrading] = useState(false);
 
+  // ── Claim "Send Email" modal state ──
+  const [emailModal, setEmailModal] = useState<{ claim: ClaimRequest } | null>(null);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
+
+  const DEFAULT_PROMO_SUBJECT = 'Your GoSolarIndex listing is approved — here’s what’s next';
+  const defaultPromoMessage = (listingName: string) =>
+    `Your claim for "${listingName}" has been approved and your listing is now live with a verified badge on GoSolarIndex.\n\n` +
+    `Want more visibility and leads? Upgrade to our Featured plan (₹999/month) to unlock unlimited photos, a YouTube video, priority placement in search results, and direct customer leads in your city.\n\n` +
+    `Reply to this email or visit our pricing page to upgrade today!`;
+
   // ── Client-side pagination for leads & claims ──
   const LEADS_PER_PAGE = 10;
   const CLAIMS_PER_PAGE = 10;
@@ -387,6 +399,35 @@ export default function AdminDashboard() {
       toast('error', err instanceof Error ? err.message : 'Failed to process claim');
     } finally {
       setProcessingClaim(null);
+    }
+  };
+
+  const sendClaimEmail = async () => {
+    if (!emailModal) return;
+    if (!emailSubject.trim() || !emailMessage.trim()) {
+      toast('error', 'Subject and message are required');
+      return;
+    }
+    setSendingEmail(true);
+    try {
+      const res = await fetch('/api/admin/claims', {
+        method: 'PATCH',
+        headers: headers(),
+        body: JSON.stringify({
+          claimId: emailModal.claim.id,
+          action: 'send_email',
+          subject: emailSubject,
+          message: emailMessage,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast('success', `Email sent to ${emailModal.claim.email}`);
+      setEmailModal(null);
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'Failed to send email');
+    } finally {
+      setSendingEmail(false);
     }
   };
 
@@ -680,16 +721,18 @@ export default function AdminDashboard() {
   const toggleSuggestPanel = async (lead: any) => {
     if (expandedLeadId === lead.id) { setExpandedLeadId(null); return; }
     setExpandedLeadId(lead.id);
-    if (!lead.location) { setSuggestInstallers([]); setSuggestCity('No city'); return; }
+    const locId = lead.location?.id || lead.locationId;
+    const leadCity = lead.city || lead.location?.city;
+    if (!locId && !leadCity) { setSuggestInstallers([]); setSuggestCity('No city'); return; }
     setSuggestLoading(true);
     try {
       const res = await fetch(
-        `/api/admin/installers/suggest?locationId=${lead.location.id}&leadId=${lead.id}`,
+        `/api/admin/installers/suggest?${locId ? `locationId=${locId}&` : ''}leadId=${lead.id}`,
         { headers: { Authorization: `Bearer ${auth}` } },
       );
       const data = await res.json();
       setSuggestInstallers(data.installers || []);
-      setSuggestCity(data.city || lead.location.city);
+      setSuggestCity(data.city || leadCity);
     } catch { setSuggestInstallers([]); } finally { setSuggestLoading(false); }
   };
 
@@ -867,6 +910,66 @@ export default function AdminDashboard() {
               <button
                 onClick={() => setUpgradeModal(null)}
                 className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Claim "Send Email" Modal ── */}
+      {emailModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Mail className="h-5 w-5 text-blue-500" />
+              <h3 className="font-bold text-gray-900 text-base">Send Email to Claimant</h3>
+            </div>
+            <p className="text-sm text-gray-500 mb-5">
+              To <span className="font-semibold text-gray-800">{emailModal.claim.name}</span>{' '}
+              (<span className="text-gray-600">{emailModal.claim.email}</span>) regarding{' '}
+              <span className="font-semibold text-gray-800">{emailModal.claim.listing.name}</span>
+            </p>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Subject</label>
+              <input
+                type="text"
+                value={emailSubject}
+                onChange={(e) => setEmailSubject(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Email subject"
+              />
+            </div>
+
+            <div className="mb-5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
+              <textarea
+                value={emailMessage}
+                onChange={(e) => setEmailMessage(e.target.value)}
+                rows={8}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
+                placeholder="Write your message…"
+              />
+              <p className="text-xs text-gray-400 mt-1.5">
+                Sent as GoSolarIndex branded HTML email with a &quot;View Plans &amp; Upgrade&quot; button linking to /pricing.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={sendClaimEmail}
+                disabled={sendingEmail}
+                className="flex-1 py-2.5 rounded-xl font-semibold text-sm transition disabled:opacity-60 bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-1.5"
+              >
+                <Send className="h-3.5 w-3.5" />
+                {sendingEmail ? 'Sending…' : 'Send Email'}
+              </button>
+              <button
+                onClick={() => setEmailModal(null)}
+                disabled={sendingEmail}
+                className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition disabled:opacity-60"
               >
                 Cancel
               </button>
@@ -1065,17 +1168,27 @@ export default function AdminDashboard() {
                                       {lead.email}
                                     </div>
                                   )}
-                                  {lead.location && (
-                                    <div className="flex items-center gap-1.5 text-xs text-ink-2">
+                                  {(lead.city || lead.location?.city) ? (
+                                    <div className="flex items-center gap-1.5 text-xs text-ink font-medium">
                                       <MapPin className="h-3 w-3 text-ink-2" />
-                                      {lead.location.city}
+                                      {lead.city || lead.location?.city}
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center gap-1.5 text-xs text-amber-700">
+                                      <MapPin className="h-3 w-3 text-amber-500" />
+                                      Location unassigned
                                     </div>
                                   )}
                                 </div>
                               </td>
-                              <td className="px-5 py-3.5 text-xs text-ink-2 max-w-[180px]">
-                                {lead.requirement && <div className="truncate">{lead.requirement}</div>}
-                                {lead.budget && <div className="text-ink-2">Budget: {lead.budget}</div>}
+                              <td className="px-5 py-3.5 text-xs text-ink-2 max-w-[200px]">
+                                {lead.requirement && <div className="truncate text-ink font-medium">{lead.requirement}</div>}
+                                {lead.monthlyBill && (
+                                  <div className="inline-block mt-0.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                                    ⚡ Bill: {lead.monthlyBill}
+                                  </div>
+                                )}
+                                {lead.budget && !lead.monthlyBill && <div className="text-ink-2">Budget: {lead.budget}</div>}
                                 {lead.leadDeliveries?.length > 0 && (
                                   <div className="text-ink font-medium mt-0.5">
                                     ✓ Sent to {lead.leadDeliveries.length} installer{lead.leadDeliveries.length > 1 ? 's' : ''}
@@ -1869,6 +1982,19 @@ export default function AdminDashboard() {
                               >
                                 <Crown className="h-3.5 w-3.5" />
                                 {claim.listing.featured ? 'Manage Premium' : 'Upgrade Premium'}
+                              </button>
+                            )}
+                            {claim.status === 'approved' && (
+                              <button
+                                onClick={() => {
+                                  setEmailSubject(DEFAULT_PROMO_SUBJECT);
+                                  setEmailMessage(defaultPromoMessage(claim.listing.name));
+                                  setEmailModal({ claim });
+                                }}
+                                className="flex items-center gap-1.5 bg-white hover:bg-blue-50 text-blue-600 border border-blue-200 text-xs font-semibold px-4 py-2 rounded-lg transition"
+                              >
+                                <Mail className="h-3.5 w-3.5" />
+                                Send Email
                               </button>
                             )}
                             <button

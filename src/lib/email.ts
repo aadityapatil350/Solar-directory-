@@ -78,13 +78,71 @@ export async function sendClaimApprovedEmail(
   });
 }
 
+export async function sendClaimPromoEmail(
+  email: string,
+  name: string,
+  listingName: string,
+  subject: string,
+  message: string,
+): Promise<void> {
+  console.log(`\n===== CLAIM PROMO EMAIL TO ${email} =====`);
+  console.log(`Listing: ${listingName} | Subject: ${subject}`);
+  console.log(`============================================\n`);
+
+  if (!resend) {
+    console.warn('RESEND_API_KEY not set — email only logged to console');
+    return;
+  }
+
+  // message is admin-authored plain text from a textarea — render line breaks, escape HTML
+  const escapeHtml = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const messageHtml = escapeHtml(message).replace(/\n/g, '<br/>');
+
+  await resend.emails.send({
+    from: FROM,
+    to: email,
+    subject,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111;">
+        <div style="background:#f97316;padding:24px 32px;border-radius:8px 8px 0 0;">
+          <h1 style="color:#fff;margin:0;font-size:22px;">GoSolarIndex</h1>
+          <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">India's Solar Directory</p>
+        </div>
+        <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          <p>Hi <strong>${name}</strong>,</p>
+          <p style="line-height:1.7;color:#374151;">${messageHtml}</p>
+
+          <div style="margin:28px 0;text-align:center;">
+            <a href="${APP_URL}/pricing" style="background:#f97316;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;">
+              View Plans & Upgrade →
+            </a>
+          </div>
+
+          <p style="margin-top:24px;color:#6b7280;font-size:13px;">Regarding your listing: <strong>${listingName}</strong>. Questions? Reply to this email or contact us at <a href="mailto:adityabiz350@gmail.com" style="color:#f97316;">adityabiz350@gmail.com</a></p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
+          <p style="font-size:12px;color:#9ca3af;margin:0;">GoSolarIndex — India's #1 Solar Business Directory</p>
+        </div>
+      </div>
+    `,
+  });
+}
+
 export async function sendLeadNotificationEmail(
   ownerEmail: string,
   ownerName: string,
-  lead: { name: string; phone: string; email: string | null; requirement: string | null; budget: string | null; city: string },
+  lead: {
+    name: string;
+    phone: string;
+    email: string | null;
+    requirement: string | null;
+    budget: string | null;
+    monthlyBill?: string | null;
+    city: string;
+  },
 ): Promise<void> {
   console.log(`\n===== LEAD NOTIFICATION TO ${ownerEmail} =====`);
-  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}`);
+  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}${lead.monthlyBill ? ` | Bill: ${lead.monthlyBill}` : ''}`);
   console.log(`===============================================\n`);
 
   if (!resend) {
@@ -95,25 +153,26 @@ export async function sendLeadNotificationEmail(
   await resend.emails.send({
     from: FROM,
     to: ownerEmail,
-    subject: `🔔 New Lead in ${lead.city} — ${lead.name} wants a solar quote`,
+    subject: `🔔 New Qualified Lead in ${lead.city} — ${lead.name}${lead.monthlyBill ? ` (Bill: ${lead.monthlyBill})` : ''}`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111;">
         <div style="background:#f97316;padding:24px 32px;border-radius:8px 8px 0 0;">
           <h1 style="color:#fff;margin:0;font-size:22px;">GoSolarIndex</h1>
-          <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">New Lead Notification</p>
+          <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">New Qualified Lead Notification</p>
         </div>
         <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
           <h2 style="color:#111;margin-top:0;">🔔 New Lead in ${lead.city}!</h2>
-          <p>Hi <strong>${ownerName}</strong>, a new customer is looking for solar services in your area.</p>
+          <p>Hi <strong>${ownerName}</strong>, a qualified customer is looking for solar installations in your area.</p>
 
           <div style="background:#f9fafb;border-radius:8px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
             <table style="width:100%;border-collapse:collapse;">
-              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:120px;">Name</td><td style="padding:6px 0;font-weight:600;font-size:14px;">${lead.name}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:130px;">Name</td><td style="padding:6px 0;font-weight:600;font-size:14px;">${lead.name}</td></tr>
               <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Phone</td><td style="padding:6px 0;font-weight:600;font-size:14px;"><a href="tel:${lead.phone}" style="color:#f97316;">${lead.phone}</a></td></tr>
               ${lead.email ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Email</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${lead.email}" style="color:#f97316;">${lead.email}</a></td></tr>` : ''}
-              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City</td><td style="padding:6px 0;font-size:14px;">${lead.city}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City / Location</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.city}</td></tr>
+              ${lead.monthlyBill ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Monthly Light Bill</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#059669;">⚡ ${lead.monthlyBill}</td></tr>` : ''}
               ${lead.requirement ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Requirement</td><td style="padding:6px 0;font-size:14px;">${lead.requirement}</td></tr>` : ''}
-              ${lead.budget ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Budget</td><td style="padding:6px 0;font-size:14px;">${lead.budget}</td></tr>` : ''}
+              ${lead.budget && !lead.monthlyBill ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Budget</td><td style="padding:6px 0;font-size:14px;">${lead.budget}</td></tr>` : ''}
             </table>
           </div>
 

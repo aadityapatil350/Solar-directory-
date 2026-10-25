@@ -30,8 +30,10 @@ export default function ContactPage() {
           name: form.name.trim(),
           phone: form.phone.trim() || '0000000000',
           email: form.email.trim(),
+          city: 'Support Enquiry',
           requirement: `[Contact Form] Subject: ${form.subject} | Message: ${form.message}`,
           urgency: 'normal',
+          source: 'contact-page',
         }),
       });
 

@@ -118,6 +118,8 @@ export async function POST(request: Request) {
       data: {
         name: String(name).trim(),
         phone: cleanPhone,
+        city: String(city).trim(),
+        monthlyBill: monthlyBill ? `₹${monthlyBill}/mo` : null,
         requirement: requirementText,
         locationId: location?.id || null,
         budget: monthlyBill ? `Bill ₹${monthlyBill}/mo` : null,

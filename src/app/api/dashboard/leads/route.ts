@@ -48,7 +48,8 @@ export async function GET() {
       email: isFeatured ? lead.email : null,
       requirement: lead.requirement,
       budget: lead.budget,
-      city: lead.location?.city,
+      monthlyBill: lead.monthlyBill,
+      city: lead.city || lead.location?.city,
       createdAt: lead.createdAt,
       phoneMasked: !isFeatured,
     }));

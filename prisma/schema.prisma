@@ -115,6 +115,8 @@ model Lead {
   name           String
   phone          String
   email          String?
+  city           String?
+  monthlyBill    String?
   requirement    String?
   locationId     String?
   budget         String?
@@ -127,6 +129,7 @@ model Lead {
 
   @@index([status])
   @@index([createdAt])
+  @@index([city])
 }
 
 model LeadDelivery {

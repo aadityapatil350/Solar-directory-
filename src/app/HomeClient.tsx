@@ -274,12 +274,16 @@ export default function HomeClient({
             <div className="flex items-center gap-2 flex-wrap pt-2.5 px-1 text-xs text-ink-2 font-body">
               <span className="font-semibold text-ink">Popular:</span>
               {[
-                { name: 'Mumbai', slug: 'mumbai' },
-                { name: 'Pune', slug: 'pune' },
-                { name: 'Delhi', slug: 'delhi' },
+                { name: 'Hyderabad', slug: 'hyderabad' },
                 { name: 'Bangalore', slug: 'bangalore' },
+                { name: 'Delhi', slug: 'delhi' },
+                { name: 'Pune', slug: 'pune' },
+                { name: 'Mumbai', slug: 'mumbai' },
                 { name: 'Ahmedabad', slug: 'ahmedabad' },
+                { name: 'Surat', slug: 'surat' },
                 { name: 'Jaipur', slug: 'jaipur' },
+                { name: 'Chennai', slug: 'chennai' },
+                { name: 'Kolkata', slug: 'kolkata' },
                 { name: 'Lucknow', slug: 'lucknow' },
               ].map((c) => (
                 <Link

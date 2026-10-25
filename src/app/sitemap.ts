@@ -6,10 +6,12 @@ export const revalidate = 3600;
 
 const BASE_URL = 'https://gosolarindex.in';
 
-// City slugs that get bumped priority (top metros)
+// City slugs that get bumped priority (top metros & high-growth solar hubs)
 const TOP_CITIES = new Set([
   'mumbai', 'delhi', 'bangalore', 'pune', 'hyderabad',
   'chennai', 'kolkata', 'ahmedabad', 'jaipur', 'lucknow',
+  'surat', 'nagpur', 'nashik', 'thane', 'indore', 'bhopal',
+  'chandigarh', 'vadodara', 'coimbatore', 'patna', 'mysore'
 ]);
 
 // A city with fewer than this many listings is a thin page — exclude from sitemap.

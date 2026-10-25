@@ -3,13 +3,18 @@ import { Sun } from 'lucide-react';
 
 export default function Footer() {
   const directoryLinks = [
-    { name: 'Solar in Mumbai', href: '/mumbai' },
-    { name: 'Solar in Delhi', href: '/delhi' },
-    { name: 'Solar in Bangalore', href: '/bangalore' },
-    { name: 'Solar in Pune', href: '/pune' },
     { name: 'Solar in Hyderabad', href: '/hyderabad' },
+    { name: 'Solar in Bangalore', href: '/bangalore' },
+    { name: 'Solar in Delhi', href: '/delhi' },
+    { name: 'Solar in Pune', href: '/pune' },
+    { name: 'Solar in Mumbai', href: '/mumbai' },
+    { name: 'Solar in Ahmedabad', href: '/ahmedabad' },
+    { name: 'Solar in Surat', href: '/surat' },
+    { name: 'Solar in Jaipur', href: '/jaipur' },
+    { name: 'Solar in Chennai', href: '/chennai' },
+    { name: 'Solar in Kolkata', href: '/kolkata' },
     { name: 'Browse all 78+ cities', href: '/locations' },
-    { name: 'All 36 Indian states', href: '/states/maharashtra' },
+    { name: 'All Indian states', href: '/states/maharashtra' },
   ];
 
   const planningTools = [
