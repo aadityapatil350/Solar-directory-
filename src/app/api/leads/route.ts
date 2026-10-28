@@ -8,7 +8,7 @@ import {
   validateLeadPincode,
   validateMonthlyBill,
 } from '@/lib/lead-validation';
-import { isTier1Lead } from '@/lib/tier1-cities';
+import { isTier1Lead, getSolarProfile } from '@/lib/tier1-cities';
 
 // How many verified installers to notify per lead
 const MAX_INSTALLERS_PER_LEAD = 3;
@@ -116,6 +116,9 @@ async function notifyFeaturedOwners(
     city: string;
     pincode?: string | null;
     isTier1?: boolean;
+    isSolarSquare?: boolean;
+    isExperienceCentre?: boolean;
+    experienceCentreLocation?: string;
   },
   locationId: string | null,
 ) {
@@ -143,9 +146,6 @@ async function notifyFeaturedOwners(
         {
           ...lead,
           city: lead.city || listing.location.city,
-          pincode: lead.pincode,
-          monthlyBill: lead.monthlyBill,
-          isTier1: lead.isTier1,
         },
       ).catch((err) => console.error('Lead notification email failed:', err));
     }
@@ -269,12 +269,19 @@ export async function POST(request: Request) {
       locationId = location?.id || null;
     }
 
-    // Tier-1 Metro qualification for channel partner SolarSquare
+    // Tier-1 Metro and SolarSquare network qualification
+    const solarProfile = getSolarProfile(cleanCityName, cleanPincode);
     const isTier1 = isTier1Lead(cleanCityName, cleanPincode);
 
     // Build structured qualification text with all details for solar channel partners & installers
     const qualificationParts: string[] = [];
-    if (isTier1) qualificationParts.push('⭐ Tier-1 Metro');
+    if (solarProfile?.isExperienceCentre) {
+      qualificationParts.push(`🏢 SolarSquare EC Hub (${solarProfile.experienceCentreLocation || solarProfile.name})`);
+    } else if (solarProfile?.isSolarSquare) {
+      qualificationParts.push('⚡ SolarSquare Network');
+    } else if (isTier1) {
+      qualificationParts.push('⭐ Tier-1 Metro');
+    }
     if (source) qualificationParts.push(`[${String(source).slice(0, 40)}]`);
     if (requirement?.trim()) qualificationParts.push(requirement.trim());
     if (effectiveMonthlyBill) qualificationParts.push(`Light Bill: ${effectiveMonthlyBill}`);
@@ -315,6 +322,9 @@ export async function POST(request: Request) {
         city: cleanCityName,
         pincode: cleanPincode || null,
         isTier1,
+        isSolarSquare: solarProfile?.isSolarSquare,
+        isExperienceCentre: solarProfile?.isExperienceCentre,
+        experienceCentreLocation: solarProfile?.experienceCentreLocation,
       },
       locationId,
     );

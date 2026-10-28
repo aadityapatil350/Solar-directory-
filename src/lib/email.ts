@@ -141,10 +141,13 @@ export async function sendLeadNotificationEmail(
     city: string;
     pincode?: string | null;
     isTier1?: boolean;
+    isSolarSquare?: boolean;
+    isExperienceCentre?: boolean;
+    experienceCentreLocation?: string;
   },
 ): Promise<void> {
   console.log(`\n===== LEAD NOTIFICATION TO ${ownerEmail} =====`);
-  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''}${lead.isTier1 ? ' [TIER-1 METRO]' : ''}${lead.monthlyBill ? ` | Bill: ${lead.monthlyBill}` : ''}`);
+  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''}${lead.isExperienceCentre ? ' [SOLARSQUARE EC HUB]' : lead.isSolarSquare ? ' [SOLARSQUARE NETWORK]' : lead.isTier1 ? ' [TIER-1 METRO]' : ''}${lead.monthlyBill ? ` | Bill: ${lead.monthlyBill}` : ''}`);
   console.log(`===============================================\n`);
 
   if (!resend) {
@@ -152,7 +155,13 @@ export async function sendLeadNotificationEmail(
     return;
   }
 
-  const subjectTag = lead.isTier1 ? '⭐ [Tier-1 Metro]' : '🔔';
+  const subjectTag = lead.isExperienceCentre
+    ? '🏢 [SolarSquare EC Hub]'
+    : lead.isSolarSquare
+    ? '⚡ [SolarSquare Network]'
+    : lead.isTier1
+    ? '⭐ [Tier-1 Metro]'
+    : '🔔';
 
   await resend.emails.send({
     from: FROM,
@@ -165,7 +174,15 @@ export async function sendLeadNotificationEmail(
           <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">New Qualified Lead Notification</p>
         </div>
         <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
-          ${lead.isTier1 ? `
+          ${lead.isExperienceCentre ? `
+          <div style="background:#fffbeb;border:1px solid #fde68a;color:#78350f;padding:12px 14px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:18px;">
+            🏢 Priority SolarSquare Experience Centre Hub (${lead.experienceCentreLocation || lead.city}) — Direct 3D Rooftop Survey &amp; Subsidy Assistance
+          </div>
+          ` : lead.isSolarSquare ? `
+          <div style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 14px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:18px;">
+            ⚡ Active SolarSquare Operational Network — Verified Rooftop Service Zone
+          </div>
+          ` : lead.isTier1 ? `
           <div style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 14px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:18px;">
             ⭐ Priority Tier-1 Metro Lead — Active SolarSquare &amp; Partner Service Zone
           </div>
@@ -178,7 +195,7 @@ export async function sendLeadNotificationEmail(
               <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:130px;">Name</td><td style="padding:6px 0;font-weight:600;font-size:14px;">${lead.name}</td></tr>
               <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Phone</td><td style="padding:6px 0;font-weight:600;font-size:14px;"><a href="tel:${lead.phone}" style="color:#f97316;">${lead.phone}</a></td></tr>
               ${lead.email ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Email</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${lead.email}" style="color:#f97316;">${lead.email}</a></td></tr>` : ''}
-              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City / Location</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.city}${lead.isTier1 ? ' <span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;">Tier-1 Metro</span>' : ''}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City / Location</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.city}${lead.isExperienceCentre ? ' <span style="background:#f59e0b;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;">SolarSquare EC</span>' : lead.isSolarSquare ? ' <span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;">SolarSquare Hub</span>' : lead.isTier1 ? ' <span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;">Tier-1 Metro</span>' : ''}</td></tr>
               ${lead.pincode ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">PIN Code</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.pincode}</td></tr>` : ''}
               ${lead.monthlyBill ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Monthly Light Bill</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#059669;">⚡ ${lead.monthlyBill}</td></tr>` : ''}
               ${lead.requirement ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Requirement</td><td style="padding:6px 0;font-size:14px;">${lead.requirement}</td></tr>` : ''}

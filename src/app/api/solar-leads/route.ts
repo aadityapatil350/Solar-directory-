@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { sendLeadNotificationEmail } from '@/lib/email';
 import { validateLeadName, validateLeadCity } from '@/lib/lead-validation';
+import { isTier1Lead, getSolarProfile } from '@/lib/tier1-cities';
 
 const MAX_INSTALLERS_PER_LEAD = 3;
 
@@ -112,14 +113,28 @@ export async function POST(request: Request) {
     });
 
     // 3. Create core Lead record so it appears on admin & installer dashboards
-    const requirementText = `[${source || 'Subsidy Calculator'}] ${systemSize || 3} kW System | Bill: ₹${monthlyBill || 'N/A'}/mo | Roof: ${roofType || 'RCC'} | Pincode: ${pincode || 'N/A'}`;
+    const cleanPin = pincode ? String(pincode).trim().replace(/\D/g, '').slice(0, 6) : null;
+    const cleanCity = String(city).trim();
+    const isTier1 = isTier1Lead(cleanCity, cleanPin);
+    const solarProfile = getSolarProfile(cleanCity, cleanPin);
+
+    const tagPrefix = solarProfile?.isExperienceCentre
+      ? `[🏢 SolarSquare EC - ${solarProfile.experienceCentreLocation || cleanCity}] `
+      : solarProfile?.isSolarSquare
+      ? `[⚡ SolarSquare Network] `
+      : isTier1
+      ? `[⭐ Tier-1 Metro] `
+      : '';
+
+    const requirementText = `${tagPrefix}[${source || 'Subsidy Calculator'}] ${systemSize || 3} kW System | Bill: ₹${monthlyBill || 'N/A'}/mo | Roof: ${roofType || 'RCC'} | Pincode: ${cleanPin || 'N/A'}`;
 
     const lead = await prisma.lead.create({
       data: {
         name: String(name).trim(),
         phone: cleanPhone,
-        city: String(city).trim(),
-        pincode: pincode ? String(pincode).trim().replace(/\D/g, '').slice(0, 6) : null,
+        city: cleanCity,
+        pincode: cleanPin,
+        isTier1,
         monthlyBill: monthlyBill ? `₹${monthlyBill}/mo` : null,
         requirement: requirementText,
         locationId: location?.id || null,

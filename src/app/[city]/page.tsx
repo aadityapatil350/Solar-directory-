@@ -14,7 +14,8 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { getCityFAQs, citySpecificData } from '@/lib/cityData';
 import { getStateSolarConfig } from '@/lib/solarConfig';
-import { Zap, ShieldCheck, MapPin, CheckCircle2 } from 'lucide-react';
+import { getSolarProfile } from '@/lib/tier1-cities';
+import { Zap, ShieldCheck, MapPin, CheckCircle2, Building2 } from 'lucide-react';
 
 // Use ISR for better SEO - revalidate every 1 hour
 export const revalidate = 3600;
@@ -29,13 +30,24 @@ function slugToSearch(slug: string) {
   return slug.replace(/-/g, ' ');
 }
 
+async function findCityLocation(citySlug: string) {
+  const searchName = slugToSearch(citySlug);
+  return prisma.location.findFirst({
+    where: {
+      OR: [
+        { city: { equals: searchName, mode: 'insensitive' } },
+        { slug: { equals: citySlug, mode: 'insensitive' } },
+        { slug: { startsWith: `${citySlug}-`, mode: 'insensitive' } },
+      ],
+    },
+  });
+}
+
 const MIN_LISTINGS_FOR_INDEX = 3;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { city: citySlug } = await params;
-  const location = await prisma.location.findFirst({
-    where: { city: { equals: slugToSearch(citySlug), mode: 'insensitive' } },
-  });
+  const location = await findCityLocation(citySlug);
   if (!location) return {};
 
   const listingsCount = await prisma.listing.count({
@@ -51,9 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CityPage({ params }: PageProps) {
   const { city: citySlug } = await params;
-  const cityData = await prisma.location.findFirst({
-    where: { city: { equals: slugToSearch(citySlug), mode: 'insensitive' } },
-  });
+  const cityData = await findCityLocation(citySlug);
 
   if (!cityData) notFound();
 
@@ -96,6 +106,7 @@ export default async function CityPage({ params }: PageProps) {
   const stateConfig = getStateSolarConfig(cityData.state);
   const cityInfo = citySpecificData[cityData.city.toLowerCase()];
   const topAreas = cityInfo?.topAreas || [];
+  const solarProfile = getSolarProfile(cityData.city, null);
 
   // Fetch categories
   const categories = await prisma.category.findMany({
@@ -291,6 +302,28 @@ export default async function CityPage({ params }: PageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* Left Column: Fact Panel + Coverage Info */}
               <div className="lg:col-span-7 space-y-6">
+                {solarProfile?.isExperienceCentre ? (
+                  <div className="border border-amber-300 rounded-sm p-4 bg-amber-50/80 space-y-2 text-ink shadow-xs">
+                    <div className="flex items-center gap-2 font-semibold text-amber-950 text-sm">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                      Official SolarSquare Experience Centre in {cityData.city}
+                    </div>
+                    <p className="text-xs text-amber-900 leading-relaxed font-body">
+                      Visit the physical walk-in Experience Centre located at <strong>{solarProfile.experienceCentreLocation}</strong> ({solarProfile.experienceCentreLandmark}). Explore full-scale rooftop installations, shadow simulations, wind-tested elevated structures, and instant 0-cost EMI pre-approvals.
+                    </p>
+                  </div>
+                ) : solarProfile?.isSolarSquare ? (
+                  <div className="border border-emerald-200 rounded-sm p-3.5 bg-emerald-50/80 space-y-1.5 text-xs text-emerald-950 font-body">
+                    <div className="flex items-center gap-2 font-semibold text-emerald-900 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      SolarSquare Operational Service Zone
+                    </div>
+                    <p className="leading-relaxed">
+                      {cityData.city} is an active residential operational hub for SolarSquare Energy. Certified local crews provide turnkey installation, cyclone-proof elevated structures, and DISCOM net-metering approvals.
+                    </p>
+                  </div>
+                ) : null}
+
                 <FactPanel
                   title={`Solar benchmark: ${cityData.city}, ${cityData.state}`}
                   rows={[

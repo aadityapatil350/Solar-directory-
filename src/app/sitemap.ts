@@ -6,12 +6,16 @@ export const revalidate = 3600;
 
 const BASE_URL = 'https://gosolarindex.in';
 
-// City slugs that get bumped priority (top metros & high-growth solar hubs)
+// City slugs that get bumped priority (SolarSquare operational hubs & top metros)
 const TOP_CITIES = new Set([
-  'mumbai', 'delhi', 'bangalore', 'pune', 'hyderabad',
-  'chennai', 'kolkata', 'ahmedabad', 'jaipur', 'lucknow',
-  'surat', 'nagpur', 'nashik', 'thane', 'indore', 'bhopal',
-  'chandigarh', 'vadodara', 'coimbatore', 'patna', 'mysore'
+  // SolarSquare 9 Experience Centre Hubs
+  'pune', 'nagpur', 'nashik', 'bhopal', 'indore', 'gwalior', 'jabalpur', 'lucknow', 'kanpur',
+  // SolarSquare Core Metro & Regional Hubs
+  'mumbai', 'thane', 'delhi', 'bangalore', 'hyderabad', 'gurgaon', 'noida', 'ghaziabad', 'faridabad',
+  'ahmedabad', 'surat', 'vadodara', 'jaipur', 'aurangabad', 'solapur', 'kolhapur',
+  'varanasi', 'agra', 'meerut', 'bareilly', 'prayagraj', 'raipur',
+  // Other Top Metros
+  'chennai', 'kolkata', 'chandigarh', 'coimbatore', 'patna', 'mysore'
 ]);
 
 // A city with fewer than this many listings is a thin page — exclude from sitemap.
@@ -148,14 +152,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pages.push({
       url: `${BASE_URL}/${citySlug}`,
       lastModified: loc.updatedAt.toISOString(),
-      priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.7,
+      priority: TOP_CITIES.has(citySlug) ? 0.95 : 0.7,
     });
 
     // City × service pages
     pages.push({
       url: `${BASE_URL}/${citySlug}/solar-panel-cleaning`,
       lastModified: now,
-      priority: TOP_CITIES.has(citySlug) ? 0.85 : 0.65,
+      priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.65,
     });
   }
 

@@ -272,19 +272,24 @@ export default function HomeClient({
 
             {/* Popular City Shortcuts */}
             <div className="flex items-center gap-2 flex-wrap pt-2.5 px-1 text-xs text-ink-2 font-body">
-              <span className="font-semibold text-ink">Popular:</span>
+              <span className="font-semibold text-ink">SolarSquare Hubs &amp; Top Metros:</span>
               {[
-                { name: 'Hyderabad', slug: 'hyderabad' },
+                { name: 'Pune (EC)', slug: 'pune' },
+                { name: 'Bhopal (EC)', slug: 'bhopal' },
+                { name: 'Indore (EC)', slug: 'indore' },
+                { name: 'Nagpur (EC)', slug: 'nagpur' },
+                { name: 'Nashik (EC)', slug: 'nashik' },
+                { name: 'Lucknow (EC)', slug: 'lucknow' },
+                { name: 'Kanpur (EC)', slug: 'kanpur' },
+                { name: 'Gwalior (EC)', slug: 'gwalior' },
                 { name: 'Bangalore', slug: 'bangalore' },
-                { name: 'Delhi', slug: 'delhi' },
-                { name: 'Pune', slug: 'pune' },
+                { name: 'Hyderabad', slug: 'hyderabad' },
                 { name: 'Mumbai', slug: 'mumbai' },
+                { name: 'Delhi-NCR', slug: 'delhi' },
+                { name: 'Noida', slug: 'noida' },
+                { name: 'Gurgaon', slug: 'gurgaon' },
                 { name: 'Ahmedabad', slug: 'ahmedabad' },
-                { name: 'Surat', slug: 'surat' },
                 { name: 'Jaipur', slug: 'jaipur' },
-                { name: 'Chennai', slug: 'chennai' },
-                { name: 'Kolkata', slug: 'kolkata' },
-                { name: 'Lucknow', slug: 'lucknow' },
               ].map((c) => (
                 <Link
                   key={c.slug}

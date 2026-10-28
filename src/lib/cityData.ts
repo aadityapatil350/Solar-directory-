@@ -664,6 +664,90 @@ export const citySpecificData: Record<string, CityInfo> = {
       'Sugar & foundry industries driving commercial adoption',
       'Growing residential solar market'
     ]
+  },
+  'gwalior': {
+    city: 'Gwalior', state: 'Madhya Pradesh', discoms: ['MPMKVVCL'],
+    avgCost3kW: '₹40,000 - ₹72,000', avgCost5kW: '₹65,000 - ₹1,18,000',
+    topAreas: ['Patel Nagar', 'City Centre', 'Lashkar', 'Morar', 'Thathipur', 'Govindpuri', 'Jayendraganj', 'Deen Dayal Nagar'],
+    subsidyInfo: 'Direct PM Surya Ghar subsidy ₹78,000 credited via MPMKVVCL portal',
+    highlights: [
+      'Official SolarSquare Experience Centre located in Patel Nagar, City Centre',
+      'MPMKVVCL fast-track net metering approval within 15-20 days',
+      'High solar irradiation with 5.6-6.0 peak sunshine hours daily',
+      'Rapid residential rooftop adoption in City Centre and Lashkar villa clusters'
+    ]
+  },
+  'noida': {
+    city: 'Noida', state: 'Uttar Pradesh', discoms: ['PVVNL'],
+    avgCost3kW: '₹42,000 - ₹75,000', avgCost5kW: '₹70,000 - ₹1,25,000',
+    topAreas: ['Sector 62', 'Sector 137', 'Sector 150', 'Sector 50', 'Sector 44', 'Greater Noida West', 'Sector 18', 'Sector 128'],
+    subsidyInfo: 'PM Surya Ghar Yojana central subsidy ₹78,000 + UP State Top-up incentives',
+    highlights: [
+      'PVVNL net metering streamlined for builder floors and high-rise society rooftops',
+      'Dedicated SolarSquare Energy Hub serving Noida & Greater Noida',
+      'Substantial electricity cost reduction against high Uttar Pradesh domestic slab rates',
+      'Average payback period of 3.2-3.6 years for 3kW-5kW systems'
+    ]
+  },
+  'ghaziabad': {
+    city: 'Ghaziabad', state: 'Uttar Pradesh', discoms: ['PVVNL'],
+    avgCost3kW: '₹42,000 - ₹75,000', avgCost5kW: '₹70,000 - ₹1,25,000',
+    topAreas: ['Indirapuram', 'Vaishali', 'Vasundhara', 'Raj Nagar', 'Raj Nagar Extension', 'Crossings Republik', 'Kaushambi', 'Sanjay Nagar'],
+    subsidyInfo: 'PM Surya Ghar ₹78,000 direct subsidy via PVVNL portal',
+    highlights: [
+      'SolarSquare operational hub covering Indirapuram, Vaishali & RDC',
+      'Fast PVVNL bi-directional net meter testing and installation',
+      'Heavy domestic power tariffs make solar extremely lucrative for villas and kothis',
+      'Elevated wind-proof rooftop structures popular for terrace utilization'
+    ]
+  },
+  'gurgaon': {
+    city: 'Gurgaon', state: 'Haryana', discoms: ['DHBVN'],
+    avgCost3kW: '₹44,000 - ₹78,000', avgCost5kW: '₹72,000 - ₹1,30,000',
+    topAreas: ['Golf Course Extension', 'DLF Phase 1-5', 'Sushant Lok', 'Sohna Road', 'Sector 56', 'Sector 57', 'Nirvana Country', 'South City'],
+    subsidyInfo: 'PM Surya Ghar DBT subsidy up to ₹78,000 + Haryana solar incentives',
+    highlights: [
+      'Prime SolarSquare operational cluster for premium luxury villas and floors',
+      'DHBVN digital net-metering portal with swift technical feasibility issuance',
+      'High AC power loads during peak summer offset by 5.5+ peak sunlight hours',
+      'Top-tier monocrystalline TOPCon panels preferred for compact terrace footprints'
+    ]
+  },
+  'faridabad': {
+    city: 'Faridabad', state: 'Haryana', discoms: ['DHBVN'],
+    avgCost3kW: '₹42,000 - ₹75,000', avgCost5kW: '₹68,000 - ₹1,22,000',
+    topAreas: ['Sector 15', 'Sector 16', 'Sector 21C', 'Neharpar', 'Sector 82', 'Sector 85', 'Greenfield Colony', 'Surajkund'],
+    subsidyInfo: 'PM Surya Ghar Yojana ₹78,000 subsidy through DHBVN',
+    highlights: [
+      'Active SolarSquare turnkey installation and maintenance network',
+      'DHBVN bi-directional meter deployment within 20-30 days',
+      'Rapidly growing rooftop adoption in Greater Faridabad sectors',
+      'Over 300 sunny days annually providing consistent energy output'
+    ]
+  },
+  'bareilly': {
+    city: 'Bareilly', state: 'Uttar Pradesh', discoms: ['Madhyanchal MVVNL'],
+    avgCost3kW: '₹40,000 - ₹72,000', avgCost5kW: '₹65,000 - ₹1,18,000',
+    topAreas: ['Civil Lines', 'DD Puram', 'Rajendra Nagar', 'Pilibhit Bypass Road', 'Rampur Garden', 'Prem Nagar', 'Subhash Nagar'],
+    subsidyInfo: 'Direct Benefit Transfer subsidy up to ₹78,000 under PM Surya Ghar Yojana',
+    highlights: [
+      'SolarSquare operational territory with certified installation engineers',
+      'Madhyanchal Vidyut Vitran Nigam net metering processing',
+      'High power tariff protection for independent houses and duplexes',
+      'Estimated 3.4 years capital payback with monthly savings over ₹3,200'
+    ]
+  },
+  'prayagraj': {
+    city: 'Prayagraj', state: 'Uttar Pradesh', discoms: ['UPPCL'],
+    avgCost3kW: '₹40,000 - ₹72,000', avgCost5kW: '₹65,000 - ₹1,18,000',
+    topAreas: ['Civil Lines', 'George Town', 'Tagore Town', 'Ashok Nagar', 'Mumfordganj', 'Kareli', 'Naini', 'Jhalwa'],
+    subsidyInfo: 'Central subsidy up to ₹78,000 credited within 30 days under PM Surya Ghar',
+    highlights: [
+      'SolarSquare channel partner presence with end-to-end liaison support',
+      'UPPCL net metering liaison and safety earthing inspection',
+      'Excellent solar irradiation along the Gangetic plains (5.4-5.8 kWh/m²/day)',
+      'Substantial reduction in summer power bills for residential consumers'
+    ]
   }
 };
 

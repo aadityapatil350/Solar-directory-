@@ -9,7 +9,7 @@ import {
   validateLeadPincode,
   validateMonthlyBill,
 } from '@/lib/lead-validation';
-import { detectCityFromPincode, isTier1Lead } from '@/lib/tier1-cities';
+import { detectCityFromPincode, isTier1Lead, getSolarProfile } from '@/lib/tier1-cities';
 
 const LIGHT_BILLS = [
   { label: '₹1,500 – ₹3,000', value: '₹1,500 – ₹3,000', hint: '2–3 kW (₹78k subsidy)' },
@@ -37,15 +37,15 @@ const REQUIREMENTS = [
 
 const QUICK_CITIES = [
   'Pune',
-  'Bengaluru',
-  'Hyderabad',
-  'Mumbai',
-  'Delhi-NCR',
-  'Thane',
-  'Ahmedabad',
-  'Jaipur',
+  'Bhopal',
+  'Indore',
   'Nagpur',
+  'Nashik',
   'Lucknow',
+  'Kanpur',
+  'Gwalior',
+  'Bengaluru',
+  'Mumbai',
 ];
 
 interface LeadFormProps {
@@ -87,6 +87,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
   };
 
   const isTier1 = isTier1Lead(city, pincode);
+  const solarProfile = getSolarProfile(city, pincode);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -194,7 +195,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           Get Pre-Qualified Solar Quotes
         </h2>
         <p className="text-xs text-ink-2 mt-0.5">
-          Priority service for Metro &amp; Tier-1 cities ({city || 'Pune, Bengaluru, Hyderabad, Mumbai, Delhi-NCR, Ahmedabad'}). Free site survey &amp; ₹78,000 subsidy calculation.
+          Priority service for SolarSquare operational hubs &amp; Metro cities ({city || 'Pune, Bhopal, Indore, Nagpur, Nashik, Lucknow, Kanpur, Mumbai'}). Free site survey &amp; ₹78,000 subsidy calculation.
         </p>
       </div>
 
@@ -280,17 +281,33 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           </div>
         </div>
 
-        {/* Priority Tier-1 Metro Zone Badge */}
-        {isTier1 && (
+        {/* Partner & Operational Zone Qualification Badges */}
+        {solarProfile?.isExperienceCentre ? (
+          <div className="flex items-start gap-2 text-[11px] text-amber-950 bg-amber-50/90 border border-amber-300 px-3 py-2 rounded-sm font-medium -mt-1 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0 mt-1"></span>
+            <div>
+              <span className="font-bold text-amber-900">⚡ SolarSquare Experience Centre Hub ({solarProfile.name}):</span>{' '}
+              {solarProfile.experienceCentreLocation}
+              <p className="text-[10px] text-amber-800/90 font-normal mt-0.5">
+                Physical walk-in centre · Free 3D roof design, elevated wind-proof structures &amp; certified installation crew.
+              </p>
+            </div>
+          </div>
+        ) : solarProfile?.isSolarSquare ? (
+          <div className="flex items-center gap-2 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-sm font-medium -mt-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+            <span>⚡ SolarSquare Operational Network · Fast-track PM Surya Ghar (₹78,000) Subsidy Processing</span>
+          </div>
+        ) : isTier1 ? (
           <div className="flex items-center gap-2 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-sm font-medium -mt-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
             <span>Priority Tier-1 Metro Hub · Fast-track SolarSquare &amp; empanelled partner dispatch</span>
           </div>
-        )}
+        ) : null}
 
-        {/* Quick Tier-1 Metro selectors */}
+        {/* Quick SolarSquare & Metro City selectors */}
         <div className="flex flex-wrap items-center gap-1.5 -mt-1">
-          <span className="text-[11px] text-ink-2 font-medium">Top Metros:</span>
+          <span className="text-[11px] text-ink-2 font-medium">Top Cities:</span>
           {QUICK_CITIES.map((c) => (
             <button
               key={c}

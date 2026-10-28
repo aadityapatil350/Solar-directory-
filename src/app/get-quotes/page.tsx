@@ -61,7 +61,7 @@ export default function GetQuotesPage() {
             Get Free Solar Quotes from Verified Installers
           </h1>
           <p className="text-base text-ink-2 max-w-2xl font-body">
-            Priority matching for Metro &amp; Tier-1 cities (Pune, Bengaluru, Hyderabad, Mumbai, Delhi-NCR, Ahmedabad, Surat, Jaipur &amp; more). Connect with channel partners like SolarSquare and empanelled DISCOM contractors for ₹78,000 central subsidy assistance.
+            Priority matching for SolarSquare operational hubs &amp; Experience Centre cities (Pune, Bhopal, Indore, Nagpur, Nashik, Lucknow, Kanpur, Gwalior, Bengaluru, Hyderabad, Mumbai, Delhi-NCR &amp; more). Connect with channel partners like SolarSquare and empanelled DISCOM contractors for ₹78,000 central subsidy assistance.
           </p>
         </div>
       </section>

@@ -1175,11 +1175,19 @@ export default function AdminDashboard() {
                                         {lead.city || lead.location?.city}
                                         {lead.pincode ? ` (${lead.pincode})` : ''}
                                       </span>
-                                      {lead.isTier1 && (
+                                      {lead.requirement?.includes('SolarSquare EC') ? (
+                                        <span className="text-[10px] font-bold text-amber-900 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded ml-1 shrink-0">
+                                          🏢 SolarSquare EC
+                                        </span>
+                                      ) : lead.requirement?.includes('SolarSquare Network') ? (
+                                        <span className="text-[10px] font-bold text-emerald-900 bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded ml-1 shrink-0">
+                                          ⚡ SolarSquare Hub
+                                        </span>
+                                      ) : lead.isTier1 ? (
                                         <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded ml-1 shrink-0">
                                           ⭐ Tier-1
                                         </span>
-                                      )}
+                                      ) : null}
                                     </div>
                                   ) : (
                                     <div className="flex items-center gap-1.5 text-xs text-amber-700">
