@@ -61,7 +61,7 @@ export default function GetQuotesPage() {
             Get Free Solar Quotes from Verified Installers
           </h1>
           <p className="text-base text-ink-2 max-w-2xl font-body">
-            Compare transparent proposals from certified solar contractors in your city. Compare Tier-1 ALMM panels, inverter warranties, and subsidy claims.
+            Priority matching for Metro &amp; Tier-1 cities (Pune, Bengaluru, Hyderabad, Mumbai, Delhi-NCR, Ahmedabad, Surat, Jaipur &amp; more). Connect with channel partners like SolarSquare and empanelled DISCOM contractors for ₹78,000 central subsidy assistance.
           </p>
         </div>
       </section>
@@ -74,6 +74,7 @@ export default function GetQuotesPage() {
             <FactPanel
               title="What to expect when requesting quotes"
               rows={[
+                { label: 'Priority service coverage', value: 'Metro & Tier-1 Hubs (SolarSquare Network)' },
                 { label: 'Maximum quotes received', value: '3 verified installers' },
                 { label: 'Cost of quotation & site survey', value: '₹0 (100% Free)', total: true },
                 { label: 'Subsidy assistance', value: 'Full PM Surya Ghar paperwork' },

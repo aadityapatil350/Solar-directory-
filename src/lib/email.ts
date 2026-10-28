@@ -140,10 +140,11 @@ export async function sendLeadNotificationEmail(
     monthlyBill?: string | null;
     city: string;
     pincode?: string | null;
+    isTier1?: boolean;
   },
 ): Promise<void> {
   console.log(`\n===== LEAD NOTIFICATION TO ${ownerEmail} =====`);
-  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''}${lead.monthlyBill ? ` | Bill: ${lead.monthlyBill}` : ''}`);
+  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''}${lead.isTier1 ? ' [TIER-1 METRO]' : ''}${lead.monthlyBill ? ` | Bill: ${lead.monthlyBill}` : ''}`);
   console.log(`===============================================\n`);
 
   if (!resend) {
@@ -151,10 +152,12 @@ export async function sendLeadNotificationEmail(
     return;
   }
 
+  const subjectTag = lead.isTier1 ? '⭐ [Tier-1 Metro]' : '🔔';
+
   await resend.emails.send({
     from: FROM,
     to: ownerEmail,
-    subject: `🔔 New Qualified Lead in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''} — ${lead.name}${lead.monthlyBill ? ` (Bill: ${lead.monthlyBill})` : ''}`,
+    subject: `${subjectTag} New Lead in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''} — ${lead.name}${lead.monthlyBill ? ` (Bill: ${lead.monthlyBill})` : ''}`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111;">
         <div style="background:#f97316;padding:24px 32px;border-radius:8px 8px 0 0;">
@@ -162,6 +165,11 @@ export async function sendLeadNotificationEmail(
           <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">New Qualified Lead Notification</p>
         </div>
         <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          ${lead.isTier1 ? `
+          <div style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 14px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:18px;">
+            ⭐ Priority Tier-1 Metro Lead — Active SolarSquare &amp; Partner Service Zone
+          </div>
+          ` : ''}
           <h2 style="color:#111;margin-top:0;">🔔 New Lead in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''}!</h2>
           <p>Hi <strong>${ownerName}</strong>, a qualified customer is looking for solar installations in your area.</p>
 
@@ -170,7 +178,7 @@ export async function sendLeadNotificationEmail(
               <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:130px;">Name</td><td style="padding:6px 0;font-weight:600;font-size:14px;">${lead.name}</td></tr>
               <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Phone</td><td style="padding:6px 0;font-weight:600;font-size:14px;"><a href="tel:${lead.phone}" style="color:#f97316;">${lead.phone}</a></td></tr>
               ${lead.email ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Email</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${lead.email}" style="color:#f97316;">${lead.email}</a></td></tr>` : ''}
-              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City / Location</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.city}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City / Location</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.city}${lead.isTier1 ? ' <span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;">Tier-1 Metro</span>' : ''}</td></tr>
               ${lead.pincode ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">PIN Code</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.pincode}</td></tr>` : ''}
               ${lead.monthlyBill ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Monthly Light Bill</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#059669;">⚡ ${lead.monthlyBill}</td></tr>` : ''}
               ${lead.requirement ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Requirement</td><td style="padding:6px 0;font-size:14px;">${lead.requirement}</td></tr>` : ''}

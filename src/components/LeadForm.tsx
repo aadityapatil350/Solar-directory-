@@ -9,6 +9,7 @@ import {
   validateLeadPincode,
   validateMonthlyBill,
 } from '@/lib/lead-validation';
+import { detectCityFromPincode, isTier1Lead } from '@/lib/tier1-cities';
 
 const LIGHT_BILLS = [
   { label: '₹1,500 – ₹3,000', value: '₹1,500 – ₹3,000', hint: '2–3 kW (₹78k subsidy)' },
@@ -34,7 +35,18 @@ const REQUIREMENTS = [
   { label: 'AMC / Service', value: 'AMC & Maintenance' },
 ];
 
-const QUICK_CITIES = ['Pune', 'Mumbai', 'Thane', 'Nagpur', 'Nashik', 'Bengaluru', 'Jaipur', 'Ahmedabad', 'Lucknow'];
+const QUICK_CITIES = [
+  'Pune',
+  'Bengaluru',
+  'Hyderabad',
+  'Mumbai',
+  'Delhi-NCR',
+  'Thane',
+  'Ahmedabad',
+  'Jaipur',
+  'Nagpur',
+  'Lucknow',
+];
 
 interface LeadFormProps {
   prefill?: {
@@ -62,6 +74,19 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const handlePincodeChange = (raw: string) => {
+    const clean = raw.replace(/\D/g, '').slice(0, 6);
+    setPincode(clean);
+    if (clean.length >= 3) {
+      const detected = detectCityFromPincode(clean);
+      if (detected && (!city || QUICK_CITIES.includes(city))) {
+        setCity(detected.name);
+      }
+    }
+  };
+
+  const isTier1 = isTier1Lead(city, pincode);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,7 +194,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           Get Pre-Qualified Solar Quotes
         </h2>
         <p className="text-xs text-ink-2 mt-0.5">
-          Connect with top channel partners &amp; verified installers in {city || 'your area'}. Free site survey &amp; subsidy calculation.
+          Priority service for Metro &amp; Tier-1 cities ({city || 'Pune, Bengaluru, Hyderabad, Mumbai, Delhi-NCR, Ahmedabad'}). Free site survey &amp; ₹78,000 subsidy calculation.
         </p>
       </div>
 
@@ -231,7 +256,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
                 required
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                placeholder="e.g. Pune, PCMC, Thane..."
+                placeholder="e.g. Pune, Bengaluru, Thane..."
                 className="w-full h-11 pl-8 pr-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
               />
               <MapPin className="h-4 w-4 text-ink-2 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -240,7 +265,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
 
           <div className="sm:col-span-5">
             <label className="block text-xs font-semibold text-ink mb-1">
-              PIN Code <span className="text-red-500">*</span>
+              6-Digit PIN Code <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -248,24 +273,32 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
               inputMode="numeric"
               maxLength={6}
               value={pincode}
-              onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="6-digit PIN"
+              onChange={(e) => handlePincodeChange(e.target.value)}
+              placeholder="e.g. 411045"
               className="w-full h-11 px-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink tabular-nums"
             />
           </div>
         </div>
 
-        {/* Quick city selectors */}
+        {/* Priority Tier-1 Metro Zone Badge */}
+        {isTier1 && (
+          <div className="flex items-center gap-2 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-sm font-medium -mt-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+            <span>Priority Tier-1 Metro Hub · Fast-track SolarSquare &amp; empanelled partner dispatch</span>
+          </div>
+        )}
+
+        {/* Quick Tier-1 Metro selectors */}
         <div className="flex flex-wrap items-center gap-1.5 -mt-1">
-          <span className="text-[11px] text-ink-2">Popular:</span>
-          {QUICK_CITIES.slice(0, 5).map((c) => (
+          <span className="text-[11px] text-ink-2 font-medium">Top Metros:</span>
+          {QUICK_CITIES.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setCity(c)}
               className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
                 city.toLowerCase() === c.toLowerCase()
-                  ? 'border-ink bg-ink text-paper font-medium'
+                  ? 'border-ink bg-ink text-paper font-semibold shadow-xs'
                   : 'border-line text-ink-2 hover:text-ink hover:bg-wash'
               }`}
             >

@@ -562,25 +562,25 @@ export default function HomeClient({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
             {[
               {
-                title: 'PM Surya Ghar Muft Bijli Yojana Complete Application Guide',
-                desc: 'Step-by-step procedure to apply on the national portal, DISCOM feasibility, and DBT disbursement directly into your bank account.',
-                date: 'Sep 2026',
-                href: '/blog/pm-surya-ghar-yojana-complete-guide',
-                tag: 'Subsidy Guide',
+                title: 'SolarSquare Rooftop Solar Review 2026: Cost, Structure & Subsidy',
+                desc: 'Comprehensive review of SolarSquare: 150 km/h wind-resistant elevated frames, 5-year AMC, and net costs after ₹78,000 DBT.',
+                date: 'Oct 2026',
+                href: '/blog/solarsquare-solar-review-cost-subsidy-2026',
+                tag: 'Partner Review',
               },
               {
-                title: 'TOPCon vs Mono PERC Solar Panels in India',
-                desc: 'Efficiency metrics, heat degradation rates during Indian summers, and price difference analysis for rooftop installations.',
-                date: 'Sep 2026',
-                href: '/guides/topcon-vs-mono-perc-solar-panels-india',
-                tag: 'Hardware Comparison',
+                title: 'Top 7 Residential Solar Installation Companies in India (2026)',
+                desc: 'Independent evaluation comparing SolarSquare, Tata Power Solar, Waaree, and regional empanelled DISCOM contractors.',
+                date: 'Oct 2026',
+                href: '/blog/top-residential-solar-epc-companies-india-2026',
+                tag: 'EPC Rankings',
               },
               {
-                title: 'How to Verify a Solar Installer in India Before Paying Advance',
-                desc: 'Essential checklist: ALMM module certification, DISCOM vendor empanelment ID, GST verification, and customer warranty terms.',
-                date: 'Sep 2026',
-                href: '/blog/how-to-choose-solar-installer-india',
-                tag: 'Buyer Checklist',
+                title: '3 kW Solar Panel Price in Pune & Metro Cities (2026 Guide)',
+                desc: 'Real system pricing, MSEDCL slab tariff savings, ₹78,000 PM Surya Ghar subsidy deduction, and 2.3-year payback.',
+                date: 'Oct 2026',
+                href: '/blog/3kw-solar-panel-price-in-pune-msedcl-subsidy-2026',
+                tag: 'Metro Pricing',
               },
             ].map((guide, idx) => (
               <Link

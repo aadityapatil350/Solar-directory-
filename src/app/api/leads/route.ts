@@ -8,6 +8,7 @@ import {
   validateLeadPincode,
   validateMonthlyBill,
 } from '@/lib/lead-validation';
+import { isTier1Lead } from '@/lib/tier1-cities';
 
 // How many verified installers to notify per lead
 const MAX_INSTALLERS_PER_LEAD = 3;
@@ -114,6 +115,7 @@ async function notifyFeaturedOwners(
     monthlyBill?: string | null;
     city: string;
     pincode?: string | null;
+    isTier1?: boolean;
   },
   locationId: string | null,
 ) {
@@ -143,6 +145,7 @@ async function notifyFeaturedOwners(
           city: lead.city || listing.location.city,
           pincode: lead.pincode,
           monthlyBill: lead.monthlyBill,
+          isTier1: lead.isTier1,
         },
       ).catch((err) => console.error('Lead notification email failed:', err));
     }
@@ -266,8 +269,12 @@ export async function POST(request: Request) {
       locationId = location?.id || null;
     }
 
+    // Tier-1 Metro qualification for channel partner SolarSquare
+    const isTier1 = isTier1Lead(cleanCityName, cleanPincode);
+
     // Build structured qualification text with all details for solar channel partners & installers
     const qualificationParts: string[] = [];
+    if (isTier1) qualificationParts.push('⭐ Tier-1 Metro');
     if (source) qualificationParts.push(`[${String(source).slice(0, 40)}]`);
     if (requirement?.trim()) qualificationParts.push(requirement.trim());
     if (effectiveMonthlyBill) qualificationParts.push(`Light Bill: ${effectiveMonthlyBill}`);
@@ -284,6 +291,7 @@ export async function POST(request: Request) {
         email: email?.trim() || null,
         city: cleanCityName || null,
         pincode: cleanPincode || null,
+        isTier1,
         monthlyBill: effectiveMonthlyBill || null,
         requirement: requirementText,
         locationId: locationId || null,
@@ -306,6 +314,7 @@ export async function POST(request: Request) {
         monthlyBill: lead.monthlyBill,
         city: cleanCityName,
         pincode: cleanPincode || null,
+        isTier1,
       },
       locationId,
     );
@@ -314,7 +323,7 @@ export async function POST(request: Request) {
       {
         success: true,
         message: 'Thank you! Qualified quotes from verified channel partners will be sent shortly.',
-        lead: { id: lead.id, name: lead.name, phone: lead.phone, city: lead.city, pincode: lead.pincode, monthlyBill: lead.monthlyBill },
+        lead: { id: lead.id, name: lead.name, phone: lead.phone, city: lead.city, pincode: lead.pincode, isTier1: lead.isTier1, monthlyBill: lead.monthlyBill },
       },
       { status: 201 }
     );

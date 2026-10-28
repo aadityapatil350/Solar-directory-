@@ -117,6 +117,7 @@ model Lead {
   email          String?
   city           String?
   pincode        String?
+  isTier1        Boolean        @default(false)
   monthlyBill    String?
   requirement    String?
   locationId     String?
@@ -132,6 +133,7 @@ model Lead {
   @@index([createdAt])
   @@index([city])
   @@index([pincode])
+  @@index([isTier1])
 }
 
 model LeadDelivery {

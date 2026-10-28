@@ -1093,7 +1093,7 @@ export default function AdminDashboard() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex gap-2 flex-wrap">
-                    {['all', 'new', 'assigned', 'contacted', 'closed'].map((f) => (
+                    {['all', 'tier1', 'new', 'assigned', 'contacted', 'closed'].map((f) => (
                       <button
                         key={f}
                         onClick={() => setLeadsFilter(f)}
@@ -1103,7 +1103,7 @@ export default function AdminDashboard() {
                             : 'bg-wash text-ink-2 hover:text-ink hover:bg-line/20'
                         }`}
                       >
-                        {f}
+                        {f === 'tier1' ? '⭐ Tier-1 Metro' : f}
                       </button>
                     ))}
                   </div>
@@ -1170,11 +1170,16 @@ export default function AdminDashboard() {
                                   )}
                                   {(lead.city || lead.location?.city) ? (
                                     <div className="flex items-center gap-1.5 text-xs text-ink font-medium">
-                                      <MapPin className="h-3 w-3 text-ink-2" />
+                                      <MapPin className="h-3 w-3 text-ink-2 shrink-0" />
                                       <span>
                                         {lead.city || lead.location?.city}
                                         {lead.pincode ? ` (${lead.pincode})` : ''}
                                       </span>
+                                      {lead.isTier1 && (
+                                        <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded ml-1 shrink-0">
+                                          ⭐ Tier-1
+                                        </span>
+                                      )}
                                     </div>
                                   ) : (
                                     <div className="flex items-center gap-1.5 text-xs text-amber-700">

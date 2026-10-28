@@ -49,7 +49,11 @@ export async function GET(request: Request) {
     const where: Record<string, unknown> = {};
 
     if (status && status !== 'all') {
-      where.status = status;
+      if (status === 'tier1') {
+        where.isTier1 = true;
+      } else {
+        where.status = status;
+      }
     }
 
     const leads = await prisma.lead.findMany({
