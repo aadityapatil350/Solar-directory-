@@ -1171,7 +1171,10 @@ export default function AdminDashboard() {
                                   {(lead.city || lead.location?.city) ? (
                                     <div className="flex items-center gap-1.5 text-xs text-ink font-medium">
                                       <MapPin className="h-3 w-3 text-ink-2" />
-                                      {lead.city || lead.location?.city}
+                                      <span>
+                                        {lead.city || lead.location?.city}
+                                        {lead.pincode ? ` (${lead.pincode})` : ''}
+                                      </span>
                                     </div>
                                   ) : (
                                     <div className="flex items-center gap-1.5 text-xs text-amber-700">

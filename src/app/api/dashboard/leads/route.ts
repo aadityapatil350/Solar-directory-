@@ -50,6 +50,7 @@ export async function GET() {
       budget: lead.budget,
       monthlyBill: lead.monthlyBill,
       city: lead.city || lead.location?.city,
+      pincode: lead.pincode,
       createdAt: lead.createdAt,
       phoneMasked: !isFeatured,
     }));

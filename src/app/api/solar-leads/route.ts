@@ -119,6 +119,7 @@ export async function POST(request: Request) {
         name: String(name).trim(),
         phone: cleanPhone,
         city: String(city).trim(),
+        pincode: pincode ? String(pincode).trim().replace(/\D/g, '').slice(0, 6) : null,
         monthlyBill: monthlyBill ? `₹${monthlyBill}/mo` : null,
         requirement: requirementText,
         locationId: location?.id || null,

@@ -1,7 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { sendLeadNotificationEmail } from '@/lib/email';
-import { validateLeadName, validateLeadCity, validateLeadPhone, validateMonthlyBill } from '@/lib/lead-validation';
+import {
+  validateLeadName,
+  validateLeadCity,
+  validateLeadPhone,
+  validateLeadPincode,
+  validateMonthlyBill,
+} from '@/lib/lead-validation';
 
 // How many verified installers to notify per lead
 const MAX_INSTALLERS_PER_LEAD = 3;
@@ -99,7 +105,16 @@ async function distributeLeadToInstallers(leadId: string, locationId: string | n
 }
 
 async function notifyFeaturedOwners(
-  lead: { name: string; phone: string; email: string | null; requirement: string | null; budget: string | null; monthlyBill?: string | null; city: string },
+  lead: {
+    name: string;
+    phone: string;
+    email: string | null;
+    requirement: string | null;
+    budget: string | null;
+    monthlyBill?: string | null;
+    city: string;
+    pincode?: string | null;
+  },
   locationId: string | null,
 ) {
   try {
@@ -126,6 +141,7 @@ async function notifyFeaturedOwners(
         {
           ...lead,
           city: lead.city || listing.location.city,
+          pincode: lead.pincode,
           monthlyBill: lead.monthlyBill,
         },
       ).catch((err) => console.error('Lead notification email failed:', err));
@@ -145,6 +161,7 @@ export async function POST(request: Request) {
       requirement,
       locationId: rawLocationId,
       city,
+      pincode,
       monthlyBill,
       propertyType,
       budget,
@@ -178,6 +195,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: cityError }, { status: 400 });
       }
     }
+
+    // PIN code is mandatory for all quote enquiries
+    const rawPincode = (pincode ?? '').trim();
+    if (!isContactForm) {
+      const pinError = validateLeadPincode(rawPincode);
+      if (pinError) {
+        return NextResponse.json({ error: pinError }, { status: 400 });
+      }
+    }
+    const cleanPincode = rawPincode.replace(/\D/g, '').slice(0, 6);
 
     // Monthly light bill is mandatory for quote enquiries to ensure lead qualification for channel partners (e.g. SolarSquare)
     const effectiveMonthlyBill = (monthlyBill ?? budget ?? '').trim();
@@ -246,6 +273,7 @@ export async function POST(request: Request) {
     if (effectiveMonthlyBill) qualificationParts.push(`Light Bill: ${effectiveMonthlyBill}`);
     if (propertyType?.trim()) qualificationParts.push(`Property: ${propertyType.trim()}`);
     if (cleanCityName) qualificationParts.push(`City: ${cleanCityName}`);
+    if (cleanPincode) qualificationParts.push(`PIN: ${cleanPincode}`);
 
     const requirementText = qualificationParts.join(' | ');
 
@@ -255,6 +283,7 @@ export async function POST(request: Request) {
         phone: phone.trim(),
         email: email?.trim() || null,
         city: cleanCityName || null,
+        pincode: cleanPincode || null,
         monthlyBill: effectiveMonthlyBill || null,
         requirement: requirementText,
         locationId: locationId || null,
@@ -276,6 +305,7 @@ export async function POST(request: Request) {
         budget: lead.budget,
         monthlyBill: lead.monthlyBill,
         city: cleanCityName,
+        pincode: cleanPincode || null,
       },
       locationId,
     );
@@ -284,7 +314,7 @@ export async function POST(request: Request) {
       {
         success: true,
         message: 'Thank you! Qualified quotes from verified channel partners will be sent shortly.',
-        lead: { id: lead.id, name: lead.name, phone: lead.phone, city: lead.city, monthlyBill: lead.monthlyBill },
+        lead: { id: lead.id, name: lead.name, phone: lead.phone, city: lead.city, pincode: lead.pincode, monthlyBill: lead.monthlyBill },
       },
       { status: 201 }
     );

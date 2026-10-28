@@ -6,6 +6,7 @@ import {
   validateLeadName,
   validateLeadCity,
   validateLeadPhone,
+  validateLeadPincode,
   validateMonthlyBill,
 } from '@/lib/lead-validation';
 
@@ -39,6 +40,7 @@ interface LeadFormProps {
   prefill?: {
     requirement?: string;
     city?: string;
+    pincode?: string;
     monthlyBill?: string;
     propertyType?: string;
   };
@@ -52,6 +54,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState(prefill?.city || '');
+  const [pincode, setPincode] = useState(prefill?.pincode || '');
   const [monthlyBill, setMonthlyBill] = useState(prefill?.monthlyBill || '');
   const [propertyType, setPropertyType] = useState(prefill?.propertyType || 'Independent House');
   const [requirement, setRequirement] = useState(prefill?.requirement || '3kW Residential');
@@ -83,6 +86,13 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
       return;
     }
 
+    const cleanPincode = pincode.replace(/\D/g, '').slice(0, 6);
+    const pinError = validateLeadPincode(cleanPincode);
+    if (pinError) {
+      setError(pinError);
+      return;
+    }
+
     const billError = validateMonthlyBill(monthlyBill);
     if (billError) {
       setError(billError);
@@ -98,6 +108,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           name: name.trim(),
           phone: cleanPhone,
           city: city.trim(),
+          pincode: cleanPincode,
           monthlyBill: monthlyBill.trim(),
           propertyType: propertyType.trim(),
           requirement,
@@ -115,6 +126,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           value: 100,
           source: source || 'unknown',
           city: city.trim(),
+          pincode: cleanPincode,
           requirement: requirement || 'unspecified',
           monthly_bill: monthlyBill,
         });
@@ -137,7 +149,7 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
         </div>
         <h3 className="font-heading font-semibold text-lg text-ink mb-1">Pre-Qualification Confirmed</h3>
         <p className="text-ink-2 text-sm leading-relaxed mb-3">
-          Your solar enquiry for <strong>{city}</strong> (Monthly Bill: {monthlyBill}) has been received.
+          Your solar enquiry for <strong>{city} ({pincode.replace(/\D/g, '').slice(0, 6)})</strong> (Monthly Bill: {monthlyBill}) has been received.
         </p>
         <p className="text-xs text-ink-2 bg-wash p-3 rounded-sm border border-line">
           Channel partner engineers (including SolarSquare & verified local installers) will contact you on WhatsApp / Phone with customized proposal and PM Surya Ghar (₹78,000) subsidy assistance.
@@ -207,41 +219,59 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
           <p className="text-[11px] text-ink-2 mt-1">Quotation and subsidy estimate will be shared via WhatsApp</p>
         </div>
 
-        {/* Mandatory City / Installation Location */}
-        <div>
-          <label className="block text-xs font-semibold text-ink mb-1">
-            Installation Location (City / Town) <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
+        {/* Mandatory City & PIN Code */}
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div className="sm:col-span-7">
+            <label className="block text-xs font-semibold text-ink mb-1">
+              Installation City / Town <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Pune, PCMC, Thane..."
+                className="w-full h-11 pl-8 pr-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
+              />
+              <MapPin className="h-4 w-4 text-ink-2 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+
+          <div className="sm:col-span-5">
+            <label className="block text-xs font-semibold text-ink mb-1">
+              PIN Code <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               required
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="e.g. Pune, PCMC, Thane, Lucknow, Bengaluru..."
-              className="w-full h-11 pl-8 pr-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink"
+              inputMode="numeric"
+              maxLength={6}
+              value={pincode}
+              onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="6-digit PIN"
+              className="w-full h-11 px-3 border border-line rounded-sm bg-paper text-ink placeholder:text-ink-2/50 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink tabular-nums"
             />
-            <MapPin className="h-4 w-4 text-ink-2 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
+        </div>
 
-          {/* Quick city selectors */}
-          <div className="flex flex-wrap items-center gap-1.5 mt-2">
-            <span className="text-[11px] text-ink-2">Popular:</span>
-            {QUICK_CITIES.slice(0, 5).map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => setCity(c)}
-                className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
-                  city.toLowerCase() === c.toLowerCase()
-                    ? 'border-ink bg-ink text-paper font-medium'
-                    : 'border-line text-ink-2 hover:text-ink hover:bg-wash'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+        {/* Quick city selectors */}
+        <div className="flex flex-wrap items-center gap-1.5 -mt-1">
+          <span className="text-[11px] text-ink-2">Popular:</span>
+          {QUICK_CITIES.slice(0, 5).map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCity(c)}
+              className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
+                city.toLowerCase() === c.toLowerCase()
+                  ? 'border-ink bg-ink text-paper font-medium'
+                  : 'border-line text-ink-2 hover:text-ink hover:bg-wash'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
         </div>
 
         {/* Mandatory Monthly Electricity Bill / Light Bill */}

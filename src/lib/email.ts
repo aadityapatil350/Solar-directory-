@@ -139,10 +139,11 @@ export async function sendLeadNotificationEmail(
     budget: string | null;
     monthlyBill?: string | null;
     city: string;
+    pincode?: string | null;
   },
 ): Promise<void> {
   console.log(`\n===== LEAD NOTIFICATION TO ${ownerEmail} =====`);
-  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}${lead.monthlyBill ? ` | Bill: ${lead.monthlyBill}` : ''}`);
+  console.log(`Lead from: ${lead.name} (${lead.phone}) in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''}${lead.monthlyBill ? ` | Bill: ${lead.monthlyBill}` : ''}`);
   console.log(`===============================================\n`);
 
   if (!resend) {
@@ -153,7 +154,7 @@ export async function sendLeadNotificationEmail(
   await resend.emails.send({
     from: FROM,
     to: ownerEmail,
-    subject: `🔔 New Qualified Lead in ${lead.city} — ${lead.name}${lead.monthlyBill ? ` (Bill: ${lead.monthlyBill})` : ''}`,
+    subject: `🔔 New Qualified Lead in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''} — ${lead.name}${lead.monthlyBill ? ` (Bill: ${lead.monthlyBill})` : ''}`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111;">
         <div style="background:#f97316;padding:24px 32px;border-radius:8px 8px 0 0;">
@@ -161,7 +162,7 @@ export async function sendLeadNotificationEmail(
           <p style="color:#fff3e0;margin:4px 0 0;font-size:13px;">New Qualified Lead Notification</p>
         </div>
         <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
-          <h2 style="color:#111;margin-top:0;">🔔 New Lead in ${lead.city}!</h2>
+          <h2 style="color:#111;margin-top:0;">🔔 New Lead in ${lead.city}${lead.pincode ? ` (${lead.pincode})` : ''}!</h2>
           <p>Hi <strong>${ownerName}</strong>, a qualified customer is looking for solar installations in your area.</p>
 
           <div style="background:#f9fafb;border-radius:8px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
@@ -170,6 +171,7 @@ export async function sendLeadNotificationEmail(
               <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Phone</td><td style="padding:6px 0;font-weight:600;font-size:14px;"><a href="tel:${lead.phone}" style="color:#f97316;">${lead.phone}</a></td></tr>
               ${lead.email ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Email</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${lead.email}" style="color:#f97316;">${lead.email}</a></td></tr>` : ''}
               <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">City / Location</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.city}</td></tr>
+              ${lead.pincode ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">PIN Code</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#111;">${lead.pincode}</td></tr>` : ''}
               ${lead.monthlyBill ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Monthly Light Bill</td><td style="padding:6px 0;font-weight:600;font-size:14px;color:#059669;">⚡ ${lead.monthlyBill}</td></tr>` : ''}
               ${lead.requirement ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Requirement</td><td style="padding:6px 0;font-size:14px;">${lead.requirement}</td></tr>` : ''}
               ${lead.budget && !lead.monthlyBill ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;">Budget</td><td style="padding:6px 0;font-size:14px;">${lead.budget}</td></tr>` : ''}

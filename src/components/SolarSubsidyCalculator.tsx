@@ -182,6 +182,7 @@ export default function SolarSubsidyCalculator({
             phone: cleaned,
             requirement: `${recommendedKw} kW Rooftop Solar System (${roofType}) - Subsidy Calculator`,
             city: validCity,
+            pincode: pincode.trim(),
             monthlyBill: `₹${monthlyBill}/mo`,
             budget: `Net ₹${netInvestment.toLocaleString('en-IN')}`,
           }),

@@ -115,3 +115,36 @@ export function validateMonthlyBill(raw: string | null | undefined): string | nu
   if (!bill) return 'Please select your average monthly electricity bill (light bill).';
   return null;
 }
+
+/**
+ * Validate Indian postal PIN code (strictly 6 digits, 100000 to 999999).
+ * Rejects non-digits, wrong length, and common dummy numbers.
+ */
+export function validateLeadPincode(raw: string | null | undefined): string | null {
+  const pin = (raw ?? '').trim().replace(/\s+/g, '');
+  if (!pin) return 'Please enter your 6-digit postal PIN code.';
+
+  const cleanPin = pin.replace(/\D/g, '');
+  if (cleanPin.length !== 6) {
+    return 'PIN code must be exactly 6 digits.';
+  }
+
+  if (!/^[1-9]\d{5}$/.test(cleanPin)) {
+    return 'Please enter a valid 6-digit Indian PIN code.';
+  }
+
+  // Reject all identical digits (e.g. 111111, 999999)
+  if (/^(\d)\1{5}$/.test(cleanPin)) {
+    return 'Please enter a genuine 6-digit PIN code.';
+  }
+
+  // Reject common fake sequences
+  const fakeSequences = new Set([
+    '123456', '654321', '121212', '987654', '100000', '900000'
+  ]);
+  if (fakeSequences.has(cleanPin)) {
+    return 'Please enter your actual 6-digit PIN code.';
+  }
+
+  return null;
+}
