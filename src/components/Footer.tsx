@@ -118,6 +118,65 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Priority Solar Markets & Flagship Experience Centres */}
+        <div className="border-t border-line pt-6 pb-6 text-xs text-ink-2">
+          <h4 className="font-heading font-semibold text-ink text-xs uppercase tracking-wider mb-3">
+            Priority Solar Markets &amp; SolarSquare Experience Centres
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            <div>
+              <span className="font-semibold text-ink block mb-1.5">Maharashtra</span>
+              <ul className="space-y-1">
+                <li><Link href="/mumbai" className="hover:text-ink hover:underline">Mumbai (HQ)</Link></li>
+                <li><Link href="/pune" className="hover:text-ink hover:underline">Pune (Kharadi &amp; Wakad)</Link></li>
+                <li><Link href="/nagpur" className="hover:text-ink hover:underline">Nagpur (Glocal Mall)</Link></li>
+                <li><Link href="/nashik" className="hover:text-ink hover:underline">Nashik (City Centre)</Link></li>
+                <li><Link href="/thane" className="hover:text-ink hover:underline">Thane</Link> &middot; <Link href="/navi-mumbai" className="hover:text-ink hover:underline">Navi Mumbai</Link></li>
+                <li><Link href="/aurangabad" className="hover:text-ink hover:underline">Aurangabad</Link> &middot; <Link href="/kolhapur" className="hover:text-ink hover:underline">Kolhapur</Link></li>
+                <li><Link href="/solapur" className="hover:text-ink hover:underline">Solapur</Link> &middot; <Link href="/amravati" className="hover:text-ink hover:underline">Amravati</Link></li>
+              </ul>
+            </div>
+            <div>
+              <span className="font-semibold text-ink block mb-1.5">Madhya Pradesh</span>
+              <ul className="space-y-1">
+                <li><Link href="/bhopal" className="hover:text-ink hover:underline">Bhopal (Srishti CBD)</Link></li>
+                <li><Link href="/indore" className="hover:text-ink hover:underline">Indore (LIG Square)</Link></li>
+                <li><Link href="/gwalior" className="hover:text-ink hover:underline">Gwalior (City Centre)</Link></li>
+                <li><Link href="/jabalpur" className="hover:text-ink hover:underline">Jabalpur (Wright Town)</Link></li>
+              </ul>
+            </div>
+            <div>
+              <span className="font-semibold text-ink block mb-1.5">UP &amp; Delhi NCR</span>
+              <ul className="space-y-1">
+                <li><Link href="/lucknow" className="hover:text-ink hover:underline">Lucknow (Gomti Nagar)</Link></li>
+                <li><Link href="/kanpur" className="hover:text-ink hover:underline">Kanpur (Saket Nagar)</Link></li>
+                <li><Link href="/delhi" className="hover:text-ink hover:underline">Delhi</Link> &middot; <Link href="/gurgaon" className="hover:text-ink hover:underline">Gurugram</Link></li>
+                <li><Link href="/noida" className="hover:text-ink hover:underline">Noida</Link> &middot; <Link href="/ghaziabad" className="hover:text-ink hover:underline">Ghaziabad</Link></li>
+                <li><Link href="/faridabad" className="hover:text-ink hover:underline">Faridabad</Link> &middot; <Link href="/varanasi" className="hover:text-ink hover:underline">Varanasi</Link></li>
+              </ul>
+            </div>
+            <div>
+              <span className="font-semibold text-ink block mb-1.5">Gujarat &amp; Rajasthan</span>
+              <ul className="space-y-1">
+                <li><Link href="/ahmedabad" className="hover:text-ink hover:underline">Ahmedabad Regional Hub</Link></li>
+                <li><Link href="/surat" className="hover:text-ink hover:underline">Surat</Link> &middot; <Link href="/vadodara" className="hover:text-ink hover:underline">Vadodara</Link></li>
+                <li><Link href="/anand" className="hover:text-ink hover:underline">Anand</Link> &middot; <Link href="/gandhinagar" className="hover:text-ink hover:underline">Gandhinagar</Link></li>
+                <li><Link href="/jaipur" className="hover:text-ink hover:underline">Jaipur (Malviya Nagar)</Link></li>
+                <li><Link href="/jodhpur" className="hover:text-ink hover:underline">Jodhpur</Link> &middot; <Link href="/kota" className="hover:text-ink hover:underline">Kota</Link> &middot; <Link href="/ajmer" className="hover:text-ink hover:underline">Ajmer</Link></li>
+              </ul>
+            </div>
+            <div>
+              <span className="font-semibold text-ink block mb-1.5">Karnataka &amp; Southern</span>
+              <ul className="space-y-1">
+                <li><Link href="/bangalore" className="hover:text-ink hover:underline">Bengaluru (Indiranagar)</Link></li>
+                <li><Link href="/hyderabad" className="hover:text-ink hover:underline">Hyderabad (Gachibowli)</Link></li>
+                <li><Link href="/chennai" className="hover:text-ink hover:underline">Chennai Operational Hub</Link></li>
+                <li><Link href="/mysore" className="hover:text-ink hover:underline">Mysuru</Link> &middot; <Link href="/raipur" className="hover:text-ink hover:underline">Raipur (CG)</Link></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Data sources note per DESIGN.md */}
         <div className="border-t border-line pt-6 pb-6 text-xs text-ink-2 leading-relaxed max-w-prose">
           <p className="mb-2">

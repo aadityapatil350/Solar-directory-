@@ -10,6 +10,7 @@ import Steps from '@/components/ui/Steps';
 import FAQ from '@/components/ui/FAQ';
 import ListingRow from '@/components/ui/ListingRow';
 import LeadForm from '@/components/LeadForm';
+import StickyQuoteBar from '@/components/ui/StickyQuoteBar';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { getCityFAQs, citySpecificData } from '@/lib/cityData';
@@ -54,8 +55,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     where: { location: { city: location.city } },
   });
 
-  const base = constructCityMetadata(location.city, location.state, listingsCount);
-  if (listingsCount < MIN_LISTINGS_FOR_INDEX) {
+  const profile = getSolarProfile(location.city, null);
+  const isPriorityCity = Boolean(profile?.isSolarSquare || profile?.isExperienceCentre);
+
+  const base = constructCityMetadata(location.city, location.state, listingsCount, isPriorityCity);
+  if (listingsCount < MIN_LISTINGS_FOR_INDEX && !isPriorityCity) {
     return { ...base, robots: { index: false, follow: true } };
   }
   return base;
@@ -262,7 +266,7 @@ export default async function CityPage({ params }: PageProps) {
       )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <div>
+      <div className="pb-20 md:pb-0">
         <Header />
 
         {/* Breadcrumb */}
@@ -302,24 +306,72 @@ export default async function CityPage({ params }: PageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* Left Column: Fact Panel + Coverage Info */}
               <div className="lg:col-span-7 space-y-6">
-                {solarProfile?.isExperienceCentre ? (
-                  <div className="border border-amber-300 rounded-sm p-4 bg-amber-50/80 space-y-2 text-ink shadow-xs">
-                    <div className="flex items-center gap-2 font-semibold text-amber-950 text-sm">
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-                      Official SolarSquare Experience Centre in {cityData.city}
+                {solarProfile?.officeType === 'hq' ? (
+                  <div className="border border-amber-300 rounded-sm p-4 bg-amber-50/90 space-y-2 text-ink shadow-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-semibold text-amber-950 text-sm">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                        SolarSquare National Headquarters (HQ) — {cityData.city}
+                      </div>
+                      <a href="#quote" className="text-xs font-semibold text-amber-950 underline underline-offset-2 hover:text-amber-800">
+                        Book Site Visit →
+                      </a>
                     </div>
                     <p className="text-xs text-amber-900 leading-relaxed font-body">
-                      Visit the physical walk-in Experience Centre located at <strong>{solarProfile.experienceCentreLocation}</strong> ({solarProfile.experienceCentreLandmark}). Explore full-scale rooftop installations, shadow simulations, wind-tested elevated structures, and instant 0-cost EMI pre-approvals.
+                      Located at <strong>{solarProfile.officeAddress || 'Suvidha Square, Andheri West'}</strong>. Central engineering, design leadership, and premium rooftop solar installations across the Greater Mumbai metropolitan region.
+                    </p>
+                  </div>
+                ) : solarProfile?.isExperienceCentre ? (
+                  <div className="border border-amber-300 rounded-sm p-4 bg-amber-50/90 space-y-2 text-ink shadow-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-semibold text-amber-950 text-sm">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                        Official SolarSquare Experience Centre in {cityData.city}
+                      </div>
+                      {solarProfile.experienceCentreHours && (
+                        <span className="text-[11px] font-semibold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded border border-amber-200">
+                          {solarProfile.experienceCentreHours}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-amber-900 leading-relaxed font-body">
+                      Visit the physical walk-in Experience Centre: <strong>{solarProfile.experienceCentreLocation}</strong> ({solarProfile.experienceCentreLandmark}). Explore full-scale rooftop installations, shadow simulations, wind-tested elevated structures, and instant 0-cost EMI pre-approvals.
+                    </p>
+                    <div className="pt-1">
+                      <a href="#quote" className="inline-flex items-center text-xs font-semibold text-amber-950 underline underline-offset-2 hover:text-amber-800">
+                        Schedule a Free Experience Centre Site Survey →
+                      </a>
+                    </div>
+                  </div>
+                ) : solarProfile?.officeType === 'regional_office' ? (
+                  <div className="border border-emerald-300 rounded-sm p-4 bg-emerald-50/90 space-y-2 text-ink shadow-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-semibold text-emerald-950 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                        SolarSquare Regional Corporate &amp; Operations Hub ({cityData.city})
+                      </div>
+                      <a href="#quote" className="text-xs font-semibold text-emerald-900 underline underline-offset-2 hover:text-emerald-700">
+                        Get Local Quote →
+                      </a>
+                    </div>
+                    <p className="text-xs text-emerald-900 leading-relaxed font-body">
+                      {solarProfile.officeAddress ? <strong>{solarProfile.officeAddress}. </strong> : null}
+                      Turnkey residential rooftop installations, dedicated local engineering teams, and fast-track DISCOM net-metering approvals across {cityData.city}.
                     </p>
                   </div>
                 ) : solarProfile?.isSolarSquare ? (
                   <div className="border border-emerald-200 rounded-sm p-3.5 bg-emerald-50/80 space-y-1.5 text-xs text-emerald-950 font-body">
-                    <div className="flex items-center gap-2 font-semibold text-emerald-900 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                      SolarSquare Operational Service Zone
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-semibold text-emerald-900 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                        SolarSquare Priority Operational Service Zone
+                      </div>
+                      <a href="#quote" className="text-xs font-semibold text-emerald-900 underline underline-offset-2 hover:text-emerald-700">
+                        Free Survey →
+                      </a>
                     </div>
                     <p className="leading-relaxed">
-                      {cityData.city} is an active residential operational hub for SolarSquare Energy. Certified local crews provide turnkey installation, cyclone-proof elevated structures, and DISCOM net-metering approvals.
+                      {cityData.city} is an active residential operational hub for SolarSquare Energy. Certified local crews provide turnkey installation, cyclone-proof elevated structures, and DISCOM net-metering liaison.
                     </p>
                   </div>
                 ) : null}
@@ -725,6 +777,11 @@ export default async function CityPage({ params }: PageProps) {
         )}
 
       </div>
+
+      <StickyQuoteBar
+        quoteHref="#quote"
+        quoteText={`Get Free Solar Quote in ${cityData.city}`}
+      />
 
       <Footer />
     </div>

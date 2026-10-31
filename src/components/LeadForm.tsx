@@ -36,16 +36,23 @@ const REQUIREMENTS = [
 ];
 
 const QUICK_CITIES = [
+  'Mumbai',
   'Pune',
-  'Bhopal',
-  'Indore',
   'Nagpur',
   'Nashik',
+  'Bhopal',
+  'Indore',
+  'Gwalior',
+  'Jabalpur',
   'Lucknow',
   'Kanpur',
-  'Gwalior',
+  'Jaipur',
   'Bengaluru',
-  'Mumbai',
+  'Hyderabad',
+  'Delhi',
+  'Gurgaon',
+  'Ahmedabad',
+  'Surat',
 ];
 
 interface LeadFormProps {
@@ -282,14 +289,37 @@ export default function LeadForm({ prefill, onSuccess, compact = false, source }
         </div>
 
         {/* Partner & Operational Zone Qualification Badges */}
-        {solarProfile?.isExperienceCentre ? (
+        {solarProfile?.officeType === 'hq' ? (
+          <div className="flex items-start gap-2 text-[11px] text-amber-950 bg-amber-50/90 border border-amber-300 px-3 py-2 rounded-sm font-medium -mt-1 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0 mt-1"></span>
+            <div>
+              <span className="font-bold text-amber-900">⚡ SolarSquare National Headquarters ({solarProfile.name}):</span>{' '}
+              {solarProfile.officeAddress}
+              <p className="text-[10px] text-amber-800/90 font-normal mt-0.5">
+                Priority direct dispatch, turnkey cyclone-proof structures &amp; fast-track DISCOM approvals.
+              </p>
+            </div>
+          </div>
+        ) : solarProfile?.isExperienceCentre ? (
           <div className="flex items-start gap-2 text-[11px] text-amber-950 bg-amber-50/90 border border-amber-300 px-3 py-2 rounded-sm font-medium -mt-1 shadow-xs">
             <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0 mt-1"></span>
             <div>
               <span className="font-bold text-amber-900">⚡ SolarSquare Experience Centre Hub ({solarProfile.name}):</span>{' '}
               {solarProfile.experienceCentreLocation}
+              {solarProfile.experienceCentreHours ? ` (${solarProfile.experienceCentreHours})` : ''}
               <p className="text-[10px] text-amber-800/90 font-normal mt-0.5">
                 Physical walk-in centre · Free 3D roof design, elevated wind-proof structures &amp; certified installation crew.
+              </p>
+            </div>
+          </div>
+        ) : solarProfile?.officeType === 'regional_office' ? (
+          <div className="flex items-start gap-2 text-[11px] text-emerald-950 bg-emerald-50/90 border border-emerald-300 px-3 py-2 rounded-sm font-medium -mt-1 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0 mt-1"></span>
+            <div>
+              <span className="font-bold text-emerald-900">⚡ SolarSquare Regional Hub ({solarProfile.name}):</span>{' '}
+              {solarProfile.officeAddress}
+              <p className="text-[10px] text-emerald-800/90 font-normal mt-0.5">
+                Local engineering teams &amp; direct PM Surya Ghar (₹78,000) DISCOM liaison.
               </p>
             </div>
           </div>

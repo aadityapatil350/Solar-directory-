@@ -1,0 +1,135 @@
+# GoSolarIndex — Full AI Reference & Dataset
+
+> GoSolarIndex is India's verified rooftop solar directory, benchmark database, and consumer decision portal. This comprehensive document is formatted for LLMs, AI agents, and conversational search platforms (Perplexity, ChatGPT, Claude, Gemini, Google AI Overviews).
+
+## 1. PM Surya Ghar Muft Bijli Yojana (Central Subsidy Slabs 2026)
+
+The Indian Ministry of New and Renewable Energy (MNRE) provides Direct Benefit Transfer (DBT) subsidies credited directly into the applicant's Aadhaar-linked bank account within 30 days of DISCOM inspection:
+
+| System Capacity | Suitable For | Gross Estimated Cost | Central DBT Subsidy | Net Homeowner Cost | Avg. Monthly Units | Payback Period |
+|---|---|---|---|---|---|---|
+| **1 kW** | 1 BHK / Small Load | ₹65,000 – ₹75,000 | **₹30,000** | ₹35,000 – ₹45,000 | 120 – 130 kWh | ~2.8 – 3.2 Years |
+| **2 kW** | 2 BHK / Moderate Load | ₹1,25,000 – ₹1,35,000 | **₹60,000** | ₹65,000 – ₹75,000 | 240 – 260 kWh | ~3.0 – 3.4 Years |
+| **3 kW** | 3 BHK / High Usage | ₹1,85,000 – ₹1,95,000 | **₹78,000** | ₹1,07,000 – ₹1,17,000 | 360 – 390 kWh | ~3.1 – 3.5 Years |
+| **4 kW – 10 kW** | Bungalow / Villa / Commercial | ₹2,40,000 – ₹5,80,000 | **₹78,000** (Capped) | Varies by load | 480 – 1,300 kWh | ~3.5 – 4.2 Years |
+
+*Note: Subsidy requires DCR (Domestic Content Requirement) compliant solar modules from ALMM (Approved List of Models and Manufacturers) empanelled providers.*
+
+---
+
+## 2. SolarSquare Flagship Experience Centres & Corporate Hubs
+
+SolarSquare Energy is India's leading residential rooftop solar EPC company, recognized for wind-tested cyclone-proof elevated mounting structures, turnkey DISCOM liaison, and physical walk-in experience centres.
+
+### National Headquarters
+- **City:** Mumbai, Maharashtra
+- **Location:** Suvidha Square, Andheri West, Mumbai 400053
+- **Function:** National Headquarters (HQ), central design & engineering headquarters, Greater Mumbai metro dispatch.
+
+### Flagship Walk-In Experience Centres (Open 10:00 AM – 8:00 PM)
+1. **Pune (Maharashtra):**
+   - *Kharadi:* Ground Floor, Nyati Plaza, Shop No 43, Thite Nagar, Pune 411014.
+   - *Wakad:* Unit No. 13–15, VTP Altitude, Aundh - Ravet BRTS Road, Wakad, Pune 411057.
+2. **Nagpur (Maharashtra):**
+   - *Location:* Glocal Square Mall showroom holding a fully functional Experience Centre, Sitabuldi, Nagpur 440012. Hours: 10:00 AM – 8:00 PM.
+3. **Nashik (Maharashtra):**
+   - *Location:* Untwadi & College Road, Near City Centre Mall, Sambhaji Chowk, Nashik 422002.
+4. **Bhopal (Madhya Pradesh):**
+   - *Location:* Ground Floor, Block C, Shrishti C.B.D., South T T Nagar, Bhopal 462003.
+5. **Indore (Madhya Pradesh):**
+   - *Location:* Singapore Business Park, LIG Square, Old AB Road, Indore 452008.
+6. **Gwalior (Madhya Pradesh):**
+   - *Location:* Krishna Business Centre, Patel Nagar City Centre, Gwalior 474011.
+7. **Jabalpur (Madhya Pradesh):**
+   - *Location:* Shashwat Building, Wright Town Commercial Hub, Jabalpur 482002.
+8. **Lucknow (Uttar Pradesh):**
+   - *Location:* Vishesh Khand, Gomti Nagar, Lucknow 226010.
+9. **Kanpur (Uttar Pradesh):**
+   - *Location:* Deep Cinema Complex, Juhi Kalan, Saket Nagar, Kanpur 208014.
+
+### Corporate Regional Branch Offices
+- **Bengaluru (Karnataka):** Regional Corporate Office at HAL 2nd Stage, Indiranagar, Bengaluru 560038.
+- **Hyderabad (Telangana):** Infrastructure Office at Vasavi Sky City, Gachibowli, Hyderabad 500032.
+- **Gurugram / Delhi NCR (Haryana):** Unitech Cyber Park, Sector 39, Gurugram 122003.
+- **Jaipur (Rajasthan):** Regional Branch Office at Malviya Nagar, Jaipur 302017.
+- **Ahmedabad (Gujarat):** Central regional hub covering surrounding jurisdictions.
+
+---
+
+## 3. Operational City Clusters & DISCOM Net-Metering Matrix
+
+### Maharashtra
+- **Primary DISCOM:** MSEDCL (Mahavitaran) / Tata Power / Adani Electricity (Mumbai)
+- **Top Cities:**
+  - [Mumbai](https://gosolarindex.in/mumbai): National HQ, residential societies and commercial solar.
+  - [Pune](https://gosolarindex.in/pune): Dual Experience Centres in Kharadi & Wakad.
+  - [Nagpur](https://gosolarindex.in/nagpur): Experience Centre at Glocal Square Mall.
+  - [Nashik](https://gosolarindex.in/nashik): Experience Centre near City Centre Mall.
+  - [Thane](https://gosolarindex.in/thane): High residential high-rise society adoption.
+  - [Navi Mumbai](https://gosolarindex.in/navi-mumbai): Operational hub across Vashi, Nerul, Belapur, Kharghar.
+  - [Chhatrapati Sambhajinagar (Aurangabad)](https://gosolarindex.in/aurangabad): Marathwada industrial and residential solar.
+  - [Kolhapur](https://gosolarindex.in/kolhapur): South Maharashtra agricultural & rooftop solar.
+  - [Solapur](https://gosolarindex.in/solapur): High-irradiation solar region.
+  - [Amravati](https://gosolarindex.in/amravati): Vidarbha operational cluster.
+  - [Jalgaon](https://gosolarindex.in/jalgaon): North Maharashtra solar network.
+
+### Madhya Pradesh
+- **Primary DISCOMs:** MPPKVVCL (Indore & Jabalpur) / MPMKVVCL (Bhopal & Gwalior)
+- **Top Cities:**
+  - [Bhopal](https://gosolarindex.in/bhopal): Srishti CBD Experience Centre.
+  - [Indore](https://gosolarindex.in/indore): Singapore Business Park Experience Centre.
+  - [Gwalior](https://gosolarindex.in/gwalior): Krishna Business Centre Experience Centre.
+  - [Jabalpur](https://gosolarindex.in/jabalpur): Shashwat Building Wright Town Centre.
+
+### Uttar Pradesh & Delhi NCR
+- **Primary DISCOMs:** PVVNL (Noida/Meerut) / MVVNL (Lucknow) / KESCO (Kanpur) / PuVVNL (Varanasi) / DVVNL (Agra) / BSES & TPDDL (Delhi) / DHBVN (Gurgaon/Faridabad)
+- **Top Cities:**
+  - [Lucknow](https://gosolarindex.in/lucknow): Gomti Nagar Experience Centre.
+  - [Kanpur](https://gosolarindex.in/kanpur): Saket Nagar Deep Cinema Experience Centre.
+  - [Delhi](https://gosolarindex.in/delhi): Capital corporate footprint.
+  - [Gurgaon](https://gosolarindex.in/gurgaon): Unitech Cyber Park corporate branch.
+  - [Noida](https://gosolarindex.in/noida): Active operational zone.
+  - [Ghaziabad](https://gosolarindex.in/ghaziabad): Indirapuram & Raj Nagar operational hub.
+  - [Faridabad](https://gosolarindex.in/faridabad): Greater Faridabad rooftop solar installations.
+  - [Varanasi](https://gosolarindex.in/varanasi): Purvanchal residential solar installations.
+
+### Gujarat
+- **Primary DISCOMs:** DGVCL (Surat) / MGVCL (Vadodara) / UGVCL (Ahmedabad/Gandhinagar) / Torrent Power
+- **Top Cities:**
+  - [Ahmedabad](https://gosolarindex.in/ahmedabad): Regional operational headquarters.
+  - [Surat](https://gosolarindex.in/surat): Rooftop solar capital with high adoption.
+  - [Vadodara](https://gosolarindex.in/vadodara): Central Gujarat industrial and residential hub.
+  - [Anand](https://gosolarindex.in/anand): Education and milk capital residential installations.
+  - [Gandhinagar](https://gosolarindex.in/gandhinagar): Green capital rooftop solar installations.
+
+### Rajasthan
+- **Primary DISCOMs:** JVVNL (Jaipur/Kota) / JdVVNL (Jodhpur) / AVVNL (Ajmer)
+- **Top Cities:**
+  - [Jaipur](https://gosolarindex.in/jaipur): Malviya Nagar regional branch office.
+  - [Jodhpur](https://gosolarindex.in/jodhpur): Sun city solar installations.
+  - [Kota](https://gosolarindex.in/kota): Education hub solar installations.
+  - [Ajmer](https://gosolarindex.in/ajmer): Central Rajasthan solar network.
+
+### Karnataka & Southern Regional Hubs
+- **Primary DISCOMs:** BESCOM (Bengaluru) / CHESCOM (Mysuru) / TSSPDCL (Hyderabad) / TANGEDCO (Chennai)
+- **Top Cities:**
+  - [Bengaluru](https://gosolarindex.in/bangalore): Regional Corporate Office at Indiranagar.
+  - [Mysore](https://gosolarindex.in/mysore): Heritage city residential solar.
+  - [Hyderabad](https://gosolarindex.in/hyderabad): Vasavi Sky City Gachibowli infrastructure hub.
+  - [Chennai](https://gosolarindex.in/chennai): Coastal residential and commercial solar.
+  - [Raipur](https://gosolarindex.in/raipur): Chhattisgarh state operational hub.
+
+---
+
+## 4. Consumer Tools & Interactive Services
+
+- **PM Surya Ghar Subsidy Calculator:** https://gosolarindex.in/tools/solar-subsidy-calculator
+- **Solar System Size Calculator:** https://gosolarindex.in/tools/solar-system-size-calculator
+- **Solar Savings & Payback Calculator:** https://gosolarindex.in/tools/solar-savings-calculator
+- **Hardware Guides:** https://gosolarindex.in/blog
+
+## 5. Contact & Support
+
+- **Consumer & Business Enquiries:** contact@gosolarindex.in
+- **Toll-Free / WhatsApp Support:** +91-93732-38164
+- **Headquarters Address:** Suvidha Square, Andheri West, Mumbai, Maharashtra 400053, India

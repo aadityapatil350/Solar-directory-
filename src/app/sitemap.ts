@@ -11,8 +11,10 @@ const TOP_CITIES = new Set([
   // SolarSquare 9 Experience Centre Hubs
   'pune', 'nagpur', 'nashik', 'bhopal', 'indore', 'gwalior', 'jabalpur', 'lucknow', 'kanpur',
   // SolarSquare Core Metro & Regional Hubs
-  'mumbai', 'thane', 'delhi', 'bangalore', 'hyderabad', 'gurgaon', 'noida', 'ghaziabad', 'faridabad',
-  'ahmedabad', 'surat', 'vadodara', 'jaipur', 'aurangabad', 'solapur', 'kolhapur',
+  'mumbai', 'thane', 'navi-mumbai', 'delhi', 'bangalore', 'hyderabad', 'gurgaon', 'noida', 'ghaziabad', 'faridabad',
+  'ahmedabad', 'surat', 'vadodara', 'anand', 'gandhinagar',
+  'jaipur', 'kota', 'jodhpur', 'ajmer',
+  'aurangabad', 'solapur', 'kolhapur', 'amravati', 'jalgaon',
   'varanasi', 'agra', 'meerut', 'bareilly', 'prayagraj', 'raipur',
   // Other Top Metros
   'chennai', 'kolkata', 'chandigarh', 'coimbatore', 'patna', 'mysore'
@@ -144,22 +146,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const includedCitySlugs = new Set<string>();
   for (const loc of locationsWithId) {
     const count = locationIdToCount[loc.id] ?? 0;
-    if (count < MIN_LISTINGS_PER_CITY) continue;
     const citySlug = loc.city.toLowerCase().replace(/\s+/g, '-');
+    const isPriorityCity = TOP_CITIES.has(citySlug);
+    if (count < MIN_LISTINGS_PER_CITY && !isPriorityCity) continue;
     if (includedCitySlugs.has(citySlug)) continue;
     includedCitySlugs.add(citySlug);
 
     pages.push({
       url: `${BASE_URL}/${citySlug}`,
       lastModified: loc.updatedAt.toISOString(),
-      priority: TOP_CITIES.has(citySlug) ? 0.95 : 0.7,
+      priority: isPriorityCity ? 0.95 : 0.7,
     });
 
     // City × service pages
     pages.push({
       url: `${BASE_URL}/${citySlug}/solar-panel-cleaning`,
       lastModified: now,
-      priority: TOP_CITIES.has(citySlug) ? 0.9 : 0.65,
+      priority: isPriorityCity ? 0.9 : 0.65,
     });
   }
 

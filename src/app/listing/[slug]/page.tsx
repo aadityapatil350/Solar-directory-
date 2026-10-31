@@ -209,9 +209,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     !listing.address &&
     (listing.reviews ?? 0) === 0;
 
+  const year = new Date().getFullYear();
   return constructMetadata({
-    title: `${listing.name} Reviews, Ratings & Phone — ${listing.location.city} | GoSolarIndex`,
-    description: `Read verified customer reviews, ratings, contact phone number, and PM Surya Ghar solar rooftop services for ${listing.name} in ${listing.location.city}.`,
+    title: `${listing.name} Reviews, Price List & Contact — ${listing.location.city} | GoSolarIndex`,
+    description: `Check ${listing.name} customer reviews, ratings, price list, phone number & office address in ${listing.location.city}, ${listing.location.state}. Compare PM Surya Ghar subsidy quotes and installation quality.`,
     path: `/listing/${slug}`,
     canonicalUrl: canonicalUrl,
     noindex: isThinContent,

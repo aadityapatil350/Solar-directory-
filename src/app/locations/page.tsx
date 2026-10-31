@@ -6,6 +6,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import FactPanel from '@/components/ui/FactPanel';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import { isTier1City } from '@/lib/tier1-cities';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,8 +25,8 @@ export default async function LocationsPage() {
     include: { _count: { select: { listings: true } } },
   });
 
-  // Filter out thin/empty locations
-  const locations = allLocations.filter((l) => l._count.listings >= MIN_LISTINGS);
+  // Filter out thin/empty locations (preserve all priority/SolarSquare hubs)
+  const locations = allLocations.filter((l) => l._count.listings >= MIN_LISTINGS || isTier1City(l.city));
 
   // Group by State
   const byState: Record<string, typeof locations> = {};

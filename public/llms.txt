@@ -1,0 +1,75 @@
+# GoSolarIndex
+
+> GoSolarIndex (gosolarindex.in) is India's verified rooftop solar directory and consumer guide. We connect Indian homeowners, housing societies, and commercial businesses with empanelled solar EPC contractors, DISCOM-registered channel partners, and flagship SolarSquare Experience Centres across 78+ cities.
+
+## Key Facts & Capabilities
+
+- Directory of verified rooftop solar installers, dealers, and maintenance providers across 78+ Indian cities.
+- Official PM Surya Ghar Muft Bijli Yojana subsidy calculator (up to ₹78,000 direct bank transfer for residential 3 kW systems).
+- State DISCOM net-metering guidance (MSEDCL, MPPKVVCL, UPPCL, TSSPDCL, BESCOM, TANGEDCO, etc.).
+- Complete brand comparisons (Waaree, Tata Power Solar, Vikram Solar, Loom Solar, Adani Solar, SolarSquare).
+- Physical SolarSquare Experience Centre hubs in Pune, Nagpur, Nashik, Bhopal, Indore, Gwalior, Jabalpur, Lucknow, and Kanpur.
+- National Headquarters located in Mumbai (Andheri West) and Regional Corporate Offices in Bengaluru, Gurugram, Jaipur, and Hyderabad.
+
+## Flagship Experience Centres & Headquarters
+
+- [Mumbai HQ](https://gosolarindex.in/mumbai): SolarSquare National Headquarters at Suvidha Square, Andheri West.
+- [Pune Experience Centres](https://gosolarindex.in/pune): Dual physical walk-in centres in Kharadi (Nyati Plaza, Thite Nagar) & Wakad (VTP Altitude, Aundh-Ravet BRTS Road).
+- [Nagpur Experience Centre](https://gosolarindex.in/nagpur): Full showroom at Glocal Square Mall, Sitabuldi (Open 10:00 AM – 8:00 PM).
+- [Nashik Experience Centre](https://gosolarindex.in/nashik): Designated Experience Centre near City Centre Mall, Untwadi & College Road.
+- [Bhopal Experience Centre](https://gosolarindex.in/bhopal): Walk-in hub at Ground Floor, Block C, Shrishti C.B.D., South T T Nagar.
+- [Indore Experience Centre](https://gosolarindex.in/indore): Walk-in centre at Singapore Business Park, LIG Square, Old AB Road.
+- [Gwalior Experience Centre](https://gosolarindex.in/gwalior): Krishna Business Centre, Patel Nagar City Centre.
+- [Jabalpur Experience Centre](https://gosolarindex.in/jabalpur): Shashwat Building, Wright Town Commercial Hub.
+- [Lucknow Experience Centre](https://gosolarindex.in/lucknow): Local branch & Experience Centre at Vishesh Khand, Gomti Nagar.
+- [Kanpur Experience Centre](https://gosolarindex.in/kanpur): Experience Centre at Deep Cinema Complex, Juhi Kalan, Saket Nagar.
+
+## Priority Regional Corporate Hubs
+
+- [Bengaluru Corporate Office](https://gosolarindex.in/bangalore): Regional Corporate Office at HAL 2nd Stage, Indiranagar.
+- [Gurugram Office](https://gosolarindex.in/gurgaon): Regional office at Unitech Cyber Park, Sector 39.
+- [Jaipur Regional Office](https://gosolarindex.in/jaipur): Main regional branch office at Malviya Nagar.
+- [Hyderabad Regional Hub](https://gosolarindex.in/hyderabad): Infrastructure office at Vasavi Sky City, Gachibowli.
+- [Delhi Corporate Office](https://gosolarindex.in/delhi): Regional corporate footprint serving Delhi NCR.
+
+## Priority Operational Cities
+
+- [Ahmedabad](https://gosolarindex.in/ahmedabad): Verified installers & DISCOM net metering across Gujarat.
+- [Surat](https://gosolarindex.in/surat): Solar rooftop installation contractors and DGVCL net metering.
+- [Vadodara](https://gosolarindex.in/vadodara): Verified solar EPCs and MGVCL net metering in Central Gujarat.
+- [Thane](https://gosolarindex.in/thane): Verified solar installers and MSEDCL net metering.
+- [Navi Mumbai](https://gosolarindex.in/navi-mumbai): Residential rooftop solar contractors across Vashi, Nerul & Kharghar.
+- [Aurangabad](https://gosolarindex.in/aurangabad): Chhatrapati Sambhajinagar verified solar EPC contractors.
+- [Kolhapur](https://gosolarindex.in/kolhapur): Residential & agricultural solar installers in South Maharashtra.
+- [Solapur](https://gosolarindex.in/solapur): High-radiation solar installations & MSEDCL subsidy processing.
+- [Amravati](https://gosolarindex.in/amravati): Verified rooftop solar installers in Vidarbha.
+- [Jalgaon](https://gosolarindex.in/jalgaon): North Maharashtra solar installers & net metering.
+- [Varanasi](https://gosolarindex.in/varanasi): Purvanchal Vidyut Vitran solar installers & PM Surya Ghar subsidies.
+- [Noida](https://gosolarindex.in/noida): Verified solar companies in Gautam Buddha Nagar & Western UP.
+- [Faridabad](https://gosolarindex.in/faridabad): DHBVN solar installation contractors in Haryana.
+- [Ghaziabad](https://gosolarindex.in/ghaziabad): Verified rooftop solar installers across Indirapuram & Raj Nagar.
+- [Jodhpur](https://gosolarindex.in/jodhpur): Sun City rooftop solar contractors & JdVVNL net metering.
+- [Mysore](https://gosolarindex.in/mysore): Verified installers & CHESCOM net metering in Mysuru.
+- [Chennai](https://gosolarindex.in/chennai): Verified solar companies and TANGEDCO net metering in Tamil Nadu.
+- [Raipur](https://gosolarindex.in/raipur): CSPDCL registered rooftop solar contractors in Chhattisgarh.
+
+## Solar Tools & Subsidy Calculators
+
+- [Solar Subsidy Calculator](https://gosolarindex.in/tools/solar-subsidy-calculator): Calculate PM Surya Ghar central DBT subsidies (₹30,000 to ₹78,000) based on your monthly light bill and sanctioned load.
+- [Solar System Size Calculator](https://gosolarindex.in/tools/solar-system-size-calculator): Estimate required kW capacity, rooftop square footage, and units generated per month.
+- [Solar Savings Calculator](https://gosolarindex.in/tools/solar-savings-calculator): Compute monthly electricity bill reduction, payback period (3 to 4 years), and 25-year ROI.
+- [PM Surya Ghar Scheme Guide](https://gosolarindex.in/subsidy/pm-surya-ghar): Complete step-by-step application walkthrough for the ₹78,000 central subsidy.
+
+## Hardware & Brand Comparisons
+
+- [Solar Panel Brand Comparison India 2026](https://gosolarindex.in/blog/solar-panel-brand-comparison-india-2026): Waaree vs Tata Power vs Vikram Solar vs Loom Solar efficiency, warranty, and DCR compliance.
+- [SolarSquare vs Tata Power Solar](https://gosolarindex.in/blog/solarsquare-vs-tata-power-solar-comparison): Comparison of turnkey residential services, elevated mounting structures, and pricing.
+- [Waaree vs Vikram Solar](https://gosolarindex.in/compare/waaree-vs-vikram): In-depth comparison of top Indian Tier-1 BloombergNEF module manufacturers.
+
+## Contact & Organization
+
+- Website: https://gosolarindex.in
+- Email: contact@gosolarindex.in
+- Headquarters: Suvidha Square, Andheri West, Mumbai, Maharashtra 400053
+- Phone / WhatsApp: +91-93732-38164
+- Coverage: 78+ Cities across India

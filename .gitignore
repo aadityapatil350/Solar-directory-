@@ -43,3 +43,8 @@ scripts/gsc.ts
 # scratch and backup dumps
 scratch*
 *_backup.json
+
+# GSC credentials
+gsc-credentials.json
+*credentials*.json
+

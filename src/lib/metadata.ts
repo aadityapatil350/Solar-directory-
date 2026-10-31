@@ -85,17 +85,17 @@ export function constructMetadata({
 
 const currentYear = () => new Date().getFullYear();
 
-export function constructCityMetadata(city: string, state: string, count?: number): Metadata {
+export function constructCityMetadata(city: string, state: string, count?: number, forceIndex?: boolean): Metadata {
   const year = currentYear();
-  const countLabel = count ? `${count} Verified` : 'Verified';
+  const countLabel = count && count > 0 ? `${count} Verified` : 'Verified';
   const title = `Best Solar Companies in ${city} (${year}) — ${countLabel} Installers & Subsidy`;
-  const description = `Compare ${count ? `${count} verified` : 'top'} solar companies & rooftop EPC installers in ${city}, ${state}. Check 3kW–10kW prices, DISCOM net metering, ₹78,000 PM Surya Ghar subsidy & get free quotes.`;
+  const description = `Compare ${count && count > 0 ? `${count} verified` : 'top'} solar companies & rooftop EPC installers in ${city}, ${state}. Check 3kW–10kW prices, DISCOM net metering, ₹78,000 PM Surya Ghar subsidy & get free quotes.`;
   return constructMetadata({
     title,
     description,
     path: `/${city.toLowerCase().replace(/\s+/g, '-')}`,
     standalone: true,
-    noindex: count === 0, // Noindex cities with 0 listings to prevent Soft 404s
+    noindex: forceIndex ? false : count === 0, // Never noindex priority hubs with fallback content
   });
 }
 
