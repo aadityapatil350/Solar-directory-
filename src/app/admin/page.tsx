@@ -617,7 +617,7 @@ export default function AdminDashboard() {
         setListings((prev) => prev.map((l) => l.id === listingId ? { ...l, featured: true, premiumExpiresAt: data.expiresAt } : l));
       }
       setUpgradeModal(null);
-      fetchClaims(auth);
+      fetchClaims();
     } catch (err) {
       toast('error', err instanceof Error ? err.message : 'Upgrade failed');
     } finally {
@@ -632,7 +632,6 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`/api/admin/listings?listingId=${listing.id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${auth}` },
       });
       if (!res.ok) throw new Error();
       toast('success', `"${listing.name}" deleted`);
@@ -726,7 +725,6 @@ export default function AdminDashboard() {
     try {
       await fetch(`/api/admin/leads?leadId=${leadId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${auth}` },
       });
       toast('success', 'Lead deleted');
     } catch {
@@ -744,8 +742,7 @@ export default function AdminDashboard() {
     setSuggestLoading(true);
     try {
       const res = await fetch(
-        `/api/admin/installers/suggest?${locId ? `locationId=${locId}&` : ''}leadId=${lead.id}`,
-        { headers: { Authorization: `Bearer ${auth}` } },
+        `/api/admin/installers/suggest?${locId ? `locationId=${locId}&` : ''}leadId=${lead.id}`
       );
       const data = await res.json();
       setSuggestInstallers(data.installers || []);
@@ -1374,7 +1371,7 @@ export default function AdminDashboard() {
                         placeholder="Search…"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') { setListingsPage(1); fetchListings(auth, 1); } }}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { setListingsPage(1); fetchListings(1); } }}
                         className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-sm w-44 focus:outline-none focus:border-ink"
                       />
                     </div>
@@ -1442,7 +1439,7 @@ export default function AdminDashboard() {
                       {unfeaturing ? 'Unfeaturing…' : `Unfeature All (${stats.featuredListings})`}
                     </button>
                     <button
-                      onClick={() => { fetchListings(auth, listingsPage); }}
+                      onClick={() => { fetchListings(listingsPage); }}
                       disabled={listingsLoading}
                       className="flex items-center gap-1.5 text-xs text-ink-2 hover:text-ink px-3 py-2 rounded-sm border border-line hover:bg-wash transition disabled:opacity-50"
                       title="Refresh listings from database"

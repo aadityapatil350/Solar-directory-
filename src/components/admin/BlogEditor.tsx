@@ -43,7 +43,7 @@ export interface BlogFormData {
 interface Props {
   initialData?: Partial<BlogFormData>;
   mode: 'new' | 'edit';
-  auth: string;
+  auth?: string;
   onSuccess?: (post: BlogFormData) => void;
 }
 
@@ -105,13 +105,13 @@ export default function BlogEditor({ initialData, mode, auth, onSuccess }: Props
       if (mode === 'new') {
         res = await fetch('/api/admin/blogs', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
       } else {
         res = await fetch(`/api/admin/blogs/${form.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
       }

@@ -28,7 +28,6 @@ const CATEGORIES = [
 
 export default function AdminBlogsPage() {
   const router = useRouter();
-  const [auth, setAuth] = useState('');
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -39,50 +38,56 @@ export default function AdminBlogsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [toast, setToast] = useState('');
 
-  // Auth check
-  useEffect(() => {
-    const a = localStorage.getItem('adminAuth');
-    if (!a) { router.push('/admin'); return; }
-    setAuth(a);
-  }, [router]);
-
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(''), 3500);
   };
 
-  const headers = useCallback((a?: string) => ({
-    Authorization: `Bearer ${a || auth}`,
-    'Content-Type': 'application/json',
-  }), [auth]);
-
-  const fetchPosts = useCallback(async (a = auth) => {
-    if (!a) return;
+  const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set('search', search);
       if (filterCat) params.set('category', filterCat);
       if (filterPub !== '') params.set('published', filterPub);
-      const res = await fetch(`/api/admin/blogs?${params}`, { headers: headers(a) });
+      const res = await fetch(`/api/admin/blogs?${params}`);
       if (!res.ok) { router.push('/admin'); return; }
       const data = await res.json();
       setPosts(data.posts);
       setTotal(data.total);
       setPublishedCount(data.publishedCount);
+    } catch {
+      router.push('/admin');
     } finally {
       setLoading(false);
     }
-  }, [auth, search, filterCat, filterPub, headers, router]);
+  }, [search, filterCat, filterPub, router]);
 
+  // Auth check via session
   useEffect(() => {
-    if (auth) fetchPosts(auth);
-  }, [auth, fetchPosts]);
+    localStorage.removeItem('adminAuth');
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user?.role === 'admin') {
+            fetchPosts();
+            return;
+          }
+        }
+      } catch {
+        // Not authenticated
+      }
+      router.push('/admin');
+    }
+    checkAuth();
+  }, [router, fetchPosts]);
 
   const deletePost = async (post: BlogPost) => {
     if (!window.confirm(`Delete "${post.title}"? This cannot be undone.`)) return;
     setDeletingId(post.id);
-    const res = await fetch(`/api/admin/blogs/${post.id}`, { method: 'DELETE', headers: headers() });
+    const res = await fetch(`/api/admin/blogs/${post.id}`, { method: 'DELETE' });
     setDeletingId(null);
     if (res.ok) {
       setPosts((p) => p.filter((x) => x.id !== post.id));

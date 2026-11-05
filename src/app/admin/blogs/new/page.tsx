@@ -6,14 +6,26 @@ import BlogEditor from '@/components/admin/BlogEditor';
 
 export default function NewBlogPage() {
   const router = useRouter();
-  const [auth, setAuth] = useState('');
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const a = localStorage.getItem('adminAuth');
-    if (!a) { router.push('/admin'); return; }
-    setAuth(a);
-    setReady(true);
+    localStorage.removeItem('adminAuth');
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user?.role === 'admin') {
+            setReady(true);
+            return;
+          }
+        }
+      } catch {
+        // Not authenticated
+      }
+      router.push('/admin');
+    }
+    checkAuth();
   }, [router]);
 
   if (!ready) return (
@@ -25,7 +37,6 @@ export default function NewBlogPage() {
   return (
     <BlogEditor
       mode="new"
-      auth={auth}
       onSuccess={(post) => {
         // After creating, redirect to the edit page so subsequent saves are PATCHes
         setTimeout(() => router.push(`/admin/blogs/${post.id}`), 800);

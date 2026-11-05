@@ -9,21 +9,32 @@ export default function EditBlogPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const [auth, setAuth] = useState('');
   const [post, setPost] = useState<BlogFormData | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const a = localStorage.getItem('adminAuth');
-    if (!a) { router.push('/admin'); return; }
-    setAuth(a);
+    localStorage.removeItem('adminAuth');
 
-    fetch(`/api/admin/blogs/${id}`, {
-      headers: { Authorization: `Bearer ${a}` },
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) { setError(data.error); return; }
+    async function init() {
+      try {
+        const authRes = await fetch('/api/auth/me');
+        if (!authRes.ok) {
+          router.push('/admin');
+          return;
+        }
+        const authData = await authRes.json();
+        if (authData.user?.role !== 'admin') {
+          router.push('/admin');
+          return;
+        }
+
+        const res = await fetch(`/api/admin/blogs/${id}`);
+        const data = await res.json();
+        if (data.error) {
+          setError(data.error);
+          return;
+        }
+
         const p = data.post;
         setPost({
           id: p.id,
@@ -39,8 +50,12 @@ export default function EditBlogPage() {
           metaDescription: p.metaDescription ?? '',
           ogImage: p.ogImage ?? '',
         });
-      })
-      .catch(() => setError('Failed to load post'));
+      } catch {
+        setError('Failed to load post');
+      }
+    }
+
+    init();
   }, [id, router]);
 
   if (error) return (
@@ -49,11 +64,11 @@ export default function EditBlogPage() {
     </div>
   );
 
-  if (!post || !auth) return (
+  if (!post) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-gray-400 text-sm">Loading post…</div>
     </div>
   );
 
-  return <BlogEditor mode="edit" auth={auth} initialData={post} />;
+  return <BlogEditor mode="edit" initialData={post} />;
 }
