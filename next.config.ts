@@ -29,9 +29,15 @@ const categorySlugRedirects = [
   { source: '/categories/solar-panel-dealers', destination: '/categories/solar-dealers', permanent: true },
 ];
 
-// Merged duplicate city routes.
+// Merged duplicate city routes and search aliases.
 const cityRedirects = [
   { source: '/mysuru', destination: '/mysore', permanent: true },
+  { source: '/bengaluru', destination: '/bangalore', permanent: true },
+  { source: '/gurugram', destination: '/gurgaon', permanent: true },
+  { source: '/new-delhi', destination: '/delhi', permanent: true },
+  { source: '/bareily', destination: '/bareilly', permanent: true },
+  { source: '/jablpur', destination: '/jabalpur', permanent: true },
+  { source: '/hydrabad', destination: '/hyderabad', permanent: true },
 ];
 
 // Old /locations/{city-state} URLs that Google indexed — redirect to canonical /{city} pages.
@@ -46,6 +52,8 @@ const locationPageRedirects = [
   { source: '/locations/amritsar-punjab', destination: '/amritsar', permanent: true },
   { source: '/locations/aurangabad-maharashtra', destination: '/aurangabad', permanent: true },
   { source: '/locations/bangalore-karnataka', destination: '/bangalore', permanent: true },
+  { source: '/locations/bengaluru-karnataka', destination: '/bangalore', permanent: true },
+  { source: '/locations/bareilly-uttar-pradesh', destination: '/bareilly', permanent: true },
   { source: '/locations/beed-maharashtra', destination: '/beed', permanent: true },
   { source: '/locations/belgaum-karnataka', destination: '/belgaum', permanent: true },
   { source: '/locations/bhavnagar-gujarat', destination: '/bhavnagar', permanent: true },
@@ -61,6 +69,9 @@ const locationPageRedirects = [
   { source: '/locations/dehradun-uttarakhand', destination: '/dehradun', permanent: true },
   { source: '/locations/delhi-delhi', destination: '/delhi', permanent: true },
   { source: '/locations/dhule-maharashtra', destination: '/dhule', permanent: true },
+  { source: '/locations/gurgaon-haryana', destination: '/gurgaon', permanent: true },
+  { source: '/locations/gurugram-haryana', destination: '/gurgaon', permanent: true },
+  { source: '/locations/gwalior-madhya-pradesh', destination: '/gwalior', permanent: true },
   { source: '/locations/guwahati-assam', destination: '/guwahati', permanent: true },
   { source: '/locations/hingoli-maharashtra', destination: '/hingoli', permanent: true },
   { source: '/locations/hubli-karnataka', destination: '/hubli', permanent: true },

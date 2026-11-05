@@ -1,22 +1,12 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-
-async function verifyAuth(request: Request) {
-  const auth = request.headers.get('authorization');
-  if (!auth?.startsWith('Bearer ')) return false;
-  const user = await prisma.user.findUnique({
-    where: { email: 'adityabiz350@gmail.com', role: 'admin' },
-  });
-  if (!user?.password) return false;
-  return bcrypt.compare(auth.substring(7), user.password);
-}
+import { verifyAdmin } from '@/lib/verify-admin';
 
 // GET /api/admin/installers/suggest?locationId=xxx&leadId=yyy
 // Returns all installers in the same city, flagging which already got this lead
 export async function GET(request: Request) {
-  const ok = await verifyAuth(request);
-  if (!ok) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const session = await verifyAdmin(request);
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
   const locationId = searchParams.get('locationId');

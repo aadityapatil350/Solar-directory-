@@ -1,45 +1,12 @@
-import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-
-async function verifyAuth(request: Request): Promise<{ success: boolean; user?: any }> {
-  const authHeader = request.headers.get('authorization');
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { success: false };
-  }
-
-  const password = authHeader.substring(7); // Remove 'Bearer ' prefix
-
-  // Look up admin user from database
-  const user = await prisma.user.findUnique({
-    where: {
-      email: 'adityabiz350@gmail.com',
-      role: 'admin',
-    },
-  });
-
-  if (!user || !user.password) {
-    return { success: false };
-  }
-
-  // Validate password
-  if (!await bcrypt.compare(password, user.password)) {
-    return { success: false };
-  }
-
-  return { success: true, user };
-}
+import { verifyAdmin } from '@/lib/verify-admin';
 
 export async function GET(request: Request) {
   try {
-    const { success, user } = await verifyAuth(request);
-
-    if (!success || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const adminUser = await verifyAdmin(request);
+    if (!adminUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -98,8 +65,7 @@ export async function GET(request: Request) {
         closed: closedLeads,
       },
       adminUser: {
-        name: user.name,
-        email: user.email,
+        email: adminUser.email,
       },
     });
   } catch (error) {
@@ -113,13 +79,9 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const { success, user } = await verifyAuth(request);
-
-    if (!success || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const adminUser = await verifyAdmin(request);
+    if (!adminUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -157,7 +119,7 @@ export async function PATCH(request: Request) {
             leadId,
             installerId,
             status: 'pending',
-            price: 50, // Default price for basic lead (you can adjust)
+            price: 50,
             paid: false,
           },
         });
@@ -186,13 +148,9 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const { success, user } = await verifyAuth(request);
-
-    if (!success || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const adminUser = await verifyAdmin(request);
+    if (!adminUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);

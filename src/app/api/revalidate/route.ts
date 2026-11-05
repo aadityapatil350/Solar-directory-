@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { verifyAdmin } from '@/lib/verify-admin';
 
 /**
  * On-Demand Revalidation API
  *
- * Usage: POST /api/revalidate
- * Body: { "path": "/listing/some-slug" } or { "paths": ["/listing/slug1", "/listing/slug2"] }
- *
- * For security, add a secret token in production
+ * Secured via:
+ * 1. Active admin session cookie, OR
+ * 2. x-revalidate-token header matching REVALIDATION_SECRET or SESSION_SECRET
  */
 export async function POST(request: NextRequest) {
   try {
+    const session = await verifyAdmin(request);
+    const tokenHeader = request.headers.get('x-revalidate-token');
+    const expectedSecret = process.env.REVALIDATION_SECRET || process.env.SESSION_SECRET;
+
+    const isSecretValid = Boolean(expectedSecret && tokenHeader && tokenHeader === expectedSecret);
+
+    if (!session && !isSecretValid) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { path, paths } = body;
 
@@ -20,7 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `Revalidated: ${path}`,
-        revalidated: [path]
+        revalidated: [path],
       });
     }
 
@@ -32,7 +42,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `Revalidated ${paths.length} paths`,
-        revalidated: paths
+        revalidated: paths,
       });
     }
 

@@ -36,23 +36,23 @@ const REQUIREMENTS = [
 ];
 
 const QUICK_CITIES = [
-  'Mumbai',
-  'Pune',
-  'Nagpur',
-  'Nashik',
+  'Chennai',
+  'Coimbatore',
+  'Bengaluru',
+  'Hyderabad',
+  'Gwalior',
   'Bhopal',
   'Indore',
-  'Gwalior',
   'Jabalpur',
   'Lucknow',
   'Kanpur',
+  'Bareilly',
+  'Ahmedabad',
   'Jaipur',
-  'Bengaluru',
-  'Hyderabad',
   'Delhi',
   'Gurgaon',
-  'Ahmedabad',
-  'Surat',
+  'Mumbai',
+  'Pune',
 ];
 
 interface LeadFormProps {

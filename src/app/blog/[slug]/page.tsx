@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { constructMetadata } from '@/lib/metadata';
 import { prisma } from '@/lib/prisma';
+import { sanitizeBlogHtml } from '@/lib/sanitize';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -119,7 +120,7 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Article Body */}
         <article
           className="article-body prose prose-neutral max-w-none text-ink font-body leading-relaxed space-y-6 [&>h2]:font-heading [&>h2]:font-semibold [&>h2]:text-2xl [&>h2]:text-ink [&>h2]:mt-8 [&>h2]:mb-3 [&>h3]:font-heading [&>h3]:font-semibold [&>h3]:text-xl [&>h3]:text-ink [&>h3]:mt-6 [&>p]:text-[16px] [&>p]:text-ink-2 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1 [&>ul]:text-ink-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1 [&>ol]:text-ink-2 [&>table]:w-full [&>table]:border [&>table]:border-line [&>table_th]:bg-wash [&>table_th]:p-3 [&>table_td]:p-3 [&>table_td]:border-t [&>table_td]:border-line"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(post.content) }}
         />
 
         {/* Lead CTA Strip */}

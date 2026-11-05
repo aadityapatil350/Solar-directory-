@@ -466,9 +466,11 @@ export const TIER1_CITIES: Tier1CityConfig[] = [
     slug: 'bareilly',
     state: 'Uttar Pradesh',
     pinPrefixes: ['243'],
-    aliases: ['bareilly', 'civil lines bareilly', 'rajendra nagar bareilly', 'dd puram'],
+    aliases: ['bareilly', 'bareily', 'civil lines bareilly', 'rajendra nagar bareilly', 'dd puram', 'ayub khan chowk'],
     isSolarSquare: true,
     isExperienceCentre: false,
+    officeType: 'operational_hub',
+    officeAddress: 'Bareilly & Rohilkhand Regional Operations Hub, Civil Lines',
   },
   {
     name: 'Prayagraj',
@@ -502,9 +504,11 @@ export const TIER1_CITIES: Tier1CityConfig[] = [
     slug: 'coimbatore',
     state: 'Tamil Nadu',
     pinPrefixes: ['641'],
-    aliases: ['coimbatore', 'kovai', 'rs puram', 'peelamedu', 'gandhipuram'],
-    isSolarSquare: false,
+    aliases: ['coimbatore', 'kovai', 'rs puram', 'peelamedu', 'gandhipuram', 'singanallur', 'saravanampatti', 'saibaba colony', 'race course'],
+    isSolarSquare: true,
     isExperienceCentre: false,
+    officeType: 'operational_hub',
+    officeAddress: 'Coimbatore Regional Solar Operations, RS Puram & Peelamedu',
   },
 ];
 

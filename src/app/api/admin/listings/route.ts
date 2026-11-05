@@ -1,24 +1,14 @@
-import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 import { generateCleanListingSlug } from '@/lib/slugs';
-
-async function verifyAuth(request: Request): Promise<{ success: boolean; user?: any }> {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return { success: false };
-  const password = authHeader.substring(7);
-  const user = await prisma.user.findUnique({ where: { email: 'adityabiz350@gmail.com', role: 'admin' } });
-  if (!user || !user.password) return { success: false };
-  if (!await bcrypt.compare(password, user.password)) return { success: false };
-  return { success: true, user };
-}
+import { verifyAdmin } from '@/lib/verify-admin';
 
 // GET all listings (with optional filters + pagination)
 export async function GET(request: Request) {
   try {
-    const { success, user } = await verifyAuth(request);
-    if (!success || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await verifyAdmin(request);
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { searchParams } = new URL(request.url);
     const categoryId = searchParams.get('categoryId');
@@ -76,8 +66,8 @@ export async function GET(request: Request) {
 // POST create new listing
 export async function POST(request: Request) {
   try {
-    const { success, user } = await verifyAuth(request);
-    if (!success || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await verifyAdmin(request);
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
     const { name, description, phone, email, website, address, categoryId, locationId, verified, featured, extraCategoryIds } = body;
@@ -131,8 +121,8 @@ export async function POST(request: Request) {
 // PATCH update listing
 export async function PATCH(request: Request) {
   try {
-    const { success, user } = await verifyAuth(request);
-    if (!success || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await verifyAdmin(request);
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
     const { id, featured, verified, name, description, phone, email, website, address, categoryId, locationId, rating, reviews, extraCategoryIds } = body;
@@ -178,8 +168,8 @@ export async function PATCH(request: Request) {
 // DELETE listing
 export async function DELETE(request: Request) {
   try {
-    const { success } = await verifyAuth(request);
-    if (!success) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await verifyAdmin(request);
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { searchParams } = new URL(request.url);
     const listingId = searchParams.get('listingId');

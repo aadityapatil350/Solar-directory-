@@ -1,25 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
-
-async function verifyAuth(request: Request): Promise<{ success: boolean; user?: any }> {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { success: false };
-  }
-  const password = authHeader.substring(7);
-  const user = await prisma.user.findUnique({
-    where: { email: 'adityabiz350@gmail.com', role: 'admin' },
-  });
-  if (!user || !user.password) return { success: false };
-  if (!await bcrypt.compare(password, user.password)) return { success: false };
-  return { success: true, user };
-}
+import { verifyAdmin } from '@/lib/verify-admin';
 
 export async function GET(request: NextRequest) {
   try {
-    const { success } = await verifyAuth(request);
-    if (!success) {
+    const session = await verifyAdmin(request);
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -46,8 +32,8 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const { success } = await verifyAuth(request);
-    if (!success) {
+    const session = await verifyAdmin(request);
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

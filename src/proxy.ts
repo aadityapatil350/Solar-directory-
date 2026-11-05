@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySession } from '@/lib/session';
+import { verifySession, COOKIE_NAME_EXPORT } from '@/lib/session';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -13,20 +13,60 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url, 301);
   }
 
-  // Dashboard auth protection
-  if (!pathname.startsWith('/dashboard')) return NextResponse.next();
-  if (pathname === '/dashboard/login') return NextResponse.next();
-  if (pathname === '/dashboard/forgot-password') return NextResponse.next();
-  if (pathname === '/dashboard/reset-password') return NextResponse.next();
+  const token = request.cookies.get(COOKIE_NAME_EXPORT)?.value;
 
-  const token = request.cookies.get('gsi_session')?.value;
-  if (!token) {
-    return NextResponse.redirect(new URL('/dashboard/login', request.url));
+  // ── 1. Admin API Protection ──
+  if (pathname.startsWith('/api/admin')) {
+    if (pathname === '/api/admin/login') {
+      return NextResponse.next();
+    }
+
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const session = await verifySession(token);
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    return NextResponse.next();
   }
 
-  const session = await verifySession(token);
-  if (!session || (session.role !== 'owner' && session.role !== 'admin')) {
-    return NextResponse.redirect(new URL('/dashboard/login', request.url));
+  // ── 2. Admin Blogs Protection (/admin/blogs and subpages) ──
+  if (pathname.startsWith('/admin/blogs')) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
+
+    const session = await verifySession(token);
+    if (!session || session.role !== 'admin') {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
+
+    return NextResponse.next();
+  }
+
+  // ── 3. Dashboard Auth Protection ──
+  if (pathname.startsWith('/dashboard')) {
+    if (
+      pathname === '/dashboard/login' ||
+      pathname === '/dashboard/forgot-password' ||
+      pathname === '/dashboard/reset-password'
+    ) {
+      return NextResponse.next();
+    }
+
+    if (!token) {
+      return NextResponse.redirect(new URL('/dashboard/login', request.url));
+    }
+
+    const session = await verifySession(token);
+    if (!session || (session.role !== 'owner' && session.role !== 'admin')) {
+      return NextResponse.redirect(new URL('/dashboard/login', request.url));
+    }
+
+    return NextResponse.next();
   }
 
   return NextResponse.next();

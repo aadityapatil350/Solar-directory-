@@ -191,26 +191,29 @@ export default async function CityPage({ params }: PageProps) {
     })),
   };
 
+  const isUP = cityData.state === 'Uttar Pradesh';
+  const isDelhi = cityData.city.toLowerCase() === 'delhi' || cityData.state === 'Delhi';
+
   const solarPriceBenchmarks = [
     {
       size: '2 kW',
       idealFor: '1–2 BHK / Small Home',
       areaSqFt: '160 – 200 sq.ft',
       monthlyGen: '240 – 260 units',
-      monthlySavings: '₹1,800 – ₹2,400',
+      monthlySavings: isUP ? '₹2,000 – ₹2,600' : '₹1,800 – ₹2,400',
       grossCost: '₹1,25,000 – ₹1,35,000',
-      subsidy: '₹60,000',
-      netCost: '₹65,000 – ₹75,000',
+      subsidy: isUP ? '₹90,000 (₹60K + ₹30K UP)' : '₹60,000',
+      netCost: isUP ? '₹35,000 – ₹45,000' : '₹65,000 – ₹75,000',
     },
     {
       size: '3 kW',
       idealFor: '3–4 BHK (PM Surya Ghar Sweet Spot)',
       areaSqFt: '240 – 300 sq.ft',
       monthlyGen: '360 – 400 units',
-      monthlySavings: '₹2,800 – ₹3,800',
+      monthlySavings: isUP ? '₹3,200 – ₹4,200' : '₹2,800 – ₹3,800',
       grossCost: '₹1,85,000 – ₹1,95,000',
-      subsidy: '₹78,000',
-      netCost: '₹1,07,000 – ₹1,17,000',
+      subsidy: isUP ? '₹1,08,000 (₹78K + ₹30K UP)' : '₹78,000',
+      netCost: isUP ? '₹77,000 – ₹87,000' : '₹1,07,000 – ₹1,17,000',
       popular: true,
     },
     {
@@ -220,8 +223,8 @@ export default async function CityPage({ params }: PageProps) {
       monthlyGen: '600 – 660 units',
       monthlySavings: '₹4,800 – ₹6,200',
       grossCost: '₹2,90,000 – ₹3,10,000',
-      subsidy: '₹78,000',
-      netCost: '₹2,12,000 – ₹2,32,000',
+      subsidy: isUP ? '₹1,08,000 (₹78K + ₹30K UP)' : '₹78,000',
+      netCost: isUP ? '₹1,82,000 – ₹2,02,000' : '₹2,12,000 – ₹2,32,000',
     },
     {
       size: '10 kW',
@@ -230,8 +233,8 @@ export default async function CityPage({ params }: PageProps) {
       monthlyGen: '1,200 – 1,300 units',
       monthlySavings: '₹9,600 – ₹12,500',
       grossCost: '₹5,40,000 – ₹5,80,000',
-      subsidy: '₹78,000',
-      netCost: '₹4,62,000 – ₹5,02,000',
+      subsidy: isUP ? '₹1,08,000 (₹78K + ₹30K UP)' : '₹78,000',
+      netCost: isUP ? '₹4,32,000 – ₹4,72,000' : '₹4,62,000 – ₹5,02,000',
     },
   ];
 
@@ -288,7 +291,11 @@ export default async function CityPage({ params }: PageProps) {
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-sun-wash text-ink text-xs font-semibold">
                 <Zap className="h-3.5 w-3.5 fill-sun text-ink" />
-                PM Surya Ghar Scheme (₹78,000 Subsidy)
+                {isUP
+                  ? 'PM Surya Ghar + UPNEDA (Up to ₹1,08,000 Total Subsidy)'
+                  : isDelhi
+                  ? 'PM Surya Ghar (₹78K Subsidy) + ₹3/Unit Delhi GBI'
+                  : 'PM Surya Ghar Scheme (₹78,000 Subsidy)'}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-wash text-ink-2 text-xs font-medium border border-line">
                 <ShieldCheck className="h-3.5 w-3.5 text-ink" />
@@ -300,7 +307,7 @@ export default async function CityPage({ params }: PageProps) {
               Best Solar Companies &amp; Verified Installers in {cityData.city}
             </h1>
             <p className="text-sm sm:text-base text-ink-2 max-w-3xl mb-8 leading-relaxed font-body">
-              Compare {listings.length || 'top'} verified solar rooftop contractors and channel partners serving {cityData.city}, {cityData.state}. Calculate net installation costs after the ₹78,000 central subsidy and receive up to 3 competitive proposals.
+              Compare {listings.length || 'top'} verified solar rooftop contractors and channel partners serving {cityData.city}, {cityData.state}. Calculate net installation costs after {isUP ? 'the ₹1,08,000 combined central & UPNEDA state subsidy' : isDelhi ? 'the ₹78,000 central subsidy and ₹3/unit Delhi GBI cash incentive' : 'the ₹78,000 central subsidy'} and receive up to 3 competitive proposals.
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -378,14 +385,37 @@ export default async function CityPage({ params }: PageProps) {
 
                 <FactPanel
                   title={`Solar benchmark: ${cityData.city}, ${cityData.state}`}
-                  rows={[
-                    { label: 'Primary DISCOM', value: stateConfig.discoms[0] || 'State Distribution Utility' },
-                    { label: 'PM Surya Ghar subsidy (3 kW)', value: '₹78,000' },
-                    { label: 'Estimated 3 kW gross cost', value: '₹1,85,000 – ₹1,95,000' },
-                    { label: 'Net homeowner cost', value: '₹1,07,000 – ₹1,17,000', total: true },
-                    { label: 'Avg daily solar radiation', value: '4.8 – 5.5 kWh/m²' },
-                    { label: 'Estimated payback period', value: '3.1 – 3.8 years' },
-                  ]}
+                  rows={
+                    isUP
+                      ? [
+                          { label: 'Primary DISCOM', value: stateConfig.discoms[0] || 'MVVNL / UPPCL' },
+                          { label: 'PM Surya Ghar central subsidy', value: '₹78,000' },
+                          { label: 'UPNEDA state top-up subsidy', value: '₹30,000' },
+                          { label: 'Total combined govt. subsidy', value: '₹1,08,000', total: true },
+                          { label: 'Estimated 3 kW gross cost', value: '₹1,85,000 – ₹1,95,000' },
+                          { label: 'Net homeowner cost', value: '₹77,000 – ₹87,000', total: true },
+                          { label: 'Avg daily solar radiation', value: '5.2 – 5.8 kWh/m²' },
+                          { label: 'Estimated payback period', value: '2.4 – 3.2 years' },
+                        ]
+                      : isDelhi
+                      ? [
+                          { label: 'Primary DISCOM', value: stateConfig.discoms[0] || 'BSES / Tata Power DDL' },
+                          { label: 'PM Surya Ghar central subsidy', value: '₹78,000' },
+                          { label: 'Delhi Govt GBI cash incentive', value: '₹3 / kWh (for 5 years)' },
+                          { label: 'Estimated 3 kW gross cost', value: '₹1,85,000 – ₹1,95,000' },
+                          { label: 'Net homeowner cost', value: '₹1,07,000 – ₹1,17,000', total: true },
+                          { label: 'Avg daily solar radiation', value: '5.0 – 5.5 kWh/m²' },
+                          { label: 'Estimated payback period', value: '2.8 – 3.4 years' },
+                        ]
+                      : [
+                          { label: 'Primary DISCOM', value: stateConfig.discoms[0] || 'State Distribution Utility' },
+                          { label: 'PM Surya Ghar subsidy (3 kW)', value: '₹78,000' },
+                          { label: 'Estimated 3 kW gross cost', value: '₹1,85,000 – ₹1,95,000' },
+                          { label: 'Net homeowner cost', value: '₹1,07,000 – ₹1,17,000', total: true },
+                          { label: 'Avg daily solar radiation', value: `${stateConfig.avgSunHoursDaily || 5.2} – 5.8 kWh/m²` },
+                          { label: 'Estimated payback period', value: '3.1 – 3.8 years' },
+                        ]
+                  }
                   sources="MNRE National Solar Mission, PM Surya Ghar Portal, State Electricity Regulatory Commission tariff orders 2026."
                 />
 
@@ -686,13 +716,81 @@ export default async function CityPage({ params }: PageProps) {
                       },
                     ]
                   : []),
-                ...(cityData.city.toLowerCase() === 'delhi'
+                ...(cityData.city.toLowerCase() === 'delhi' || cityData.city.toLowerCase() === 'gurgaon'
                   ? [
                       {
                         title: 'Delhi Solar Policy 2026: Generation-Based Incentive (GBI) & Subsidy',
                         href: '/blog/delhi-solar-policy-2026-subsidy-zero-bill-bses-tata',
-                        tag: 'Delhi Policy',
-                        desc: 'How to combine the ₹78,000 central subsidy with the ₹3/kWh Delhi GBI cash reward.',
+                        tag: 'NCR Solar Policy',
+                        desc: 'How to combine the ₹78,000 central subsidy with the ₹3/kWh Delhi GBI cash reward and DHBVN/BSES rules.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'chennai'
+                  ? [
+                      {
+                        title: 'Solar Panel Installation in Chennai (2026): TANGEDCO Net Metering & Costs',
+                        href: '/blog/solar-panel-installation-chennai-2026',
+                        tag: 'Chennai Pricing',
+                        desc: 'Turnkey costs, cyclone-resistant mounting structures, and TANGEDCO billing slabs for Chennai homes.',
+                      },
+                      {
+                        title: 'Tamil Nadu Net Metering (TANGEDCO) 2026: The Full Homeowner Guide',
+                        href: '/blog/tamil-nadu-net-metering-tangedco-guide-2026',
+                        tag: 'TANGEDCO Rules',
+                        desc: 'Net feed-in vs gross metering, application steps, and bi-monthly electricity bill credits.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'coimbatore'
+                  ? [
+                      {
+                        title: 'Tamil Nadu Net Metering (TANGEDCO) 2026: The Full Homeowner Guide',
+                        href: '/blog/tamil-nadu-net-metering-tangedco-guide-2026',
+                        tag: 'TANGEDCO Rules',
+                        desc: 'How Coimbatore residential and textile industrial rooftops maximize return with solar net metering.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'ahmedabad'
+                  ? [
+                      {
+                        title: 'Solar Panel Installation in Ahmedabad (2026): Cost & Net Metering',
+                        href: '/blog/solar-panel-installation-ahmedabad-2026',
+                        tag: 'Ahmedabad Pricing',
+                        desc: 'Torrent Power and UGVCL net metering workflows, 3kW-5kW costs, and SURYA Gujarat integration.',
+                      },
+                      {
+                        title: 'SURYA Gujarat Yojana 2026 — Extra Subsidy & Application Guide',
+                        href: '/blog/surya-gujarat-yojana-2026-guide',
+                        tag: 'Gujarat Policy',
+                        desc: 'Everything you need to know about DISCOM meter replacement within 14 days in Gujarat.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'jaipur'
+                  ? [
+                      {
+                        title: 'Solar Panel Installation in Jaipur (2026): Cost, JVVNL & Payback',
+                        href: '/blog/solar-panel-installation-jaipur-2026',
+                        tag: 'Jaipur Pricing',
+                        desc: 'How Jaipur homeowners benefit from 5.8+ kWh/m² daily solar radiation and 3.1-year payback.',
+                      },
+                      {
+                        title: "Rajasthan Solar Subsidy & Policy 2026 — India's No.1 Solar State",
+                        href: '/blog/rajasthan-solar-policy-subsidy-2026',
+                        tag: 'Rajasthan Guide',
+                        desc: 'JVVNL net metering guidelines, DCR panel requirements, and ₹78,000 DBT subsidy processing.',
+                      },
+                    ]
+                  : []),
+                ...(cityData.city.toLowerCase() === 'lucknow' || cityData.city.toLowerCase() === 'kanpur' || cityData.city.toLowerCase() === 'bareilly'
+                  ? [
+                      {
+                        title: `Solar Panel Installation in ${cityData.city} (2026): ₹1.08L Combined Subsidy`,
+                        href: '/blog/solar-panel-installation-lucknow-2026',
+                        tag: 'UP Subsidy Guide',
+                        desc: 'How to claim both ₹78,000 PM Surya Ghar and ₹30,000 UPNEDA state top-up subsidy in Uttar Pradesh.',
                       },
                     ]
                   : []),

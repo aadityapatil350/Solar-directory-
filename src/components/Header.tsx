@@ -83,6 +83,66 @@ export default function Header() {
             </div>
           </div>
 
+          {/* Top Cities dropdown */}
+          <div className="relative group">
+            <button className="flex items-center gap-1 hover:text-ink/80 transition-colors focus:outline-none">
+              Top Cities
+              <svg
+                className="h-3.5 w-3.5 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Dropdown panel */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[540px] bg-paper border border-line rounded-md shadow-float opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 p-4">
+              <div className="grid grid-cols-4 gap-4 text-xs">
+                <div>
+                  <span className="font-semibold text-ink uppercase tracking-wider text-[11px] block mb-2 pb-1 border-b border-line">South</span>
+                  <div className="space-y-1.5 font-medium">
+                    <Link href="/bangalore" className="block text-ink-2 hover:text-ink transition-colors">Bengaluru</Link>
+                    <Link href="/hyderabad" className="block text-ink-2 hover:text-ink transition-colors">Hyderabad</Link>
+                    <Link href="/chennai" className="block text-ink-2 hover:text-ink transition-colors">Chennai</Link>
+                    <Link href="/coimbatore" className="block text-ink-2 hover:text-ink transition-colors">Coimbatore</Link>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-semibold text-ink uppercase tracking-wider text-[11px] block mb-2 pb-1 border-b border-line">Central MP</span>
+                  <div className="space-y-1.5 font-medium">
+                    <Link href="/bhopal" className="block text-ink-2 hover:text-ink transition-colors">Bhopal</Link>
+                    <Link href="/indore" className="block text-ink-2 hover:text-ink transition-colors">Indore</Link>
+                    <Link href="/gwalior" className="block text-ink-2 hover:text-ink transition-colors">Gwalior</Link>
+                    <Link href="/jabalpur" className="block text-ink-2 hover:text-ink transition-colors">Jabalpur</Link>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-semibold text-ink uppercase tracking-wider text-[11px] block mb-2 pb-1 border-b border-line">UP &amp; NCR</span>
+                  <div className="space-y-1.5 font-medium">
+                    <Link href="/delhi" className="block text-ink-2 hover:text-ink transition-colors">Delhi</Link>
+                    <Link href="/gurgaon" className="block text-ink-2 hover:text-ink transition-colors">Gurgaon</Link>
+                    <Link href="/lucknow" className="block text-ink-2 hover:text-ink transition-colors">Lucknow</Link>
+                    <Link href="/kanpur" className="block text-ink-2 hover:text-ink transition-colors">Kanpur</Link>
+                    <Link href="/bareilly" className="block text-ink-2 hover:text-ink transition-colors">Bareilly</Link>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-semibold text-ink uppercase tracking-wider text-[11px] block mb-2 pb-1 border-b border-line">West</span>
+                  <div className="space-y-1.5 font-medium">
+                    <Link href="/ahmedabad" className="block text-ink-2 hover:text-ink transition-colors">Ahmedabad</Link>
+                    <Link href="/jaipur" className="block text-ink-2 hover:text-ink transition-colors">Jaipur</Link>
+                    <div className="pt-2 border-t border-line mt-2">
+                      <Link href="/locations" className="block text-sun font-semibold hover:underline">All 70+ Cities →</Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <Link href="/locations" className="hover:text-ink/80 transition-colors">
             Find
           </Link>
@@ -160,6 +220,28 @@ export default function Header() {
               >
                 View all tools →
               </Link>
+            </div>
+          </div>
+
+          {/* Priority Solar Hubs mobile sub-section */}
+          <div className="py-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink/40 mb-2">Priority Solar Hubs</p>
+            <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-sm pl-1 font-medium">
+              <Link href="/bangalore" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Bengaluru</Link>
+              <Link href="/hyderabad" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Hyderabad</Link>
+              <Link href="/chennai" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Chennai</Link>
+              <Link href="/coimbatore" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Coimbatore</Link>
+              <Link href="/delhi" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Delhi</Link>
+              <Link href="/gurgaon" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Gurgaon</Link>
+              <Link href="/lucknow" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Lucknow</Link>
+              <Link href="/kanpur" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Kanpur</Link>
+              <Link href="/bareilly" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Bareilly</Link>
+              <Link href="/bhopal" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Bhopal</Link>
+              <Link href="/indore" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Indore</Link>
+              <Link href="/gwalior" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Gwalior</Link>
+              <Link href="/jabalpur" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Jabalpur</Link>
+              <Link href="/ahmedabad" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Ahmedabad</Link>
+              <Link href="/jaipur" onClick={() => setMobileOpen(false)} className="text-ink hover:text-sun py-1">Jaipur</Link>
             </div>
           </div>
 

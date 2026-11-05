@@ -164,7 +164,6 @@ export default function AdminDashboard() {
   // Auth
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [auth, setAuth] = useState(''); // stored plain password for Bearer token
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -259,24 +258,34 @@ export default function AdminDashboard() {
 
   // ── Auth ──
   useEffect(() => {
-    const savedAuth = localStorage.getItem('adminAuth');
-    const savedEmail = localStorage.getItem('adminEmail');
-    const savedName = localStorage.getItem('adminName');
-    if (savedAuth && savedEmail) {
-      setAuth(savedAuth);
-      setLoginEmail(savedEmail);
-      setIsAuthenticated(true);
-      if (savedName) setAdminUser({ name: savedName, email: savedEmail });
+    // Clean up any old plaintext password stored in localStorage
+    localStorage.removeItem('adminAuth');
+
+    async function checkAuthSession() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user && data.user.role === 'admin') {
+            setIsAuthenticated(true);
+            setAdminUser({ name: data.user.name || 'Admin', email: data.user.email });
+            return;
+          }
+        }
+      } catch {
+        // Not authenticated
+      }
+      setIsAuthenticated(false);
     }
+    checkAuthSession();
   }, []);
 
   const headers = useCallback(
     (extra?: Record<string, string>) => ({
-      Authorization: `Bearer ${auth}`,
       'Content-Type': 'application/json',
       ...extra,
     }),
-    [auth],
+    [],
   );
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -291,12 +300,9 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (!res.ok) { setLoginError(data.error || 'Invalid credentials'); return; }
-      localStorage.setItem('adminAuth', loginPassword);
-      localStorage.setItem('adminEmail', loginEmail.trim());
-      if (data.name) localStorage.setItem('adminName', data.name);
-      setAuth(loginPassword);
-      setAdminUser({ name: data.name, email: data.email });
+      setAdminUser({ name: data.user?.name || 'Admin', email: data.user?.email || loginEmail.trim() });
       setIsAuthenticated(true);
+      setLoginPassword('');
     } catch {
       setLoginError('Network error. Please try again.');
     } finally {
@@ -304,10 +310,14 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' });
+    } catch {
+      // Ignore
+    }
     setIsAuthenticated(false);
     setAdminUser(null);
-    setAuth('');
     setLoginEmail('');
     setLoginPassword('');
     localStorage.removeItem('adminAuth');
@@ -318,13 +328,15 @@ export default function AdminDashboard() {
   };
 
   // ── Fetch helpers ──
-  const fetchLeads = useCallback(async (token = auth, filter = leadsFilter) => {
+  const fetchLeads = useCallback(async (filter = leadsFilter) => {
     setLeadsLoading(true);
     try {
-      const res = await fetch(`/api/admin/leads?status=${filter}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) { setLeads([]); return; }
+      const res = await fetch(`/api/admin/leads?status=${filter}`);
+      if (!res.ok) {
+        if (res.status === 401) setIsAuthenticated(false);
+        setLeads([]);
+        return;
+      }
       const data = await res.json();
       setLeads(data.leads || []);
       if (data.adminUser) setAdminUser(data.adminUser);
@@ -334,9 +346,9 @@ export default function AdminDashboard() {
         newLeads: data.stats?.new || 0,
       }));
     } catch { setLeads([]); } finally { setLeadsLoading(false); }
-  }, [auth, leadsFilter]);
+  }, [leadsFilter]);
 
-  const fetchListings = useCallback(async (token = auth, page = listingsPage) => {
+  const fetchListings = useCallback(async (page = listingsPage) => {
     setListingsLoading(true);
     try {
       const params = new URLSearchParams();
@@ -346,16 +358,18 @@ export default function AdminDashboard() {
       if (filterFeatured) params.set('featured', filterFeatured);
       if (searchQuery) params.set('search', searchQuery);
       params.set('page', String(page));
-      const res = await fetch(`/api/admin/listings?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`/api/admin/listings?${params}`);
+      if (!res.ok) {
+        if (res.status === 401) setIsAuthenticated(false);
+        return;
+      }
       const data = await res.json();
       setListings(data.listings || []);
       setListingsTotalPages(data.totalPages || 1);
       setListingsTotal(data.total || 0);
       setStats((prev) => ({ ...prev, ...(data.stats || {}) }));
     } catch { /* silent */ } finally { setListingsLoading(false); }
-  }, [auth, listingsPage, filterCategory, filterLocation, filterVerified, filterFeatured, searchQuery]);
+  }, [listingsPage, filterCategory, filterLocation, filterVerified, filterFeatured, searchQuery]);
 
   const fetchCatsLocs = useCallback(async () => {
     const [catsRes, locsRes] = await Promise.all([
@@ -366,16 +380,19 @@ export default function AdminDashboard() {
     setLocations(await locsRes.json());
   }, []);
 
-  const fetchClaims = useCallback(async (token = auth) => {
+  const fetchClaims = useCallback(async () => {
     setClaimsLoading(true);
     try {
-      const res = await fetch('/api/admin/claims', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch('/api/admin/claims');
+      if (!res.ok) {
+        if (res.status === 401) setIsAuthenticated(false);
+        setClaims([]);
+        return;
+      }
       const data = await res.json();
       setClaims(data.claims || []);
     } catch { setClaims([]); } finally { setClaimsLoading(false); }
-  }, [auth]);
+  }, []);
 
   const processClaim = async (claimId: string, action: 'approve' | 'reject') => {
     if (action === 'approve' && !confirm('Approve this claim? The listing will be verified and the owner will get dashboard access.')) return;
@@ -450,32 +467,32 @@ export default function AdminDashboard() {
 
   // Load data when authenticated — only load active tab
   useEffect(() => {
-    if (!isAuthenticated || !auth) return;
+    if (!isAuthenticated) return;
     fetchCatsLocs();
-    fetchLeads(auth);
-  }, [isAuthenticated, auth]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchLeads();
+  }, [isAuthenticated, fetchCatsLocs, fetchLeads]);
 
   // Lazy-load tab data when switching tabs
   useEffect(() => {
-    if (!isAuthenticated || !auth) return;
-    if (activeTab === 'listings' && listings.length === 0) fetchListings(auth, 1);
-    if (activeTab === 'claims' && claims.length === 0) fetchClaims(auth);
-  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!isAuthenticated) return;
+    if (activeTab === 'listings' && listings.length === 0) fetchListings(1);
+    if (activeTab === 'claims' && claims.length === 0) fetchClaims();
+  }, [activeTab, isAuthenticated, listings.length, claims.length, fetchListings, fetchClaims]);
 
   // Reload leads when filter changes
   useEffect(() => {
-    if (isAuthenticated && auth) { setLeadsPage(1); fetchLeads(auth, leadsFilter); }
-  }, [leadsFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (isAuthenticated) { setLeadsPage(1); fetchLeads(leadsFilter); }
+  }, [leadsFilter, isAuthenticated, fetchLeads]);
 
   // Reload listings when filters change (reset to page 1)
   useEffect(() => {
-    if (isAuthenticated && auth) { setListingsPage(1); fetchListings(auth, 1); }
-  }, [filterCategory, filterLocation, filterVerified, filterFeatured]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (isAuthenticated) { setListingsPage(1); fetchListings(1); }
+  }, [filterCategory, filterLocation, filterVerified, filterFeatured, isAuthenticated, fetchListings]);
 
   // Reload listings when page changes
   useEffect(() => {
-    if (isAuthenticated && auth && activeTab === 'listings') fetchListings(auth, listingsPage);
-  }, [listingsPage]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (isAuthenticated && activeTab === 'listings') fetchListings(listingsPage);
+  }, [listingsPage, isAuthenticated, activeTab, fetchListings]);
 
   // ── Listings actions (optimistic) ──
 

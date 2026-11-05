@@ -1,7 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { verifyAdmin } from '@/lib/verify-admin';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const session = await verifyAdmin(request);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const all = await prisma.listing.findMany({
       select: {

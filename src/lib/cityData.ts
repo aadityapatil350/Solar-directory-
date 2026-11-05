@@ -778,27 +778,56 @@ export interface CityFAQ {
 
 export function getCityFAQs(city: string, state: string): CityFAQ[] {
   const cityInfo = citySpecificData[city.toLowerCase()];
+  const cLower = city.toLowerCase();
+  const isUP = state === 'Uttar Pradesh';
+  const isDelhi = cLower === 'delhi' || state === 'Delhi';
+  const isMP = state === 'Madhya Pradesh';
+  const isTN = state === 'Tamil Nadu';
+  const isKA = state === 'Karnataka';
+  const isRJ = state === 'Rajasthan';
+  const isGJ = state === 'Gujarat';
+  const isHR = state === 'Haryana';
+
+  const subsidyAnswer = isUP
+    ? `Yes! In ${city}, Uttar Pradesh, you are eligible for BOTH the central PM Surya Ghar Yojana subsidy (up to ₹78,000) AND the UPNEDA State Top-up Subsidy of up to ₹30,000, giving you a total combined government subsidy of up to ₹1,08,000 for residential installations! The central ₹78,000 is credited directly via DBT to your Aadhaar-linked bank account within 30 days of net-meter commissioning, and UPNEDA state subsidy is processed through the state portal. Our verified installers manage all documentation, technical feasibility, and DISCOM inspections.`
+    : isDelhi
+    ? `Yes! In Delhi, residential homeowners receive the central PM Surya Ghar subsidy of up to ₹78,000 PLUS the Delhi Solar Policy Generation-Based Incentive (GBI) of ₹3 per kWh (unit) produced for 5 years, deposited directly into your bank account. For a typical 3 kW system generating 360 units/month, the Delhi GBI pays an additional ₹1,080/month (~₹13,000/year) on top of bringing your electricity bill down to ₹0! Verified installers on GoSolarIndex handle the entire single-window registration with BSES and Tata Power DDL.`
+    : isMP
+    ? `Yes! PM Surya Ghar Yojana subsidy of up to ₹78,000 is fully available in ${city}, Madhya Pradesh (₹30,000 for 1kW, ₹60,000 for 2kW, and ₹78,000 for 3kW+). Furthermore, residents in ${city} have access to walk-in SolarSquare Experience Centres with live full-scale models, 3D rooftop shadow simulations, and 0-cost EMI financing pre-approvals.`
+    : isTN
+    ? `Yes! PM Surya Ghar Yojana central subsidy of up to ₹78,000 is available for residential installations across ${city}, Tamil Nadu. Applications are submitted via the National Portal and processed through TANGEDCO. Because Tamil Nadu has higher domestic tariff slabs for consumption over 400–500 units, solar eliminates the highest billing tier and pays for itself within 3 to 3.5 years.`
+    : isKA
+    ? `Yes! PM Surya Ghar Yojana offers up to ₹78,000 central subsidy in ${city}, Karnataka. Applications are integrated directly with BESCOM / KREDL. Subsidies are credited directly to your bank account within 30 days following net-meter inspection.`
+    : isRJ
+    ? `Yes! In ${city}, Rajasthan, you get up to ₹78,000 central subsidy under PM Surya Ghar Yojana. With Rajasthan's nation-leading solar radiation (over 5.8 kWh/m²/day), a 3kW system generates over 380–420 units per month, delivering payback in under 3.2 years.`
+    : isGJ
+    ? `Yes! In ${city}, Gujarat, you receive up to ₹78,000 under PM Surya Ghar Yojana combined with SURYA Gujarat digital net-metering integration. GUVNL, UGVCL, and Torrent Power approve net meters within 14 business days, making Gujarat the fastest state for solar commissioning.`
+    : isHR
+    ? `Yes! PM Surya Ghar Yojana offers up to ₹78,000 central DBT subsidy in ${city}, Haryana. Subsidies are processed through DHBVN, offsetting expensive grid and diesel generator power tariffs for independent kothis and floors.`
+    : `Yes! PM Surya Ghar Yojana subsidy is fully available in ${city}, ${state}. You can get up to ₹78,000 central government subsidy (₹30,000 for 1-2kW, ₹60,000 for 2-3kW, and ₹78,000 for 3kW+). The subsidy is credited directly to your bank account after installation and inspection by DISCOM officials. Our verified installers help you with documentation, subsidy application, and follow-ups to ensure you receive the full amount.`;
 
   return [
     {
       question: `How much does solar installation cost in ${city} in 2026?`,
-      answer: cityInfo
-        ? `In ${city}, a 3kW residential solar system costs ${cityInfo.avgCost3kW} on average in 2026. After applying the PM Surya Ghar Yojana subsidy of up to ₹78,000, your net cost comes down to approximately ₹1.2L–₹1.8L. A 5kW system ranges from ${cityInfo.avgCost5kW}. Costs vary based on panel brand (Tata, Adani, Waaree, etc.), inverter type (string vs micro), and installation complexity. Most ${city} homeowners recover their investment in 3-4 years through electricity bill savings. Get free quotes from verified installers to find the best deal.`
-        : `In ${city}, solar installation costs typically range from ₹40,000 to ₹80,000 for a 3kW system in 2026. With PM Surya Ghar Yojana subsidy of up to ₹78,000, your net investment reduces to ₹1.2L–₹1.8L. Contact verified installers for accurate quotes based on your requirements.`
+      answer: isUP
+        ? `In ${city}, a 3kW residential solar system costs ₹1,85,000 – ₹1,95,000 gross. After combining the PM Surya Ghar central subsidy (₹78,000) and UPNEDA state subsidy (₹30,000), your total subsidy is ₹1,08,000, bringing your net out-of-pocket cost down to just ₹77,000 – ₹87,000! A 5kW system costs approximately ₹1,82,000 – ₹2,02,000 net. Costs include Tier-1 DCR ALMM solar panels, on-grid inverter, elevated mounting structure, and DISCOM net meter commissioning.`
+        : cityInfo
+        ? `In ${city}, a 3kW residential solar system costs ${cityInfo.avgCost3kW} net on average in 2026 after the PM Surya Ghar Yojana subsidy of up to ₹78,000 (gross cost ₹1.85L–₹1.95L). A 5kW system ranges from ${cityInfo.avgCost5kW} net. Costs vary based on panel brand (SolarSquare, Tata Power Solar, Adani, Waaree), inverter type (string vs micro), and roof elevation. Most ${city} homeowners recover their entire capital investment in 3-4 years through electricity bill savings. Get free quotes from verified installers to find the best deal.`
+        : `In ${city}, solar installation costs typically range from ₹1,05,000 to ₹1,20,000 net for a 3kW system in 2026 after applying the ₹78,000 PM Surya Ghar subsidy. Contact verified installers on GoSolarIndex for accurate site surveys and quotations.`
     },
     {
       question: `Which are the best solar companies in ${city}?`,
-      answer: `The best solar companies in ${city} are those verified by GoSolarIndex with proven track records. We list only MNRE-certified installers who have completed successful installations in ${city}. Top-rated companies have 4+ star ratings, authentic customer reviews, and comply with ${cityInfo?.discoms[0] || state + ' DISCOM'} net metering requirements. Look for the "Verified" badge and check reviews before choosing. ${cityInfo ? `Popular installers serve areas like ${cityInfo.topAreas.slice(0, 3).join(', ')}.` : ''} Filter by rating and reviews to find the best fit for your needs.`
+      answer: `The best solar companies in ${city} are those verified by GoSolarIndex with proven track records. We list only MNRE-certified installers and empanelled channel partners (including SolarSquare, Tata Power Solar, Waaree, and certified local EPCs) who have completed successful installations in ${city}. Top-rated companies have 4+ star ratings, authentic customer reviews, and handle end-to-end ${cityInfo?.discoms[0] || state + ' DISCOM'} net metering. Look for the "Verified" badge and check ratings before choosing. ${cityInfo ? `Popular installers actively serve areas like ${cityInfo.topAreas.slice(0, 4).join(', ')}.` : ''}`
     },
     {
       question: `Is PM Surya Ghar subsidy available in ${city}?`,
-      answer: `Yes! PM Surya Ghar Yojana subsidy is fully available in ${city}, ${state}. You can get up to ₹78,000 central government subsidy (₹30,000 for 1-2kW, ₹60,000 for 2-3kW, and ₹78,000 for 3kW+). ${cityInfo?.subsidyInfo || 'The subsidy is credited directly to your bank account after installation and inspection by DISCOM officials.'} ${cityInfo?.discoms[0] ? `Applications are processed through ${cityInfo.discoms[0]}.` : ''} Our verified installers help you with documentation, subsidy application, and follow-ups to ensure you receive the full amount.`
+      answer: subsidyAnswer
     },
     {
       question: `How does net metering work in ${city}?`,
       answer: cityInfo
-        ? `Net metering in ${city} is managed by ${cityInfo.discoms.join('/')}. After installing solar panels, you export excess electricity to the grid during the day and consume grid power at night. Your meter runs backward when exporting, earning you credits. ${cityInfo.discoms[0]} approval takes 15-45 days on average. You'll need: solar installation completion certificate, ${cityInfo.discoms[0]} application form, building NOC, and technical drawings. ${cityInfo.discoms.length > 1 ? 'Process varies slightly by DISCOM area.' : ''} Our verified installers handle all ${cityInfo.discoms[0]} paperwork and inspections. You get billed only for net consumption (consumed - exported).`
-        : `Net metering in ${city} allows you to export excess solar electricity to the grid and earn credits. Your DISCOM installs a bi-directional meter that tracks both consumption and export. Applications typically take 2-6 weeks for approval. You'll need installation certificates, DISCOM application, and building approvals. Verified installers handle all paperwork and coordinate with ${state} DISCOM for smooth approval.`
+        ? `Net metering in ${city} is managed by ${cityInfo.discoms.join(' and ')}. After installing rooftop panels, you export surplus solar energy to the grid during peak daytime hours and draw power from the grid at night. A bi-directional net meter calculates the difference (net consumption). DISCOM approval typically takes 15–30 days. Empanelled installers on GoSolarIndex handle the complete technical feasibility application, meter testing, and safety inspection so you only pay for net units consumed.`
+        : `Net metering in ${city} allows you to export excess solar electricity to the grid and earn credits. Your DISCOM installs a bi-directional meter that tracks both consumption and export. Applications typically take 2-4 weeks for approval. Verified installers handle all paperwork and coordinate with ${state} DISCOM for smooth commissioning.`
     }
   ];
 }
