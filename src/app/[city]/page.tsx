@@ -12,7 +12,7 @@ import ListingRow from '@/components/ui/ListingRow';
 import LeadForm from '@/components/LeadForm';
 import StickyQuoteBar from '@/components/ui/StickyQuoteBar';
 import { prisma } from '@/lib/prisma';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { getCityFAQs, citySpecificData } from '@/lib/cityData';
 import { getStateSolarConfig } from '@/lib/solarConfig';
 import { getSolarProfile } from '@/lib/tier1-cities';
@@ -44,10 +44,27 @@ async function findCityLocation(citySlug: string) {
   });
 }
 
+const CITY_ALIASES: Record<string, string> = {
+  bengaluru: 'bangalore',
+  gurugram: 'gurgaon',
+  'new-delhi': 'delhi',
+  bareily: 'bareilly',
+  jablpur: 'jabalpur',
+  hydrabad: 'hyderabad',
+  mysuru: 'mysore',
+  kovai: 'coimbatore',
+};
+
 const MIN_LISTINGS_FOR_INDEX = 3;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { city: citySlug } = await params;
+  const { city: rawCitySlug } = await params;
+  const canonicalAlias = CITY_ALIASES[rawCitySlug.toLowerCase()];
+  if (canonicalAlias) {
+    permanentRedirect(`/${canonicalAlias}`);
+  }
+
+  const citySlug = rawCitySlug;
   const location = await findCityLocation(citySlug);
   if (!location) return {};
 
@@ -66,7 +83,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CityPage({ params }: PageProps) {
-  const { city: citySlug } = await params;
+  const { city: rawCitySlug } = await params;
+  const canonicalAlias = CITY_ALIASES[rawCitySlug.toLowerCase()];
+  if (canonicalAlias) {
+    permanentRedirect(`/${canonicalAlias}`);
+  }
+
+  const citySlug = rawCitySlug;
   const cityData = await findCityLocation(citySlug);
 
   if (!cityData) notFound();
